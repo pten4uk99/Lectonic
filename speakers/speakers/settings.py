@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'authapp',
 ]
 
 MIDDLEWARE = [
@@ -135,3 +136,5 @@ try:
     from .local_settings import *
 except ImportError:
     from .prod_settings import *
+
+AUTH_USER_MODEL = 'authapp.User'
