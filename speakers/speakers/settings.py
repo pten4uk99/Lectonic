@@ -137,4 +137,4 @@ try:
 except ImportError:
     from .prod_settings import *
 
-AUTH_USER_MODEL = 'authapp.User'
+# AUTH_USER_MODEL = 'authapp.User'
