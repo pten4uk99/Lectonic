@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.fields import EmailField
 from django.utils import timezone
 from datetime import date
+from django.contrib.auth.hashers import make_password
 
 class UserProfile(models.Model):
     u_id = models.AutoField(null=False, blank=False, primary_key = True)
@@ -15,6 +16,10 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.u_login
+
+    def save(self, *args, **kwargs):
+        self.u_password = make_password(self.u_password)
+        super(UserProfile, self).save(*args, **kwargs)
 
 class City(models.Model):
     c_id = models.AutoField(null=False, blank=False, primary_key = True)
