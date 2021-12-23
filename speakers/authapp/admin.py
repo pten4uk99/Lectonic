@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import *
 
 @admin.register(UserProfile)
-class User2Admin(admin.ModelAdmin):
+class UserProfileAdmin(admin.ModelAdmin):
   pass
 
 @admin.register(City)
