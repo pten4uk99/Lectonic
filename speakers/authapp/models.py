@@ -51,7 +51,7 @@ class Person(models.Model):
     person_isCustomer = models.BooleanField(default=False)
     person_isVerified = models.BooleanField(default=False)
     person_grade = models.CharField(max_length=300, null=True, blank=True, default='')
-    person_description = models.TextField()
+    person_description = models.TextField(null=True, blank=True)
     person_domainId = models.OneToOneField(Domain, on_delete = models.CASCADE, related_name='person_domain')
     person_latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True, default='') # Возможно надо будет добавить цифр, если будут ошибки поиска координат
     person_longtitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True, default='') # Возможно надо будет добавить цифр, если будут ошибки поиска координат
@@ -76,7 +76,7 @@ class Company(models.Model):
 class Projects(models.Model):
     project_id = models.AutoField(null=False, blank=False, primary_key = True)
     project_name = models.CharField(max_length=200, null=True, blank=True, default='')
-    project_description = models.TextField()
+    project_description = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.project_name
