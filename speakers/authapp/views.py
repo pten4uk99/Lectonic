@@ -8,6 +8,8 @@ from rest_framework.exceptions import ValidationError as VE
 from rest_framework.response import Response
 from rest_framework.views import APIView
 #==================
+from .serializers import UserCreateSerializer
+
 
 def is_correct_login(login):
 # Функция проверки логина: занят или нет, ... возможно будут другие проверки, например только английские буквы
@@ -34,3 +36,18 @@ class Registration(APIView):
                 raise
             success = {'status_code':201,'usr_msg':'Регистрация прошла успешно'}
             return Response(success)
+
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+
+class UserCreationView(APIView):  # Возможно в будущем переделается на дженерик
+    def post(self, request):
+        serializer = UserCreateSerializer(request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            ''' Если валидация прошла, создаем пользователя '''
+            pass
+        return Response(status=201)
