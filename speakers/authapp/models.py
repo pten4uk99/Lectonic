@@ -3,6 +3,8 @@ from django.db.models.fields import EmailField
 from django.utils import timezone
 from datetime import date
 from django.contrib.auth.hashers import make_password
+from rest_framework.authtoken.models import Token as BaseToken
+
 
 class UserProfile(models.Model):
     u_id = models.AutoField(null=False, blank=False, primary_key = True)
@@ -13,6 +15,7 @@ class UserProfile(models.Model):
     u_rating = models.IntegerField(default = 0, null=True, blank=True)
     u_photo = models.CharField(max_length=200, null=True, blank=True)
     u_isAdmin = models.BooleanField(default=False)
+    is_authenticated = models.BooleanField(default=False)
 
     def __str__(self):
         return self.u_login
@@ -20,6 +23,17 @@ class UserProfile(models.Model):
     def save(self, *args, **kwargs):
         self.u_password = make_password(self.u_password)
         super(UserProfile, self).save(*args, **kwargs)
+
+    def login(self):
+        self.is_authenticated = True
+        self.save()
+        return self
+
+    def logout(self):
+        self.is_authenticated = False
+        self.save()
+        return self
+
 
 class City(models.Model):
     c_id = models.AutoField(null=False, blank=False, primary_key = True)
@@ -29,6 +43,7 @@ class City(models.Model):
     def __str__(self):
         return self.c_name
 
+
 class Domain(models.Model):
     domain_id = models.AutoField(null=False, blank=False, primary_key = True)
     domain_name = models.CharField(max_length=200, null=False, blank=False, default='no name')
@@ -36,6 +51,7 @@ class Domain(models.Model):
 
     def __str__(self):
         return self.domain_name
+
 
 class Person(models.Model):
     person_id = models.AutoField(null=False, blank=False, primary_key = True)
@@ -59,6 +75,7 @@ class Person(models.Model):
     def __str__(self):
         return '{} {}'.format(self.person_firstName, self.person_lastname)
 
+
 class Company(models.Model):
     company_id = models.AutoField(null=False, blank=False, primary_key = True)
     company_name = models.CharField(max_length=100, null=False, blank=False, default='no company name')
@@ -73,6 +90,7 @@ class Company(models.Model):
     def __str__(self):
         return self.company_name
 
+
 class Projects(models.Model):
     project_id = models.AutoField(null=False, blank=False, primary_key = True)
     project_name = models.CharField(max_length=200, null=True, blank=True, default='')
@@ -81,6 +99,7 @@ class Projects(models.Model):
     def __str__(self):
         return self.project_name
 
+
 class ProjectAdmin(models.Model):
     pa_userId = models.OneToOneField(UserProfile, on_delete = models.CASCADE, related_name='pa_user')
     pa_projectId = models.OneToOneField(Projects, on_delete = models.CASCADE, related_name='pa_project')
@@ -88,10 +107,18 @@ class ProjectAdmin(models.Model):
     def __str__(self):
         return self.pa_userId.u_login
 
+
 class ProjectLecturer(models.Model):
     pu_lecturerId = models.ForeignKey(UserProfile, on_delete = models.CASCADE, related_name='lecturers')
     pu_projectId = models.ForeignKey(Projects, on_delete = models.CASCADE, related_name='projects')
 
     def __str__(self):
         return self.pu_lecturerId.u_login
-    
+
+
+class Token(BaseToken):
+    user = models.OneToOneField(
+        UserProfile,
+        related_name='auth_token',
+        on_delete=models.CASCADE
+    )
