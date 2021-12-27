@@ -1,36 +1,51 @@
-# === Base block ===
-from .models import UserProfile
-from django.shortcuts import render
-# =================
-# === DRF block ===
-from rest_framework.exceptions import APIException
-from rest_framework.exceptions import ValidationError as VE
+from . import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-#==================
 
-def is_correct_login(login):
-# Функция проверки логина: занят или нет, ... возможно будут другие проверки, например только английские буквы
-    return True
-def is_correct_email(email):
-# Функция проверки почты: занята или нет, корректность и прочие проверки
-    return True
-def is_correct_passwd(passwd, passwd_repeat):
-# Функция проверки пароля: совпадают ли пароль и повтор пароля, удовлетворяет ли пароль требованиям и прочие проверки
-    return True
+from .serializers import (
+    UserProfileCreateSerializer,
+    UserProfileLoginSerializer
+)
 
-class Registration(APIView):
+
+class UserProfileCreationView(APIView):  # Возможно в будущем переделается на дженерик
     def post(self, request):
-        # Получаем данные из формы. Уточнить формат передачи данных из формы фронта
-        u_login = request.data['login']
-        u_email = request.data['email']
-        u_password = request.data['pass']
-        u_password_repeat = request.data['pass_repeat']
-        if (is_correct_login(u_login) and is_correct_email(u_email) and is_correct_passwd(u_password, u_password_repeat)):
-            new_user = UserProfile(u_login = u_login, u_email = u_email, u_password = u_password, u_isAdmin = False)
-            try:
-                new_user.save()
-            except APIException:
-                raise
-            success = {'status_code':201,'usr_msg':'Регистрация прошла успешно'}
-            return Response(success)
+        serializer = UserProfileCreateSerializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return Response(status=201)
+
+
+class UserProfileLoginView(APIView):
+    def post(self, request):
+        serializer = UserProfileLoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user, new_token = serializer.login_user()
+
+        return Response(
+            data={"auth_token": new_token.key},
+            status=201
+        )
+
+
+class UserProfileLogoutView(APIView):
+    def post(self, request):
+        user = request.user.logout()
+        user.auth_token.delete()
+
+        return Response(
+            data={"response": "success"},
+            status=201
+        )
+
+
+# Тестовая вьюшка для проверки аутентификации-----------------------
+
+class TestView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        return Response(data={"response": "success"})
+
+# Тестовая вьюшка для проверки аутентификации-----------------------
