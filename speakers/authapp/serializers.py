@@ -3,25 +3,38 @@ from rest_framework import serializers
 from authapp.models import UserProfile
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class UserProfileCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = (
             'u_login',
             'u_email',
             'u_password',
-            'u_password_repeat'
+            # повторный ввод пароля будет проверяться на стороне фронтенда
         )
 
-    def validate_u_login(self, data):
+    def validate_u_login(self, login):
         ''' Валидация логина '''
-        return data
+        return login
 
-    def validate_u_email(self, data):
+    def validate_u_email(self, email):
         ''' Валидация эмейла '''
-        return data
+        return email
 
-    def validate_u_password(self, data):
-        ''' Валидация пароля +
-        тут же проверка на равенство повторному паролю '''
-        return data
+    def validate_u_password(self, password):
+        ''' Валидация пароля '''
+        return password
+
+
+class UserProfileLoginSerializer(serializers.Serializer):
+    u_email = serializers.EmailField(required=False)
+    u_password = serializers.CharField()
+
+    def validate_u_email(self, email):
+        ''' Валидация эмейла '''
+        return email
+
+    def validate_u_password(self, password):
+        ''' Валидация пароля '''
+        return password
+
