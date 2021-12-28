@@ -18,8 +18,9 @@ from django.urls import path
 from django.urls import include
 
 urlpatterns = [
+    path('', include('authapp.urls')),
     path('admin/', admin.site.urls),
 ]
-urlpatterns += [
-     path('', include('authapp.urls')),
-]
+# urlpatterns += [
+#      path('', include('authapp.urls')),
+# ]
