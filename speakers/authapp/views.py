@@ -14,7 +14,7 @@ class UserProfileCreationView(APIView):  # Возможно в будущем п
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-        return Response(status=201)
+        return Response(data={"response": "success"}, status=201)
 
 
 class UserProfileLoginView(APIView):
@@ -31,7 +31,7 @@ class UserProfileLoginView(APIView):
 
 class UserProfileLogoutView(APIView):
     def post(self, request):
-        user = request.user.logout()
+        user = request.user_profile.logout()
         user.auth_token.delete()
 
         return Response(
