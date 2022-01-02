@@ -11,10 +11,12 @@ from .serializers import (
 class UserProfileCreationView(APIView):  # Возможно в будущем переделается на дженерик
     def post(self, request):
         serializer = UserProfileCreateSerializer(data=request.data)
-
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-        return Response(status=201)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(
+            data={"user_profile": serializer.data['u_email'],
+                  "status": "created"},
+            status=201)
 
 
 class UserProfileLoginView(APIView):
@@ -24,18 +26,19 @@ class UserProfileLoginView(APIView):
         user, new_token = serializer.login_user()
 
         return Response(
-            data={"auth_token": new_token.key},
+            data={"auth_token": new_token.key,
+                  "status": "logged_in"},
             status=201
         )
 
 
 class UserProfileLogoutView(APIView):
     def post(self, request):
-        user = request.user.logout()
+        user = request.user_profile.logout()
         user.auth_token.delete()
 
         return Response(
-            data={"response": "success"},
+            data={"status": "logged_out"},
             status=201
         )
 
