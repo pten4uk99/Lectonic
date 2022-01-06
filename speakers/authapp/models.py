@@ -8,10 +8,12 @@ from rest_framework.authtoken.models import Token as BaseToken
 
 class UserProfile(models.Model):
     u_id = models.AutoField(null=False, blank=False, primary_key = True)
-    u_login = models.CharField(max_length=30, null=False, blank=False, unique=True, default='no login')
+    u_login = models.CharField(max_length=30, null=True, blank=True, default='no login')
     u_password = models.CharField(max_length=100, null=False, blank=False)
-    u_email = models.EmailField(null=True, blank=True, unique=True)
+    u_email = models.EmailField(max_length=254, null=False, blank=False, unique=True)
     u_phone = models.CharField(max_length=20, null=True, blank=True)
+    u_activationKey = models.CharField(max_length=128, blank=True)
+    u_activationKeyExpires = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     u_rating = models.IntegerField(default = 0, null=True, blank=True)
     u_photo = models.CharField(max_length=200, null=True, blank=True)
     u_isAdmin = models.BooleanField(default=False)
@@ -61,7 +63,7 @@ class Person(models.Model):
     person_birthdate = models.DateField(null=False, blank=False, default=date.today)
     person_cityId = models.OneToOneField(City, on_delete = models.CASCADE, related_name='person_city')
     person_address = models.CharField(max_length=200, null=True, blank=True, default='')
-    person_userId = models.OneToOneField(UserProfile, on_delete = models.CASCADE, related_name='person_user')
+    person_userProfileId = models.OneToOneField(UserProfile, on_delete = models.CASCADE, related_name='person_user')
     person_isLecturer = models.BooleanField(default=False)
     person_isProjectAdmin = models.BooleanField(default=False)
     person_isCustomer = models.BooleanField(default=False)
@@ -82,7 +84,7 @@ class Company(models.Model):
     company_cityId = models.OneToOneField(City, on_delete = models.CASCADE, related_name='company_city')
     company_address = models.CharField(max_length=200, null=True, blank=True, default='')
     company_inn = models.CharField(max_length=30, null=True, blank=True, default='', unique=True)
-    company_userId = models.OneToOneField(UserProfile, on_delete = models.CASCADE, related_name='company_user')
+    company_userProfileId = models.OneToOneField(UserProfile, on_delete = models.CASCADE, related_name='company_user')
     company_isProjectAdmin = models.BooleanField(default=False)
     company_isCustomer = models.BooleanField(default=False)
     company_verified = models.BooleanField(default=False)
@@ -101,7 +103,7 @@ class Projects(models.Model):
 
 
 class ProjectAdmin(models.Model):
-    pa_userId = models.OneToOneField(UserProfile, on_delete = models.CASCADE, related_name='pa_user')
+    pa_userProfileId = models.OneToOneField(UserProfile, on_delete = models.CASCADE, related_name='pa_user')
     pa_projectId = models.OneToOneField(Projects, on_delete = models.CASCADE, related_name='pa_project')
 
     def __str__(self):
