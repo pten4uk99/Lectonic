@@ -53,14 +53,22 @@ class UserProfileLoginSerializer(serializers.Serializer):
 
     def get_object(self):
         ''' Из переданных данных получает объект пользователя '''
-        return UserProfile.objects.get(u_email=self.validated_data.get('u_email'))
+
+        user = UserProfile.objects.get(u_email=self.validated_data.get('u_email'))
+
+        if user.is_authenticated:
+            raise ValidationError({"detail": 'Данный пользователь уже авторизован'})
+
+        return user
 
     def create_token(self):
         ''' Создает токен, относящийся к полученному пользователю '''
+
         user = self.get_object()
         return user, Token.objects.create(user=user)
 
     def login_user(self):
         ''' Аутентифицирует пользователя '''
+
         user, new_token = self.create_token()
         return user.login(), new_token

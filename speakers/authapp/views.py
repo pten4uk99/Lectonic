@@ -1,11 +1,12 @@
-from . import permissions
 from rest_framework.response import Response
-from rest_framework.views import APIView
+# from rest_framework.views import APIView
 
 from .serializers import (
     UserProfileCreateSerializer,
     UserProfileLoginSerializer
 )
+from . import permissions
+from .utils.views import APIView
 
 
 class UserProfileCreationView(APIView):  # Возможно в будущем переделается на дженерик
