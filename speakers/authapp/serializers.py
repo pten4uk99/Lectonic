@@ -10,8 +10,8 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = (
-            'u_email',
-            'u_password',
+            'email',
+            'password',
             # повторный ввод пароля будет проверяться на стороне фронтенда
         )
 
@@ -53,7 +53,7 @@ class UserProfileLoginSerializer(serializers.Serializer):
 
     def get_object(self):
         ''' Из переданных данных получает объект пользователя '''
-        return UserProfile.objects.get(u_email=self.validated_data.get('u_email'))
+        return UserProfile.objects.get(email=self.validated_data.get('email'))
 
     def create_token(self):
         ''' Создает токен, относящийся к полученному пользователю '''
