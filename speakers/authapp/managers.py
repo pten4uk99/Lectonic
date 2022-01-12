@@ -1,6 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _
-class CustomUserManager(BaseUserManager):
+
+class UserProfileManager(BaseUserManager):
     """
     Custom user model manager where email is the unique identifiers
     for authentication instead of usernames.
@@ -20,11 +21,11 @@ class CustomUserManager(BaseUserManager):
         """
         Create and save a SuperUser with the given email and password.
         """
-        extra_fields.setdefault('u_isAdmin', True)
+        extra_fields.setdefault('isAdmin', True)
         extra_fields.setdefault('is_superuser', True)
-        # extra_fields.setdefault('is_active', True)
-        if extra_fields.get('u_isAdmin') is not True:
-            raise ValueError(_('Superuser must have u_isAdmin=True.'))
+        extra_fields.setdefault('is_active', True)
+        if extra_fields.get('isAdmin') is not True:
+            raise ValueError(_('Superuser must have isAdmin=True.'))
         if extra_fields.get('is_superuser') is not True:
             raise ValueError(_('Superuser must have is_superuser=True.'))
         return self.create_user(email, password, **extra_fields)
