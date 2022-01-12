@@ -48,8 +48,8 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
 
 
 class UserProfileLoginSerializer(serializers.Serializer):
-    u_email = serializers.EmailField()
-    u_password = serializers.CharField()
+    email = serializers.EmailField()
+    password = serializers.CharField()
 
     def get_object(self):
         ''' Из переданных данных получает объект пользователя '''
