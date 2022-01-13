@@ -1,5 +1,6 @@
 import re
 
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -10,12 +11,12 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = (
-            'u_email',
-            'u_password',
+            'email',
+            'password',
             # повторный ввод пароля будет проверяться на стороне фронтенда
         )
 
-    def validate_u_email(self, email):
+    def validate_email(self, email):
         '''
         Валидация эмейла
 
@@ -32,7 +33,7 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
             raise ValidationError('Некорректный эмейл')
         return email
 
-    def validate_u_password(self, password):
+    def validate_password(self, password):
         '''
         Валидация пароля
 
@@ -44,16 +45,31 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
 
         if not match:
             raise ValidationError('Пароль слишком короткий')
-        return password
+
+        return make_password(password)
 
 
 class UserProfileLoginSerializer(serializers.Serializer):
-    u_email = serializers.EmailField()
-    u_password = serializers.CharField()
+    email = serializers.EmailField()
+    password = serializers.CharField()
 
     def get_object(self):
         ''' Из переданных данных получает объект пользователя '''
-        return UserProfile.objects.get(u_email=self.validated_data.get('u_email'))
+
+        user = UserProfile.objects.filter(email=self.initial_data.get('email')).first()
+
+        if not user:
+            raise serializers.ValidationError('Пользователя с таким email не существует')
+
+        return user
+
+    def validate(self, data):
+        user = self.get_object()
+
+        if not user.check_password(data['password']):
+            raise serializers.ValidationError('Неверный пароль')
+
+        return data
 
     def create_token(self):
         ''' Создает токен, относящийся к полученному пользователю '''

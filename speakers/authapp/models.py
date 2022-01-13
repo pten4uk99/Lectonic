@@ -1,24 +1,24 @@
-from types import ClassMethodDescriptorType
-from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
-from django.contrib.auth.models import PermissionsMixin
-from .managers import UserProfileManager
-from django.db.models.fields import EmailField
-from django.utils import timezone
 from datetime import date
-from django.contrib.auth.hashers import make_password
-from rest_framework.authtoken.models import Token as BaseToken
+
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import PermissionsMixin
 from django.contrib.postgres.fields import DateTimeRangeField
 
+from rest_framework.authtoken.models import Token as BaseToken
 
-class UserProfile(AbstractBaseUser, PermissionsMixin):
+from .managers import UserProfileManager
+
+
+class UserProfile(AbstractUser, PermissionsMixin):
+    username = None
+    first_name = None
+    last_name = None
     email = models.EmailField(max_length=254, unique=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
     activationKey = models.CharField(max_length=128, null=True, blank=True)
     activationKeyExpires = models.DateTimeField(auto_now_add=True, blank=True, null=True) # Жень, уточни параметр auto_now_add=True. Кажется это поле не должно быть по умолчанию "просроченым"
-    isAdmin = models.BooleanField(default=False)
     is_authenticated = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=False)  # Не уверен, что это поле нужно. Задумка - менять на True после подтверждения email по почте
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -28,7 +28,6 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
         return self.email
 
     def save(self, *args, **kwargs):
-        self.password = make_password(self.password)
         super(UserProfile, self).save(*args, **kwargs)
 
     def login(self):
@@ -131,6 +130,7 @@ class Token(BaseToken):
         related_name='auth_token',
         on_delete=models.CASCADE
     )
+
 
 class LectureCycle(models.Model):
     lc_id = models.AutoField(null=False, blank=False, primary_key = True)
