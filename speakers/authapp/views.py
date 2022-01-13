@@ -15,7 +15,7 @@ class UserProfileCreationView(APIView):  # Возможно в будущем п
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(
-            data={"user_profile": serializer.data['u_email'],
+            data={"user_profile": serializer.data['email'],
                   "status": "created"},
             status=201)
 
