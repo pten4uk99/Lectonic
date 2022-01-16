@@ -70,6 +70,7 @@ class Person(models.Model):
     person_rating = models.IntegerField(default = 0, null=True, blank=True)
     person_photo = models.CharField(max_length=200, null=True, blank=True)
     person_userProfileId = models.OneToOneField(UserProfile, on_delete = models.CASCADE, related_name='person_user')
+    person_isListener = models.BooleanField(default=False)
     person_isLecturer = models.BooleanField(default=False)
     person_isProjectAdmin = models.BooleanField(default=False)
     person_isCustomer = models.BooleanField(default=False)
@@ -82,6 +83,12 @@ class Person(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.person_firstName, self.person_lastname)
+    
+    def isLecturer(self):
+        if self.person_isLecturer:
+            return True
+        else:
+            return False 
 
 
 class Company(models.Model):
