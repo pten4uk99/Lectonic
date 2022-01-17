@@ -13,8 +13,8 @@ class UserProfile(AbstractUser, PermissionsMixin):
     last_name = None
     email = models.EmailField(max_length=254, unique=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
-    activationKey = models.CharField(max_length=128, null=True, blank=True)
-    activationKeyExpires = models.DateTimeField(auto_now_add=True, blank=True, null=True) # Жень, уточни параметр auto_now_add=True. Кажется это поле не должно быть по умолчанию "просроченым"
+    activation_key = models.CharField(max_length=128, null=True, blank=True)
+    activation_key_expires = models.DateTimeField(auto_now_add=True, blank=True, null=True) # Жень, уточни параметр auto_now_add=True. Кажется это поле не должно быть по умолчанию "просроченым"
     is_authenticated = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'

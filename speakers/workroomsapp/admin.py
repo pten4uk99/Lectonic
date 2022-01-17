@@ -13,19 +13,19 @@ class PersonAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(Company)
-class CompanyAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(Projects)
-class ProjectsAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(ProjectAdmin)
-class ProjectAdminAdmin(admin.ModelAdmin):
-    pass
+# @admin.register(Company)
+# class CompanyAdmin(admin.ModelAdmin):
+#     pass
+#
+#
+# @admin.register(Projects)
+# class ProjectsAdmin(admin.ModelAdmin):
+#     pass
+#
+#
+# @admin.register(ProjectAdmin)
+# class ProjectAdminAdmin(admin.ModelAdmin):
+#     pass
 
 
 @admin.register(ProjectLecturer)
