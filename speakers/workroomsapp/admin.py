@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from workrooms.models import *
+from workroomsapp.models import *
 
 
 @admin.register(City)
