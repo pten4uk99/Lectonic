@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .views.person import *
+from workroomsapp.views.lector import *
 
 urlpatterns = [
-
+    path('lecturer/addlecture/', AddLecture.as_view()),
 ]

@@ -47,6 +47,12 @@ class Person(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+    
+    def isLecturer(self):
+        if self.is_lecturer:
+            return True
+        else:
+            return False
 
 
 class Project(models.Model):
