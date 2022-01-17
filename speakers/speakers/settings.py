@@ -141,7 +141,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'authapp.UserProfile'
+AUTH_USER_MODEL = 'authapp.User'
 
 try:
     from .local_settings import *

@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.contrib.postgres.fields import DateTimeRangeField
 
-UserProfile = get_user_model()
+User = get_user_model()
 
 
 class City(models.Model):
@@ -32,7 +32,7 @@ class Person(models.Model):
     address = models.CharField(max_length=200, null=True, blank=True, default='')
     rating = models.IntegerField(default=0, null=True, blank=True)
     photo = models.CharField(max_length=200, null=True, blank=True)
-    user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='person')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='person')
     is_lecturer = models.BooleanField(default=False)
     is_project_admin = models.BooleanField(default=False)
     is_customer = models.BooleanField(default=False)
@@ -58,11 +58,11 @@ class Project(models.Model):
 
 
 class ProjectLecturer(models.Model):
-    user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='project_lecturer')
 
     def __str__(self):
-        return f'{self.user_profile.email}'
+        return f'{self.user.email}'
 
 
 class LectureHall(models.Model):
@@ -70,7 +70,7 @@ class LectureHall(models.Model):
     area_size = models.IntegerField(default=0, null=True, blank=True)
     capacity = models.IntegerField(default=0, null=True, blank=True)
     address = models.CharField(max_length=200, null=True, blank=True)
-    owner = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='lecture_hall')
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='lecture_hall')
     has_whiteboard = models.BooleanField(default=False)
     has_professional_sound = models.BooleanField(default=False)
     has_transformer = models.BooleanField(default=False)
@@ -119,7 +119,7 @@ class Lecture(models.Model):
 #     city = models.OneToOneField(City, on_delete=models.CASCADE, related_name='company')
 #     address = models.CharField(max_length=200, null=True, blank=True, default='')
 #     inn = models.CharField(max_length=30, null=True, blank=True, default='', unique=True)
-#     user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='company')
+#     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='company')
 #     is_project_admin = models.BooleanField(default=False)
 #     is_customer = models.BooleanField(default=False)
 #     is_verified = models.BooleanField(default=False)
@@ -129,14 +129,14 @@ class Lecture(models.Model):
 
 
 # class ProjectAdmin(models.Model):
-#     user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='user')
+#     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user')
 #     project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name='project')
 #
 #     def __str__(self):
-#         return f'{self.user_profile.email}'
+#         return f'{self.user.email}'
 
 # class Lecture2_Lecturer(models.Model):
-#     llecturer_userId = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='llecturers')
+#     llecturer_userId = models.ForeignKey(User, on_delete=models.CASCADE, related_name='llecturers')
 #     llecturer_lectureId = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name='lecturer_lectures')
 #
 #     def __str__(self):
@@ -145,7 +145,7 @@ class Lecture(models.Model):
 #
 #
 # class LectureListener(models.Model):
-#     llistener_userId = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='llisteners')
+#     llistener_userId = models.ForeignKey(User, on_delete=models.CASCADE, related_name='llisteners')
 #     llistener_lectureId = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name='listener_lectures')
 #
 #     def __str__(self):
@@ -154,7 +154,7 @@ class Lecture(models.Model):
 #
 #
 # class LectureCustomer(models.Model):
-#     lc_userId = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='lcustomers')
+#     lc_userId = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lcustomers')
 #     lc_lectureId = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name='customer_lectures')
 #
 #     def __str__(self):

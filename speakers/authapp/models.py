@@ -4,10 +4,10 @@ from django.contrib.auth.models import PermissionsMixin
 
 from rest_framework.authtoken.models import Token as BaseToken
 
-from .managers import UserProfileManager
+from .managers import UserManager
 
 
-class UserProfile(AbstractUser, PermissionsMixin):
+class User(AbstractUser, PermissionsMixin):
     username = None
     first_name = None
     last_name = None
@@ -19,13 +19,10 @@ class UserProfile(AbstractUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
-    objects = UserProfileManager()
+    objects = UserManager()
 
     def __str__(self):
         return self.email
-
-    def save(self, *args, **kwargs):
-        super(UserProfile, self).save(*args, **kwargs)
 
     def login(self):
         self.is_authenticated = True
@@ -40,7 +37,7 @@ class UserProfile(AbstractUser, PermissionsMixin):
 
 class Token(BaseToken):
     user = models.OneToOneField(
-        UserProfile,
+        User,
         related_name='auth_token',
         on_delete=models.CASCADE
     )
