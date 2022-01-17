@@ -1,13 +1,14 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+
 from .models import *
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 
-class UserProfileAdmin(UserAdmin):
+class UserAdmin(BaseUserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
-    model = UserProfile
+    model = User
     list_display = ('email', 'is_staff', 'is_active',)
     list_filter = ('email', 'is_staff', 'is_active',)
     fieldsets = (
@@ -24,39 +25,9 @@ class UserProfileAdmin(UserAdmin):
     ordering = ('email',)
 
 
-admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(User, UserAdmin)
 
 
 @admin.register(Token)
 class TokenAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(City)
-class CityAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(Person)
-class PersonAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(Company)
-class CompanyAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(Projects)
-class ProjectsAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(ProjectAdmin)
-class ProjectAdminAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(ProjectLecturer)
-class ProjectLecturerAdmin(admin.ModelAdmin):
     pass
