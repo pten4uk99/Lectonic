@@ -77,7 +77,7 @@ class Person(models.Model):
     person_isVerified = models.BooleanField(default=False)
     person_grade = models.CharField(max_length=300, null=True, blank=True, default='')
     person_description = models.TextField(null=True, blank=True)
-    person_domainId = models.OneToOneField(Domain, on_delete = models.CASCADE, related_name='person_domain')
+    person_domainId = models.ForeignKey(Domain, on_delete = models.CASCADE, null=True, blank=True, related_name='person_domain')
     person_latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True, default='') # Возможно надо будет добавить цифр, если будут ошибки поиска координат
     person_longtitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True, default='') # Возможно надо будет добавить цифр, если будут ошибки поиска координат
 
@@ -85,6 +85,7 @@ class Person(models.Model):
         return '{} {}'.format(self.person_firstName, self.person_lastname)
     
     def isLecturer(self):
+        """Метод проверки пользователя является-ли он лектором"""
         if self.person_isLecturer:
             return True
         else:
@@ -177,13 +178,13 @@ class LectureHall(models.Model):
 class Lecture(models.Model):
     lecture_id = models.AutoField(null=False, blank=False, primary_key = True)
     lecture_name = models.CharField(max_length=100, null=False, blank=False)
-    lecture_hallId = models.OneToOneField(LectureHall, on_delete = models.CASCADE, related_name='lecture_hall')
-    lecture_cycleId = models.ForeignKey(LectureCycle, on_delete = models.CASCADE, related_name='lectureCycles')
+    lecture_hallId = models.OneToOneField(LectureHall, on_delete = models.CASCADE, null=True, blank=True, related_name='lecture_hall')
+    lecture_cycleId = models.ForeignKey(LectureCycle, on_delete = models.CASCADE, null=True, blank=True, related_name='lectureCycles')
     lecture_date = models.DateField(null=True, blank=True)
     lecture_duration = DateTimeRangeField(null=True, blank=True)
     lecture_description = models.TextField(null=True, blank=True)
     lecture_lecturerName = models.CharField(max_length=300, null=True, blank=True)
-    lecture_domainId = models.OneToOneField(Domain, on_delete = models.CASCADE, related_name='lecture_domain')
+    lecture_domainId = models.OneToOneField(Domain, on_delete = models.CASCADE, null=True, blank=True, related_name='lecture_domain')
 
     def __str__(self):
         return self.lecture_name

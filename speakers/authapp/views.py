@@ -49,9 +49,6 @@ class UserProfileLogoutView(APIView):
             status=201
         )
 
-def isLecturer(user):
-    """Функция проверки пользователя является-ли он лектором"""
-    pass
 
 class AddLecture(APIView):
     def post(self, request):
