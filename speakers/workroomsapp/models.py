@@ -1,5 +1,3 @@
-from datetime import date
-
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.contrib.postgres.fields import DateTimeRangeField
@@ -24,26 +22,35 @@ class Domain(models.Model):
 
 
 class Person(models.Model):
-    first_name = models.CharField(max_length=100, null=False, blank=False, default='no_name')
-    last_name = models.CharField(max_length=100, null=False, blank=False, default='no_lastname')
-    middle_name = models.CharField(max_length=100, null=True, blank=True, default='')
-    birth_date = models.DateField(null=False, blank=False, default=date.today)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    middle_name = models.CharField(max_length=100, null=True, blank=True)
+    birth_date = models.DateField()
     city = models.OneToOneField(City, on_delete=models.CASCADE, related_name='person')
-    address = models.CharField(max_length=200, null=True, blank=True, default='')
+    address = models.CharField(max_length=200, null=True, blank=True)
     rating = models.IntegerField(default=0, null=True, blank=True)
-    photo = models.CharField(max_length=200, null=True, blank=True)
+    # photo = models.CharField(max_length=200, null=True, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='person')
     is_lecturer = models.BooleanField(default=False)
     is_project_admin = models.BooleanField(default=False)
     is_customer = models.BooleanField(default=False)
-    is_verified = models.BooleanField(default=False) # Флаг для проверки модератором документов
-    grade = models.CharField(max_length=300, null=True, blank=True, default='')
+    is_verified = models.BooleanField(default=False)  # Флаг для проверки модератором документов
+    grade = models.CharField(max_length=300, null=True, blank=True)  # Сфера деятельности человека
     description = models.TextField(null=True, blank=True)
     domain = models.OneToOneField(Domain, on_delete=models.CASCADE, related_name='person')
-    latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True,
-                                          default='')  # Возможно надо будет добавить цифр, если будут ошибки поиска координат
-    longtitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True,
-                                            default='')  # Возможно надо будет добавить цифр, если будут ошибки поиска координат
+    latitude = models.DecimalField(
+        max_digits=10,  # Возможно надо будет добавить цифр, если будут ошибки поиска координат
+        decimal_places=7,
+        null=True,
+        blank=True
+    )
+    longitude = models.DecimalField(
+        max_digits=10, # Возможно надо будет добавить цифр, если будут ошибки поиска координат
+        decimal_places=7,
+        null=True,
+        blank=True,
+        default=''
+    )
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'

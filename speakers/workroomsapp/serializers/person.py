@@ -1,31 +1,29 @@
-from datetime import date
-
 from rest_framework import serializers
-
-from workroomsapp.models import City, Domain
 
 
 class PersonCreateSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=100)
     last_name = serializers.CharField(max_length=100)
-    middle_name = serializers.CharField(max_length=100)
-    birth_date = serializers.DateField(null=False, blank=False, default=date.today)
-    city = serializers.PrimaryKeyRelatedField(queryset=City.objects.all())
-    address = serializers.CharField(max_length=200, null=True, blank=True)
-    rating = serializers.IntegerField(default=0, null=True, blank=True)
-    photo = serializers.CharField(max_length=200, null=True, blank=True)
-    user = serializers.PrimaryKeyRelatedField()
-    is_lecturer = serializers.BooleanField(default=False)
-    is_project_admin = serializers.BooleanField(default=False)
-    is_customer = serializers.BooleanField(default=False)
-    is_verified = serializers.BooleanField(default=False) # Флаг для проверки модератором документов
-    grade = serializers.CharField(max_length=300, null=True, blank=True, default='')
-    description = serializers.CharField(null=True, blank=True)
-    domain = serializers.PrimaryKeyRelatedField(queryset=Domain.objects.all())
+    middle_name = serializers.CharField(max_length=100, required=False)
+    birth_date = serializers.DateField()
+    city = serializers.CharField(max_length=100)  # Пока что ввод города вручную, позже переделать на PrimaryKeyRelatedField()
+    # address = serializers.CharField(max_length=200, required=False)
+    rating = serializers.IntegerField(default=0, required=False)
+    # photo = serializers.CharField(max_length=200, required=False)
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    # grade = serializers.CharField(max_length=300, default='', required=False)
+    description = serializers.CharField(required=False)
+    # domain = serializers.PrimaryKeyRelatedField(queryset=Domain.objects.all(), required=False)
     latitude = serializers.DecimalField(
-        max_digits=10, decimal_places=7, null=True, blank=True,default='')
-    longtitude = serializers.DecimalField(
-        max_digits=10, decimal_places=7, null=True, blank=True, default='')
+        max_digits=10,
+        decimal_places=7,
+        required=False
+    )
+    longitude = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=7,
+        required=False
+    )
 
     class Meta:
         fields = [
@@ -34,17 +32,14 @@ class PersonCreateSerializer(serializers.Serializer):
             'middle_name',
             'birth_date',
             'city',
-            'address',
+            # 'address',
             'rating',
-            'photo',
+            # 'photo',
             'user',
-            'is_lecturer',
-            'is_project_admin',
-            'is_customer',
-            'is_verified',
-            'grade',
+            # 'grade',
             'description',
-            'domain',
+            # 'domain',
             'latitude',
+            'longitude',
         ]
 

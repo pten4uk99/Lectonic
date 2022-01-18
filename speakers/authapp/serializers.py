@@ -56,7 +56,7 @@ class UserProfileLoginSerializer(serializers.Serializer):
     def get_object(self):
         ''' Из переданных данных получает объект пользователя '''
 
-        user = UserProfile.objects.filter(email=self.initial_data.get('email')).first()
+        user = User.objects.filter(email=self.initial_data.get('email')).first()
 
         if not user:
             raise serializers.ValidationError('Пользователя с таким email не существует')
