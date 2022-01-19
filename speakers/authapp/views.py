@@ -49,7 +49,7 @@ class UserProfileLogoutView(APIView):
 
 
 class UserProfileDeleteView(APIView):
-    def post(self, request):
+    def delete(self, request):
         request.user.auth_token.delete()
         request.user.delete()
 
