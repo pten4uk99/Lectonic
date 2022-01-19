@@ -24,7 +24,7 @@ class Domain(models.Model):
 class Person(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    middle_name = models.CharField(max_length=100, null=True, blank=True)
+    middle_name = models.CharField(max_length=100, default='')
     birth_date = models.DateField()
     city = models.OneToOneField(City, on_delete=models.CASCADE, related_name='person')
     address = models.CharField(max_length=200, null=True, blank=True)
@@ -36,8 +36,14 @@ class Person(models.Model):
     is_customer = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)  # Флаг для проверки модератором документов
     grade = models.CharField(max_length=300, null=True, blank=True)  # Сфера деятельности человека
-    description = models.TextField(null=True, blank=True)
-    domain = models.OneToOneField(Domain, on_delete=models.CASCADE, related_name='person')
+    description = models.TextField(default='')
+    domain = models.OneToOneField(
+        Domain,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='person'
+    )
     latitude = models.DecimalField(
         max_digits=10,  # Возможно надо будет добавить цифр, если будут ошибки поиска координат
         decimal_places=7,
@@ -48,8 +54,7 @@ class Person(models.Model):
         max_digits=10, # Возможно надо будет добавить цифр, если будут ошибки поиска координат
         decimal_places=7,
         null=True,
-        blank=True,
-        default=''
+        blank=True
     )
 
     def __str__(self):
