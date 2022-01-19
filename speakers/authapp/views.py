@@ -3,6 +3,8 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from workroomsapp.models import Person
+
 from .serializers import (
     UserProfileCreateSerializer,
     UserProfileLoginSerializer
@@ -42,7 +44,6 @@ class UserProfileLogoutView(APIView):
             data={"status": "logged_out"},
             status=201
         )
-
 
 # --------------------Временные представления для разработки-----------------------
 
