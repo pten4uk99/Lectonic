@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from workroomsapp.models import Domain, Lecture, Lecture_Lecturer
+from workroomsapp.models import Domain, Lecture
 
 
 class LectureSerializer(serializers.ModelSerializer):
@@ -31,5 +31,5 @@ class LecturesDataSerializer(serializers.ModelSerializer):
 class LectorLecturesCommunicationSerializer(serializers.ModelSerializer):
   lecture = LecturesDataSerializer(source='lectureId')
   class Meta:
-    model = Lecture_Lecturer
+    model = Lecture
     fields = ['lecture']

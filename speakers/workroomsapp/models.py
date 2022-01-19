@@ -104,6 +104,7 @@ class LectureHall(models.Model):
 
 
 class Lecture(models.Model):
+    lecturers = models.ManyToManyField(User, related_name='lecture')
     name = models.CharField(max_length=100, null=False, blank=False)
     hall = models.OneToOneField(LectureHall, on_delete=models.CASCADE, null=True, blank=True, related_name='lecture')
     # cycle = models.ForeignKey(LectureCycle, on_delete=models.CASCADE, related_name='lecture')
@@ -153,13 +154,13 @@ class Lecture(models.Model):
 #     def __str__(self):
 #         return f'{self.user.email}'
 
-class Lecture_Lecturer(models.Model):
-    userId = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lecture_lecturer')
-    lectureId = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name='lecture_lecturer')
+# class Lecture_Lecturer(models.Model):
+#     userId = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lecture_lecturer')
+#     lectureId = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name='lecture_lecturer')
 
-    def __str__(self):
-        return 'ID пользователя - {} Лекция - {}'.format(self.userId.id,
-                                                         self.lectureId.name)  # Формат вывода, возможно, стоит изменить
+#     def __str__(self):
+#         return 'ID пользователя - {} Лекция - {}'.format(self.userId.id,
+#                                                          self.lectureId.name)  # Формат вывода, возможно, стоит изменить
 #
 #
 # class LectureListener(models.Model):
