@@ -84,7 +84,7 @@ class LectureHall(models.Model):
     is_open = models.BooleanField(default=False, null=True, blank=True)
     latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True,
                                       default='')  # Возможно надо будет добавить цифр, если будут ошибки поиска координат
-    longtitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True,
+    longitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True,
                                         default='')  # Возможно надо будет добавить цифр, если будут ошибки поиска координат
 
     def __str__(self):
