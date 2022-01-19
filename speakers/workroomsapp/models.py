@@ -47,6 +47,12 @@ class Person(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+    
+    def isLecturer(self):
+        if self.is_lecturer:
+            return True
+        else:
+            return False
 
 
 class Project(models.Model):
@@ -71,14 +77,14 @@ class LectureHall(models.Model):
     capacity = models.IntegerField(default=0, null=True, blank=True)
     address = models.CharField(max_length=200, null=True, blank=True)
     owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='lecture_hall')
-    has_whiteboard = models.BooleanField(default=False)
-    has_professional_sound = models.BooleanField(default=False)
-    has_transformer = models.BooleanField(default=False)
-    is_independent = models.BooleanField(default=False)
-    is_open = models.BooleanField(default=False)
+    has_whiteboard = models.BooleanField(default=False, null=True, blank=True)
+    has_professional_sound = models.BooleanField(default=False, null=True, blank=True)
+    has_transformer = models.BooleanField(default=False, null=True, blank=True)
+    is_independent = models.BooleanField(default=False, null=True, blank=True)
+    is_open = models.BooleanField(default=False, null=True, blank=True)
     latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True,
                                       default='')  # Возможно надо будет добавить цифр, если будут ошибки поиска координат
-    longtitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True,
+    longitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True,
                                         default='')  # Возможно надо будет добавить цифр, если будут ошибки поиска координат
 
     def __str__(self):
@@ -87,13 +93,13 @@ class LectureHall(models.Model):
 
 class Lecture(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
-    hall = models.OneToOneField(LectureHall, on_delete=models.CASCADE, related_name='lecture')
+    hall = models.OneToOneField(LectureHall, on_delete=models.CASCADE, null=True, blank=True, related_name='lecture')
     # cycle = models.ForeignKey(LectureCycle, on_delete=models.CASCADE, related_name='lecture')
     date = models.DateField(null=True, blank=True)
     duration = DateTimeRangeField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     lecturer_name = models.CharField(max_length=300, null=True, blank=True)
-    domain = models.OneToOneField(Domain, on_delete=models.CASCADE, related_name='lecture')
+    domain = models.ForeignKey(Domain, on_delete=models.CASCADE, null=True, blank=True, related_name='lecture')
 
     def __str__(self):
         return f'{self.name}'
@@ -135,13 +141,13 @@ class Lecture(models.Model):
 #     def __str__(self):
 #         return f'{self.user.email}'
 
-# class Lecture2_Lecturer(models.Model):
-#     llecturer_userId = models.ForeignKey(User, on_delete=models.CASCADE, related_name='llecturers')
-#     llecturer_lectureId = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name='lecturer_lectures')
-#
-#     def __str__(self):
-#         return 'ID пользователя - {} Лекция - {}'.format(self.llecturer_userId.u_id,
-#                                                          self.llecturer_lectureId.lecture_name)  # Формат вывода, возможно, стоит изменить
+class Lecture_Lecturer(models.Model):
+    userId = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lecture_lecturer')
+    lectureId = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name='lecture_lecturer')
+
+    def __str__(self):
+        return 'ID пользователя - {} Лекция - {}'.format(self.userId.id,
+                                                         self.lectureId.name)  # Формат вывода, возможно, стоит изменить
 #
 #
 # class LectureListener(models.Model):
