@@ -1,14 +1,25 @@
 from rest_framework import serializers
 
-from workroomsapp.models import Domain, Lecture
+from workroomsapp.models import Domain, Lecture, User
 
+class UserSerializer(serializers.ModelSerializer):
+  class Meta:
+      model = User
+      fields = '__all__'
 
 class LectureSerializer(serializers.ModelSerializer):
+  # user = UserSerializer(many=True)
   class Meta:
       model = Lecture
       fields = '__all__'
 
   def create(self, validated_data):
+    # Lecture.lecturers.add(user_id=User.objects.get(id = request.user.pk), lecture_id=lec) # Записываем связь лектора и лекции в бд
+    user_data = validated_data.pop('user')
+    lecture_data = Lecture.objects.create(**validated_data)
+    Lecture.objects.create(user=user_data, **lecture_data)
+    return lecture_data
+    
     return Lecture.objects.create(**validated_data)
 
   def update(self, instance, validated_data):
@@ -29,7 +40,7 @@ class LecturesDataSerializer(serializers.ModelSerializer):
       fields = ['id','name']
 
 class LectorLecturesCommunicationSerializer(serializers.ModelSerializer):
-  lecture = LecturesDataSerializer(source='lectureId')
+  lecture = LecturesDataSerializer(source='lecturers')
   class Meta:
     model = Lecture
     fields = ['lecture']
