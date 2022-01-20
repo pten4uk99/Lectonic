@@ -104,7 +104,7 @@ class LectureHall(models.Model):
 
 
 class Lecture(models.Model):
-    lecturers = models.ManyToManyField(User, related_name='lecture')
+    lecturers = models.ManyToManyField(User, related_name='lectures')
     name = models.CharField(max_length=100, null=False, blank=False)
     hall = models.OneToOneField(LectureHall, on_delete=models.CASCADE, null=True, blank=True, related_name='lecture')
     # cycle = models.ForeignKey(LectureCycle, on_delete=models.CASCADE, related_name='lecture')
