@@ -17,16 +17,15 @@ class AddLecture(APIView):
                     status=404
                 )
             if user.isLecturer():
-                lec_add_serializer = LectureSerializer(data=request.data)
-                lec_add_serializer.is_valid() # TODO обработать ошибки
-                lec = lec_add_serializer.save() # Записываем лекцию в таблицу
-                comm = Lecture_Lecturer(userId=User.objects.get(id = request.user.pk), 
-                                        lectureId=lec) 
-                comm.save() # Записываем связь лектора и лекции в бд
-                return Response(
-                    data={"status":"ok"},
-                    status=200
-                )
+                pass
+                # lec_add_serializer = LectureSerializer(data=request.data)
+                # lec_add_serializer.is_valid() # TODO обработать ошибки
+                # lec = lec_add_serializer.save() # Записываем лекцию в таблицу
+                # Lecture.lecturers.add(user_id=User.objects.get(id = request.user.pk), lecture_id=lec) # Записываем связь лектора и лекции в бд
+                # return Response(
+                #     data={"status":"ok"},
+                #     status=200
+                # )
             else:
                 return Response(
                     data={"status":"error","description": "WrongAuthorization","user_msg":"Только лекторы могут добавлять лекции"},
@@ -49,19 +48,19 @@ class GetLectorLectures(APIView):
                     status=404
                 )
             if user.isLecturer():
-                try:
-                    comms = Lecture_Lecturer.objects.filter(userId__id = request.user.pk)
-                    count = len(comms)
-                except ObjectDoesNotExist:
-                    return Response(
-                        data={"status":"error","description": "NoLecturesFound","user_msg":"У Вас не добавлено ни одной лекции"},
-                        status=404
-                    )
-                lectures = LectorLecturesCommunicationSerializer(comms, many = True)
+                # try:
+                #     comms = Lecture_Lecturer.objects.filter(userId__id = request.user.pk)
+                #     count = len(comms)
+                # except ObjectDoesNotExist:
+                #     return Response(
+                #         data={"status":"error","description": "NoLecturesFound","user_msg":"У Вас не добавлено ни одной лекции"},
+                #         status=404
+                #     )
+                # lectures = LectorLecturesCommunicationSerializer(comms, many = True)
                 return Response(
                     data={"status":"ok",
-                        "count":count,
-                        "lectures":lectures.data
+                        # "count":count,
+                        # "lectures":lectures.data
                         },
                     status=200
                 )
@@ -108,15 +107,6 @@ class GetLecture(APIView):
                         data={"status":"error","description": "SyntaxError","user_msg":"Необходимо указать параметр id в get-запросе"},
                         status=404
                     )
-                
-                
-                return Response(
-                    data={"status":"ok",
-                        "count":count,
-                        "lectures":lectures.data
-                        },
-                    status=200
-                )
             else:
                 return Response(
                     data={"status":"error","description": "WrongAuthorization","user_msg":"Только лектор может посмотреть свои лекции"},
