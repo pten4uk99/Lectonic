@@ -1,35 +1,44 @@
 from rest_framework import serializers
 
-from workroomsapp.models import Domain, Lecture
+from workroomsapp.models import Domain, Lecture, User, LectureHall
+      
 
+class LectureHallSerializer(serializers.ModelSerializer):
+  hall_id = serializers.IntegerField(source = 'id')
+  class Meta:
+      model = LectureHall
+      fields = '__all__'
+
+class DomainSerializer(serializers.ModelSerializer):
+  domain_id = serializers.IntegerField(source = 'id')
+  class Meta:
+      model = Domain
+      fields = '__all__'
+
+class UserSerializer(serializers.ModelSerializer):
+  user_id = serializers.IntegerField(source = 'id')
+  class Meta:
+    model = User
+    fields = (
+      'user_id',
+      'email',
+    )
 
 class LectureSerializer(serializers.ModelSerializer):
+  lecturers = UserSerializer(many=True, required = False)
+  hall = LectureHallSerializer(required = False)
+  domain = DomainSerializer(many=True, required = False)
   class Meta:
       model = Lecture
       fields = '__all__'
 
   def create(self, validated_data):
-    return Lecture.objects.create(**validated_data)
+      lecture = Lecture.objects.create(**validated_data)
+      lecture.lecturers.add(User.objects.get(id=self.context.user.pk))
+      return lecture
 
-  def update(self, instance, validated_data):
-    instance.id = validated_data.get('id', instance.id)
-    instance.name = validated_data.get('name', instance.name)
-    instance.hall = validated_data.get('hall', instance.hall)
-    instance.date = validated_data.get('date', instance.date)
-    instance.duration = validated_data.get('duration', instance.duration)
-    instance.description = validated_data.get('description', instance.description)
-    instance.lecturer_name = validated_data.get('lecturer_name', instance.lecturer_name)
-    instance.domain = validated_data.get('domain', instance.domain)
-    instance.save()
-    return instance
-
-class LecturesDataSerializer(serializers.ModelSerializer):
-  class Meta:
-      model = Lecture
-      fields = ['id','name']
-
-class LectorLecturesCommunicationSerializer(serializers.ModelSerializer):
-  lecture = LecturesDataSerializer(source='lectureId')
+class LectorLecturesSerializer(serializers.ModelSerializer):
+  lecture_id = serializers.IntegerField(source = 'id')
   class Meta:
     model = Lecture
-    fields = ['lecture']
+    fields = ['lecture_id','name']
