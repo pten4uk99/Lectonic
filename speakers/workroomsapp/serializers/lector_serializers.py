@@ -1,46 +1,44 @@
 from rest_framework import serializers
 
-from workroomsapp.models import Domain, Lecture, User
+from workroomsapp.models import Domain, Lecture, User, LectureHall
+      
 
-class UserSerializer(serializers.ModelSerializer):
+class LectureHallSerializer(serializers.ModelSerializer):
+  hall_id = serializers.IntegerField(source = 'id')
   class Meta:
-      model = User
+      model = LectureHall
       fields = '__all__'
 
+class DomainSerializer(serializers.ModelSerializer):
+  domain_id = serializers.IntegerField(source = 'id')
+  class Meta:
+      model = Domain
+      fields = '__all__'
+
+class UserSerializer(serializers.ModelSerializer):
+  user_id = serializers.IntegerField(source = 'id')
+  class Meta:
+    model = User
+    fields = (
+      'user_id',
+      'email',
+    )
+
 class LectureSerializer(serializers.ModelSerializer):
-  # user = UserSerializer(many=True)
+  lecturers = UserSerializer(many=True, required = False)
+  hall = LectureHallSerializer(required = False)
+  domain = DomainSerializer(many=True, required = False)
   class Meta:
       model = Lecture
       fields = '__all__'
 
   def create(self, validated_data):
-    # Lecture.lecturers.add(user_id=User.objects.get(id = request.user.pk), lecture_id=lec) # Записываем связь лектора и лекции в бд
-    user_data = validated_data.pop('user')
-    lecture_data = Lecture.objects.create(**validated_data)
-    Lecture.objects.create(user=user_data, **lecture_data)
-    return lecture_data
-    
-    return Lecture.objects.create(**validated_data)
+      lecture = Lecture.objects.create(**validated_data)
+      lecture.lecturers.add(User.objects.get(id=self.context.user.pk))
+      return lecture
 
-  def update(self, instance, validated_data):
-    instance.id = validated_data.get('id', instance.id)
-    instance.name = validated_data.get('name', instance.name)
-    instance.hall = validated_data.get('hall', instance.hall)
-    instance.date = validated_data.get('date', instance.date)
-    instance.duration = validated_data.get('duration', instance.duration)
-    instance.description = validated_data.get('description', instance.description)
-    instance.lecturer_name = validated_data.get('lecturer_name', instance.lecturer_name)
-    instance.domain = validated_data.get('domain', instance.domain)
-    instance.save()
-    return instance
-
-class LecturesDataSerializer(serializers.ModelSerializer):
-  class Meta:
-      model = Lecture
-      fields = ['id','name']
-
-class LectorLecturesCommunicationSerializer(serializers.ModelSerializer):
-  lecture = LecturesDataSerializer(source='lecturers')
+class LectorLecturesSerializer(serializers.ModelSerializer):
+  lecture_id = serializers.IntegerField(source = 'id')
   class Meta:
     model = Lecture
-    fields = ['lecture']
+    fields = ['lecture_id','name']

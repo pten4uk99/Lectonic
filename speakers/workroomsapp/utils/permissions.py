@@ -13,7 +13,7 @@ class IsLecturer(BasePermission):
         except ObjectDoesNotExist:
             return Response(
                 data={"status":"error",
-                    "description": "NoProfile",
+                    "description": "NoProfileOrAuthorizationError",
                     "user_msg":"Необходимо заполнить профиль и войти под учетной записью лектора"
                     },
                 status=404

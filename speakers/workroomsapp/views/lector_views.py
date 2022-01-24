@@ -1,123 +1,184 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from workroomsapp.utils.permissions import IsLecturer
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from django.core.exceptions import ObjectDoesNotExist
 from workroomsapp.models import *
 from workroomsapp.serializers.lector_serializers import *
 
-class AddLecture(APIView):
+class LectorLecturesAPIView(APIView):
+    permission_classes = [IsAuthenticated&(IsLecturer|IsAdminUser)]
     def post(self, request):
-        if (request.user.is_authenticated or request.user.is_staff):
-            try:
-                user = Person.objects.get(id = request.user.pk)
-            except ObjectDoesNotExist:
-                return Response(
-                    data={"status":"error","description": "NoProfile","user_msg":"Необходимо заполнить профиль"},
-                    status=404
-                )
-            if user.isLecturer():
-                # User.objects.get(id = request.user.pk)
-                # lec_add_serializer = LectureSerializer(data=request.data)
-                # lec_add_serializer.is_valid() # TODO обработать ошибки
-                # lec = lec_add_serializer.save() # Записываем лекцию в таблицу
-                return Response(
-                    data={"status":"ok"},
-                    status=200
-                )
-            else:
-                return Response(
-                    data={"status":"error","description": "WrongAuthorization","user_msg":"Только лекторы могут добавлять лекции"},
-                    status=403
-                )
-        else:
+        lec_add_serializer = LectureSerializer(data=request.data,
+                                                context=request,
+                                                )
+        lec_add_serializer.is_valid()
+        if lec_add_serializer.errors:
             return Response(
-                data={"status":"error","description": "Unauthorized","user_msg":"Требуется авторизация"},
-                status=401
-            )
-
-class GetLectorLectures(APIView):
-    permission_classes = [IsLecturer]
-    def get(self, request):
-        try:
-            Person.objects.get(id = request.user.pk)
-        except ObjectDoesNotExist:
-            return Response(
-                data={"status":"error","description": "NoProfile","user_msg":"Необходимо заполнить профиль"},
-                status=404
-            )
-        try:
-            lecturer = User.objects.get(id=request.user.pk)
-            comms = lecturer.lectures.all()
-            count = len(comms)
-        except ObjectDoesNotExist:
-            return Response(
-                data={"status":"error","description": "NoLecturesFound","user_msg":"У Вас не добавлено ни одной лекции"},
-                status=404
-            )
-        lectures = LectorLecturesCommunicationSerializer(comms, many = True)
+            data={"status":"error",
+                "description": "ValidationError",
+                "user_msg": lec_add_serializer.errors,
+            },
+            status=400
+        )
+        lec_add_serializer.save()
         return Response(
-            data={"status":"ok",
-                "count":count,
-                "lectures":lectures.data
-                },
+            data={"status":"ok"},
             status=200
         )
-            # else:
-            #     return Response(
-            #         data={"status":"error","description": "WrongAuthorization","user_msg":"Только лектор может посмотреть свои лекции"},
-            #         status=403
-            #     )
-        # else:
-        #     return Response(
-        #         data={"status":"error","description": "Unauthorized","user_msg":"Требуется авторизация"},
-        #         status=401
-        #     )
-
-class GetLecture(APIView):
     def get(self, request):
-        if (request.user.is_authenticated or request.user.is_staff):
-            try:
-                user = Person.objects.get(id = request.user.pk)
-            except ObjectDoesNotExist:
+        if 'id' in request.GET:
+            lec_id = request.GET['id']
+            lecture = Lecture.objects.filter(id=lec_id).first()
+            if not lecture:
                 return Response(
-                    data={"status":"error","description": "NoProfile","user_msg":"Необходимо заполнить профиль"},
+                    data={"status":"error",
+                        "description": "NoSuchLecture",
+                        "user_msg":"Нет лекции с таким id"
+                        },
                     status=404
                 )
-            if user.isLecturer():
-                if 'id' in request.GET:
-                    lec_id = request.GET['id']
-                    lecture = Lecture.objects.filter(id=lec_id).first()
-                    if not lecture:
-                        return Response(
-                            data={"status":"error","description": "NoSuchLecture","user_msg":"Нет лекции с таким id"},
-                            status=404
-                        )
-                    lec_data = LectureSerializer(lecture)
-                    return Response(
-                        data={"status":"ok",
-                            "lecture":lec_data.data
-                            },
-                        status=200
-                    )
-                else:
-                    return Response(
-                        data={"status":"error","description": "SyntaxError","user_msg":"Необходимо указать параметр id в get-запросе"},
-                        status=404
-                    )
+            lec_data = LectureSerializer(lecture)
+            return Response(
+                data={"status":"ok",
+                    "lecture":lec_data.data
+                    },
+                status=200
+            )
+        else:
+            try:
+                lecturer = User.objects.get(id=request.user.pk)
+                comms = lecturer.lectures.all()
+                count = len(comms)
+            except ObjectDoesNotExist:
+                return Response(
+                    data={"status":"error",
+                        "description": "NoLecturesFound",
+                        "user_msg":"У Вас не добавлено ни одной лекции"
+                        },
+                    status=404
+                )
+            lectures = LectorLecturesSerializer(comms, many = True)
+            return Response(
+                data={"status":"ok",
+                    "count":count,
+                    "lectures":lectures.data
+                    },
+                status=200
+            )
+
+    def patch(self,request):
+        if 'id' in request.data:
+            lec_id = request.data['id']
+            lecture = Lecture.objects.filter(id=lec_id).first()
+            if not lecture:
+                return Response(
+                    data={"status":"error",
+                        "description": "NoSuchLecture",
+                        "user_msg":"Нет лекции с таким id"
+                        },
+                    status=404
+                )
+            lec_data = LectureSerializer(lecture, data = request.data, partial=True)
+            lec_data.is_valid()
+            if lec_data.errors:
+                return Response(
+                    data={"status":"error",
+                        "description": "ValidationError",
+                        "user_msg": lec_data.errors,
+                    },
+                    status=400
+                )
+            lec_data.save()
+            return Response(
+                data={"status":"ok"},
+                status=200
+            )
+        else:
+            return Response(
+                    data={"status":"error",
+                        "description": "NoLectureId",
+                        "user_msg":"Не указан id лекции"
+                        },
+                    status=404
+                )
+
+    def delete(self,request):
+        if 'id' in request.data:
+            lec_id = request.data['id']
+            lecture = Lecture.objects.filter(id=lec_id).first()
+            if not lecture:
+                return Response(
+                    data={"status":"error",
+                        "description": "NoSuchLecture",
+                        "user_msg":"Нет лекции с таким id"
+                        },
+                    status=404
+                )
+            lecture.delete()
+            return Response(
+                data={"status":"ok"},
+                status=200
+            )
+        else:
+            return Response(
+                    data={"status":"error",
+                        "description": "NoLectureId",
+                        "user_msg":"Не указан id лекции"
+                        },
+                    status=404
+                )
+
+class DeleteMultipleLecture(APIView):
+    permission_classes = [IsAuthenticated&(IsLecturer|IsAdminUser)]
+    def delete(self,request):
+        if 'id_list' in request.data:
+            lec_ids = dict(request.data)['id_list']
+            errors = {}
+            success = {}
+            for id in lec_ids:
+                try:
+                    int(id)
+                except ValueError:
+                    errors[id] = 'NotANumber'
+                    continue
+                try:
+                    lecture = Lecture.objects.get(id=id)
+                except ObjectDoesNotExist:
+                    errors[id] = 'NoSuchLectureId'
+                    continue
+                lecture.delete()
+                success[id] = 'Deleted'
+            if not errors:
+                return Response(
+                    data={"status":"ok",
+                        "description": "AllLecturesDeleted",
+                        "user_msg":success
+                        },
+                    status=200
+                )
+            elif not success:
+                return Response(
+                    data={"status":"error",
+                        "description": "NoDeletedLectures",
+                        "user_msg":errors
+                        },
+                    status=400
+                )
             else:
                 return Response(
-                    data={"status":"error","description": "WrongAuthorization","user_msg":"Только лектор может посмотреть свои лекции"},
-                    status=403
+                    data={"status":"error",
+                        "description": "NotAllLecturesDeleted",
+                        "user_msg": {**errors, **success}
+                        },
+                    status=200
                 )
         else:
             return Response(
-                data={"status":"error","description": "Unauthorized","user_msg":"Требуется авторизация"},
-                status=401
-            )
-
-class DeleteLecture(APIView):
-    pass
-
-class ModifyLecture(APIView):
-    pass
+                    data={"status":"error",
+                        "description": "NoLectureIdList",
+                        "user_msg":"Не указан список id лекций для удаления"
+                        },
+                    status=404
+                )
