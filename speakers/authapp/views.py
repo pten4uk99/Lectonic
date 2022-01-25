@@ -1,17 +1,17 @@
-from django.contrib.auth import login
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from workroomsapp.models import Person
 
 from .serializers import (
     UserProfileCreateSerializer,
     UserProfileLoginSerializer
 )
+from .docs import docs
 
 
 class UserProfileCreationView(APIView):  # Возможно в будущем переделается на дженерик
+    @swagger_auto_schema(**docs.UserProfileCreationView)
     def post(self, request):
         serializer = UserProfileCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -23,6 +23,7 @@ class UserProfileCreationView(APIView):  # Возможно в будущем п
 
 
 class UserProfileLoginView(APIView):
+    @swagger_auto_schema(**docs.UserProfileLoginView)
     def post(self, request):
         serializer = UserProfileLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
