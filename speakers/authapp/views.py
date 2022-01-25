@@ -1,17 +1,17 @@
-from django.contrib.auth import login
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from workroomsapp.models import Person
 
 from .serializers import (
     UserProfileCreateSerializer,
     UserProfileLoginSerializer
 )
+from .docs import docs
 
 
 class UserProfileCreationView(APIView):  # Возможно в будущем переделается на дженерик
+    @swagger_auto_schema(**docs.UserProfileCreationView)
     def post(self, request):
         serializer = UserProfileCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -23,16 +23,22 @@ class UserProfileCreationView(APIView):  # Возможно в будущем п
 
 
 class UserProfileLoginView(APIView):
+    @swagger_auto_schema(**docs.UserProfileLoginView)
     def post(self, request):
         serializer = UserProfileLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user, new_token = serializer.login_user()
 
-        return Response(
-            data={"auth_token": new_token.key,
-                  "status": "logged_in"},
+        response = Response(
+            data={
+                "auth_token": new_token.key,
+                "status": "logged_in"
+            },
             status=201
         )
+        response.set_cookie('auth_token', new_token.key)
+
+        return response
 
 
 class UserProfileLogoutView(APIView):
@@ -49,6 +55,8 @@ class UserProfileLogoutView(APIView):
 
 
 class UserProfileDeleteView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def delete(self, request):
         request.user.auth_token.delete()
         request.user.delete()
