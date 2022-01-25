@@ -28,11 +28,16 @@ class UserProfileLoginView(APIView):
         serializer.is_valid(raise_exception=True)
         user, new_token = serializer.login_user()
 
-        return Response(
-            data={"auth_token": new_token.key,
-                  "status": "logged_in"},
+        response = Response(
+            data={
+                "auth_token": new_token.key,
+                "status": "logged_in"
+            },
             status=201
         )
+        response.set_cookie('auth_token', new_token.key)
+
+        return response
 
 
 class UserProfileLogoutView(APIView):
@@ -49,6 +54,8 @@ class UserProfileLogoutView(APIView):
 
 
 class UserProfileDeleteView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def delete(self, request):
         request.user.auth_token.delete()
         request.user.delete()

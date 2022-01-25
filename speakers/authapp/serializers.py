@@ -74,6 +74,10 @@ class UserProfileLoginSerializer(serializers.Serializer):
     def create_token(self):
         ''' Создает токен, относящийся к полученному пользователю '''
         user = self.get_object()
+
+        if user.is_authenticated:
+            raise serializers.ValidationError({'detail': 'Данный пользователь уже авторизован'})
+
         return user, Token.objects.create(user=user)
 
     def login_user(self):
