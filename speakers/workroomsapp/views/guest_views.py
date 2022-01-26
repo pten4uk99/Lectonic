@@ -18,7 +18,7 @@ class LecturesAPIView(APIView):
                         "description": "NoSuchLecture",
                         "user_msg":"Нет лекции с таким id"
                         },
-                    status=404
+                    status=204
                 )
             lec_data = GuestLectureSerializer(lecture)
             return Response(
@@ -36,7 +36,7 @@ class LecturesAPIView(APIView):
                         "description": "NoLecturesFound",
                         "user_msg":"В БД не добавлено ни одной лекции"
                         },
-                    status=404
+                    status=204
                 )
             lectures = GuestLectureSerializer(all_lecs, many = True)
             return Response(
