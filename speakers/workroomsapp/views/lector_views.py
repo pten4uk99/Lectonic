@@ -33,7 +33,7 @@ class LectorLecturesAPIView(APIView):
             lecture = Lecture.objects.filter(id=lec_id).first()
             if not lecture:
                 return Response(
-                    data={"status":"error",
+                    data={"status":"warning",
                         "description": "NoSuchLecture",
                         "user_msg":"Нет лекции с таким id"
                         },
@@ -53,7 +53,7 @@ class LectorLecturesAPIView(APIView):
                 count = len(comms)
             except ObjectDoesNotExist:
                 return Response(
-                    data={"status":"error",
+                    data={"status":"warning",
                         "description": "NoLecturesFound",
                         "user_msg":"У Вас не добавлено ни одной лекции"
                         },
@@ -74,7 +74,7 @@ class LectorLecturesAPIView(APIView):
             lecture = Lecture.objects.filter(id=lec_id).first()
             if not lecture:
                 return Response(
-                    data={"status":"error",
+                    data={"status":"warning",
                         "description": "NoSuchLecture",
                         "user_msg":"Нет лекции с таким id"
                         },
@@ -110,7 +110,7 @@ class LectorLecturesAPIView(APIView):
             lecture = Lecture.objects.filter(id=lec_id).first()
             if not lecture:
                 return Response(
-                    data={"status":"error",
+                    data={"status":"warning",
                         "description": "NoSuchLecture",
                         "user_msg":"Нет лекции с таким id"
                         },
@@ -160,7 +160,7 @@ class DeleteMultipleLecture(APIView):
                 )
             elif not success:
                 return Response(
-                    data={"status":"error",
+                    data={"status":"warning",
                         "description": "NoDeletedLectures",
                         "user_msg":errors
                         },
@@ -168,7 +168,7 @@ class DeleteMultipleLecture(APIView):
                 )
             else:
                 return Response(
-                    data={"status":"error",
+                    data={"status":"warning",
                         "description": "NotAllLecturesDeleted",
                         "user_msg": {**errors, **success}
                         },

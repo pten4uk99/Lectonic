@@ -14,7 +14,7 @@ class LecturesAPIView(APIView):
             lecture = Lecture.objects.filter(id=lec_id).first()
             if not lecture:
                 return Response(
-                    data={"status":"error",
+                    data={"status":"warning",
                         "description": "NoSuchLecture",
                         "user_msg":"Нет лекции с таким id"
                         },
@@ -32,7 +32,7 @@ class LecturesAPIView(APIView):
                 all_lecs = Lecture.objects.all()
             except ObjectDoesNotExist:
                 return Response(
-                    data={"status":"error",
+                    data={"status":"warning",
                         "description": "NoLecturesFound",
                         "user_msg":"В БД не добавлено ни одной лекции"
                         },
