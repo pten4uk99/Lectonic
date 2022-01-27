@@ -25,7 +25,7 @@ class LectorLecturesAPIView(APIView):
         lec_add_serializer.save()
         return Response(
             data={"status":"ok"},
-            status=200
+            status=201
         )
     def get(self, request):
         if 'id' in request.GET:
@@ -33,11 +33,11 @@ class LectorLecturesAPIView(APIView):
             lecture = Lecture.objects.filter(id=lec_id).first()
             if not lecture:
                 return Response(
-                    data={"status":"error",
+                    data={"status":"warning",
                         "description": "NoSuchLecture",
                         "user_msg":"Нет лекции с таким id"
                         },
-                    status=404
+                    status=204
                 )
             lec_data = LectureSerializer(lecture)
             return Response(
@@ -53,11 +53,11 @@ class LectorLecturesAPIView(APIView):
                 count = len(comms)
             except ObjectDoesNotExist:
                 return Response(
-                    data={"status":"error",
+                    data={"status":"warning",
                         "description": "NoLecturesFound",
                         "user_msg":"У Вас не добавлено ни одной лекции"
                         },
-                    status=404
+                    status=204
                 )
             lectures = LectorLecturesSerializer(comms, many = True)
             return Response(
@@ -74,11 +74,11 @@ class LectorLecturesAPIView(APIView):
             lecture = Lecture.objects.filter(id=lec_id).first()
             if not lecture:
                 return Response(
-                    data={"status":"error",
+                    data={"status":"warning",
                         "description": "NoSuchLecture",
                         "user_msg":"Нет лекции с таким id"
                         },
-                    status=404
+                    status=204
                 )
             lec_data = LectureSerializer(lecture, data = request.data, partial=True)
             lec_data.is_valid()
@@ -101,7 +101,7 @@ class LectorLecturesAPIView(APIView):
                         "description": "NoLectureId",
                         "user_msg":"Не указан id лекции"
                         },
-                    status=404
+                    status=400
                 )
 
     def delete(self,request):
@@ -110,11 +110,11 @@ class LectorLecturesAPIView(APIView):
             lecture = Lecture.objects.filter(id=lec_id).first()
             if not lecture:
                 return Response(
-                    data={"status":"error",
+                    data={"status":"warning",
                         "description": "NoSuchLecture",
                         "user_msg":"Нет лекции с таким id"
                         },
-                    status=404
+                    status=204
                 )
             lecture.delete()
             return Response(
@@ -127,7 +127,7 @@ class LectorLecturesAPIView(APIView):
                         "description": "NoLectureId",
                         "user_msg":"Не указан id лекции"
                         },
-                    status=404
+                    status=400
                 )
 
 class DeleteMultipleLecture(APIView):
@@ -160,19 +160,19 @@ class DeleteMultipleLecture(APIView):
                 )
             elif not success:
                 return Response(
-                    data={"status":"error",
+                    data={"status":"warning",
                         "description": "NoDeletedLectures",
                         "user_msg":errors
                         },
-                    status=400
+                    status=204
                 )
             else:
                 return Response(
-                    data={"status":"error",
+                    data={"status":"warning",
                         "description": "NotAllLecturesDeleted",
                         "user_msg": {**errors, **success}
                         },
-                    status=200
+                    status=204
                 )
         else:
             return Response(
@@ -180,5 +180,5 @@ class DeleteMultipleLecture(APIView):
                         "description": "NoLectureIdList",
                         "user_msg":"Не указан список id лекций для удаления"
                         },
-                    status=404
+                    status=400
                 )
