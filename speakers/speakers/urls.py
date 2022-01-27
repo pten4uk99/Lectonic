@@ -13,6 +13,7 @@ urlpatterns = [
     path('verify_email/', index),
     path('continue_registration/', index),
     path('user_info-form/', index),
+    path('user_profile/', index),
 
     path('admin/', admin.site.urls),
 
