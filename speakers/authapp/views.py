@@ -36,8 +36,8 @@ class UserProfileLoginView(APIView):
             },
             status=201
         )
-        response.set_cookie('auth_token', new_token.key)
 
+        response.set_cookie('auth_token', new_token.key, samesite="None", secure=True)
         return response
 
 
