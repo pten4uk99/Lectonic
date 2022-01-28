@@ -25,19 +25,18 @@ class UserProfileCreationView(APIView):  # Возможно в будущем п
 class UserProfileLoginView(APIView):
     @swagger_auto_schema(**docs.UserProfileLoginView)
     def post(self, request):
-        serializer = UserProfileLoginSerializer(data=request.data)
+        serializer = UserProfileLoginSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         user, new_token = serializer.login_user()
 
         response = Response(
             data={
-                "auth_token": new_token.key,
                 "status": "logged_in"
             },
             status=201
         )
 
-        response.set_cookie('auth_token', new_token.key, samesite="None", secure=True)
+        response.set_cookie('auth_token', new_token.key, samesite="None", secure=True, httponly=True)
         return response
 
 
@@ -46,10 +45,13 @@ class UserProfileLogoutView(APIView):
         user = request.user.logout()
         user.auth_token.delete()
 
-        return Response(
+        response = Response(
             data={"status": "logged_out"},
             status=201
         )
+
+        response.delete_cookie('auth_token')
+        return response
 
 # --------------------Временные представления для разработки-----------------------
 
@@ -61,10 +63,13 @@ class UserProfileDeleteView(APIView):
         request.user.auth_token.delete()
         request.user.delete()
 
-        return Response(
+        response = Response(
             data={"status": "deleted"},
             status=201
         )
+
+        response.delete_cookie('auth_token')
+        return response
 
 
 # Тестовая вьюшка для проверки аутентификации-----------------------
