@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     # Наши приложения
     'authapp',
     'workroomsapp',
+    'guestapp',
 ]
 
 MIDDLEWARE = [

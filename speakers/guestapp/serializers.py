@@ -3,6 +3,7 @@ from workroomsapp.models import City, Person
 
 from workroomsapp.models import Domain, Lecture, User, LectureHall
 
+
 class GuestCitySerializer(serializers.ModelSerializer):
     class Meta:
         model = City
@@ -11,6 +12,7 @@ class GuestCitySerializer(serializers.ModelSerializer):
             'country',
         ]
 
+
 class GuestDomainSerializer(serializers.ModelSerializer):
     class Meta:
         model = Domain
@@ -18,8 +20,10 @@ class GuestDomainSerializer(serializers.ModelSerializer):
             'name',
         ]
 
+
 class GuestLectureHallSerializer(serializers.ModelSerializer):
     city = GuestCitySerializer()
+
     class Meta:
         model = LectureHall
         fields = [
@@ -29,8 +33,10 @@ class GuestLectureHallSerializer(serializers.ModelSerializer):
             'longitude',
         ]
 
+
 class GuestPersonSerializer(serializers.ModelSerializer):
     domain = GuestDomainSerializer()
+
     class Meta:
         model = Person
         fields = (
@@ -42,19 +48,23 @@ class GuestPersonSerializer(serializers.ModelSerializer):
             'domain',
         )
 
+
 class GuestUserSerializer(serializers.ModelSerializer):
     person = GuestPersonSerializer()
+
     class Meta:
         model = User
         fields = (
             'person',
         )
 
+
 class GuestLectureSerializer(serializers.ModelSerializer):
-    lecture_id = serializers.IntegerField(source = 'id')
-    lecturers = GuestUserSerializer(many=True, required = False)
-    hall = GuestLectureHallSerializer(required = False)
-    domain = GuestDomainSerializer(many=True, required = False)
+    lecture_id = serializers.IntegerField(source='id')
+    lecturers = GuestUserSerializer(many=True, required=False)
+    hall = GuestLectureHallSerializer(required=False)
+    domain = GuestDomainSerializer(many=True, required=False)
+
     class Meta:
         model = Lecture
         fields = [
