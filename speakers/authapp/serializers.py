@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 from .models import User, Token
 
 
-class UserProfileCreateSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
@@ -49,7 +49,7 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
         return make_password(password)
 
 
-class UserProfileLoginSerializer(serializers.Serializer):
+class UserLoginSerializer(serializers.Serializer):
     email = serializers.CharField()
     password = serializers.CharField()
 

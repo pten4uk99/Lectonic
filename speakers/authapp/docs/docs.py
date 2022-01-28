@@ -1,8 +1,8 @@
-from authapp.serializers import UserProfileCreateSerializer
+from authapp.serializers import UserCreateSerializer
 from authapp.docs.schemas import *
 
 UserProfileCreationView = {
-    'request_body': UserProfileCreateSerializer,  # Сериализатор
+    'request_body': UserCreateSerializer,  # Сериализатор
     'query_serializer': None,  # Пока что не совсем понял, что это но тоже сериализатор
     'manual_parameters': None,
     'operation_id': None,  # Меняет латинское название в snake_case справа, лучше не трогать

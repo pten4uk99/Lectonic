@@ -4,72 +4,51 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializers import (
-    UserProfileCreateSerializer,
-    UserProfileLoginSerializer
+    UserCreateSerializer,
+    UserLoginSerializer
 )
 from .docs import docs
+from .utils import responses
 
 
-class UserProfileCreationView(APIView):  # Возможно в будущем переделается на дженерик
+class UserCreationView(APIView):  # Возможно в будущем переделается на дженерик
     @swagger_auto_schema(**docs.UserProfileCreationView)
     def post(self, request):
-        serializer = UserProfileCreateSerializer(data=request.data)
+        serializer = UserCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(
-            data={"user_profile": serializer.data['email'],
-                  "status": "created"},
-            status=201)
+
+        return responses.created({'user': serializer.data['email']})
 
 
-class UserProfileLoginView(APIView):
+class UserLoginView(APIView):
     @swagger_auto_schema(**docs.UserProfileLoginView)
     def post(self, request):
-        serializer = UserProfileLoginSerializer(data=request.data, context={'request': request})
+        serializer = UserLoginSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         user, new_token = serializer.login_user()
 
-        response = Response(
-            data={
-                "status": "logged_in"
-            },
-            status=201
-        )
-
-        response.set_cookie('auth_token', new_token.key, samesite="None", secure=True, httponly=True)
-        return response
+        return responses.logged_in(('auth_token', new_token.key))
 
 
-class UserProfileLogoutView(APIView):
+class UserLogoutView(APIView):
     def post(self, request):
         user = request.user.logout()
         user.auth_token.delete()
 
-        response = Response(
-            data={"status": "logged_out"},
-            status=201
-        )
-
-        response.delete_cookie('auth_token')
-        return response
+        return responses.logged_out('auth_token')
 
 # --------------------Временные представления для разработки-----------------------
 
 
-class UserProfileDeleteView(APIView):
+class UserDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request):
         request.user.auth_token.delete()
         request.user.delete()
 
-        response = Response(
-            data={"status": "deleted"},
-            status=201
-        )
-
-        response.delete_cookie('auth_token')
-        return response
+        return responses.deleted('auth_token')
 
 
 # Тестовая вьюшка для проверки аутентификации-----------------------
