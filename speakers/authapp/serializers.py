@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 from .models import User, Token
 
 
-class UserProfileCreateSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
@@ -49,36 +49,31 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
         return make_password(password)
 
 
-class UserProfileLoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.CharField()
     password = serializers.CharField()
 
     def get_object(self):
         ''' Из переданных данных получает объект пользователя '''
 
+        if self.context['request'].user.is_authenticated:
+            raise serializers.ValidationError('Данный пользователь уже авторизован')
+
         user = User.objects.filter(email=self.initial_data.get('email')).first()
-
-        if not user:
-            raise serializers.ValidationError('Пользователя с таким email не существует')
-
         return user
 
     def validate(self, data):
         user = self.get_object()
 
-        if not user.check_password(data['password']):
-            raise serializers.ValidationError('Неверный пароль')
+        if not user or not user.check_password(data['password']):
+            raise serializers.ValidationError('Проверьте правильность ввода электронной почты или пароля')
 
         return data
 
     def create_token(self):
         ''' Создает токен, относящийся к полученному пользователю '''
         user = self.get_object()
-
-        if user.is_authenticated:
-            raise serializers.ValidationError({'detail': 'Данный пользователь уже авторизован'})
-
-        return user, Token.objects.create(user=user)
+        return user, Token.objects.get_or_create(user=user)[0]
 
     def login_user(self):
         ''' Аутентифицирует пользователя '''
