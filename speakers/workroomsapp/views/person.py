@@ -1,16 +1,20 @@
 from django.db import transaction
 from rest_framework import permissions
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from workroomsapp.models import City, Person
 from workroomsapp.serializers.person import *
+from workroomsapp.utils.responses.person import created, success_get_profile, profile_does_not_exist, \
+    profile_is_existing
 
 
 class PersonAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
+        if Person.objects.filter(user=request.user).first():
+            return profile_is_existing()
+
         serializer = PersonCreateSerializer(
             data=request.data,
             context={'request': request}
@@ -26,21 +30,16 @@ class PersonAPIView(APIView):
 
         serializer.validated_data.pop('user')
 
-        return Response(
-            data={
-                "person": {**serializer.validated_data},
-                "status": "created"
-            }, status=201
-        )
+        return created(data=serializer.validated_data)
 
     def get(self, request):
         person = Person.objects.filter(user=request.user).first()
 
         if not person:
-            raise serializers.ValidationError({"detail": "Данного профиля не существует"})
+            return profile_does_not_exist()
 
         serializer = PersonGetPatchSerializer(person)
-        return Response(serializer.data)
+        return success_get_profile(serializer.data)
 
     def patch(self, request):
         person = Person.objects.filter(user=request.user).first()
@@ -58,10 +57,10 @@ class PersonAPIView(APIView):
                 city_serializer.save()
 
         if not person:
-            raise serializers.ValidationError({"detail": "Данного профиля не существует"})
+            return profile_does_not_exist()
 
         person_serializer = PersonGetPatchSerializer(person, data=request.data, partial=True)
         person_serializer.is_valid(raise_exception=True)
         person_serializer.save()
 
-        return Response(data={"patched": {**person_serializer.data}})
+        return created(person_serializer.data)

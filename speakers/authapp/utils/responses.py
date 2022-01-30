@@ -1,11 +1,12 @@
 from speakers.utils import response
 
 
-def created(data):
+def signed_in(data, cookie):
     return response.get_response(
-        status=response.CREATED,
-        detail='Пользователь успешно зарегистрирован',
+        status=response.SIGN_IN,
+        detail='Пользователь успешно зарегистрирован и авторизован',
         data=data,
+        set_cookie=cookie,
         status_code=201
     )
 
@@ -30,7 +31,7 @@ def logged_out(cookie: str):
 
 def deleted(cookie: str):
     return response.get_response(
-        status=response.DELETED,
+        status=response.DELETE,
         detail='Пользователь успешно удален',
         status_code=200,
         delete_cookie=cookie
