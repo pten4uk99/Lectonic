@@ -69,13 +69,3 @@ class UserLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError('Проверьте правильность ввода электронной почты или пароля')
 
         return data
-
-    def create_token(self):
-        ''' Создает токен, относящийся к полученному пользователю '''
-        user = self.get_object()
-        return user, Token.objects.get_or_create(user=user)[0]
-
-    def login_user(self):
-        ''' Аутентифицирует пользователя '''
-        user, new_token = self.create_token()
-        return user.login(), new_token

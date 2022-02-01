@@ -16,9 +16,14 @@ class UserCreationView(APIView):  # Возможно в будущем пере�
     def post(self, request):
         serializer = UserCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
 
-        return responses.created({'user': serializer.data['email']})
+        user = serializer.save()
+        user, new_token = user.login()
+
+        return responses.signed_in(
+            data={'user': serializer.data['email']},
+            cookie=('auth_token', new_token.key)
+        )
 
 
 class UserLoginView(APIView):
@@ -26,16 +31,16 @@ class UserLoginView(APIView):
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
-        user, new_token = serializer.login_user()
+        user, new_token = serializer.get_object().login()
 
         return responses.logged_in(('auth_token', new_token.key))
 
 
 class UserLogoutView(APIView):
-    def post(self, request):
-        user = request.user.logout()
-        user.auth_token.delete()
+    permission_classes = [permissions.IsAuthenticated]
 
+    def post(self, request):
+        request.user.logout()
         return responses.logged_out('auth_token')
 
 # --------------------Временные представления для разработки-----------------------
@@ -45,9 +50,7 @@ class UserDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request):
-        request.user.auth_token.delete()
         request.user.delete()
-
         return responses.deleted('auth_token')
 
 
