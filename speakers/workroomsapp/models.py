@@ -13,7 +13,7 @@ class City(models.Model):
 
 
 class Domain(models.Model):
-    name = models.CharField(max_length=200, null=False, blank=False)
+    name = models.CharField(max_length=200)
     code = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
@@ -27,7 +27,7 @@ class Person(models.Model):
     birth_date = models.DateField()
     city = models.OneToOneField(City, on_delete=models.CASCADE, related_name='person')
     address = models.CharField(max_length=200, null=True, blank=True)
-    rating = models.IntegerField(default=0, null=True, blank=True)
+    rating = models.IntegerField(default=0)
     # photo = models.CharField(max_length=200, null=True, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='person')
     is_lecturer = models.BooleanField(default=False)
@@ -35,7 +35,7 @@ class Person(models.Model):
     is_customer = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)  # Флаг для проверки модератором документов
     grade = models.CharField(max_length=300, null=True, blank=True)  # Сфера деятельности человека
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(blank=True, default='')
     domain = models.OneToOneField(
         Domain,
         on_delete=models.CASCADE,

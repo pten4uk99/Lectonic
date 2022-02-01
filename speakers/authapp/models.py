@@ -27,10 +27,11 @@ class User(AbstractUser, PermissionsMixin):
     def login(self):
         self.is_authenticated = True
         self.save()
-        return self
+        return self, Token.objects.get_or_create(user=self)[0]
 
     def logout(self):
         self.is_authenticated = False
+        self.auth_token.delete()
         self.save()
         return self
 
