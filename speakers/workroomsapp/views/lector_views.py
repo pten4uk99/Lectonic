@@ -30,7 +30,7 @@ class LectorLecturesAPIView(APIView):
     def get(self, request):
         if 'id' in request.GET:
             lec_id = request.GET['id']
-            lecture = Lecture.objects.filter(id=lec_id).first()
+            lecture = Lecture.objects.filter(id=lec_id, is_active = True).first()
             if not lecture:
                 return Response(
                     data={"status":"warning",
@@ -49,7 +49,7 @@ class LectorLecturesAPIView(APIView):
         else:
             try:
                 lecturer = User.objects.get(id=request.user.pk)
-                comms = lecturer.lectures.all()
+                comms = lecturer.lectures.filter(is_active=True)
                 count = len(comms)
             except ObjectDoesNotExist:
                 return Response(
@@ -71,7 +71,7 @@ class LectorLecturesAPIView(APIView):
     def patch(self,request):
         if 'id' in request.data:
             lec_id = request.data['id']
-            lecture = Lecture.objects.filter(id=lec_id).first()
+            lecture = Lecture.objects.filter(id=lec_id, is_active = True).first()
             if not lecture:
                 return Response(
                     data={"status":"warning",
@@ -130,55 +130,75 @@ class LectorLecturesAPIView(APIView):
                     status=400
                 )
 
-class DeleteMultipleLecture(APIView):
-    permission_classes = [IsAuthenticated&(IsLecturer|IsAdminUser)]
-    def delete(self,request):
-        if 'id_list' in request.data:
-            lec_ids = dict(request.data)['id_list']
-            errors = {}
-            success = {}
-            for id in lec_ids:
-                try:
-                    int(id)
-                except ValueError:
-                    errors[id] = 'NotANumber'
-                    continue
-                try:
-                    lecture = Lecture.objects.get(id=id)
-                except ObjectDoesNotExist:
-                    errors[id] = 'NoSuchLectureId'
-                    continue
-                lecture.delete()
-                success[id] = 'Deleted'
-            if not errors:
+class ArchiveLecture(APIView):
+    permission_classes = [IsAuthenticated&(IsLecturer|IsAdminUser)]  # TODO Сделать прверку IsOwner, чтобы отправлять в архив мог только владелец лекции
+    def patch(self, request):
+        if (len(request.data) != 1 or (('id' not in request.data) and ('id_list' not in request.data))):
+            return Response(
+                data={"status":"error",
+                    "description": "BadFormat",
+                    "user_msg":"Не верный формат переданных данных"
+                    },
+                status=400
+            )
+        else:
+            if 'id' in request.data:
+                lec_id = request.data['id']
+                lecture = Lecture.objects.filter(id=lec_id, is_active=True).first()
+                if not lecture:
+                    return Response(
+                        data={"status":"warning",
+                            "description": "NoSuchLecture",
+                            "user_msg":"Нет лекции с таким id"
+                            },
+                        status=224
+                    )
+                lecture.is_active = False
+                lecture.save()
                 return Response(
-                    data={"status":"ok",
-                        "description": "AllLecturesDeleted",
-                        "user_msg":success
-                        },
+                    data={"status":"ok"},
                     status=200
                 )
-            elif not success:
-                return Response(
-                    data={"status":"warning",
-                        "description": "NoDeletedLectures",
-                        "user_msg":errors
-                        },
-                    status=204
-                )
             else:
-                return Response(
-                    data={"status":"warning",
-                        "description": "NotAllLecturesDeleted",
-                        "user_msg": {**errors, **success}
-                        },
-                    status=204
-                )
-        else:
-            return Response(
-                    data={"status":"error",
-                        "description": "NoLectureIdList",
-                        "user_msg":"Не указан список id лекций для удаления"
-                        },
-                    status=400
-                )
+                lec_ids = dict(request.data)['id_list']
+                errors = {}
+                success = {}
+                for id in lec_ids:
+                    try:
+                        int(id)
+                    except ValueError:
+                        errors[id] = 'NotANumber'
+                        continue
+                    try:
+                        lecture = Lecture.objects.get(id=id, is_active=True)
+                    except ObjectDoesNotExist:
+                        errors[id] = 'NoSuchLectureId'
+                        continue
+                    lecture.is_active = False
+                    lecture.save()
+                    success[id] = 'Archived'
+                if not errors:
+                    return Response(
+                        data={"status":"ok",
+                            "description": "AllLecturesArchived",
+                            "user_msg":success
+                            },
+                        status=200
+                    )
+                elif not success:
+                    return Response(
+                        data={"status":"warning",
+                            "description": "NoArchivedLectures",
+                            "user_msg":errors
+                            },
+                        status=224
+                    )
+                else:
+                    return Response(
+                        data={"status":"warning",
+                            "description": "NotAllLecturesArchived",
+                            "user_msg": {**errors, **success}
+                            },
+                        status=224
+                    )
+        

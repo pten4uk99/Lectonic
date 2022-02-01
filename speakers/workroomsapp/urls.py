@@ -6,5 +6,5 @@ from .views.person import *
 urlpatterns = [
     path('profile/', PersonAPIView.as_view()),
     path('lecturer/lecture/', LectorLecturesAPIView.as_view()),
-    path('lecturer/lecture/delete-multiple/', DeleteMultipleLecture.as_view()),
+    path('lecturer/lecture/add_to_archive/', ArchiveLecture.as_view()),
 ]
