@@ -1,47 +1,72 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from django.core.exceptions import ObjectDoesNotExist
-
-from guestapp.serializers import GuestLectureSerializer
-from workroomsapp.models import *
+from guestapp.serializers import GuestLectureSerializer, GuestPersonSerializer
+from workroomsapp.models import Lecture, Person
+from guestapp.utils.guest_responses import *
 
 
 class LecturesAPIView(APIView):
+
     def get(self, request):
         if 'id' in request.GET:
             lec_id = request.GET['id']
             lecture = Lecture.objects.filter(id=lec_id).first()
             if not lecture:
-                return Response(
-                    data={"status": "warning",
-                          "description": "NoSuchLecture",
-                          "user_msg": "Нет лекции с таким id"
-                          },
-                    status=204
-                )
+                return lecture_does_not_exist()
             lec_data = GuestLectureSerializer(lecture)
-            return Response(
-                data={"status": "ok",
-                      "lecture": lec_data.data
-                      },
-                status=200
-            )
+            return success_response(lec_data.data)
         else:
-            try:
-                all_lecs = Lecture.objects.all()
-            except ObjectDoesNotExist:
-                return Response(
-                    data={"status": "warning",
-                          "description": "NoLecturesFound",
-                          "user_msg": "В БД не добавлено ни одной лекции"
-                          },
-                    status=204
-                )
-            lectures = GuestLectureSerializer(all_lecs, many=True)
-            return Response(
-                data={"status": "ok",
-                      "lectures": lectures.data
-                      },
-                status=200
-            )
+            if 'closer' in request.GET:
+                closer_count = request.GET['closer']
+                if (closer_count.isdigit() and int(closer_count) > 0):
+                    all_lecs = Lecture.objects.all().order_by('date')
+                    if not all_lecs:
+                        return have_no_lectures()
+                    lectures = GuestLectureSerializer(all_lecs[:int(closer_count)], many=True)
+                    return success_response(lectures.data)
+                else:
+                    return wrong_format()
+            elif 'last' in request.GET:
+                last_count = request.GET['last']
+                if (last_count.isdigit() and int(last_count) > 0):
+                    all_lecs = Lecture.objects.all().order_by('-sys_created_at')
+                    if not all_lecs:
+                        return have_no_lectures()
+                    lectures = GuestLectureSerializer(all_lecs[:int(last_count)], many=True)
+                    return success_response(lectures.data)
+                else:
+                    return wrong_format()
+            else:
+                all_lecs = Lecture.objects.all().order_by('-sys_created_at')
+                if not all_lecs:
+                    return have_no_lectures()
+                lectures = GuestLectureSerializer(all_lecs, many=True)
+                return success_response(lectures.data)
+
+class LecturersAPIView(APIView):
+
+    def get(self, request):
+        if 'id' in request.GET:
+            lecturer_id = request.GET['id']
+            lecturer = Person.objects.filter(id=lecturer_id, is_lecturer=True).first()
+            if not lecturer:
+                return lecturer_does_not_exist()
+            lecturer_data = GuestPersonSerializer(lecturer)
+            return success_response(lecturer_data.data)
+        elif 'last' in request.GET:
+            last_count = request.GET['last']
+            if (last_count.isdigit() and int(last_count) > 0):
+                all_lecturers = Person.objects.filter(is_lecturer=True).order_by('-sys_created_at')
+                if not all_lecturers:
+                    return have_no_lecturers()
+                lecturers = GuestPersonSerializer(all_lecturers[:int(last_count)], many=True)
+                return success_response(lecturers.data)
+            else:
+                return wrong_format()
+        else:
+            all_lecturers = Person.objects.filter(is_lecturer=True).order_by('-sys_created_at')
+            if not all_lecturers:
+                return have_no_lecturers()
+            lecturers = GuestPersonSerializer(all_lecturers, many=True)
+            return success_response(lecturers.data)

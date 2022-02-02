@@ -6,10 +6,18 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.core.exceptions import ObjectDoesNotExist
 from workroomsapp.models import *
 from workroomsapp.serializers.lector_serializers import *
+from workroomsapp.utils.responses.lector_responses import *
+
+
+def is_owner(lecture, user):
+    '''Функция проверки находится-ли user в списке лекторов лекции lecture'''
+    if user.is_superuser or user.is_staff:
+        return True
+    return user in lecture.lecturers.all()
 
 
 class LectorLecturesAPIView(APIView):
-    permission_classes = [IsAuthenticated & (IsLecturer | IsAdminUser)]
+    permission_classes = [IsAuthenticated & ( IsAdminUser | IsLecturer )]
 
     def post(self, request):
         lec_add_serializer = LectureSerializer(
@@ -19,153 +27,76 @@ class LectorLecturesAPIView(APIView):
         lec_add_serializer.is_valid()
 
         if lec_add_serializer.errors:
-            return Response(
-                data={
-                    "status": "error",
-                    "description": "ValidationError",
-                    "user_msg": lec_add_serializer.errors,
-                },
-                status=400
-            )
+            return validation_error(lec_add_serializer.errors)
         lec_add_serializer.save()
-        return Response(
-            data={"status": "ok"},
-            status=201
-        )
+        return created(lec_add_serializer.validated_data)
 
     def get(self, request):
         if 'id' in request.GET:
             lec_id = request.GET['id']
             lecture = Lecture.objects.filter(id=lec_id, is_active = True).first()
             if not lecture:
-                return Response(
-                    data={"status": "warning",
-                          "description": "NoSuchLecture",
-                          "user_msg": "Нет лекции с таким id"
-                          },
-                    status=204
-                )
+                return lecture_does_not_exist()
             lec_data = LectureSerializer(lecture)
-            return Response(
-                data={"status": "ok",
-                      "lecture": lec_data.data
-                      },
-                status=200
-            )
+            return success_response(lec_data.data)
         else:
-            try:
-                lecturer = User.objects.get(id=request.user.pk)
-                comms = lecturer.lectures.filter(is_active=True)
-                count = len(comms)
-            except ObjectDoesNotExist:
-                return Response(
-                    data={"status": "warning",
-                          "description": "NoLecturesFound",
-                          "user_msg": "У Вас не добавлено ни одной лекции"
-                          },
-                    status=204
-                )
+            lecturer = User.objects.get(id=request.user.pk)
+            comms = lecturer.lectures.filter(is_active=True)
+            if not comms:
+                return have_no_lectures()
             lectures = LectorLecturesSerializer(comms, many=True)
-            return Response(
-                data={"status": "ok",
-                      "count": count,
-                      "lectures": lectures.data
-                      },
-                status=200
-            )
+            return success_response(lectures.data)
 
     def patch(self, request):
         if 'id' in request.data:
             lec_id = request.data['id']
             lecture = Lecture.objects.filter(id=lec_id, is_active = True).first()
             if not lecture:
-                return Response(
-                    data={"status": "warning",
-                          "description": "NoSuchLecture",
-                          "user_msg": "Нет лекции с таким id"
-                          },
-                    status=204
-                )
-            lec_data = LectureSerializer(lecture, data=request.data, partial=True)
-            lec_data.is_valid()
-            if lec_data.errors:
-                return Response(
-                    data={"status": "error",
-                          "description": "ValidationError",
-                          "user_msg": lec_data.errors,
-                          },
-                    status=400
-                )
-            lec_data.save()
-            return Response(
-                data={"status": "ok"},
-                status=200
-            )
+                return lecture_does_not_exist()
+            if is_owner(lecture, request.user):
+                lec_data = LectureSerializer(lecture, data=request.data, partial=True)
+                lec_data.is_valid()
+                if lec_data.errors:
+                    return validation_error(lec_data.errors)
+                lec_data.save()
+                return success_response(lec_data.validated_data)
+            else: 
+                return not_owner()
         else:
-            return Response(
-                data={"status": "error",
-                      "description": "NoLectureId",
-                      "user_msg": "Не указан id лекции"
-                      },
-                status=400
-            )
+            return wrong_format()
 
     def delete(self, request):
         if 'id' in request.data:
             lec_id = request.data['id']
             lecture = Lecture.objects.filter(id=lec_id).first()
             if not lecture:
-                return Response(
-                    data={"status": "warning",
-                          "description": "NoSuchLecture",
-                          "user_msg": "Нет лекции с таким id"
-                          },
-                    status=204
-                )
-            lecture.delete()
-            return Response(
-                data={"status": "ok"},
-                status=200
-            )
+                return lecture_does_not_exist()
+            if is_owner(lecture, request.user):
+                lecture.delete()
+                return success_response(data=None)
+            else:
+                return not_owner()
         else:
-            return Response(
-                data={"status": "error",
-                      "description": "NoLectureId",
-                      "user_msg": "Не указан id лекции"
-                      },
-                status=400
-            )
+            return wrong_format()
 
 
 class ArchiveLecture(APIView):
-    permission_classes = [IsAuthenticated&(IsLecturer|IsAdminUser)]  # TODO Сделать прверку IsOwner, чтобы отправлять в архив мог только владелец лекции
+    permission_classes = [IsAuthenticated & ( IsAdminUser | IsLecturer )]
     def patch(self, request):
         if (len(request.data) != 1 or (('id' not in request.data) and ('id_list' not in request.data))):
-            return Response(
-                data={"status":"error",
-                    "description": "BadFormat",
-                    "user_msg":"Не верный формат переданных данных"
-                    },
-                status=400
-            )
+            return wrong_format()
         else:
             if 'id' in request.data:
                 lec_id = request.data['id']
                 lecture = Lecture.objects.filter(id=lec_id, is_active=True).first()
                 if not lecture:
-                    return Response(
-                        data={"status":"warning",
-                            "description": "NoSuchLecture",
-                            "user_msg":"Нет лекции с таким id"
-                            },
-                        status=224
-                    )
-                lecture.is_active = False
-                lecture.save()
-                return Response(
-                    data={"status":"ok"},
-                    status=200
-                )
+                    return lecture_does_not_exist()
+                if is_owner(lecture, request.user):
+                    lecture.is_active = False
+                    lecture.save()
+                else:
+                    return not_owner()
+                return success_response(data=None)
             else:
                 lec_ids = dict(request.data)['id_list']
                 errors = {}
@@ -181,31 +112,15 @@ class ArchiveLecture(APIView):
                     except ObjectDoesNotExist:
                         errors[id] = 'NoSuchLectureId'
                         continue
-                    lecture.is_active = False
-                    lecture.save()
-                    success[id] = 'Archived'
+                    if is_owner(lecture, request.user):
+                        lecture.is_active = False
+                        lecture.save()
+                        success[id] = 'Archived'
+                    else:
+                        errors[id] = 'Have no permissions'
                 if not errors:
-                    return Response(
-                        data={"status":"ok",
-                            "description": "AllLecturesArchived",
-                            "user_msg":success
-                            },
-                        status=200
-                    )
+                    return success_response(success)
                 elif not success:
-                    return Response(
-                        data={"status":"warning",
-                            "description": "NoArchivedLectures",
-                            "user_msg":errors
-                            },
-                        status=224
-                    )
+                    return operation_report(errors)
                 else:
-                    return Response(
-                        data={"status":"warning",
-                            "description": "NotAllLecturesArchived",
-                            "user_msg": {**errors, **success}
-                            },
-                        status=224
-                    )
-        
+                    return operation_report({**errors, **success})
