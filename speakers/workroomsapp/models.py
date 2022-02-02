@@ -57,7 +57,7 @@ class Person(models.Model):
         blank=True
     )
     sys_created_at = models.DateTimeField(auto_now_add=True)
-    sys_modified_at = models.DateTimeField(auto_now_add=True)
+    sys_modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
@@ -108,7 +108,7 @@ class Lecture(models.Model):
     lecturer_name = models.CharField(max_length=300, null=True, blank=True)
     domain = models.ForeignKey(Domain, on_delete=models.CASCADE, null=True, blank=True, related_name='lecture')
     sys_created_at = models.DateTimeField(auto_now_add=True)
-    sys_modified_at = models.DateTimeField(auto_now_add=True)
+    sys_modified_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
