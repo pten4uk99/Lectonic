@@ -16,6 +16,7 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
 
+    path('api/email/', include('emailapp.urls')),
     path('api/auth/', include('authapp.urls')),
     path('api/workrooms/', include('workroomsapp.urls')),
     path('api/guest/', include('guestapp.urls')),

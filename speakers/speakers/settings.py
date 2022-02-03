@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'drf_yasg',
 
     # Наши приложения
+    'emailapp',
     'authapp',
     'workroomsapp',
     'guestapp',
@@ -148,6 +149,15 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'authapp.User'
+HOST = 'https://dev.lectonic.ru'
+
+
+DEFAULT_FROM_EMAIL = 'sup.lectonic@gmail.com'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'sup.lectonic'
+EMAIL_HOST_PASSWORD = 'toniquelectures2021'
+EMAIL_USE_SSL = True
 
 try:
     from .local_settings import *
