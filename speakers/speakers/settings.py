@@ -153,11 +153,6 @@ HOST = 'https://dev.lectonic.ru'
 
 
 DEFAULT_FROM_EMAIL = 'sup.lectonic@gmail.com'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 465
-EMAIL_HOST_USER = 'sup.lectonic'
-EMAIL_HOST_PASSWORD = 'toniquelectures2021'
-EMAIL_USE_SSL = True
 
 try:
     from .local_settings import *
