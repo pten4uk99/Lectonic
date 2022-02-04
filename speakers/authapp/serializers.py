@@ -4,6 +4,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from emailapp.models import EmailConfirmation
 from .models import User, Token
 
 
@@ -31,6 +32,12 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
         if not match:
             raise ValidationError('Некорректный эмейл')
+
+        # confirmation = EmailConfirmation.objects.filter(email=email).first()
+        #
+        # if not confirmation or (confirmation and not confirmation.confirmed):
+        #     raise ValidationError('Данный адрес электронной почты не подтвержден')
+
         return email
 
     def validate_password(self, password):
@@ -38,13 +45,17 @@ class UserCreateSerializer(serializers.ModelSerializer):
         Валидация пароля
 
         1. Длина пароля от 8 символов
+        2. Только латинские буквы: заглавные и строчные
+        3. Разрешены цифры
+        4. Разрешенные специальные символы: :;()$&?!_
         '''
 
         # Для удобства в режиме разработки ограничение пароля только по длине
-        match = re.findall(r'^.{8,}$', password)
+        match = re.findall(r'^[A-Za-z0-9:;()$&?!_]{8,}$', password)
 
         if not match:
-            raise ValidationError('Пароль слишком короткий')
+            msg = 'Некорректный пароль. Разрешены только латинские буквы, цифры и специальные символы: :;()$&?!_'
+            raise ValidationError(msg)
 
         return make_password(password)
 

@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 
+CONFIRM = 'confirmed'
 SIGN_IN = 'signed_in'
 LOGIN = 'logged_in'
 LOGOUT = 'logged_out'
