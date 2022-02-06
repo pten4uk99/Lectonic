@@ -50,6 +50,6 @@ class EmailConfirmationView(APIView):
         )
 
         msg.attach_alternative(html, 'text/html')
-        # msg.send()
+        msg.send()
 
         return mail_is_sent()
