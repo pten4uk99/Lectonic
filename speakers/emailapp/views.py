@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import EmailConfirmation
@@ -10,21 +9,6 @@ from .responses.email_confirmation import *
 
 class EmailConfirmationView(APIView):
     def post(self, request):
-        key = request.GET.get('key')
-
-        if key:
-            confirmation = EmailConfirmation.objects.filter(key=key).first()
-
-            if confirmation and confirmation.check_lifetime():
-                confirmation.confirmed = True
-                confirmation.save()
-                return confirmed(confirmation.email)
-
-            if confirmation and not confirmation.check_lifetime():
-                confirmation.delete()
-
-            return bad_key()
-
         email = request.data.get('email')
 
         if not email:
@@ -40,7 +24,7 @@ class EmailConfirmationView(APIView):
             'emailapp/confirm_email.html',
             {
                 'key': email_confirmation.key,
-                'host': settings.HOST
+                'host': settings.DEFAULT_HOST
             },
         )
 
@@ -53,3 +37,21 @@ class EmailConfirmationView(APIView):
         msg.send()
 
         return mail_is_sent()
+
+    def get(self, request):
+        key = request.GET.get('key')
+
+        if not key:
+            return key_not_in_get()
+
+        confirmation = EmailConfirmation.objects.filter(key=key).first()
+
+        if confirmation and confirmation.check_lifetime():
+            confirmation.confirmed = True
+            confirmation.save()
+            return confirmed(confirmation.email)
+
+        if confirmation and not confirmation.check_lifetime():
+            confirmation.delete()
+
+        return bad_key()
