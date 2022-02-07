@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 from rest_framework.views import APIView
 
 from .models import EmailConfirmation
-from .responses.email_confirmation import *
+from .responses.email_confirmation_responses import *
 
 
 class EmailConfirmationView(APIView):

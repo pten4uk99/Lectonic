@@ -1,7 +1,7 @@
 from django.urls import path
 
 from workroomsapp.views.lector_views import *
-from .views.person import *
+from .views.person_views import *
 
 urlpatterns = [
     path('profile/', PersonAPIView.as_view()),

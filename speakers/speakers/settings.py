@@ -33,7 +33,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
-    'authapp.utils.middleware.AuthenticationMiddleware',
+    'authapp.utils.authapp_middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -87,7 +87,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'authapp.utils.token.TokenAuthentication',
+        'authapp.utils.authapp_token.TokenAuthentication',
     ]
 }
 

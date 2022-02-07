@@ -1,5 +1,5 @@
-from authapp.serializers import UserCreateSerializer
-from authapp.docs.schemas import *
+from authapp.authapp_serializers import UserCreateSerializer
+from authapp.docs.authapp_schemas import *
 
 UserProfileCreationView = {
     'request_body': UserCreateSerializer,  # Сериализатор

@@ -3,8 +3,8 @@ from rest_framework import permissions
 from rest_framework.views import APIView
 
 from workroomsapp.models import City, Person
-from workroomsapp.serializers.person import *
-from workroomsapp.utils.responses.person import created, success_get_profile, profile_does_not_exist, \
+from workroomsapp.serializers.person_serializers import *
+from workroomsapp.utils.responses.person_responses import created, success_get_profile, profile_does_not_exist, \
     profile_is_existing
 
 
