@@ -106,7 +106,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'authapp.User'
 
 DEFAULT_HOST = 'https://lectonic.tk'
-DEFAULT_FROM_EMAIL = 'sup.lectonic@gmail.com'
 
 try:
     from .local_settings import *
