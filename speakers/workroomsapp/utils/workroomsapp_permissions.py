@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import BasePermission
 
+from workroomsapp.models import Person
+
 User = get_user_model()
 
 
@@ -8,21 +10,27 @@ class IsLecturer(BasePermission):
     """ Предоставляет доступ только лекторам. """
 
     def has_permission(self, request, view):
-        return isinstance(request.user, User) and request.user.person.is_lecturer
+        return (isinstance(request.user, User) and
+                Person.objects.filter(user=request.user).first() and
+                request.user.person.is_lecturer)
 
 
 class IsProjectAdmin(BasePermission):
     """ Предоставляет доступ только админитраторам проекта. """
 
     def has_permission(self, request, view):
-        return isinstance(request.user, User) and request.user.person.is_project_admin
+        return (isinstance(request.user, User) and
+                Person.objects.filter(user=request.user).first() and
+                request.user.person.is_project_admin)
 
 
 class IsCustomer(BasePermission):
     """ Предоставляет доступ только заказчикам. """
 
     def has_permission(self, request, view):
-        return isinstance(request.user, User) and request.user.person.is_customer
+        return (isinstance(request.user, User) and
+                Person.objects.filter(user=request.user).first() and
+                request.user.person.is_customer)
 
 
 class IsVerified(BasePermission):
@@ -30,4 +38,6 @@ class IsVerified(BasePermission):
     проверены модераторами. """
 
     def has_permission(self, request, view):
-        return isinstance(request.user, User) and request.user.person.is_verified
+        return (isinstance(request.user, User) and
+                Person.objects.filter(user=request.user).first() and
+                request.user.person.is_verified)

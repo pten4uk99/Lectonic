@@ -1,9 +1,9 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from guestapp.serializers import GuestLectureSerializer, GuestPersonSerializer
+from guestapp.guestapp_serializers import GuestLectureSerializer, GuestPersonSerializer
 from workroomsapp.models import Lecture, Person
-from guestapp.utils.guest_responses import *
+from guestapp.utils.guestapp_responses import *
 
 
 class LecturesAPIView(APIView):

@@ -19,7 +19,7 @@ class EmailConfirmation(models.Model):
 
     @classmethod
     def generate_key(cls):
-        return binascii.hexlify(os.urandom(15)).decode()
+        return binascii.hexlify(os.urandom(7)).decode()
 
     def check_lifetime(self):
         return datetime.datetime.now(timezone.utc) - self.created_at < datetime.timedelta(minutes=15)

@@ -9,11 +9,18 @@ def created(data):
     )
 
 
-def success_get_profile(data):
+def success(data):
     return response.get_response(
         status=response.SUCCESS,
         data=[data],
         status_code=200
+    )
+
+
+def empty():
+    return response.get_response(
+        status=response.EMPTY,
+        status_code=224
     )
 
 
