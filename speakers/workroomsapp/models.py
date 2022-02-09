@@ -6,7 +6,8 @@ User = get_user_model()
 
 
 class City(models.Model):
-    name = models.CharField(max_length=100, null=True, blank=True)
+    name = models.CharField(max_length=100)
+    region = models.CharField(max_length=100, null=True, blank=True)
     country = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):

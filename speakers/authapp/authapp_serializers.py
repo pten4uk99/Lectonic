@@ -53,7 +53,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         match = re.findall(reg, password)
 
         if not match:
-            msg = 'Некорректный пароль. Разрешены только латинские буквы, цифры и специальные символы: :;()$&?!_'
+            msg = 'Проверьте правильность ввода пароля'
             raise ValidationError(msg)
 
         return make_password(password)
