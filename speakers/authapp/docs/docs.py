@@ -8,7 +8,7 @@ UserProfileCreationView = {
     'operation_id': None,  # Меняет латинское название в snake_case справа, лучше не трогать
     'operation_description': 'Регистрация нового пользователя',  # Развернутое описание
     'operation_summary': 'Регистрация',  # Краткое описание
-    'security': None,  # Должен быть какой то объект, пока не разобрался
+    'security': [],  # Должен быть какой то объект, пока не разобрался
     'deprecated': False,  # Если True, помечает API как не рабочее
     'responses': {
         201: UserProfileCreationSchema201,
