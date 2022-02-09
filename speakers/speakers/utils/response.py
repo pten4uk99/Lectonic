@@ -6,6 +6,7 @@ LOGIN = 'logged_in'
 LOGOUT = 'logged_out'
 SUCCESS = 'success'
 CREATE = 'created'
+EMPTY = 'empty'
 DELETE = 'deleted'
 ERROR = 'error'
 

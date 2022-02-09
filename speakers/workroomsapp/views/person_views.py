@@ -4,8 +4,7 @@ from rest_framework.views import APIView
 
 from workroomsapp.models import City, Person
 from workroomsapp.serializers.person_serializers import *
-from workroomsapp.utils.responses.person_responses import created, success_get_profile, profile_does_not_exist, \
-    profile_is_existing
+from workroomsapp.utils.responses.person_responses import *
 
 
 class PersonAPIView(APIView):
@@ -15,22 +14,17 @@ class PersonAPIView(APIView):
         if Person.objects.filter(user=request.user).first():
             return profile_is_existing()
 
-        serializer = PersonCreateSerializer(
+        serializer = PersonSerializer(
             data=request.data,
             context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
-        city = serializer.validated_data.pop('city')
-
-        with transaction.atomic():
-            Person.objects.create(
-                **serializer.validated_data,
-                city=City.objects.create(name=city)
-            )
+        serializer.save()
 
         serializer.validated_data.pop('user')
+        city = serializer.validated_data.pop('city')
 
-        return created(data=serializer.validated_data)
+        return created(data={**serializer.validated_data, 'city': city.name})
 
     def get(self, request):
         person = Person.objects.filter(user=request.user).first()
@@ -38,29 +32,33 @@ class PersonAPIView(APIView):
         if not person:
             return profile_does_not_exist()
 
-        serializer = PersonGetPatchSerializer(person)
-        return success_get_profile(serializer.data)
+        serializer = PersonSerializer(person)
+
+        return success({**serializer.data, 'city': City.objects.get(id=serializer.data['city']).name})
 
     def patch(self, request):
         person = Person.objects.filter(user=request.user).first()
 
-        if request.data.get('city'):
-            city = City.objects.filter(person=person).first()
-
-            if city:
-                city_serializer = PersonCityEditSerializer(
-                    city,
-                    data={'name': request.data['city']},
-                    partial=True
-                )
-                city_serializer.is_valid(raise_exception=True)
-                city_serializer.save()
-
         if not person:
             return profile_does_not_exist()
 
-        person_serializer = PersonGetPatchSerializer(person, data=request.data, partial=True)
+        person_serializer = PersonSerializer(person, data=request.data, partial=True)
         person_serializer.is_valid(raise_exception=True)
         person_serializer.save()
 
         return created(person_serializer.data)
+
+
+class CityAPIView(APIView):
+    def get(self, request):
+        serializer = CitySerializer(data=request.GET)
+        serializer.is_valid(raise_exception=True)
+
+        cities = City.objects.filter(name__icontains=serializer.data['name'])
+
+        if not cities:
+            return empty()
+
+        cities_ser = CitySerializer(cities, many=True)
+
+        return success(cities_ser.data)

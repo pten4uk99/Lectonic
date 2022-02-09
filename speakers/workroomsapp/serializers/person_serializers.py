@@ -43,71 +43,27 @@ class PersonSerializerMixin:
 
         return birth_date
 
-    def validate_city(self, city):
-        match = re.findall(r'^[А-Яа-я]+$', city)
 
-        if not match:
-            raise serializers.ValidationError('Неверный формат')
-
-        return city
-
-
-class PersonCreateSerializer(serializers.Serializer, PersonSerializerMixin):
-    first_name = serializers.CharField(max_length=100)
-    last_name = serializers.CharField(max_length=100)
-    middle_name = serializers.CharField(max_length=100, required=False)
-    birth_date = serializers.DateField()
-    city = serializers.CharField(max_length=100)  # Пока что ввод города вручную, позже переделать на PrimaryKeyRelatedField()
-    # address = serializers.CharField(max_length=200, required=False)
-    rating = serializers.IntegerField(required=False)
-    # photo = serializers.CharField(max_length=200, required=False)
+class PersonSerializer(serializers.ModelSerializer, PersonSerializerMixin):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    # grade = serializers.CharField(max_length=300, default='', required=False)
-    description = serializers.CharField(required=False)
-    # domain = serializers.PrimaryKeyRelatedField(queryset=Domain.objects.all(), required=False)
-    latitude = serializers.DecimalField(
-        max_digits=10,
-        decimal_places=7,
-        required=False
-    )
-    longitude = serializers.DecimalField(
-        max_digits=10,
-        decimal_places=7,
-        required=False
-    )
-
-    class Meta:
-        fields = [
-            'first_name',
-            'last_name',
-            'middle_name',
-            'birth_date',
-            'city',
-            # 'address',
-            'rating',
-            # 'photo',
-            'user',
-            # 'grade',
-            'description',
-            # 'domain',
-            'latitude',
-            'longitude',
-        ]
-
-
-class PersonGetPatchSerializer(serializers.ModelSerializer, PersonSerializerMixin):
-    city = serializers.StringRelatedField()
+    city = serializers.PrimaryKeyRelatedField(queryset=City.objects.all())
 
     class Meta:
         model = Person
         exclude = [
             'address',
+            'grade',
             'domain',
-            'user'
         ]
 
 
-class PersonCityEditSerializer(serializers.ModelSerializer):
+class CitySerializer(serializers.ModelSerializer):
+    name = serializers.CharField(error_messages={'required': 'Обязательное поле'})
+
     class Meta:
         model = City
-        fields = ['name']
+        fields = [
+            'id',
+            'name',
+            'region'
+        ]
