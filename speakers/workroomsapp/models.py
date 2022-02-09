@@ -14,6 +14,7 @@ class City(models.Model):
 
 
 class Domain(models.Model):
+    """Cфера деятельности (химия, биология, физика)"""
     name = models.CharField(max_length=200)
     code = models.CharField(max_length=100, null=True, blank=True)
 
