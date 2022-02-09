@@ -16,7 +16,9 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             'filename',
-            action='store'
+            action='store',
+            nargs='?',
+            default='ru_cities.csv'
         )
 
     def handle(self, *args, **options):

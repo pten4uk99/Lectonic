@@ -42,11 +42,13 @@ class PersonAPIView(APIView):
         if not person:
             return profile_does_not_exist()
 
-        person_serializer = PersonSerializer(person, data=request.data, partial=True)
-        person_serializer.is_valid(raise_exception=True)
-        person_serializer.save()
+        serializer = PersonSerializer(person, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        return created(person_serializer.data)
+        city = serializer.validated_data.pop('city')
+
+        return created(data={**serializer.validated_data, 'city': city.name})
 
 
 class CityAPIView(APIView):
