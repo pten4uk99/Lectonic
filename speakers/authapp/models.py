@@ -4,7 +4,7 @@ from django.contrib.auth.models import PermissionsMixin
 
 from rest_framework.authtoken.models import Token as BaseToken
 
-from .managers import UserManager
+from authapp.utils.authapp_managers import UserManager
 
 
 class User(AbstractUser, PermissionsMixin):

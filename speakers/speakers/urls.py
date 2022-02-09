@@ -8,10 +8,10 @@ from .utils.yasg import urlpatterns as swagger_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('api/email/', include('emailapp.urls')),
-    path('api/auth/', include('authapp.urls')),
-    path('api/workrooms/', include('workroomsapp.urls')),
-    path('api/guest/', include('guestapp.urls')),
+    path('api/email/', include('emailapp.emailapp_urls')),
+    path('api/auth/', include('authapp.authapp_urls')),
+    path('api/workrooms/', include('workroomsapp.workroomsapp_urls')),
+    path('api/guest/', include('guestapp.guestapp_urls')),
 ]
 
 if settings.DEBUG:

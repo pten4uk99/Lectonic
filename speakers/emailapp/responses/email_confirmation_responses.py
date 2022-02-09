@@ -34,6 +34,14 @@ def email_not_in_data():
     )
 
 
+def key_not_in_get():
+    return response.get_response(
+        status=response.ERROR,
+        detail='В запросе не передан код подтверждения',
+        status_code=400
+    )
+
+
 def can_not_repeat_confirmation():
     return response.get_response(
         status=response.ERROR,

@@ -2,7 +2,7 @@ from django.contrib import auth
 from django.contrib.auth.middleware import AuthenticationMiddleware as BaseAuthMiddleware
 from django.utils.functional import SimpleLazyObject
 
-from authapp.utils.token import TokenAuthentication
+from authapp.utils.authapp_token import TokenAuthentication
 
 
 def get_user_profile(request):
