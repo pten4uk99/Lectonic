@@ -6,7 +6,8 @@ User = get_user_model()
 
 
 class City(models.Model):
-    name = models.CharField(max_length=100, null=True, blank=True)
+    name = models.CharField(max_length=100)
+    region = models.CharField(max_length=100, null=True, blank=True)
     country = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
@@ -27,7 +28,7 @@ class Person(models.Model):
     last_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, null=True, blank=True)
     birth_date = models.DateField()
-    city = models.OneToOneField(City, on_delete=models.CASCADE, related_name='person')
+    city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='person')
     address = models.CharField(max_length=200, null=True, blank=True)
     rating = models.IntegerField(default=0)
     # photo = models.CharField(max_length=200, null=True, blank=True)

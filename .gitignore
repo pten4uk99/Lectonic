@@ -159,3 +159,6 @@ sup*
 04d*
 
 .prettierrc.js
+
+# Server
+staticfiles/
