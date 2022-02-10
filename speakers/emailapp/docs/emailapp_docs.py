@@ -1,8 +1,8 @@
-from emailapp.emailapp_serializers import EmailConfirmationSerializer
+from emailapp.emailapp_serializers import EmailSerializer
 from .emailapp_schemas import *
 
 EmailConfirmationDocCh1 = {
-    'request_body': EmailConfirmationSerializer,
+    'request_body': EmailSerializer,
     'query_serializer': None,
     'manual_parameters': None,
     'operation_id': None,

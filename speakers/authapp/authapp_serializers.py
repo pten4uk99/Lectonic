@@ -8,7 +8,17 @@ from emailapp.models import EmailConfirmation
 from .models import User, Token
 
 
+errors = {
+    'blank': 'Поле не может быть пустым',
+    'required': 'Обязательное поле',
+    'invalid': 'e-mail введен некорректно'
+}
+
+
 class UserCreateSerializer(serializers.ModelSerializer):
+    email = serializers.CharField(error_messages=errors)
+    password = serializers.CharField(error_messages=errors, min_length=8, max_length=40)
+
     class Meta:
         model = User
         fields = (
@@ -44,12 +54,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
         '''
         Валидация пароля
 
-        1. Длина пароля от 8 символов
-        2. Хотя бы одна заглавная буква, строчная буква, цифра
-        3. Длина не более 40 знаков
+        1. Длина пароля от 8 до 40 символов
+        2. Запрещена кириллица
         '''
 
-        reg = r'^(?=.*[A-Z])(?=.*[\d])(?=.*[a-z]).{8,40}$'
+        reg = r'^[^А-Яа-я]{8,40}$'
         match = re.findall(reg, password)
 
         if not match:
@@ -60,8 +69,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(serializers.Serializer):
-    email = serializers.CharField()
-    password = serializers.CharField()
+    email = serializers.CharField(error_messages=errors)
+    password = serializers.CharField(error_messages=errors)
 
     def get_object(self):
         ''' Из переданных данных получает объект пользователя '''
@@ -76,6 +85,6 @@ class UserLoginSerializer(serializers.Serializer):
         user = self.get_object()
 
         if not user or not user.check_password(data['password']):
-            raise serializers.ValidationError('Проверьте правильность ввода электронной почты или пароля')
+            raise serializers.ValidationError('Проверьте правильность ввода e-mail или пароля')
 
         return data

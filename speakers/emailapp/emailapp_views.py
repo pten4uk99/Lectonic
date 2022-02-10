@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from rest_framework.views import APIView
 from drf_yasg.utils import swagger_auto_schema
 
+from .emailapp_serializers import EmailSerializer
 from .models import EmailConfirmation
 from .responses.email_confirmation_responses import *
 from .docs import emailapp_docs
@@ -16,10 +17,9 @@ class EmailConfirmationView(APIView):
 
     @swagger_auto_schema(**emailapp_docs.EmailConfirmationDocCh1)
     def post(self, request):
-        email = request.data.get('email')
-
-        if not email:
-            return email_not_in_data()
+        serializer = EmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.data['email']
 
         email_confirmation, created = EmailConfirmation.objects.get_or_create(email=email)
 

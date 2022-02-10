@@ -1,5 +1,8 @@
 from drf_yasg.openapi import Schema
 
+from authapp.utils import authapp_responses
+from speakers.utils import response
+
 UserProfileCreationSchema400 = Schema(
     title='',
     description='',
@@ -8,17 +11,12 @@ UserProfileCreationSchema400 = Schema(
     enum=[],
     pattern='',
     properties={
-        "email": Schema(
-            # title='',
-            description='Пользователь с таким email уже существует',
-            type='string',
-            # format='',  # Формат данных
-            enum=['пользователь с таким email уже существует'],  # Можно считать это вариантами ответа
-            # pattern='',
-            # properties=None, # Если type='object' то нужно задать это свойство
-            # required=[],
-            # default='',
-            # read_only=None
+        "field": Schema(
+            description='Описание ответа для пользователя',
+            type='array',
+            items=Schema(
+                type='string'
+            )
         )
     },
     required=[],
@@ -27,24 +25,81 @@ UserProfileCreationSchema400 = Schema(
 )
 
 UserProfileCreationSchema201 = Schema(
-    title='',
-    description='Пользователь успешно зарегистрирован',
+    title='Успешное создание пользователя',
+    description='Пользователь содается и сразу авторизуется',
     type='object',
     format='',
     enum=[],
     pattern='',
     properties={
-        "user_profile": Schema(
-            description='Возвращает email созданного пользователя',
-            format='email',
-            type='string',
-            enum=['admin@yandex.ru']
-        ),
         "status": Schema(
             description='Статус ответа',
             type='string',
-            enum=['created']
+            enum=[response.SIGN_IN]
         ),
+        "detail": Schema(
+            description='Описание ответа для пользователя',
+            type='string',
+            enum=[authapp_responses.SIGNED_IN]
+        ),
+        "data": Schema(
+            description='Возвращает email созданного пользователя',
+            type='array',
+            items=Schema(
+                type='object',
+                properties={
+                    "user": Schema(type='string', enum=['admin@yandex.ru'])
+                },
+            ),
+        ),
+    },
+    required=[],
+    default=None,
+    read_only=None
+)
+
+UserProfileLoginSchema200 = Schema(
+    title='Успешная авторизация',
+    type='object',
+    format='',
+    enum=[],
+    pattern='',
+    properties={
+        "status": Schema(
+            description='Статус ответа',
+            type='string',
+            enum=[response.LOGIN]
+        ),
+        "detail": Schema(
+            description='Описание ответа для пользователя',
+            type='string',
+            enum=[authapp_responses.LOGGED_IN]
+        ),
+        "data": Schema(
+            description='Пустой массив',
+            type='string',
+            enum=['[]']
+        ),
+    },
+    required=[],
+    default=None,
+    read_only=None
+)
+
+UserProfileLoginSchema400 = Schema(
+    title='Ошибка при авторизации',
+    type='object',
+    format='',
+    enum=[],
+    pattern='',
+    properties={
+        "field": Schema(
+            description='Описание ответа для пользователя',
+            type='array',
+            items=Schema(
+                type='string'
+            )
+        )
     },
     required=[],
     default=None,
