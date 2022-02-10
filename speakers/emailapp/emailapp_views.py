@@ -3,16 +3,21 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from rest_framework.views import APIView
 
+from .emailapp_serializers import EmailSerializer
 from .models import EmailConfirmation
 from .responses.email_confirmation_responses import *
 
 
 class EmailConfirmationView(APIView):
     def post(self, request):
-        email = request.data.get('email')
+        # email = request.data.get('email')
+        #
+        # if not email:
+        #     return email_not_in_data()
 
-        if not email:
-            return email_not_in_data()
+        serializer = EmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.data['email']
 
         email_confirmation, created = EmailConfirmation.objects.get_or_create(email=email)
 
