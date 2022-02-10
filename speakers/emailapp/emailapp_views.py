@@ -10,11 +10,6 @@ from .responses.email_confirmation_responses import *
 
 class EmailConfirmationView(APIView):
     def post(self, request):
-        # email = request.data.get('email')
-        #
-        # if not email:
-        #     return email_not_in_data()
-
         serializer = EmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.data['email']
