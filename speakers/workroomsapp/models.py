@@ -15,6 +15,7 @@ class City(models.Model):
 
 
 class Domain(models.Model):
+    """Cфера деятельности (химия, биология, физика)"""
     name = models.CharField(max_length=200)
     code = models.CharField(max_length=100, null=True, blank=True)
 
@@ -36,7 +37,8 @@ class Person(models.Model):
     is_project_admin = models.BooleanField(default=False)
     is_customer = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)  # Флаг для проверки модератором документов
-    grade = models.CharField(max_length=300, null=True, blank=True)  # звание, степень (магистр,кандидат,доктор,эксперт в области и т.д.
+    grade = models.CharField(max_length=300, null=True,
+                             blank=True)  # звание, степень (магистр,кандидат,доктор,эксперт в области и т.д.
     description = models.TextField(blank=True, default='')
     domain = models.ForeignKey(
         Domain,
@@ -52,7 +54,7 @@ class Person(models.Model):
         blank=True
     )
     longitude = models.DecimalField(
-        max_digits=10, # Возможно надо будет добавить цифр, если будут ошибки поиска координат
+        max_digits=10,  # Возможно надо будет добавить цифр, если будут ошибки поиска координат
         decimal_places=7,
         null=True,
         blank=True
@@ -91,8 +93,10 @@ class LectureHall(models.Model):
     has_transformer = models.BooleanField(default=False)
     is_independent = models.BooleanField(default=False)
     is_open = models.BooleanField(default=False)
-    latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)  # Возможно надо будет добавить цифр, если будут ошибки поиска координат
-    longitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)  # Возможно надо будет добавить цифр, если будут ошибки поиска координат
+    latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True,
+                                   blank=True)  # Возможно надо будет добавить цифр, если будут ошибки поиска координат
+    longitude = models.DecimalField(max_digits=10, decimal_places=7, null=True,
+                                    blank=True)  # Возможно надо будет добавить цифр, если будут ошибки поиска координат
 
     def __str__(self):
         return f'{self.id}'
@@ -104,7 +108,8 @@ class Lecture(models.Model):
     hall = models.OneToOneField(LectureHall, on_delete=models.CASCADE, null=True, blank=True, related_name='lecture')
     # cycle = models.ForeignKey(LectureCycle, on_delete=models.CASCADE, related_name='lecture')
     date = models.DateField(null=True, blank=True)
-    duration = models.IntegerField(null=True, blank=True) # Длительность лекции в минутах (нет необходимости использовать DateTimeRangeField)
+    duration = models.IntegerField(null=True,
+                                   blank=True)  # Длительность лекции в минутах (нет необходимости использовать DateTimeRangeField)
     description = models.TextField(null=True, blank=True)
     lecturer_name = models.CharField(max_length=300, null=True, blank=True)
     domain = models.ForeignKey(Domain, on_delete=models.CASCADE, null=True, blank=True, related_name='lecture')
@@ -114,7 +119,6 @@ class Lecture(models.Model):
 
     def __str__(self):
         return f'{self.name}'
-
 
 # class LectureCycle(models.Model):
 #     name = models.CharField(max_length=100, null=False, blank=False, unique=True)

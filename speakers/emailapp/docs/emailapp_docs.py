@@ -1,7 +1,6 @@
 from emailapp.emailapp_serializers import EmailConfirmationSerializer
 from .emailapp_schemas import *
 
-
 EmailConfirmationDocCh1 = {
     'request_body': EmailConfirmationSerializer,
     'query_serializer': None,
@@ -13,12 +12,12 @@ EmailConfirmationDocCh1 = {
     'responses': {
         200: EmailConfirmationCh1Success200,
         400: EmailConfirmationCh1Error400,
-        },
+    },
     'field_inspectors': None,
     'filter_inspectors': None,
     'paginator_inspectors': None,
     'security': [],
-    'tags': ['Администратор','Разработчик','Гость','Лектор','Компания','Слушатель','Арендодатель']
+    'tags': ['Администратор', 'Разработчик', 'Гость', 'Лектор', 'Компания', 'Слушатель', 'Арендодатель']
 }
 
 key = openapi.Parameter(
@@ -27,7 +26,7 @@ key = openapi.Parameter(
     description="Код подтверждения",
     type=openapi.TYPE_STRING,
     required=True,
-    )
+)
 
 EmailConfirmationDocCh2 = {
     'manual_parameters': [key],
@@ -38,10 +37,10 @@ EmailConfirmationDocCh2 = {
     'responses': {
         200: EmailConfirmationCh2Success200,
         400: EmailConfirmationCh2Error400,
-        },
+    },
     'field_inspectors': None,
     'filter_inspectors': None,
     'paginator_inspectors': None,
     'security': [],
-    'tags': ['Администратор','Разработчик','Гость','Лектор','Компания','Слушатель','Арендодатель']
+    'tags': ['Администратор', 'Разработчик', 'Гость', 'Лектор', 'Компания', 'Слушатель', 'Арендодатель']
 }

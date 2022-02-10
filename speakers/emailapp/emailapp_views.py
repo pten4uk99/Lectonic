@@ -13,6 +13,7 @@ from rest_framework.parsers import FormParser
 
 class EmailConfirmationView(APIView):
     parser_classes = (FormParser,)
+
     @swagger_auto_schema(**emailapp_docs.EmailConfirmationDocCh1)
     def post(self, request):
         email = request.data.get('email')

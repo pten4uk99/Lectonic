@@ -6,6 +6,7 @@ from workroomsapp.models import Person
 
 User = get_user_model()
 
+
 class IsLecturer(BasePermission):
     """ Предоставляет доступ только лекторам. """
 

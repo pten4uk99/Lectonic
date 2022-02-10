@@ -43,6 +43,7 @@ class UserLogoutView(APIView):
         request.user.logout()
         return authapp_responses.logged_out('auth_token')
 
+
 # --------------------Временные представления для разработки-----------------------
 
 
