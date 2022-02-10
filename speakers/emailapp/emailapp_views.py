@@ -2,12 +2,18 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from rest_framework.views import APIView
+from drf_yasg.utils import swagger_auto_schema
 
 from .models import EmailConfirmation
 from .responses.email_confirmation_responses import *
+from .docs import emailapp_docs
+
+from rest_framework.parsers import FormParser
 
 
 class EmailConfirmationView(APIView):
+    parser_classes = (FormParser,)
+    @swagger_auto_schema(**emailapp_docs.EmailConfirmationDocCh1)
     def post(self, request):
         email = request.data.get('email')
 
@@ -38,6 +44,7 @@ class EmailConfirmationView(APIView):
 
         return mail_is_sent()
 
+    @swagger_auto_schema(**emailapp_docs.EmailConfirmationDocCh2)
     def get(self, request):
         key = request.GET.get('key')
 
