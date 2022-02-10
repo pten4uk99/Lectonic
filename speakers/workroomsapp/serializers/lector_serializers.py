@@ -42,10 +42,15 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class LectureSerializer(serializers.ModelSerializer):
-    lecturers = UserSerializer(many=True, required=False)
-    hall = LectureHallSerializer(required=False)
-    # domain = DomainSerializer(many=True, required=False)
-    domain = DomainModelSerializer(many=True, required=False)
+  lecturers = UserSerializer(many=True, required = False)
+  hall = LectureHallSerializer(required = False)
+  # domain = DomainSerializer(many=True, required = False)
+  domain = DomainModelSerializer(many=True, required=False)
+  is_active = serializers.BooleanField(default=True)
+  class Meta:
+      model = Lecture
+      fields = '__all__'
+
 
     class Meta:
         model = Lecture
