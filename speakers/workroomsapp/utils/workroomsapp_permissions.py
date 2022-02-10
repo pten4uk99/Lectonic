@@ -1,10 +1,10 @@
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import BasePermission
+from rest_framework import exceptions
 
 from workroomsapp.models import Person
 
 User = get_user_model()
-
 
 class IsLecturer(BasePermission):
     """ Предоставляет доступ только лекторам. """

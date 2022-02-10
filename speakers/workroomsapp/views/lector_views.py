@@ -2,11 +2,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from workroomsapp.utils.workroomsapp_permissions import IsLecturer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-
+from rest_framework.exceptions import PermissionDenied
 from django.core.exceptions import ObjectDoesNotExist
 from workroomsapp.models import *
 from workroomsapp.serializers.lector_serializers import *
 from workroomsapp.utils.responses.lector_responses import *
+from drf_yasg.utils import swagger_auto_schema
+from workroomsapp.docs.lector_docs import GetLectorLecturesDescribe
 
 
 def is_owner(lecture, user):
@@ -17,8 +19,8 @@ def is_owner(lecture, user):
 
 
 class LectorLecturesAPIView(APIView):
-    permission_classes = [IsAuthenticated & ( IsAdminUser | IsLecturer )]
 
+    permission_classes = [IsAuthenticated & ( IsAdminUser | IsLecturer )]
     def post(self, request):
         lec_add_serializer = LectureSerializer(
             data=request.data,
@@ -31,6 +33,7 @@ class LectorLecturesAPIView(APIView):
         lec_add_serializer.save()
         return created(lec_add_serializer.validated_data)
 
+    @swagger_auto_schema(**GetLectorLecturesDescribe)
     def get(self, request):
         if 'id' in request.GET:
             lec_id = request.GET['id']
