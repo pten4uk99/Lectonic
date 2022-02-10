@@ -1,5 +1,6 @@
 from speakers.utils import response
 
+
 def validation_error(data):
     return response.get_response(
         status=response.ERROR,
@@ -8,12 +9,14 @@ def validation_error(data):
         status_code=400
     )
 
+
 def wrong_format():
     return response.get_response(
         status=response.ERROR,
         detail='Не верный формат переданных данных. Нет одного или нескольких обязательных параметров (например, id) или указаны лишние',
         status_code=400
     )
+
 
 def created(data):
     return response.get_response(
@@ -23,6 +26,7 @@ def created(data):
         status_code=201
     )
 
+
 def lecture_does_not_exist():
     return response.get_response(
         status=response.ERROR,
@@ -30,12 +34,14 @@ def lecture_does_not_exist():
         status_code=224
     )
 
+
 def have_no_lectures():
     return response.get_response(
         status=response.ERROR,
         detail='У вас не добавлено ни одной лекции',
         status_code=224
     )
+
 
 def operation_report(data):
     return response.get_response(
@@ -45,6 +51,7 @@ def operation_report(data):
         status_code=224
     )
 
+
 def success_response(data):
     return response.get_response(
         status=response.SUCCESS,
@@ -52,6 +59,7 @@ def success_response(data):
         data=[data],
         status_code=200
     )
+
 
 def not_owner():
     return response.get_response(

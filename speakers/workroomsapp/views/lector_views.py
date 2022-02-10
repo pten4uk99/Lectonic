@@ -2,11 +2,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from workroomsapp.utils.workroomsapp_permissions import IsLecturer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-
+from rest_framework.exceptions import PermissionDenied
 from django.core.exceptions import ObjectDoesNotExist
 from workroomsapp.models import *
 from workroomsapp.serializers.lector_serializers import *
 from workroomsapp.utils.responses.lector_responses import *
+from drf_yasg.utils import swagger_auto_schema
+from workroomsapp.docs.lector_docs import GetLectorLecturesDescribe
 
 
 def is_owner(lecture, user):
@@ -17,7 +19,7 @@ def is_owner(lecture, user):
 
 
 class LectorLecturesAPIView(APIView):
-    permission_classes = [IsAuthenticated & ( IsAdminUser | IsLecturer )]
+    permission_classes = [IsAuthenticated & (IsAdminUser | IsLecturer)]
 
     def post(self, request):
         lec_add_serializer = LectureSerializer(
@@ -31,10 +33,11 @@ class LectorLecturesAPIView(APIView):
         lec_add_serializer.save()
         return created(lec_add_serializer.validated_data)
 
+    @swagger_auto_schema(**GetLectorLecturesDescribe)
     def get(self, request):
         if 'id' in request.GET:
             lec_id = request.GET['id']
-            lecture = Lecture.objects.filter(id=lec_id, is_active = True).first()
+            lecture = Lecture.objects.filter(id=lec_id, is_active=True).first()
             if not lecture:
                 return lecture_does_not_exist()
             lec_data = LectureSerializer(lecture)
@@ -50,7 +53,7 @@ class LectorLecturesAPIView(APIView):
     def patch(self, request):
         if 'id' in request.data:
             lec_id = request.data['id']
-            lecture = Lecture.objects.filter(id=lec_id, is_active = True).first()
+            lecture = Lecture.objects.filter(id=lec_id, is_active=True).first()
             if not lecture:
                 return lecture_does_not_exist()
             if is_owner(lecture, request.user):
@@ -60,7 +63,7 @@ class LectorLecturesAPIView(APIView):
                     return validation_error(lec_data.errors)
                 lec_data.save()
                 return success_response(lec_data.validated_data)
-            else: 
+            else:
                 return not_owner()
         else:
             return wrong_format()
@@ -81,7 +84,8 @@ class LectorLecturesAPIView(APIView):
 
 
 class ArchiveLecture(APIView):
-    permission_classes = [IsAuthenticated & ( IsAdminUser | IsLecturer )]
+    permission_classes = [IsAuthenticated & (IsAdminUser | IsLecturer)]
+
     def patch(self, request):
         if (len(request.data) != 1 or (('id' not in request.data) and ('id_list' not in request.data))):
             return wrong_format()

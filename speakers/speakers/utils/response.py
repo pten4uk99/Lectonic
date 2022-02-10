@@ -20,7 +20,6 @@ def get_response(status: str = "", detail: str = "",
                  data=None, status_code=None,
                  set_cookie: tuple = None, delete_cookie: str = None,
                  perms: list = None):
-
     if data is None:
         data = []
 
