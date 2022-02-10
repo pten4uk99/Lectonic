@@ -39,26 +39,20 @@ class UserLoginView(APIView):
 class UserLogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request):
+    @swagger_auto_schema(**authapp_docs.UserProfileLogoutView)
+    def get(self, request):
         request.user.logout()
         return authapp_responses.logged_out('auth_token')
 
-# --------------------Временные представления для разработки-----------------------
 
+# --------------------Временные представления для разработки-----------------------
 
 class UserDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
+    @swagger_auto_schema(**authapp_docs.UserProfileDeleteView)
     def delete(self, request):
         request.user.delete()
         return authapp_responses.deleted('auth_token')
-
-
-# Тестовая вьюшка для проверки аутентификации-----------------------
-class TestView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request):
-        return Response(data={"response": "success"})
 
 # --------------------Временные представления для разработки-----------------------

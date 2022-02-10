@@ -1,77 +1,46 @@
-from authapp.authapp_serializers import UserCreateSerializer
+from authapp.authapp_serializers import UserCreateSerializer, UserLoginSerializer
 from authapp.docs.authapp_schemas import *
+from authapp.utils.authapp_responses import DESCRIPTION
 
 UserProfileCreationView = {
     'request_body': UserCreateSerializer,  # Сериализатор
-    'query_serializer': None,  # Пока что не совсем понял, что это но тоже сериализатор
-    'manual_parameters': None,
-    'operation_id': None,  # Меняет латинское название в snake_case справа, лучше не трогать
-    'operation_description': 'Регистрация нового пользователя',  # Развернутое описание
+    'operation_description': 'Регистрация нового пользователя. ' + DESCRIPTION,  # Развернутое описание
     'operation_summary': 'Регистрация',  # Краткое описание
-    'security': None,  # Должен быть какой то объект, пока не разобрался
     'deprecated': False,  # Если True, помечает API как не рабочее
     'responses': {
         201: UserProfileCreationSchema201,
         400: UserProfileCreationSchema400,
     },  # Схемы ответов сервера
-    'field_inspectors': None,
-    'filter_inspectors': None,
-    'paginator_inspectors': None,
-    'tags': None
 }
 
 
 UserProfileLoginView = {
-    'method': None,
-    'methods': None,
-    'request_body': None,
-    'query_serializer': None,
-    'manual_parameters': None,
-    'operation_id': None,
-    'operation_description': 'partial_update description override',
-    'operation_summary': None,
-    'security': None,
-    'deprecated': None,
-    'responses': {404: 'slug not found'},
-    'field_inspectors': None,
-    'filter_inspectors': None,
-    'paginator_inspectors': None,
-    'tags': None
+    'request_body': UserLoginSerializer,  # Сериализатор
+    'operation_description': 'Пользователь авторизуется. '
+                             'В браузер пользователя записывается кука с токеном, '
+                             'которая автоматически передается с каждым запросом. ' + DESCRIPTION,  # Развернутое описание
+    'operation_summary': 'Авторизация',  # Краткое описание
+    'deprecated': False,  # Если True, помечает API как не рабочее
+    'responses': {
+        200: UserProfileLoginSchema200,
+        400: UserProfileLoginSchema400,
+    },  # Схемы ответов сервера
 }
 
 
 UserProfileLogoutView = {
-    'method': None,
-    'methods': None,
-    'request_body': None,
-    'query_serializer': None,
-    'manual_parameters': None,
-    'operation_id': None,
-    'operation_description': 'partial_update description override',
-    'operation_summary': None,
-    'security': None,
-    'deprecated': None,
-    'responses': {404: 'slug not found'},
-    'field_inspectors': None,
-    'filter_inspectors': None,
-    'paginator_inspectors': None,
-    'tags': None
+    'operation_description': 'Из запроса забирается кука с токеном и логаутит пользователя. ' + DESCRIPTION,  # Развернутое описание
+    'operation_summary': 'Выход из системы',  # Краткое описание
+    'deprecated': False,  # Если True, помечает API как не рабочее
+    'responses': {
+        200: UserProfileLoginSchema200,
+        400: UserProfileLoginSchema400,
+    },  # Схемы ответов сервера
 }
 
 UserProfileDeleteView = {
-    'method': None,
-    'methods': None,
-    'request_body': None,
-    'query_serializer': None,
-    'manual_parameters': None,
-    'operation_id': None,
-    'operation_description': 'partial_update description override',
-    'operation_summary': None,
-    'security': None,
-    'deprecated': None,
-    'responses': {404: 'slug not found'},
-    'field_inspectors': None,
-    'filter_inspectors': None,
-    'paginator_inspectors': None,
-    'tags': None
+    'operation_description': 'Пользователь должен быть авторизован. '
+                             'Из запроса забирается кука с токеном и удаляет пользователя.',  # Развернутое описание
+    'operation_summary': 'Удаление пользователя',  # Краткое описание
+    'deprecated': False,  # Если True, помечает API как не рабочее
 }
