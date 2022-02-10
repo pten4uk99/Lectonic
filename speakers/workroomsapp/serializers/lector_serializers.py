@@ -13,6 +13,7 @@ class LectureHallSerializer(serializers.ModelSerializer):
 
 class DomainModelSerializerBase(serializers.ModelSerializer):
     """DomainSerializerBase - для сохранения данных сферы деятельности"""
+
     # domain_id = serializers.IntegerField(source='id')
 
     class Meta:
@@ -42,15 +43,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class LectureSerializer(serializers.ModelSerializer):
-  lecturers = UserSerializer(many=True, required = False)
-  hall = LectureHallSerializer(required = False)
-  # domain = DomainSerializer(many=True, required = False)
-  domain = DomainModelSerializer(many=True, required=False)
-  is_active = serializers.BooleanField(default=True)
-  class Meta:
-      model = Lecture
-      fields = '__all__'
-
+    lecturers = UserSerializer(many=True, required=False)
+    hall = LectureHallSerializer(required=False)
+    # domain = DomainSerializer(many=True, required = False)
+    domain = DomainModelSerializer(many=True, required=False)
+    is_active = serializers.BooleanField(default=True)
 
     class Meta:
         model = Lecture

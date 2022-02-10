@@ -44,6 +44,7 @@ class LecturesAPIView(APIView):
                 lectures = GuestLectureSerializer(all_lecs, many=True)
                 return success_response(lectures.data)
 
+
 class LecturersAPIView(APIView):
 
     def get(self, request):

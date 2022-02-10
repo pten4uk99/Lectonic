@@ -41,5 +41,5 @@ class Command(BaseCommand):
                             )
         except FileNotFoundError:
             raise FileException('Чтобы команда выполнилась, необходимо поместить файл '
-                  f'{options.get("filename", "ru_cities.csv")} '
-                  f'рядом с файлом manage.py в папке /speakers/speakers')
+                                f'{options.get("filename", "ru_cities.csv")} '
+                                f'рядом с файлом manage.py в папке /speakers/speakers')

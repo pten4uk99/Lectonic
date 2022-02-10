@@ -20,7 +20,6 @@ UserProfileCreationView = {
     'tags': None
 }
 
-
 UserProfileLoginView = {
     'method': None,
     'methods': None,
@@ -38,7 +37,6 @@ UserProfileLoginView = {
     'paginator_inspectors': None,
     'tags': None
 }
-
 
 UserProfileLogoutView = {
     'method': None,

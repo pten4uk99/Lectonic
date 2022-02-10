@@ -31,4 +31,3 @@ class PersonAdmin(admin.ModelAdmin):
 @admin.register(ProjectLecturer)
 class ProjectLecturerAdmin(admin.ModelAdmin):
     pass
-

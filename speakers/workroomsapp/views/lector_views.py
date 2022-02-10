@@ -19,8 +19,8 @@ def is_owner(lecture, user):
 
 
 class LectorLecturesAPIView(APIView):
+    permission_classes = [IsAuthenticated & (IsAdminUser | IsLecturer)]
 
-    permission_classes = [IsAuthenticated & ( IsAdminUser | IsLecturer )]
     def post(self, request):
         lec_add_serializer = LectureSerializer(
             data=request.data,
@@ -37,7 +37,7 @@ class LectorLecturesAPIView(APIView):
     def get(self, request):
         if 'id' in request.GET:
             lec_id = request.GET['id']
-            lecture = Lecture.objects.filter(id=lec_id, is_active = True).first()
+            lecture = Lecture.objects.filter(id=lec_id, is_active=True).first()
             if not lecture:
                 return lecture_does_not_exist()
             lec_data = LectureSerializer(lecture)
@@ -53,7 +53,7 @@ class LectorLecturesAPIView(APIView):
     def patch(self, request):
         if 'id' in request.data:
             lec_id = request.data['id']
-            lecture = Lecture.objects.filter(id=lec_id, is_active = True).first()
+            lecture = Lecture.objects.filter(id=lec_id, is_active=True).first()
             if not lecture:
                 return lecture_does_not_exist()
             if is_owner(lecture, request.user):
@@ -63,7 +63,7 @@ class LectorLecturesAPIView(APIView):
                     return validation_error(lec_data.errors)
                 lec_data.save()
                 return success_response(lec_data.validated_data)
-            else: 
+            else:
                 return not_owner()
         else:
             return wrong_format()
@@ -84,7 +84,8 @@ class LectorLecturesAPIView(APIView):
 
 
 class ArchiveLecture(APIView):
-    permission_classes = [IsAuthenticated & ( IsAdminUser | IsLecturer )]
+    permission_classes = [IsAuthenticated & (IsAdminUser | IsLecturer)]
+
     def patch(self, request):
         if (len(request.data) != 1 or (('id' not in request.data) and ('id_list' not in request.data))):
             return wrong_format()
