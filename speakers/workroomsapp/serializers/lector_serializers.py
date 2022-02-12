@@ -1,14 +1,14 @@
 from rest_framework import serializers
 
-from workroomsapp.models import Domain, Lecture, User, LectureHall
+from workroomsapp.models import Domain, Lecture, User
 
 
-class LectureHallSerializer(serializers.ModelSerializer):
-    hall_id = serializers.IntegerField(source='id')
-
-    class Meta:
-        model = LectureHall
-        fields = '__all__'
+# class LectureHallSerializer(serializers.ModelSerializer):
+#     hall_id = serializers.IntegerField(source='id')
+#
+#     class Meta:
+#         model = LectureHall
+#         fields = '__all__'
 
 
 class DomainModelSerializerBase(serializers.ModelSerializer):
@@ -44,7 +44,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class LectureSerializer(serializers.ModelSerializer):
     lecturers = UserSerializer(many=True, required=False)
-    hall = LectureHallSerializer(required=False)
+    # hall = LectureHallSerializer(required=False)
     # domain = DomainSerializer(many=True, required = False)
     domain = DomainModelSerializer(many=True, required=False)
     is_active = serializers.BooleanField(default=True)
