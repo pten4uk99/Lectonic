@@ -32,6 +32,6 @@ class EmailSerializer(serializers.Serializer):
         match = re.findall(r'^[\w.]+@\w+\.[a-z]{2,4}$', email)
 
         if not match:
-            raise ValidationError('Некорректный эмейл')
+            raise ValidationError('Некорректный e-mail')
 
         return email

@@ -29,7 +29,6 @@ class Person(models.Model):
     middle_name = models.CharField(max_length=100, null=True, blank=True)
     birth_date = models.DateField()
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='person')
-    address = models.CharField(max_length=200, null=True, blank=True)
     rating = models.IntegerField(default=0)
     # photo = models.CharField(max_length=200, null=True, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='person')
@@ -37,16 +36,7 @@ class Person(models.Model):
     is_project_admin = models.BooleanField(default=False)
     is_customer = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)  # Флаг для проверки модератором документов
-    grade = models.CharField(max_length=300, null=True,
-                             blank=True)  # звание, степень (магистр,кандидат,доктор,эксперт в области и т.д.
     description = models.TextField(blank=True, default='')
-    domain = models.ForeignKey(
-        Domain,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name='person'
-    )
     latitude = models.DecimalField(
         max_digits=10,  # Возможно надо будет добавить цифр, если будут ошибки поиска координат
         decimal_places=7,

@@ -17,7 +17,7 @@ EmailConfirmationDocCh1 = {
     'filter_inspectors': None,
     'paginator_inspectors': None,
     'security': [],
-    'tags': ['Администратор', 'Разработчик', 'Гость', 'Лектор', 'Компания', 'Слушатель', 'Арендодатель']
+    'tags': None
 }
 
 key = openapi.Parameter(
@@ -42,5 +42,5 @@ EmailConfirmationDocCh2 = {
     'filter_inspectors': None,
     'paginator_inspectors': None,
     'security': [],
-    'tags': ['Администратор', 'Разработчик', 'Гость', 'Лектор', 'Компания', 'Слушатель', 'Арендодатель']
+    'tags': None
 }

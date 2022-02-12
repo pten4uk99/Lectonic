@@ -21,6 +21,7 @@ def is_owner(lecture, user):
 class LectorLecturesAPIView(APIView):
     permission_classes = [IsAuthenticated & (IsAdminUser | IsLecturer)]
 
+    @swagger_auto_schema(deprecated=True)
     def post(self, request):
         lec_add_serializer = LectureSerializer(
             data=request.data,
@@ -33,7 +34,7 @@ class LectorLecturesAPIView(APIView):
         lec_add_serializer.save()
         return created(lec_add_serializer.validated_data)
 
-    @swagger_auto_schema(**GetLectorLecturesDescribe)
+    @swagger_auto_schema(deprecated=True)
     def get(self, request):
         if 'id' in request.GET:
             lec_id = request.GET['id']
@@ -50,6 +51,7 @@ class LectorLecturesAPIView(APIView):
             lectures = LectorLecturesSerializer(comms, many=True)
             return success_response(lectures.data)
 
+    @swagger_auto_schema(deprecated=True)
     def patch(self, request):
         if 'id' in request.data:
             lec_id = request.data['id']
@@ -68,6 +70,7 @@ class LectorLecturesAPIView(APIView):
         else:
             return wrong_format()
 
+    @swagger_auto_schema(deprecated=True)
     def delete(self, request):
         if 'id' in request.data:
             lec_id = request.data['id']
@@ -86,6 +89,7 @@ class LectorLecturesAPIView(APIView):
 class ArchiveLecture(APIView):
     permission_classes = [IsAuthenticated & (IsAdminUser | IsLecturer)]
 
+    @swagger_auto_schema(deprecated=True)
     def patch(self, request):
         if (len(request.data) != 1 or (('id' not in request.data) and ('id_list' not in request.data))):
             return wrong_format()

@@ -6,7 +6,23 @@ from rest_framework import serializers
 from workroomsapp.models import Person, City
 
 
-class PersonSerializerMixin:
+class PersonSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    city = serializers.PrimaryKeyRelatedField(queryset=City.objects.all())
+
+    class Meta:
+        model = Person
+        exclude = [
+            'id',
+            'rating',
+            'sys_created_at',
+            'sys_modified_at',
+            'is_lecturer',
+            'is_project_admin',
+            'is_customer',
+            'is_verified'
+        ]
+
     def name_validator(self, name):
         '''
         Общий валидатор для имени, фамилии и отчества.
@@ -17,7 +33,7 @@ class PersonSerializerMixin:
 
         '''
 
-        match = re.findall(r'^[A-Я][а-яё-]+$', name)
+        match = re.findall(r'^[А-Яа-яё-]+$', name)
 
         if not match:
             raise serializers.ValidationError('Неверный формат имени')
@@ -42,19 +58,6 @@ class PersonSerializerMixin:
             raise serializers.ValidationError('Дата не может быть позже текущей')
 
         return birth_date
-
-
-class PersonSerializer(serializers.ModelSerializer, PersonSerializerMixin):
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    city = serializers.PrimaryKeyRelatedField(queryset=City.objects.all())
-
-    class Meta:
-        model = Person
-        exclude = [
-            'address',
-            'grade',
-            'domain',
-        ]
 
 
 class CitySerializer(serializers.ModelSerializer):
