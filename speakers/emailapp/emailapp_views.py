@@ -9,11 +9,11 @@ from .models import EmailConfirmation
 from .responses.email_confirmation_responses import *
 from .docs import emailapp_docs
 
-from rest_framework.parsers import FormParser
+from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 
 
 class EmailConfirmationView(APIView):
-    parser_classes = (FormParser,)
+    parser_classes = (FormParser, MultiPartParser, JSONParser)
 
     @swagger_auto_schema(**emailapp_docs.EmailConfirmationDocCh1)
     def post(self, request):

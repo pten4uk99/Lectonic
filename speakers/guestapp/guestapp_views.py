@@ -1,3 +1,4 @@
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -7,7 +8,7 @@ from guestapp.utils.guestapp_responses import *
 
 
 class LecturesAPIView(APIView):
-
+    @swagger_auto_schema(deprecated=True)
     def get(self, request):
         if 'id' in request.GET:
             lec_id = request.GET['id']
@@ -46,7 +47,7 @@ class LecturesAPIView(APIView):
 
 
 class LecturersAPIView(APIView):
-
+    @swagger_auto_schema(deprecated=True)
     def get(self, request):
         if 'id' in request.GET:
             lecturer_id = request.GET['id']
