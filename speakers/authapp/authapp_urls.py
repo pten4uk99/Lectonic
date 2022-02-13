@@ -3,7 +3,7 @@ from .authapp_views import *
 
 
 urlpatterns = [
-    path('signup/', UserCreationView.as_view()),  # POST
+    path('signup/', UserCreationView.as_view(), name='signup'),  # POST
     path('login/', UserLoginView.as_view()),  # POST
     path('logout/', UserLogoutView.as_view()),  # GET
 
