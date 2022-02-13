@@ -69,5 +69,5 @@ class Command(BaseCommand):
                 load_forms()
         except FileNotFoundError:
             raise FileException('Чтобы команда выполнилась, необходимо поместить файлы '
-                                f'ru_cities.csv '
+                                f'ru_cities.csv, domains.csv, company_forms.csv'
                                 f'в папку /db в корне проекта')

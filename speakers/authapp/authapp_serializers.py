@@ -1,11 +1,11 @@
 import re
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from emailapp.models import EmailConfirmation
-from .models import User, Token
+User = get_user_model()
 
 
 errors = {
@@ -42,6 +42,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
         if not match:
             raise ValidationError('Некорректный e-mail')
+
+        if User.objects.filter(email=email).first():
+            raise ValidationError('Пользователь с данным email уже зарегистрирован')
 
         # confirmation = EmailConfirmation.objects.filter(email=email).first()
         #

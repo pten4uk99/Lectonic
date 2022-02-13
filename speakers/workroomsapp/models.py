@@ -202,7 +202,7 @@ class Lecture(models.Model):
         related_name='lecture'
     )
     status = models.BooleanField(null=True, blank=True)  # 3 варианта: подтверждена, отклонена, не просмотрена
-    datetime = models.DateTimeField()
+    event = models.OneToOneField('Event', on_delete=models.CASCADE)
     duration = models.IntegerField(null=True, blank=True)  # Длительность лекции в минутах (нет необходимости использовать DateTimeRangeField)
     cost = models.IntegerField(default=0)  # стоимость лекции
     description = models.TextField(null=True, blank=True)
@@ -212,3 +212,31 @@ class Lecture(models.Model):
 
     def __str__(self):
         return f'{self.name}'
+
+
+class Calendar(models.Model):
+    """Общая модель календаря, у которой есть события"""
+    events = models.ManyToManyField('Event')
+
+
+class Event(models.Model):
+    datetime = models.DateTimeField()
+
+
+class LecturerCalendar(models.Model):
+    """Календарь лектора"""
+    lecturer = models.OneToOneField('Lecturer', on_delete=models.CASCADE, related_name='lecturer_calendar')
+    calendar = models.OneToOneField('Calendar', on_delete=models.CASCADE, related_name='lecturer_calendar')
+
+
+class CustomerCalendar(models.Model):
+    """Календарь заказчика: физлицо"""
+    customer = models.OneToOneField('Customer', on_delete=models.CASCADE, related_name='customer_calendar')
+    calendar = models.OneToOneField('Calendar', on_delete=models.CASCADE, related_name='customer_calendar')
+
+
+class CompanyCalendar(models.Model):
+    """Календарь заказчика: юрлицо"""
+    company = models.OneToOneField('Company', on_delete=models.CASCADE, related_name='company_calendar')
+    calendar = models.OneToOneField('Calendar', on_delete=models.CASCADE, related_name='company_calendar')
+
