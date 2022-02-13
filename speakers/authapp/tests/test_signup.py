@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
-from authapp.authapp_serializers import User
+from authapp.models import User
 from authapp.models import Token
 
 
@@ -16,7 +16,7 @@ class TestSignup(APITestCase):
             msg='Пользователь не был создан в базе данных'
         )
 
-    def test_user_was_authenticated(self):
+    def test_user_successful_authenticated(self):
         data = {'email': 'admin@admin.ru', 'password': '12345678'}
 
         self.client.post(reverse('signup'), data)
@@ -33,12 +33,7 @@ class TestSignup(APITestCase):
     def test_signup_twice(self):
         data = {'email': 'admin@admin.ru', 'password': '12345678'}
 
-        response1 = self.client.post(reverse('signup'), data)
-        self.assertEqual(
-            response1.status_code, 201,
-            msg='Неверный статус ответа при создании пользователя'
-        )
-
+        self.client.post(reverse('signup'), data)
         response2 = self.client.post(reverse('signup'), data)
         self.assertEqual(
             response2.status_code, 400,
