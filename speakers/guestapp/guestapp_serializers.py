@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from workroomsapp.models import City, Person
 
-from workroomsapp.models import Domain, Lecture, User, LectureHall
+from workroomsapp.models import Domain, Lecture, User
 
 
 class GuestCitySerializer(serializers.ModelSerializer):
@@ -21,17 +21,17 @@ class GuestDomainSerializer(serializers.ModelSerializer):
         ]
 
 
-class GuestLectureHallSerializer(serializers.ModelSerializer):
-    city = GuestCitySerializer()
-
-    class Meta:
-        model = LectureHall
-        fields = [
-            'city',
-            'address',
-            'latitude',
-            'longitude',
-        ]
+# class GuestLectureHallSerializer(serializers.ModelSerializer):
+#     city = GuestCitySerializer()
+#
+#     class Meta:
+#         model = LectureHall
+#         fields = [
+#             'city',
+#             'address',
+#             'latitude',
+#             'longitude',
+#         ]
 
 
 class GuestPersonSerializer(serializers.ModelSerializer):
@@ -62,7 +62,7 @@ class GuestUserSerializer(serializers.ModelSerializer):
 class GuestLectureSerializer(serializers.ModelSerializer):
     lecture_id = serializers.IntegerField(source='id')
     lecturers = GuestUserSerializer(many=True, required=False)
-    hall = GuestLectureHallSerializer(required=False)
+    # hall = GuestLectureHallSerializer(required=False)
     domain = GuestDomainSerializer(many=True, required=False)
 
     class Meta:
