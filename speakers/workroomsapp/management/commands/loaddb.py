@@ -19,16 +19,19 @@ def load_cities():
         with transaction.atomic():
             City.objects.all().delete()
 
+            count = 1
             for city in reader:
                 if city:
                     city_name = city[2]
                     city_region = city[3]
 
                     City.objects.create(
+                        pk=count,
                         name=city_name,
                         region=city_region,
                         country='Россия'
                     )
+                    count += 1
             print('Города успешно сохранены в базу данных...')
 
 
@@ -39,10 +42,13 @@ def load_domains():
         with transaction.atomic():
             Domain.objects.all().delete()
 
+            count = 1
             for domain in reader:
                 Domain.objects.create(
+                    pk=count,
                     name=domain[0]
                 )
+                count += 1
             print('Сферы деятельности успешно сохранены в базу данных...')
 
 
@@ -53,10 +59,13 @@ def load_forms():
         with transaction.atomic():
             CompanyForm.objects.all().delete()
 
+            count = 1
             for form in reader:
                 CompanyForm.objects.create(
+                    pk=count,
                     name=form[0]
                 )
+                count += 1
             print('Формы юрлица успешно сохранены в базу данных...')
 
 

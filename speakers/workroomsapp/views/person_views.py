@@ -40,7 +40,7 @@ class PersonAPIView(APIView):
 
         return person_responses.success({
             **serializer.data,
-            'city': City.objects.get(id=serializer.data['city']).name
+            'city': City.objects.get(pk=serializer.data['city']).name
         })
 
     @swagger_auto_schema(**person_docs.PersonPatchView)
@@ -50,9 +50,15 @@ class PersonAPIView(APIView):
         if not person:
             return person_responses.profile_does_not_exist()
 
+        if not request.data:
+            return person_responses.no_data_in_request()
+
         serializer = PersonSerializer(person, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        if 'city' in serializer.validated_data:
+            serializer.validated_data['city'] = serializer.validated_data['city'].name
 
         return person_responses.patched(data={**serializer.validated_data})
 
