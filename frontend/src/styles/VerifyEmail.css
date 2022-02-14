@@ -1,0 +1,26 @@
+.verify__wrapper {
+    text-align: center;
+    font-size: 14px;
+    line-height: 17px;
+    margin-top: 120px;
+}
+
+.verify__wrapper > h2 {
+    margin-bottom: 36px;
+}
+
+.verify__wrapper > p {
+    margin-bottom: 12px;
+}
+
+#verify__email {
+    font-weight: bold;
+}
+
+.verify__email__text-bottom {
+    padding-top: 8px;
+}
+
+h5 {
+    cursor: pointer;
+}
