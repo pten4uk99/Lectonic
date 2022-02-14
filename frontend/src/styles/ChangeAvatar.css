@@ -1,0 +1,72 @@
+.changeAvatar {
+    text-align: center;
+    padding-top: 56px;
+    padding-bottom: 60px;
+}
+
+.changeAvatar > h2 {
+    color: var(--main-blue);
+    margin-bottom: 36px;
+}
+
+.changeAvatar p {
+    font-size: 14px;
+    line-height: 17px;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.changeAvatar__defaultPics {
+    height: 160px;
+    width: 552px;
+    margin-left: 51px;
+    margin-bottom: 36px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.changeAvatar__defaultPics-text {
+    padding-top: 28px;
+}
+
+.changeAvatar__defaultPics  img {
+    cursor: pointer;
+}
+
+.chosenEllipse {
+    width: 166px;
+    height: 166px;
+    border: 2px solid var(--main-blue);
+    border-radius: 50%;
+    position: absolute;
+    left: -5px;
+    top: -5px;
+}
+
+.changeAvatar__uploadedPic-wrapper {
+    margin: 20px auto 0px;
+}
+
+.changeAvatar__uploadedPic {
+    height: 160px;
+    width: 160px;
+}
+
+.avatar-wrapper {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    cursor: pointer;
+}
+
+#avatarUploaded {
+    display: none;
+}
+
+.btn.changeAvatar__chooseFile {
+    margin: 0px auto;
+}
+
+
+
+

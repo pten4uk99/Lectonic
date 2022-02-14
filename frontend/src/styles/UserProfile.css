@@ -1,0 +1,42 @@
+.profile {
+    width: 50%;
+    margin: 63px auto;
+}
+
+.profile__up {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.profile__up__avatar-wrapper {
+    position: relative;
+    height: 160px;
+}
+
+.profile__up__avatar-photoIcon {
+    position: absolute;
+    left: 0px;
+    top: -40px;
+}
+
+.profile__up__name-wrapper h1 {
+    margin: 0px 0px 4px 42px;
+}
+
+.profile__middle {
+    display: flex;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.profile__middle .role-text {
+    margin-left: 12px;
+    margin-right: 28px;
+}
+
+.profile__bottom {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+}
