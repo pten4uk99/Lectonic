@@ -5,7 +5,7 @@ from authapp.models import Token
 from workroomsapp.models import User
 
 
-class TestSignup(APITestCase):
+class TestLogin(APITestCase):
 
     def setUp(self):
         data = {'email': 'admin@admin.ru', 'password': '12345678'}
