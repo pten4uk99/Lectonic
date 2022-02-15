@@ -248,8 +248,8 @@ function AuthSignUpPassword() {
 
             {/* Блок Регистрация Пароль*/}
             <div style={{display: signUpShown ? "block" : "none"}}>
-                <div className="auth__text">Придумайте пароль
-                <p>Не менее 8 символов, латиница, минимум одна заглавная буква, минимум одна цифра</p></div>
+                <div className="auth__text">Ваш e-mail успешно подтвержден.<br/>Придумайте пароль
+                <p>Пароль должен содержать не менее 8 символов</p></div>
                 <form className="auth__form">
                     <div className="auth__form__input-wrapper">
                         <input className="form__input"
