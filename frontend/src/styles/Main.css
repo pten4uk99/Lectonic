@@ -1,4 +1,25 @@
+.main {
+    margin-left: 12%;
+    margin-top: 72px;
+    position: relative;
+}
+
+.main__text-header {
+    font-size: 44px;
+    line-height: 54px;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.main__text {
+    font-size: 20px;
+    line-height: 28px;
+    margin-bottom: 48px;
+}
+
 .main__illustration {
-    width: 100%;
-    height: auto;
+    position: absolute;
+    left: 454px;
+    top: 65px;
+    z-index: -2;
 }
