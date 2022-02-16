@@ -1,6 +1,10 @@
+.not-found {
+    margin: 120px 0px 0px;
+}
+
 .not-found__text {
     text-align: center;
-    margin: 120px 0px 20px;
+    margin: 0px 0px 20px;
 }
 
 .not-found__text h2 {
@@ -16,8 +20,7 @@
 .not-found__lectonic {
     position: relative;
     width: 185px;
-
-
+    min-height: 305px;
     margin: 0px auto 0px;
 }
 
@@ -165,5 +168,6 @@
     80% {top: 190px}
     100% {top: 190px}
 }
+
 
 

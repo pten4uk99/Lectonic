@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {useNavigate, Link} from "react-router-dom";
-import "../styles/Authorization.css";
-import eyeOpen from "../img/eyeOpen.svg";
-import eyeClose from "../img/eyeClose.svg";
+import "../../styles/Authorization.css";
+import eyeOpen from "../../img/eyeOpen.svg";
+import eyeClose from "../../img/eyeClose.svg";
 import 'regenerator-runtime/runtime';
-import { baseURL } from "../ProjectConstants.js";
+import { baseURL } from "../../ProjectConstants.js";
 
 function AuthSignUpPassword() {
 
@@ -69,12 +69,18 @@ function AuthSignUpPassword() {
     });
 
     function onChangeSignUp(e) {
+        setErrorSignUpPassword("");
         setSignUpValue ( {...signUpValue, [e.target.name]: e.target.value})
         console.log("VALUE: ", signUpValue)
     }
 
 //стейты для вывода ошибок с сервера при регистрации пароля
     const [errorSignUpPassword, setErrorSignUpPassword] = useState("");
+
+//проверка совпадения паролей
+    function isPasswordEqual() {
+
+    }
 
 //отправка email и пароля на сервер
     let userSignUp = {
@@ -99,33 +105,13 @@ function AuthSignUpPassword() {
                 console.log("data: ", data);
                 if ("password" in data) {
                     setErrorSignUpPassword(data.password[0])
+                } if (data.status == "signed_in") {
+                    navigate("/user_basic-info")
                 }
-    })
-            //пока не решен вопрос с критериями пароля
-
-               /* if (response.status == 201) {
-                    return fetch(`${baseURL}/api/auth/login/`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(userSignUp)
-                    }).then((response) => {
-                        console.log("RESPONSE LOGIN: ", response);
-                        return response.json();
-                    }).then((data) => {
-                        console.log("data: ", data);
-                        localStorage.setItem("auth_token", data.auth_token);
-                        navigate("/user_info-form");
-                    })
-                }
-            })*/
-            .catch((error) => {
+            }).catch((error) => {
                 console.log("ERROR: ", error);
-                console.log("ERROR DATA: ", error.response.data)
             })
     }
-
 
 
 //переключение блоков Вход и Регистрация
@@ -177,6 +163,8 @@ function AuthSignUpPassword() {
         //пока нет api
         navigate("/change_password")
     }
+
+
 
     return (
         <div className="auth">
@@ -288,7 +276,7 @@ function AuthSignUpPassword() {
                     <button className="btn auth__form__btn signUp"
                                 type="submit"
                                 onClick={onSubmitSignUp}
-                        /*disabled={(!signUpValue.password || !signUpValue.password2) || (signUpValue.password !== signUpValue.password2)}*/>Продолжить</button>
+                                disabled={signUpValue.password !== signUpValue.password2}>Продолжить</button>
                     </form>
             </div>
 

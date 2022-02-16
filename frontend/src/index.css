@@ -204,6 +204,28 @@ p{
   border-bottom: 1px solid var(--add-darkGrey);
 }
 
+/* TEXTAREA */
+.form__textarea {
+  width: 471px;
+  min-height: 180px;
+  border: 1px solid var(--add-darkGrey);
+  border-radius: 18px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  line-height: 17px;
+  padding-top: 9px;
+  padding-left: 20px;
+  resize: none;
+}
+
+.form__textarea::placeholder {
+  color: var(--add-darkGrey);
+}
+
+.form__textarea:focus {
+  outline: none;
+}
+
 /*В Safari убирает иконку автозаполнения*/
 ::-webkit-credentials-auto-fill-button {
   visibility: hidden;
@@ -225,4 +247,10 @@ p{
   line-height: 15px;
   text-decoration-line: underline;
   color: var(--main-blue);
+}
+
+
+
+.required-sign {
+  color: var(--add-pink);
 }

@@ -40,8 +40,7 @@
     margin-bottom: 32px;
 }
 
-.required-sign {
-    color: var(--add-pink);
+.required-sign.chooseRole {
     margin-left: 8px;
 }
 

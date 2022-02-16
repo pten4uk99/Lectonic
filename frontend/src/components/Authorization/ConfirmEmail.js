@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import "../styles/ConfirmEmail.css";
-import {baseURL} from "../ProjectConstants";
+import "../../styles/ConfirmEmail.css";
+import {baseURL} from "../../ProjectConstants";
 
 
 export default function ConfirmEmail() {
@@ -14,7 +14,6 @@ export default function ConfirmEmail() {
     console.log("emailToken: ", emailToken);
 
     //отправляем запрос GET при загрузке страницы
-    useEffect(()=> {
         fetch(`${baseURL}/api/email/email_confirmation/?key=${emailToken}`, {
             method: 'GET',
             credentials: 'include',
@@ -27,18 +26,18 @@ export default function ConfirmEmail() {
               //  setConfirmationError(true);
                 navigate("/404");
             } else if (data.status == "success") {
-                navigate("/continue_registration");
+               navigate("/continue_registration");
             }
         }).catch((error) => {
                 console.log("ERROR: ", error);
-    })}, [])
+    })
 
-   /* return(
+   return(
         <div>
-            { confirmationError &&
+              { /* confirmationError &&
                 <div>
                     <h3>Произошла ошибка, вернитесь в почту и перейдите по ссылке ещё раз</h3>
-                </div>}
+                </div> */}
         </div>
-    )*/
+    )
 }

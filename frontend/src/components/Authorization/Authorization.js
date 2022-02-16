@@ -1,10 +1,10 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import "../styles/Authorization.css";
-import eyeOpen from "../img/eyeOpen.svg";
-import eyeClose from "../img/eyeClose.svg";
+import "../../styles/Authorization.css";
+import eyeOpen from "../../img/eyeOpen.svg";
+import eyeClose from "../../img/eyeClose.svg";
 import 'regenerator-runtime/runtime';
-import { baseURL } from "../ProjectConstants";
+import { baseURL } from "../../ProjectConstants";
 
 export default function Authorization() {
 
@@ -125,9 +125,6 @@ export default function Authorization() {
             .catch((error) => {
                 console.log("ERROR SignIn: ", error);
             })
-      // window.sessionStorage.setItem("email", signUpValue.email);
-       //console.log("this session e-mail: ", window.sessionStorage.getItem("email"));
-      // navigate("/verify_email");
     }
 
 //Checkbox согласие на обработку персональных данных
