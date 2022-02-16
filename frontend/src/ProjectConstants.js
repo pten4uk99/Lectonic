@@ -1,5 +1,5 @@
 // export const baseURL = 'https://lectonic.tk';
-export const baseURL = 'https://localhost:3000';
+export const baseURL = 'https://dev.lectonic.ru';
 
 
 
