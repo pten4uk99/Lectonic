@@ -16,7 +16,7 @@ export default function Footer(){
                 </div>
 
                 <div className="footer__supportInfo">
-                    <p className="footer__supportInfo-text">Техническая поддержка:<br/><span>support@lectonic.ru</span><br/>пн-вс: с 09:00 до 19:00</p>
+                    <p className="footer__supportInfo-text">Техническая поддержка:<br/><span>support@lectonic.ru</span></p>
                 </div>
 
                 <div className="footer__socials">

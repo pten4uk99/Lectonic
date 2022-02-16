@@ -7,7 +7,6 @@ import PersonalDetailsForm from "./components/PersonalDetailsForm";
 import NotFoundPage from "./components/NotFoundPage";
 import Footer from "./components/Footer";
 import UserProfile from "./components/UserProfile";
-import Header from "./components/Header";
 import ChangePassword from "./components/ChangePassword";
 import ChooseRole from "./components/ChooseRole";
 import ConfirmEmail from "./components/ConfirmEmail";
@@ -23,7 +22,7 @@ function App(){
           <Routes>
             <Route path ="/" element={<Main />} />
             <Route path ="/verify_email" element={<VerifyEmail />} />
-            <Route path ="/confirm_email/:myId" element={<ConfirmEmail />} />
+            <Route path ="/confirm_email" element={<ConfirmEmail />} />
             <Route path ="/continue_registration" element={<ContinueRegistration />} />
             <Route path ="/user_basic-info" element={<PersonalDetailsForm />} />
             <Route path ="/user_choose-role" element={<ChooseRole />} />
