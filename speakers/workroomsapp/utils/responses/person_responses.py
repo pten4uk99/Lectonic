@@ -45,6 +45,14 @@ def empty():
     )
 
 
+def no_data_in_request():
+    return response.get_response(
+        status=response.ERROR,
+        detail='Не передано данных для изменения профиля',
+        status_code=400
+    )
+
+
 def profile_does_not_exist():
     return response.get_response(
         status=response.ERROR,

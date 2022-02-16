@@ -17,7 +17,7 @@ errors = {
 
 class UserCreateSerializer(serializers.ModelSerializer):
     email = serializers.CharField(error_messages=errors)
-    password = serializers.CharField(error_messages=errors, min_length=8, max_length=40)
+    password = serializers.CharField(error_messages=errors)
 
     class Meta:
         model = User
@@ -38,7 +38,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         5. В строке не может быть пробелов
         '''
 
-        match = re.findall(r'^[\w.]+@\w+\.[a-z]{2,4}$', email)
+        match = re.findall(r'^[A-Za-z0-9]+@[A-Za-z0-9]+\.[a-z]{2,4}$', email)
 
         if not match:
             raise ValidationError('Некорректный e-mail')

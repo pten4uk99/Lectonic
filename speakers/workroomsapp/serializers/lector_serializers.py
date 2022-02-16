@@ -28,7 +28,8 @@ class DomainModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Domain
         # fields = '__all__'
-        fields = ('id', 'name', 'code',)
+        # fields = ('id', 'name', 'code',)
+        fields = ('id', 'name',)
 
 
 class UserSerializer(serializers.ModelSerializer):
