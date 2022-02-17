@@ -39,13 +39,13 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    'http://127.0.0.1:3000',
+    'https://dev.lectonic.ru',
+    'https://lectonic.ru',
 ]
 
-# CORS_ALLOWED_ORIGIN_REGEXES = [
-#     r'^http://(localhost|192\.168\.1\.51|127\.0\.0\.1):[\d]+$',
-# ]
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r'^http://(localhost|192\.168\.1\.51|127\.0\.0\.1):[\d]+$',
+]
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -54,8 +54,7 @@ ROOT_URLCONF = 'speakers.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # 'DIRS': [os.path.join(BASE_DIR, 'templates')],
-        'DIRS': [BASE_DIR / '../frontend/build', ],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -97,16 +96,13 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = (
-    BASE_DIR / '../frontend/build/static',
-)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'authapp.User'
 
-# DEFAULT_HOST = 'https://lectonic.tk'
+DEFAULT_HOST = 'https://lectonic.tk'
 
 try:
     from .local_settings import *
