@@ -8,7 +8,7 @@ import NotFoundPage from "./components/NotFoundPage";
 import Footer from "./components/Footer";
 import UserProfile from "./components/UserProfile";
 import ChangePassword from "./components/Authorization/ChangePassword";
-import ChooseRole from "./components/ChooseRole";
+import ChooseRole from "./components/ChooseRoleSteps/ChooseRole";
 import ConfirmEmail from "./components/Authorization/ConfirmEmail";
 import Lecturer from "./components/WorkRooms/Lecturer/components/Lecturer";
 

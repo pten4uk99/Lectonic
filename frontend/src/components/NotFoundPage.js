@@ -1,12 +1,12 @@
 import React from "react";
 import Header from "./Header";
-import Footer from "./Footer";
+import profileIcon from "../img/header_profile.svg";
 import "../styles/NotFoundPage.css";
 
 export default function NotFoundPage() {
     return (
         <>
-            <Header />
+            <Header src={profileIcon}/>
             <div className="not-found">
                 <div className="not-found__text">
                     <h2>Ошибка</h2>

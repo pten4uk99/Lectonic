@@ -28,8 +28,16 @@ import vk from "../../../../img/footer-vkontakte.svg";
 import fb from "../../../../img/footer-facebook.svg";
 import history from "../img/history.svg"
 
+import chatLecturer from "../img/chat_lecturer_temporary.svg";
+import chatCustomer from "../img/chat_customer_temporary.svg";
+import PopUpChat from "./PopUpChat";
 
 function Lecturer(props) {
+    /*работа с чатом*/
+    //const [isChatOpen, setChatOpen] = useState(false);
+    const [open, setOpen] = useState(false); //открыто модальное окно или нет
+
+
     let [lecturer, swapLecturer] = useState(true);
     let l_profile = useRef();
     let c_profile = useRef();
@@ -63,7 +71,8 @@ function Lecturer(props) {
                        alt="поиск" />
                   <img className="header__nav-chat"
                        src={iconChat}
-                       alt="поиск" />
+                       alt="чат"
+                  onClick={() => setOpen(true)}/>
 
                   <img className="header__nav-profile"
                        src={mini_photo}
@@ -71,6 +80,14 @@ function Lecturer(props) {
                        onClick={props.onOpenAuth} />
               </nav>
             </header>
+
+            {/*Чат-картинка открывается в модальном окне*/}
+            <PopUpChat isOpened={open}
+                   onModalClose={() => setOpen(false)}
+                   styleBody={{width: "76%"}}>
+                <img className="profile__chat-svg" src={ lecturer ? chatLecturer : chatCustomer}/>
+            </PopUpChat>
+
         <div className="full__profile">
             <div className="lecturer__background"><img src={bg} alt="Фон"/></div>
             <div className="lecturer__profile__header">
@@ -87,6 +104,11 @@ function Lecturer(props) {
                     <span>Туллий</span>
                     <span>Цицерон</span>
                 </div>
+                {/*Добавляю дивы для отображения ролей профиля */}
+                    <div className="profile-roles-btn lecturer-role">Лектор</div>
+                    <div className="profile-roles-btn">Заказчик</div>
+
+
             </div>
             <div className="lecturer__profile"
                  onClick={() => {swapLecturer(true); activateLecturer()}} ref={l_profile}>Лектор</div>
