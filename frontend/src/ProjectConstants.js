@@ -1,1 +1,1 @@
-export const baseURL = 'https://dev.lectonic.ru';
+export const baseURL = 'https://lectonic.tk';

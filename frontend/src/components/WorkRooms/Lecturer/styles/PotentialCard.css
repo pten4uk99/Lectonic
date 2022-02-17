@@ -1,0 +1,64 @@
+.potential__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 240px;
+    height: 316px;
+
+    margin-left: 12px;
+
+    box-shadow: 0 4px 40px rgba(0, 6, 32, 0.2);
+    border-radius: 18px;
+
+    transition: transform .2s;
+    cursor: pointer;
+}
+
+.potential__card:nth-of-type(1) {
+    margin-left: 0;
+}
+
+.potential__card:hover {
+    transform: scale(1.01);
+}
+
+.potential__card > .photo {
+    margin-top: 28px;
+}
+
+.potential__card > .card-header {
+    margin-top: 8px;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.potential__card > .card-body {
+    margin-top: 4px;
+
+    width: 200px;
+    height: 60px;
+
+    text-align: center;
+    font-size: 12px;
+}
+
+.potential__card > button {
+    margin-top: 10px;
+
+    width: 200px;
+    height: 40px;
+
+    border-radius: 30px;
+    border: none;
+    background-color: rgba(219, 219, 219, 1);
+
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+}
+
+.potential__card > button:hover {
+    border: 1px solid rgba(0, 0, 0, .4);
+}

@@ -10,6 +10,7 @@ import UserProfile from "./components/UserProfile";
 import ChangePassword from "./components/Authorization/ChangePassword";
 import ChooseRole from "./components/ChooseRole";
 import ConfirmEmail from "./components/Authorization/ConfirmEmail";
+import Lecturer from "./components/WorkRooms/Lecturer/components/Lecturer";
 
 
 
@@ -26,7 +27,7 @@ function App(){
             <Route path ="/continue_registration" element={<ContinueRegistration />} />
             <Route path ="/user_basic-info" element={<UserBasicInfo />} />
             <Route path ="/user_choose-role" element={<ChooseRole />} />
-            <Route path ="/user_profile" element={<UserProfile />} />
+            <Route path ="/user_profile" element={<Lecturer/>} />
             <Route path ="/change_password" element={<ChangePassword />} />
             <Route path ="*" element={<NotFoundPage />} />
           </Routes>
