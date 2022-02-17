@@ -1,9 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "./Header";
-import "../styles/ChangePassword.css";
-import profileSelected from "../img/header_profile-selected.svg";
-import backArrow from "../img/back-arrow.svg";
+import Header from "../Header";
+import "../../styles/ChangePassword.css";
+import profileSelected from "../../img/header_profile-selected.svg";
+import backArrow from "../../img/back-arrow.svg";
 
 export default function ChangePassword() {
 

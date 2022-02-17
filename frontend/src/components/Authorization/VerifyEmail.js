@@ -1,8 +1,9 @@
 import React from "react";
 import {Link} from "react-router-dom";
-import "../styles/VerifyEmail.css";
-import Header from "./Header";
-import profileSelected from "../img/header_profile-selected.svg";
+import "../../styles/VerifyEmail.css";
+import Header from "../Header";
+import profileSelected from "../../img/header_profile-selected.svg";
+import DropDownTest from "../DropDownTest";
 
 
 function VerifyEmail(){

@@ -106,7 +106,7 @@ export default function ChooseRole() {
                     </div>
                     <div className="chooseRole__content__block-wrapper">
                         <div className="choseRole-leftPart">
-                            <div>Кто вы?<span className="required-sign">*</span></div>
+                            <div>Кто вы?<span className="required-sign chooseRole">*</span></div>
                         </div>
                         <button className={`${isLecturerStep1 ? "btn-chosen" : "btn-notChosen"}`}
                                 onClick={showLecturerStep1}

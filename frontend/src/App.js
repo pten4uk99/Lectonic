@@ -1,15 +1,15 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Main from "./components/Main";
-import VerifyEmail from "./components/VerifyEmail";
-import ContinueRegistration from "./components/ContinueRegistration";
-import PersonalDetailsForm from "./components/PersonalDetailsForm";
+import VerifyEmail from "./components/Authorization/VerifyEmail";
+import ContinueRegistration from "./components/Authorization/ContinueRegistration";
+import UserBasicInfo from "./components/UserBasicInfo";
 import NotFoundPage from "./components/NotFoundPage";
 import Footer from "./components/Footer";
 import UserProfile from "./components/UserProfile";
-import ChangePassword from "./components/ChangePassword";
+import ChangePassword from "./components/Authorization/ChangePassword";
 import ChooseRole from "./components/ChooseRole";
-import ConfirmEmail from "./components/ConfirmEmail";
+import ConfirmEmail from "./components/Authorization/ConfirmEmail";
 
 
 
@@ -24,7 +24,7 @@ function App(){
             <Route path ="/verify_email" element={<VerifyEmail />} />
             <Route path ="/confirm_email" element={<ConfirmEmail />} />
             <Route path ="/continue_registration" element={<ContinueRegistration />} />
-            <Route path ="/user_basic-info" element={<PersonalDetailsForm />} />
+            <Route path ="/user_basic-info" element={<UserBasicInfo />} />
             <Route path ="/user_choose-role" element={<ChooseRole />} />
             <Route path ="/user_profile" element={<UserProfile />} />
             <Route path ="/change_password" element={<ChangePassword />} />

@@ -1,3 +1,5 @@
+//компонент Сергея
+
 import React, { useState, useEffect } from "react";
 import "../styles/DropdownElement.css";
 import downArrow from "../img/down-arrow.svg";
@@ -5,19 +7,19 @@ import downArrow from "../img/down-arrow.svg";
 export default function DropDownElement(props) {
   let { selectDetails } = props;
   let [options, setOptions] = useState("");
-  let [selectIsOpen, setSelectIsOpen] = useState(false);
+  let [isSelectOpen, setSelectOpen] = useState(false);
   let [choosenValue, setChoosenValue] = useState(selectDetails.default);
   let [filterValue, setFilterValue] = useState("");
 
   function toggleSelectIsOpen() {
-    let value = selectIsOpen;
-    setSelectIsOpen(!value);
+    let value = isSelectOpen;
+    setSelectOpen(!value);
   }
 
   useEffect(() => {
     document.querySelector("#root").addEventListener("click", (e) => {
-      console.log(selectIsOpen);
-      if (selectIsOpen) {
+      console.log(isSelectOpen);
+      if (isSelectOpen) {
         if (
           e.target.classList.contains("select-top") ||
           e.target.classList.contains("select-default") ||
@@ -27,7 +29,7 @@ export default function DropDownElement(props) {
         ) {
           console.log("click is inside");
         } else {
-          setSelectIsOpen(false);
+          setSelectOpen(false);
         }
       }
     });
@@ -35,7 +37,7 @@ export default function DropDownElement(props) {
 
   function handleChooseItem(value) {
     setChoosenValue(value);
-    setSelectIsOpen(false);
+    setSelectOpen(false);
     setFilterValue("");
   }
 
@@ -61,26 +63,21 @@ export default function DropDownElement(props) {
   return (
     <div className="select-section">
       <div className="select">
+
         <div className="select-top">
-          <input
-            className={
-              choosenValue === selectDetails.default
+          <input className={ choosenValue === selectDetails.default
                 ? "select-default"
-                : "select-choosen"
-            }
-            value={choosenValue}
-            onChange={(e) => handleInputChange(e)}
-            onFocus={() => setSelectIsOpen(true)}
-            onClick={() => handleInputClick()}
-          ></input>
-          <img
-            className={selectIsOpen ? "img-open" : "img-close"}
-            src={downArrow}
-            alt="select-icon"
-            onClick={toggleSelectIsOpen}
-          ></img>
+                : "select-choosen"}
+                value={choosenValue}
+                onChange={(e) => handleInputChange(e)}
+                onFocus={() => setSelectOpen(true)}
+                onClick={() => handleInputClick()} />
+          <img className={isSelectOpen ? "arrow-up" : "arrow-down"}
+               src={downArrow}
+               onClick={toggleSelectIsOpen} />
         </div>
-        {selectIsOpen && (
+
+        {isSelectOpen && (
           <div className="sub-select">
             {choosenValue !== selectDetails.default
               ? options.map((item) => {

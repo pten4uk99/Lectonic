@@ -93,7 +93,7 @@ h5 {
 }
 
 .auth__form__btn.signUp {
-    margin: 36px 0px 60px;
+    margin: 36px 0px 0px;
 }
 
 .auth__socials {
@@ -242,6 +242,4 @@ h5 {
 .auth__password-forgotten {
     padding-bottom: 60px;
 }
-
-
 

@@ -1,9 +1,4 @@
-input {
-  border: none;
-}
-
 .select-section {
-
   flex: 0 1 172px;
   font-size: 14px;
   line-height: 17px;
@@ -14,8 +9,7 @@ input {
   transition: all 1s ease-out;
   position: relative;
   height: 44px;
-  background-color: #ffffff;
-  max-width: 356px;
+  background-color: var(--main-white);
 }
 
 .select-big {
@@ -27,7 +21,7 @@ input {
 }
 
 .select-default {
-  color: #cfcfcf;
+  color: var(--add-darkGrey);
   font-size: 14px;
   line-height: 17px;
   font-family: "Montserrat", sans-serif;
@@ -36,9 +30,9 @@ input {
 .select-top {
   border: 1px solid var(--add-darkGrey);
   border-radius: 18px;
-
+  padding-top: 9px;
+  padding-left: 20px;
   display: flex;
-  padding: 13px 19px 13px 13px;
   align-items: center;
   justify-content: space-between;
 }
@@ -46,11 +40,11 @@ input {
 .select-top img {
   width: 15px;
 }
-.img-close {
+.arrow-down {
   transition: all 0.5s ease-out;
 }
 
-.img-open {
+.arrow-up {
   transform: rotateX(180deg);
 }
 
