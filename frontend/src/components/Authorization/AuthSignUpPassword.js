@@ -13,6 +13,9 @@ function AuthSignUpPassword() {
 //Для перехода
     const navigate = useNavigate();
 
+    const [errorMessageEmail, setErrorMessageEmail] = useState("");
+    const [errorMessagePassword, setErrorMessagePassword] = useState("");
+
 //ВХОД
 //изменение значений в инпутах
     const [signInValue, setSignInValue] = useState({
@@ -37,17 +40,30 @@ function AuthSignUpPassword() {
         await fetch(`${baseURL}/api/auth/login/`, {
             method: 'POST',
             headers: {
-                'Access-Control-Allow-Origin': '*'
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(userSignIn),
-
         })
             .then((response) => {
-                console.log("RESPONSE: ", response);
+                console.log("RESPONSE SignIn: ", response);
+                setErrorMessageEmail(""); //очищаем стейты, чтоб при новом запросе они исчезли
+                setErrorMessagePassword("");
+                return response.json();
+            }).then((data) => {
+                console.log("data: ", data);
+                //ниже идет проверка наличия ключа в объекте дата.
+                if ("non_field_errors" in data) {
+                    setErrorMessagePassword(data.non_field_errors[0]);
+                } if ("email" in data) {
+                    setErrorMessageEmail(data.email[0])
+                } if ("password" in data) {
+                    setErrorMessagePassword(data.password[0])
+                } if (data.status == ("logged_in" || "signed_in")) {
+                    navigate("/user_profile");
+                }
             })
             .catch((error) => {
-                console.log("ERROR: ", error);
-                console.log("ERROR DATA: ", error.response.data)
+                console.log("ERROR SignIn: ", error);
             })
     }
 
@@ -76,11 +92,6 @@ function AuthSignUpPassword() {
 
 //стейты для вывода ошибок с сервера при регистрации пароля
     const [errorSignUpPassword, setErrorSignUpPassword] = useState("");
-
-//проверка совпадения паролей
-    function isPasswordEqual() {
-
-    }
 
 //отправка email и пароля на сервер
     let userSignUp = {
@@ -186,7 +197,9 @@ function AuthSignUpPassword() {
                                type="email"
                                placeholder="E-mail"
                                value={signInValue.email}
-                               onChange={onChangeSignIn} />
+                               onChange={onChangeSignIn}
+                               style={{borderBottom: errorMessageEmail ? "1px solid var(--add-pink)" : ""}}/>
+                        {errorMessageEmail && <div className="form__input-error">{errorMessageEmail}</div>}
                     </div>
 
                     <div className="auth__form__input-wrapper">
@@ -196,7 +209,9 @@ function AuthSignUpPassword() {
                                placeholder="Пароль"
                                value={signInValue.password}
                                onChange={onChangeSignIn}
-                        />
+                               style={{borderBottom: errorMessagePassword ? "1px solid var(--add-pink)" : ""}}/>
+                        {errorMessagePassword && <div className="form__input-error">{errorMessagePassword}</div>}
+
                         <img
                             className="password-icon"
                             src={ hiddenSignIn ? eyeClose : eyeOpen}

@@ -316,3 +316,33 @@ footer.my_footer {
 
 @import "LectureCard.css";
 @import "PotentialCard.css";
+
+/*
+чтоб по-быстрому, ниже пропишу стиль для дивов ролей профиля Лектор и Заказчик
+ */
+
+.profile-roles-btn {
+    background-color: var(--add-grey);
+    border-radius: 45px;
+    font-size: 14px;
+    line-height: 17px;
+    font-weight: 700;
+    padding: 10px 20px;
+    height: 16px;
+    margin-top: 40px;
+}
+
+.lecturer-role {
+    margin-left: 178px;
+    margin-right: 12px;
+}
+
+/*подгон свг под попап*/
+.profile__chat-svg {
+    padding: 0;
+    margin-left: -36px;
+    margin-bottom: -48px;
+    margin-top: -72px;
+    width: 1053px;
+}
+

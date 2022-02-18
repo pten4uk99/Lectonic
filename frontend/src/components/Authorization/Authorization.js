@@ -15,7 +15,6 @@ export default function Authorization() {
 
     const [errorMessageEmail, setErrorMessageEmail] = useState("");
     const [errorMessagePassword, setErrorMessagePassword] = useState("");
-    const [errorM, setErrorM] = useState("");
 
 //ВХОД
 //изменение значений в инпутах
@@ -59,8 +58,7 @@ export default function Authorization() {
                 setErrorMessageEmail(data.email[0])
                 } if ("password" in data) {
                     setErrorMessagePassword(data.password[0])
-                } if (data.status == "logged_in") {
-                    console.log("cookie: ", document.cookie);
+                } if (data.status == ("logged_in" || "signed_in")) {
                     navigate("/user_profile");
                 }
             })
