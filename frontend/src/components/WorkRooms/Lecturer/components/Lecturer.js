@@ -27,6 +27,8 @@ import instagram from "../../../../img/footer-instagram.svg";
 import vk from "../../../../img/footer-vkontakte.svg";
 import fb from "../../../../img/footer-facebook.svg";
 import history from "../img/history.svg"
+import shadow from "../img/shadow.svg"
+import add_role from "../img/add_role.svg"
 
 import chatLecturer from "../img/chat_lecturer_temporary.svg";
 import chatCustomer from "../img/chat_customer_temporary.svg";
@@ -94,16 +96,17 @@ function Lecturer(props) {
                     <img src={photo_profile} alt="Фон"/>
                     <div className="edit-photo"><img src={edit_photo} alt=""/></div>
                 </div>
-                <div className="additional-info">
-                    <div className="edit-photo"><img src={additional} alt=""/></div>
-                    Дополнительная информация
-                </div>
+                {/*<div className="additional-info">*/}
+                {/*    <div className="edit-photo"><img src={additional} alt=""/></div>*/}
+                {/*    Дополнительная информация*/}
+                {/*</div>*/}
                 <div className="profile-name">
                     <span>Марк</span>
                     <span>Туллий</span>
                     <span>Цицерон</span>
                 </div>
                 {/*Добавляю дивы для отображения ролей профиля */}
+                    <img className="add-lecturer-role" src={add_role} alt=""/>
                     <div className="profile-roles-btn lecturer-role">Лектор</div>
                     <div className="profile-roles-btn">Заказчик</div>
 
@@ -184,6 +187,7 @@ function Lecturer(props) {
             </main> :
                 <Customer lecturer={lecturer}/>}
             <div className="history"><img src={history} alt=""/></div>
+            <div className="shadow"><img src={shadow} alt=""/></div>
                     <footer className="my_footer">
             <div className="footer-wrapper">
                 <div className="footer__rulesLinks">

@@ -19,7 +19,9 @@
 }
 
 .potential__card:hover {
-    transform: scale(1.01);
+    transform: scale(1.15);
+    background-color: #fff;
+    z-index: 5;
 }
 
 .potential__card > .photo {
