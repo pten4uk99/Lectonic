@@ -337,8 +337,12 @@ footer.my_footer {
     margin-right: 12px;
 }
 
+/*подгон свг под попап*/
 .profile__chat-svg {
     padding: 0;
-    margin: 0;
+    margin-left: -36px;
+    margin-bottom: -48px;
+    margin-top: -72px;
+    width: 1053px;
 }
 

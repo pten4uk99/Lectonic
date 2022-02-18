@@ -25,6 +25,7 @@
 }
 
 .Smodal__close {
+    position: relative;
     float: right;
     margin-top: 16px;
     margin-right: 16px;
