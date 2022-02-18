@@ -34,7 +34,6 @@ import PopUpChat from "./PopUpChat";
 
 function Lecturer(props) {
     /*работа с чатом*/
-    //const [isChatOpen, setChatOpen] = useState(false);
     const [open, setOpen] = useState(false); //открыто модальное окно или нет
 
 
@@ -84,7 +83,7 @@ function Lecturer(props) {
             {/*Чат-картинка открывается в модальном окне*/}
             <PopUpChat isOpened={open}
                    onModalClose={() => setOpen(false)}
-                   styleBody={{width: "76%"}}>
+                   styleBody={{width: "980px"}}>
                 <img className="profile__chat-svg" src={ lecturer ? chatLecturer : chatCustomer}/>
             </PopUpChat>
 
