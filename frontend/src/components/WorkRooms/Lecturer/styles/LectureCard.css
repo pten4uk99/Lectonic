@@ -7,6 +7,13 @@
 
     box-shadow: 0 4px 40px rgba(0, 6, 32, 0.2);
     border-radius: 18px;
+    transition: transform .2s;
+}
+
+.lecture__card:hover {
+    transform: scale(1.15);
+    background-color: #fff;
+    z-index: 5;
 }
 
 .lecture__card > .photo {

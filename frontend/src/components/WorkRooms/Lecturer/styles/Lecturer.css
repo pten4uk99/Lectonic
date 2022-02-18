@@ -219,6 +219,13 @@ section > .header > span {
 .lecture__cards > .lecture__card__empty {
     margin-right: 12px;
     z-index: 4;
+    transition: transform .2s;
+}
+
+.lecture__card__empty:hover {
+    transform: scale(1.15);
+    background-color: #fff;
+    z-index: 5;
 }
 
 
@@ -266,6 +273,13 @@ section > .header > span {
     height: 316px;
 
     background-color: transparent;
+    transition: transform .2s;
+}
+
+.lecturer__card:hover {
+    transform: scale(1.15);
+    background-color: #fff;
+    z-index: 5;
 }
 
 .lecturer__card > .photo {
@@ -314,6 +328,15 @@ footer.my_footer {
     width: 100%;
 }
 
+.shadow {
+    position: absolute;
+    top: 2645px;
+    z-index: 4;
+}
+.shadow > img {
+    width: 100%;
+}
+
 @import "LectureCard.css";
 @import "PotentialCard.css";
 
@@ -330,11 +353,19 @@ footer.my_footer {
     padding: 10px 20px;
     height: 16px;
     margin-top: 40px;
+    cursor: default;
 }
 
 .lecturer-role {
     margin-left: 178px;
     margin-right: 12px;
+}
+
+.add-lecturer-role {
+    position: absolute;
+    top: 40px;
+    transform: translate(390px, 0);
+    cursor: pointer;
 }
 
 /*подгон свг под попап*/
