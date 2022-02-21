@@ -124,8 +124,9 @@ module.exports = {
           },
         ],
       },
+
       {
-        test: /\.(png|jpe?g|gif|svg)$/i,
+        test: /\.(gif|png|jpe?g|svg)$/i,
         loader: "file-loader",
         options: {
           outputPath: PATHS.assets + "img",
@@ -140,16 +141,6 @@ module.exports = {
           name: "[name].[ext]",
         },
       },
-
-      // {
-      //   // test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
-      //   test: /\.(woff(2)?|ttf|eot)$/i,
-      //   loader: "file-loader",
-      //   options: {
-      //     outputPath: PATHS.assets + "fonts",
-      //     name: "[name].[ext]",
-      //   },
-      // },
     ],
   },
   resolve: {
