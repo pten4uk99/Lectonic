@@ -28,8 +28,10 @@ module.exports = {
     app: `${PATHS.src}index.js`,
   },
   output: {
-    // filename: "js/[name].[chunkhash].js",
+    filename: "js/[name].[chunkhash].js",
+    // filename: `${PATHS.assets}js/[name].[chunkhash].js`,
     path: PATHS.build,
+    // publicPath: "/",
   },
   optimization: {
     splitChunks: {
@@ -51,23 +53,9 @@ module.exports = {
         exclude: /node_modules/,
         use: ["babel-loader"],
       },
-      // {
-      //   test: /\.css$/,
-      //   use: [
-      //     {
-      //       loader: MiniCssExtractPlugin.loader,
-      //       options: {
-      //         esModule: true,
-      //       },
-      //     },
-      //     "css-loader",
-      //   ],
-      // },
       {
         test: /\.css$/,
         use: [
-          // "style-loader",
-
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
@@ -75,16 +63,16 @@ module.exports = {
               esModule: true,
             },
           },
-          // {
-          //   loader: "postcss-loader",
-          //   options: {
-          //     // sourceMap: true,
-          //     postcssOptions: {
-          //       config: `${PATHS.conf}/postcss.config.js`,
-          //     },
-          //   },
-          // },
           "css-loader",
+          {
+            loader: "postcss-loader",
+            options: {
+              // sourceMap: true,
+              postcssOptions: {
+                config: `${PATHS.conf}/postcss.config.js`,
+              },
+            },
+          },
         ],
       },
       {
@@ -137,22 +125,31 @@ module.exports = {
         ],
       },
       {
-        test: /\.(png|jpe?g|gif|svg|ttf)$/i,
+        test: /\.(png|jpe?g|gif|svg)$/i,
         loader: "file-loader",
         options: {
           outputPath: PATHS.assets + "img",
           name: "[name].[ext]",
         },
       },
-
       {
-        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        test: /\.(woff(2)?|ttf|eot)$/i,
         loader: "file-loader",
         options: {
           outputPath: PATHS.assets + "fonts",
           name: "[name].[ext]",
         },
       },
+
+      // {
+      //   // test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
+      //   test: /\.(woff(2)?|ttf|eot)$/i,
+      //   loader: "file-loader",
+      //   options: {
+      //     outputPath: PATHS.assets + "fonts",
+      //     name: "[name].[ext]",
+      //   },
+      // },
     ],
   },
   resolve: {
@@ -163,6 +160,7 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       // filename: `${PATHS.assets}css/[name].[contenthash].css`,
+      filename: `css/[name].[contenthash].css`,
     }),
     new CopyWebpackPlugin({
       patterns: [

@@ -1,4 +1,4 @@
-.Smodal__wrapper {
+.smodal__wrapper {
   position: fixed;
   top: 0;
   width: 100%;
@@ -7,7 +7,7 @@
   z-index: 100;
 }
 
-.Smodal__wrapper.open {
+.smodal__wrapper.open {
   height: 100%;
   display: block;
 }
