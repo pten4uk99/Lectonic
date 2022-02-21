@@ -1,24 +1,24 @@
 .inside__container > .days-of-week__container {
-    display: flex;
-    flex-direction: column;
-    width: 505px;
+  display: flex;
+  flex-direction: column;
+  width: 505px;
 }
 
 .days-of-week__container > .days-of-week {
-    display: flex;
-    justify-content: space-around;
+  display: flex;
+  justify-content: space-around;
 }
 
 .days-of-week__container > .days-of-week > .day-of-week {
-    color: #B4B4B4;
+  color: #b4b4b4;
 }
 
 .days-of-week__container > .days-of-week__underline {
-    width: 492px;
-    height: 1px;
+  width: 492px;
+  height: 1px;
 
-    background-color: #DBDBDB;
-    border: none;
+  background-color: #dbdbdb;
+  border: none;
 
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }

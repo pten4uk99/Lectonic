@@ -31,7 +31,9 @@
   margin-left: -72px;
 }
 
-.location-icon, .info-icon, .birthdate-icon {
+.location-icon,
+.info-icon,
+.birthdate-icon {
   margin-right: 12px;
 }
 

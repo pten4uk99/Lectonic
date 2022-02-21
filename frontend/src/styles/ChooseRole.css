@@ -1,61 +1,58 @@
 .chooseRole__steps__text-wrapper {
-    width: 61%;
-    margin: 60px auto 12px;
-    display: flex;
-    justify-content: space-between;
+  width: 61%;
+  margin: 60px auto 12px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .chooseRole__steps__bar {
-    height: 5px;
-    width: 77%;
-    margin: 0px auto 36px;
-    border-radius: 3px;
-    background-color: var(--add-grey);
+  height: 5px;
+  width: 77%;
+  margin: 0px auto 36px;
+  border-radius: 3px;
+  background-color: var(--add-grey);
 }
 
 .chooseRole__steps__bar-current {
-    height: 5px;
-    width: 25%;
-    border-radius: 3px;
-    background-color: var(--main-blue);
+  height: 5px;
+  width: 25%;
+  border-radius: 3px;
+  background-color: var(--main-blue);
 }
 
 .chooseRole__content-wrapper {
-    font-size: 14px;
-    line-height: 17px;
+  font-size: 14px;
+  line-height: 17px;
 }
 
 .chooseRole__role__text {
-    display: flex;
-    margin: 0px auto 36px;
+  display: flex;
+  margin: 0px auto 36px;
 }
 
-.chooseRole__role__text >p {
-    padding-top: 3px;
+.chooseRole__role__text > p {
+  padding-top: 3px;
 }
 
 .chooseRole__content__block-wrapper {
-    display: flex;
-    align-items: center;
-    margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 32px;
 }
 
 .required-sign.chooseRole {
-    margin-left: 8px;
+  margin-left: 8px;
 }
 
 .chooseRole__bottom-btns {
-    padding-top: 16px;
-    text-align: center;
- }
+  padding-top: 16px;
+  text-align: center;
+}
 
 .choseRole-leftPart {
-    margin-right: 20px;
-    width: 41%;
-    text-align: end;
+  margin-right: 20px;
+  width: 41%;
+  text-align: end;
 }
 
 /*БЛОК ЛЕКТОР */
-
-
-

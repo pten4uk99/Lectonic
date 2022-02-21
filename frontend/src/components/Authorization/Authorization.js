@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import "../../styles/Authorization.css";
-import eyeOpen from "../../img/eyeOpen.svg";
-import eyeClose from "../../img/eyeClose.svg";
+import eyeOpen from "../../assets/img/eyeOpen.svg";
+import eyeClose from "../../assets/img/eyeClose.svg";
 import 'regenerator-runtime/runtime';
 import { baseURL } from "../../ProjectConstants";
 

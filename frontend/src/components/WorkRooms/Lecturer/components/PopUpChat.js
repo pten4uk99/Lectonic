@@ -1,21 +1,25 @@
 import React from "react";
 import "../styles/PopUpChat.css";
-import closeIcon from "../../../../img/icon-close.svg";
+import closeIcon from "../../../../assets/img/icon-close.svg";
 
-const PopUpChat = props => {
+const PopUpChat = (props) => {
+  return (
+    <div
+      className={`Smodal__wrapper ${props.isOpened ? "open" : "close"}`}
+      style={{ ...props.styleWrapper }}
+    >
+      <div className="Smodal__body" style={{ ...props.styleBody }}>
+        <img
+          className="Smodal__close"
+          src={closeIcon}
+          alt="закрыть"
+          onClick={props.onModalClose}
+        />
 
-    return (
-        <div className={`Smodal__wrapper ${props.isOpened ? "open" : "close"}`} style={{...props.styleWrapper}}>
-            <div className="Smodal__body" style={{...props.styleBody}}>
-                <img className="Smodal__close"
-                     src={closeIcon}
-                     alt="закрыть"
-                     onClick={props.onModalClose} />
-
-                {props.children}
-            </div>
-        </div>
-    )
-}
+        {props.children}
+      </div>
+    </div>
+  );
+};
 
 export default PopUpChat;

@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import DropDownElement from "./DropdownElement";
 import Header from "./Header";
 import "../styles/UserBasicInfo.css";
-import locationIcon from "../img/location-icon.svg";
-import birthdateIcon from "../img/birthdate-icon.svg";
-import infoIcon from "../img/Info-icon.svg";
-import profileSelected from "../img/header_profile-selected.svg";
+import locationIcon from "../assets/img/location-icon.svg";
+import birthdateIcon from "../assets/img/birthdate-icon.svg";
+import infoIcon from "../assets/img/Info-icon.svg";
+import profileSelected from "../assets/img/header_profile-selected.svg";
 import DropDownTest from "./DropDownTest";
 
 
