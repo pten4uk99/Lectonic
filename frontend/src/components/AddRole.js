@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import "../styles/AddRole.css";
-import addRoleIcon from "../assets/img/addRole-icon.svg";
-import addRoleIconHover from "../assets/img/addRole-icon-hover.svg";
-import Icons from "./Icons";
-import DropdownElement from "./DropdownElement";
-import DropDownElement from "./DropdownElement";
+import "~/styles/AddRole.css";
+import addRoleIcon from "~/assets/img/addRole-icon.svg";
+import addRoleIconHover from "~/assets/img/addRole-icon-hover.svg";
+import Icons from "~/components/Icons";
+import DropdownElement from "~/components/DropdownElement";
+import DropDownElement from "~/components/DropdownElement";
 
 export default function AddRole(props) {
   let roleSelect = {

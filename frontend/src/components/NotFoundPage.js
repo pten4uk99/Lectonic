@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "./Header";
-import profileIcon from "../assets/img/header_profile.svg";
-import "../styles/NotFoundPage.css";
+import profileIcon from "~/assets/img/header_profile.svg";
+import "~/styles/NotFoundPage.css";
 
 export default function NotFoundPage() {
   return (

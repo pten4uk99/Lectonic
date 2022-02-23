@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Header from "../Header";
-import "../../styles/ChooseRole.css";
+import "~/styles/ChooseRole.css";
 import DropDownElement from "../DropdownElement";
 import ChooseRole_Lecturer_step1 from "./ChooseRole_Lecturer_step1";
 import ChooseRole_Lecturer_step2 from "./ChooseRole_Lecturer_step2";
@@ -10,7 +10,7 @@ import ChooseRole_Customer_step1 from "./ChooseRole_Customer_step1";
 import ChooseRole_Customer_step2 from "./ChooseRole_Customer_step2";
 import ChooseRole_Customer_step3 from "./ChooseRole_Customer_step3";
 import ChooseRole_Customer_step4 from "./ChooseRole_Customer_step4";
-import profileSelected from "../../assets/img/header_profile-selected.svg";
+import profileSelected from "~/assets/img/header_profile-selected.svg";
 
 //пока есть вопрос по логике переключения шагов, уточняю
 export default function ChooseRole() {

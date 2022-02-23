@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Header from "../Header";
 import Modal from "../Modal";
-import profileSelected from "../../assets/img/header_profile-selected.svg";
-import profile from "../../assets/img/header_profile.svg";
+import profileSelected from "~/assets/img/header_profile-selected.svg";
+import profile from "~/assets/img/header_profile.svg";
 import AuthSignUpPassword from "./AuthSignUpPassword";
 
 function ContinueRegistration() {

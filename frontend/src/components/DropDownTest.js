@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "../styles/DropDownTest.css";
-import downArrow from "../assets/img/down-arrow.svg";
-import upArrow from "../assets/img/up-arrow.svg";
+import "~/styles/DropDownTest.css";
+import downArrow from "~/assets/img/down-arrow.svg";
+import upArrow from "~/assets/img/up-arrow.svg";
 
 export default function DropDownTest(props) {
   let { selectDetails } = props;

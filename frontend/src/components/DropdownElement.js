@@ -1,8 +1,8 @@
 //компонент Сергея
 
 import React, { useState, useEffect } from "react";
-import "../styles/DropdownElement.css";
-import downArrow from "../assets/img/down-arrow.svg";
+import "~/styles/DropdownElement.css";
+import downArrow from "~/assets/img/down-arrow.svg";
 
 export default function DropDownElement(props) {
   let { selectDetails } = props;

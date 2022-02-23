@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "../assets/img/header_logo.svg";
-import iconSearch from "../assets/img/icon-search.svg";
-import "../styles/Header.css";
+import logo from "~/assets/img/header_logo.svg";
+import iconSearch from "~/assets/img/icon-search.svg";
+import "~/styles/Header.css";
 
 function Header(props) {
   console.log(logo, iconSearch);

@@ -1,14 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.styl";
-import "./components/WorkRooms/index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
+import "~/index.styl";
+import "~/components/WorkRooms/index.css";
+import App from "~/App";
+import reportWebVitals from "~/reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import { combineReducers, createStore } from "redux";
 import { Provider } from "react-redux";
-import calendar from "./components/WorkRooms/Calendar/redux/reducers/calendar";
-import dateDetail from "./components/WorkRooms/DateDetail/redux/reducers/dateDetail";
+import calendar from "~/components/WorkRooms/Calendar/redux/reducers/calendar";
+import dateDetail from "~/components/WorkRooms/DateDetail/redux/reducers/dateDetail";
 
 console.clear();
 

@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import Header from "./Header";
-import "../styles/UserProfile.css";
-import avatarDefault from "../assets/img/avatar-default.svg";
-import photoIcon from "../assets/img/photo-icon.svg";
-import photoIconHover from "../assets/img/photo-icon-hover.svg";
-import roleIcon from "../assets/img/role-icon.svg";
+import "~/styles/UserProfile.css";
+import avatarDefault from "~/assets/img/avatar-default.svg";
+import photoIcon from "~/assets/img/photo-icon.svg";
+import photoIconHover from "~/assets/img/photo-icon-hover.svg";
+import roleIcon from "~/assets/img/role-icon.svg";
 import Icons from "./Icons";
 import AddRole from "./AddRole";
-import additionalIcon from "../assets/img/additional-icon.svg";
-import additionalIconHover from "../assets/img/additional-icon-hover.svg";
+import additionalIcon from "~/assets/img/additional-icon.svg";
+import additionalIconHover from "~/assets/img/additional-icon-hover.svg";
 import Modal from "./Modal";
 import ChangeAvatar from "./ChangeAvatar";
 

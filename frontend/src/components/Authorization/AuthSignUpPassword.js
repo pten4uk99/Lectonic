@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import {useNavigate, Link} from "react-router-dom";
-import "../../styles/Authorization.css";
-import eyeOpen from "../../assets/img/eyeOpen.svg";
-import eyeClose from "../../assets/img/eyeClose.svg";
+import "~/styles/Authorization.css";
+import eyeOpen from "~/assets/img/eyeOpen.svg";
+import eyeClose from "~/assets/img/eyeClose.svg";
 import 'regenerator-runtime/runtime';
-import { baseURL } from "../../ProjectConstants.js";
+import { baseURL } from "~/ProjectConstants.js";
 
 function AuthSignUpPassword() {
 
@@ -240,9 +240,9 @@ function AuthSignUpPassword() {
                 {/* пока вход через соц сети не используется
                 <div className="auth__socials">
                     <span>или</span>
-                    <button className="auth__socials__btn-google"><public src={require("../../public/google-icon.svg").default}/>Войти через Google</button>
-                    <button className="auth__socials__btn-fb"><public src={require("../../public/fb-icon.svg").default}/>Войти через Facebook</button>
-                    <button className="auth__socials__btn-vk"><public src={require("../../public/vk-icon.svg").default}/>Войти через VK</button>
+                    <button className="auth__socials__btn-google"><public src={require("~/public/google-icon.svg").default}/>Войти через Google</button>
+                    <button className="auth__socials__btn-fb"><public src={require("~/public/fb-icon.svg").default}/>Войти через Facebook</button>
+                    <button className="auth__socials__btn-vk"><public src={require("~/public/vk-icon.svg").default}/>Войти через VK</button>
                 </div> */}
 
                 <div className="auth__bottom-text">Ещё нет аккаунта? <h5 onClick={handleSignUpShow}>Зарегистрироваться</h5></div>

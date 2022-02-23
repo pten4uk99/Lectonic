@@ -3,10 +3,10 @@
 //Связка выбранного файла с аватаркой в хедере
 
 import React, { useState } from "react";
-import "../styles/ChangeAvatar.css";
-import avatarDefault from "../assets/img/avatar-default.svg";
-import avatarFemale from "../assets/img/avatar-fem.svg";
-import avatarMale from "../assets/img/avatar-male.svg";
+import "~/styles/ChangeAvatar.css";
+import avatarDefault from "~/assets/img/avatar-default.svg";
+import avatarFemale from "~/assets/img/avatar-fem.svg";
+import avatarMale from "~/assets/img/avatar-male.svg";
 
 export default function ChangeAvatar() {
   const [chosenFile, setChosenFile] = useState(null); //выбранный файл для отправки на сервер
