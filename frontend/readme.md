@@ -39,9 +39,12 @@
         manifest.json
         robots.txt
 
-- добавлен алиас для каталога src. Теперь для задания пути файла не требуется использовать многослойные переходы
+- добавлен алиас для каталога **src**. Теперь для задания пути файла не требуется использовать многослойные переходы
+
   `../../../path/to/resource`
+
   достаточно указать
+
   `~/path/to/resource`
 
 #### **Файлы конфигурации**
@@ -55,7 +58,9 @@
 **Сравнение пакетных менеджеров npm vs yarn**
 
 https://www.youtube.com/watch?v=0DGClZD5LEM
+
 https://www.youtube.com/watch?v=0DGClZD5LEM
+
 https://prgssr.ru/development/yarn-ili-npm-vse-chto-vam-nuzhno-znat.html
 
 **Документация по Stylus**
