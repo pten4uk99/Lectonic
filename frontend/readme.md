@@ -5,7 +5,7 @@
 #### **Package.json**
 
 - замена пакетного менеджера **npm** на **yarn**
-- замена **package.json.lock** на **yarn.lock**
+- замена **package-lock.json** на **yarn.lock**
 - перенос зависимостей из продакшн в девелопмент
 - добавлена поддержка **postcss**, **stylus**, **imagemin**
 - добавлен линтер CSS **Stylelint**
