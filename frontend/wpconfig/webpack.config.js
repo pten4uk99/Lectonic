@@ -17,8 +17,7 @@ const PATHS = {
 };
 
 const PAGES_DIR = `${PATHS.src}/pages/`;
-// const PAGES = fs.readdirSync(PAGES_DIR)
-// .filter((fileName) => fileName.endsWith(".pug"));
+
 
 module.exports = {
   externals: {
@@ -29,9 +28,7 @@ module.exports = {
   },
   output: {
     filename: "js/[name].[chunkhash].js",
-    // filename: `${PATHS.assets}js/[name].[chunkhash].js`,
     path: PATHS.build,
-    // publicPath: "/",
   },
   optimization: {
     splitChunks: {
@@ -45,7 +42,6 @@ module.exports = {
       },
     },
   },
-  //   entry: ['regenerator-runtime/runtime.js', './src/index.js'],
   module: {
     rules: [
       {
@@ -67,7 +63,6 @@ module.exports = {
           {
             loader: "postcss-loader",
             options: {
-              // sourceMap: true,
               postcssOptions: {
                 config: `${PATHS.conf}/postcss.config.js`,
               },
@@ -87,7 +82,6 @@ module.exports = {
           {
             loader: "postcss-loader",
             options: {
-              // sourceMap: true,
               postcssOptions: {
                 config: `${PATHS.conf}/postcss.config.js`,
               },
@@ -104,7 +98,6 @@ module.exports = {
           {
             loader: "css-loader",
             options: {
-              // publicPath: `${PATHS.src}styles/`,
               sourceMap: true,
               esModule: true,
             },
@@ -150,7 +143,6 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      // filename: `${PATHS.assets}css/[name].[contenthash].css`,
       filename: `css/[name].[contenthash].css`,
     }),
     new CopyWebpackPlugin({

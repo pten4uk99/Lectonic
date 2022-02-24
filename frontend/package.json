@@ -8,8 +8,6 @@
     "last 3 version"
   ],
   "scripts": {
-    "sass": "node-sass -w ./src/styles/index.scss -o ./src",
-    "start": "webpack-dev-server",
     "dev": "webpack-dev-server --config wpconfig/webpack.dev.config.js",
     "build": "webpack --config wpconfig/webpack.prod.config.js"
   },
