@@ -1,8 +1,8 @@
 //компонент Сергея
 
 import React, { useState, useEffect } from "react";
-import "../styles/DropdownElement.css";
-import downArrow from "../img/down-arrow.svg";
+import "~/styles/DropdownElement.css";
+import downArrow from "~/assets/img/down-arrow.svg";
 
 export default function DropDownElement(props) {
   let { selectDetails } = props;
@@ -63,18 +63,23 @@ export default function DropDownElement(props) {
   return (
     <div className="select-section">
       <div className="select">
-
         <div className="select-top">
-          <input className={ choosenValue === selectDetails.default
+          <input
+            className={
+              choosenValue === selectDetails.default
                 ? "select-default"
-                : "select-choosen"}
-                value={choosenValue}
-                onChange={(e) => handleInputChange(e)}
-                onFocus={() => setSelectOpen(true)}
-                onClick={() => handleInputClick()} />
-          <img className={isSelectOpen ? "arrow-up" : "arrow-down"}
-               src={downArrow}
-               onClick={toggleSelectIsOpen} />
+                : "select-choosen"
+            }
+            value={choosenValue}
+            onChange={(e) => handleInputChange(e)}
+            onFocus={() => setSelectOpen(true)}
+            onClick={() => handleInputClick()}
+          />
+          <img
+            className={isSelectOpen ? "arrow-up" : "arrow-down"}
+            src={downArrow}
+            onClick={toggleSelectIsOpen}
+          />
         </div>
 
         {isSelectOpen && (

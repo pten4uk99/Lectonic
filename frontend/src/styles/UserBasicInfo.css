@@ -26,12 +26,14 @@
 
 .userInfo__form__inputIcon-container {
   display: flex;
-  align-items: start;
+  align-items: flex-start;
   margin-bottom: 12px;
   margin-left: -72px;
 }
 
-.location-icon, .info-icon, .birthdate-icon {
+.location-icon,
+.info-icon,
+.birthdate-icon {
   margin-right: 12px;
 }
 

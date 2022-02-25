@@ -20,12 +20,12 @@ import DateDetail from "../../DateDetail/components/DateDetail";
 import Customer from "./Customer";
 import Header from "../../../Header";
 import {Link} from "react-router-dom";
-import logo from "../../../../img/header_logo.svg";
-import iconSearch from "../../../../img/icon-search.svg";
+import logo from "../../../../assets/img/header_logo.svg";
+import iconSearch from "../../../../assets/img/icon-search.svg";
 import iconChat from "../img/chat.svg"
-import instagram from "../../../../img/footer-instagram.svg";
-import vk from "../../../../img/footer-vkontakte.svg";
-import fb from "../../../../img/footer-facebook.svg";
+import instagram from "../../../../assets/img/footer-instagram.svg";
+import vk from "../../../../assets/img/footer-vkontakte.svg";
+import fb from "../../../../assets/img/footer-facebook.svg";
 import history from "../img/history.svg"
 import shadow from "../img/shadow.svg"
 import add_role from "../img/add_role.svg"

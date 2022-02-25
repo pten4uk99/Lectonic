@@ -1,27 +1,28 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../Header";
-import "../../styles/ChangePassword.css";
-import profileSelected from "../../img/header_profile-selected.svg";
-import backArrow from "../../img/back-arrow.svg";
+import "~/styles/ChangePassword.css";
+import profileSelected from "~/assets/img/header_profile-selected.svg";
+import backArrow from "~/assets/img/back-arrow.svg";
 
 export default function ChangePassword() {
+  const navigate = useNavigate();
+  function backToRegistration() {
+    navigate("/");
+  }
 
-    const navigate = useNavigate();
-    function backToRegistration() {
-        navigate("/")
-    }
-
-    return (
-        <>
-            <Header src={profileSelected}/>
-            <img className="change-password__back-arrow"
-                 src={backArrow}
-                 onClick={backToRegistration}/>
-            <div className="change-password__text">
-                <h2>Смена пароля</h2>
-                <p>На Ваш e-mail отправлена ссылка для смены пароля.</p>
-            </div>
-        </>
-    )
-};
+  return (
+    <>
+      <Header src={profileSelected} />
+      <img
+        className="change-password__back-arrow"
+        src={backArrow}
+        onClick={backToRegistration}
+      />
+      <div className="change-password__text">
+        <h2>Смена пароля</h2>
+        <p>На Ваш e-mail отправлена ссылка для смены пароля.</p>
+      </div>
+    </>
+  );
+}
