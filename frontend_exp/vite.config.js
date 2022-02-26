@@ -3,7 +3,9 @@ import react from '@vitejs/plugin-react'
 import { babel } from '@rollup/plugin-babel'
 import eslintPlugin from 'vite-plugin-eslint'
 const { resolve } = require('path')
+
 // https://vitejs.dev/config/
+
 export default defineConfig({
   resolve: {
     alias: {
@@ -13,12 +15,12 @@ export default defineConfig({
     },
   },
   publicDir: resolve(__dirname, 'src/static/'),
-  root: resolve(__dirname, 'src/'),
+  root: resolve(__dirname, './'),
   build: {
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'src/index.html'),
+        main: resolve(__dirname, 'index.html'),
       },
       output: {
         // dir: resolve(__dirname, 'dist/'),
