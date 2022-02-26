@@ -3,25 +3,40 @@ header {
   box-shadow: 0px 4px 40px rgba(0, 12, 63, 0.2);
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 
 .header-logo {
-  width: 170px;
-  height: 30px;
+  margin-top: 21px;
+  width: 155px;
+  height: 27px;
   margin-left: 60px;
   cursor: pointer;
 }
 
 .header__nav {
+  margin-top: 14px;
   margin-right: 60px;
 }
 
 .header__nav-search,
-.header__nav-profile {
+.header__nav-profile,
+.header__nav-burger {
   cursor: pointer;
+  width: 56px;
+  height: 32px;
 }
 
 .header__nav-search {
   margin-right: 48px;
+}
+
+@media screen and (max-width: 720px) {
+  .header-logo{
+    width: 121px;
+    height: 21px;
+    margin-left: 20px;
+  }
+  .header__nav {
+    margin-right: 20px;
+  }
 }
