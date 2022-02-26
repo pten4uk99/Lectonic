@@ -8,48 +8,43 @@ import fb from '~/assets/img/footer-facebook.svg'
 export default function Footer() {
   return (
     <footer>
-      <div className='footer-wrapper'>
-        <div className='footer__rulesLinks'>
-          <Link to=''>
-            <p className='footer__rulesLinks-text conditions'>
-              Условия использования
-            </p>
+      <div className="footer-wrapper">
+        <div className="footer__supportInfo is-mobile">
+          Техническая поддержка:
+          <br />
+          <span>support@lectonic.ru</span>
+        </div>
+        <div className="footer__rules">
+          <Link className="footer__rules-link" to="">
+            Условия использования
           </Link>
-          <Link to=''>
-            <p className='footer__rulesLinks-text'>
-              Политика конфиденциальности
-            </p>
+          <Link className="footer__rules-link" to="">
+            Политика конфиденциальности
           </Link>
         </div>
 
-        <div className='footer__supportInfo'>
-          <p className='footer__supportInfo-text'>
-            Техническая поддержка:
-            <br />
-            <span>support@lectonic.ru</span>
-          </p>
+        <div className="footer__supportInfo is-desktop">
+          Техническая поддержка:
+          <br />
+          <span>support@lectonic.ru</span>
         </div>
 
-        <div className='footer__socials'>
-          <p className='footer__socials-text'>Мы в соц. сетях:</p>
-          <div className='footer__socials-icons'>
-            <a
-              href='https://www.instagram.com/'
-              rel='noreferrer'
-              target='_blank'
-            >
-              <img src={instagram} alt='Instagram' />
+        <div className="footer__socials">
+          <p className="footer__socials-text">Мы в соц. сетях:</p>
+          <div className="footer__socials-icons">
+            <a href="https://www.instagram.com/" target="_blank">
+              <img className="footer__insta-icon" src={instagram} alt="Instagram" />
             </a>
-            <a href='https://www.vk.com' rel='noreferrer' target='_blank'>
-              <img src={vk} alt='VKontakte' />
+            <a href="https://www.vk.com" target="_blank">
+              <img className="footer__vk-icon" src={vk} alt="VKontakte" />
             </a>
-            <a href='https://www.facebook.com' rel='noreferrer' target='_blank'>
-              <img src={fb} alt='Facebook' />
+            <a href="https://www.facebook.com" target="_blank">
+              <img className="footer__fb-icon" src={fb} alt="Facebook" />
             </a>
           </div>
         </div>
       </div>
-      <div className='footer__copyright'>2022 © Сервис Lectonic</div>
+      <div className="footer__copyright">2022 © Сервис Lectonic</div>
     </footer>
-  )
+  );
 }
