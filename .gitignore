@@ -162,3 +162,5 @@ sup*
 
 # Server
 staticfiles/
+
+node_modules/
