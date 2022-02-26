@@ -7,8 +7,8 @@ header {
 }
 
 .header-logo {
-  width: 170px;
-  height: 30px;
+  width: 155px;
+  height: 27px;
   margin-left: 60px;
   cursor: pointer;
 }
@@ -24,4 +24,18 @@ header {
 
 .header__nav-search {
   margin-right: 48px;
+}
+
+@media screen and (max-width: 720px) {
+  .header-logo{
+    width: 121px;
+    height: 21px;
+    margin-left: 20px;
+  }
+  .header__nav {
+    margin-right: 20px;
+  }
+  .header__nav-burger {
+    cursor: pointer;
+  }
 }

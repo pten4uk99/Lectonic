@@ -24,23 +24,26 @@ function Main() {
         <Authorization />
       </Modal>
       <div className="main">
-        <p className="main__text-header">
-          Платформа для лекторов
-          <br />и не только!
-        </p>
-        <p className="main__text">
-          Мы работаем, чтобы слушатели и лекторы
-          <br />
-          могли легко взаимодействовать
-        </p>
-        <button className="btn main__btn" onClick={() => setOpen(true)}>
-          Присоединиться
-        </button>
-        <img
-          className="main__illustration"
-          src={mainIllustration}
-          alt="Иллюстрация"
-        />
+        <div className="main__text-wrapper">
+          <p className="main__text-header">
+            Платформа для лекторов
+            <br />и не только!
+          </p>
+          <p className="main__text">
+            Работаем, чтобы слушатели слышали,
+            <br />а лекторы читали.
+          </p>
+          <button className="btn main__btn" onClick={() => setOpen(true)}>
+            Присоединиться
+          </button>
+        </div>
+        <div className="main__illustration-wrapper">
+          <img
+            className="main__illustration"
+            src={mainIllustration}
+            alt="Иллюстрация"
+          />
+        </div>
       </div>
     </>
   );

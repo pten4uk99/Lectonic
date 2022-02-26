@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import logo from "~/assets/img/header_logo.svg";
 import iconSearch from "~/assets/img/icon-search.svg";
+import burgerMenu from "~/assets/img/burger-menu.svg";
 import "~/styles/Header.css";
 
 function Header(props) {
@@ -13,13 +14,22 @@ function Header(props) {
       </Link>
 
       <nav className="header__nav">
-        <img className="header__nav-search" src={iconSearch} alt="поиск" />
+        <img className="header__nav-search is-desktop" 
+             src={iconSearch} 
+             alt="поиск" />
 
         <img
-          className="header__nav-profile"
+          className="header__nav-profile is-desktop"
           src={props.src}
-          alt="ваш профиль"
+          alt="меню"
           onClick={props.onOpenAuth}
+        />
+        
+        {/*бургер под мобильные*/}
+        <img
+          className="header__nav-burger is-mobile"
+          src={burgerMenu}
+          alt="меню"
         />
       </nav>
     </header>

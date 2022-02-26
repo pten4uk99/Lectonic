@@ -62,15 +62,19 @@ p
   --add-darkGrey #b4b4b4
   --add-grey #dbdbdb
   --add-greyDisable #c4c4c4
-  --add-darkBlue #000620
+  --add-darkBlue #00051A
+  --add-lightBllue #5FB5FF
+  --add-orange #FF8A00
+  --add-greyPattern #F7F7F7
 
 /* КНОПКИ */
+/*Main buttons*/
 .btn
-  width 352px
+  width 320px
   border-radius 30px
   font-weight 500
-  font-size 16px
-  line-height 20px
+  font-size 14px
+  line-height 17px
   padding 14px 0px
   border none
   background-color var(--add-purple)
@@ -86,17 +90,18 @@ p
   color rgba(255, 255, 255, 0.6)
 
 .btn-outline
-  width 352px
+  width 320px
   border-radius 30px
   font-weight 500
-  font-size 16px
-  line-height 20px
+  font-size 14px
+  line-height 17px
   padding 14px 0px
   border 1px solid var(--add-purple)
   background-color var(--main-white)
   color var(--add-purple)
   cursor pointer
 
+ /*ниже кнопки будут переделаны*/
 .btn-notChosen
   background var(--main-white)
   border 1px solid var(--main-black)
@@ -203,3 +208,12 @@ p
 
 .required-sign
   color var(--add-pink)
+  
+/*Адаптив под разную ширину экранов*/
+@media screen and (max-width: 720px) {
+  .is-desktop {
+    display: none !important; } }
+
+@media screen and (min-width: 721px) {
+  .is-mobile {
+    display: none !important; } }
