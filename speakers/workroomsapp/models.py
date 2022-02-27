@@ -115,7 +115,7 @@ class Person(models.Model):
 
 class Lecturer(models.Model):
     """Лектор"""
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='lecturer')
+    person = models.OneToOneField(Person, on_delete=models.CASCADE, related_name='lecturer')
     performances_links = models.ManyToManyField('Link', related_name='perf_lecturer')  # ссылки на выступления. Лекторы могут выступать по двое, поэтому ManyToMany
     publication_links = models.ManyToManyField('Link', related_name='pub_lecturer')  # ссылки на публикации. Так же, у публикации может быть несколько авторов
     education = models.TextField(blank=True, null=True)
