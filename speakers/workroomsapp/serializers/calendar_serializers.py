@@ -6,7 +6,7 @@ from rest_framework import serializers
 from workroomsapp.models import LecturerCalendar
 
 
-class LecturerCalendarCurrentMonthSerializer(serializers.ModelSerializer):
+class LecturerCalendarSerializer(serializers.ModelSerializer):
     lecturer = serializers.HiddenField(default=serializers.CurrentUserDefault())
     calendar = serializers.SerializerMethodField()
 
@@ -34,14 +34,13 @@ class LecturerCalendarCurrentMonthSerializer(serializers.ModelSerializer):
             month = event.datetime.month
             day = event.datetime.day
 
+            person = event.lecture_request.lecturer_lecture_request.lecturer.person
+            lecture = event.lecture_request.lecture
+
             new_event = {
-                'lecturers': event.lecture.lecturers.all().values(
-                    'person__first_name',
-                    'person__last_name',
-                    'person__middle_name'
-                ),
-                'name': event.lecture.name,
-                'status': event.lecture.status,
+                'lecturer': f'{person.last_name} {person.first_name}{ person.middle_name or ""}',
+                'name': lecture.name,
+                'status': lecture.status,
             }
 
             if not data:
@@ -65,8 +64,6 @@ class LecturerCalendarCurrentMonthSerializer(serializers.ModelSerializer):
                         'events': [new_event]
                     }
                 )
-
-            print(data)
         return data
 
     def get_calendar(self, obj):

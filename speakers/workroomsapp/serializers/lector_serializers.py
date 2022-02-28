@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from workroomsapp.models import Domain, Lecture, User
+from authapp.models import User
+from workroomsapp.models import Domain, Lecture
 
 
 # class LectureHallSerializer(serializers.ModelSerializer):
