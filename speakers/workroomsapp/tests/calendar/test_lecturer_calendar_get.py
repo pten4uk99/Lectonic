@@ -20,51 +20,41 @@ class TestLecturerCalendarGet(APITestCase):
             city=City.objects.create(name='Москва', pk=1),
             is_lecturer=True
         )
-        lecturer = Lecturer.objects.create(pk=1, person=person)
-        calendar = Calendar.objects.create()
-        LecturerCalendar.objects.create(lecturer=lecturer, calendar=calendar)
+        lecturer = Lecturer.objects.create_lecturer(person=person)
 
-        event1 = Event.objects.create(pk=1, datetime=datetime.datetime.now(tz=datetime.timezone.utc))
-        event2 = Event.objects.create(
-            pk=2,
+        Lecture.objects.create_as_lecturer(
+            name='Моя лектушка',
+            lecturer=lecturer,
+            datetime=datetime.datetime.now(tz=datetime.timezone.utc)
+        )
+        Lecture.objects.create_as_lecturer(
+            name='Твоя лектушка',
+            lecturer=lecturer,
             datetime=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=2)
         )
-        event3 = Event.objects.create(
-            pk=3,
+        Lecture.objects.create_as_lecturer(
+            name='Его лектушка',
+            lecturer=lecturer,
             datetime=datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(hours=2)
         )
-        event4 = Event.objects.create(
-            pk=4,
+        Lecture.objects.create_as_lecturer(
+            name='Ее лектушка',
+            lecturer=lecturer,
             datetime=datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(hours=2)
         )
 
-        lecture_request1 = LectureRequest.objects.create(
-            lecture=Lecture.objects.create(name='Лекция1'), event=event1
-        )
-        lecture_request2 = LectureRequest.objects.create(
-            lecture=Lecture.objects.create(name='Лекция2'), event=event2
-        )
-        lecture_request3 = LectureRequest.objects.create(
-            lecture=Lecture.objects.create(name='Лекция3'), event=event3
-        )
-        lecture_request4 = LectureRequest.objects.create(
-            lecture=Lecture.objects.create(name='Лекция4'), event=event4
-        )
-
-        LecturerLectureRequest.objects.create(lecture_request=lecture_request1, lecturer=lecturer)
-        LecturerLectureRequest.objects.create(lecture_request=lecture_request2, lecturer=lecturer)
-        LecturerLectureRequest.objects.create(lecture_request=lecture_request3, lecturer=lecturer)
-        LecturerLectureRequest.objects.create(lecture_request=lecture_request4, lecturer=lecturer)
-
-        calendar.events.add(event4, event3, event2, event1)
-        calendar.save()
-
-
-
-    def test_credentials(self):
-        response = self.client.get(reverse('lecturer_calendar'), {'year': 2022, 'month': 2})
+    def test_get_calendar(self):
+        response = self.client.get(reverse('lecturer_calendar'), {'year': 2022, 'month': 3})
         print(response.data)
-        # self.assertEqual(
-        #     response.status_code, 401,
-        #     msg='Неверный статус ответа при попытке получения города неавторизованного пользователя'
-        # )
+        self.assertEqual(
+            'data' in response.data and type(response.data['data']) == list, True,
+            msg='В ответе нет списка data'
+        )
+        self.assertEqual(
+            'date' in response.data['data'][0], True,
+            msg='В словаре списка data нет ключа date'
+        )
+        self.assertEqual(
+            len(response.data['data'][0]['events']), 4,
+            msg='Неверное количество событий'
+        )

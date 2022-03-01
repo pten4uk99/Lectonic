@@ -4,6 +4,8 @@ import datetime as datetime
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from workroomsapp.utils.workroomsapp_managers import LectureManager, CustomerManager, LecturerManager, CompanyManager
+
 BaseUser = get_user_model()
 
 
@@ -127,6 +129,8 @@ class Lecturer(models.Model):
         related_name='lecturer'
     )
 
+    objects = LecturerManager()
+
 
 class Link(models.Model):
     """Ссылка"""
@@ -143,6 +147,7 @@ class Customer(models.Model):
         on_delete=models.CASCADE,
         related_name='customer'
     )
+    objects = CustomerManager()
     # остальные поля исходят из других моделей к этой, так как ForeignKey
 
 
@@ -168,6 +173,8 @@ class Company(models.Model):
         related_name='company'
     )
     is_verified = models.BooleanField(default=False)
+
+    objects = CompanyManager()
 
     def __str__(self):
         return f'{self.name}'
@@ -202,7 +209,7 @@ class Respondent(models.Model):
 
 
 class LectureRequest(models.Model):
-    respondents = models.ManyToManyField('Respondent')
+    respondents = models.ManyToManyField('Respondent', related_name='lecture_requests')
     lecture = models.OneToOneField('Lecture', on_delete=models.CASCADE, related_name='lecture_request')
     event = models.OneToOneField('Event', on_delete=models.CASCADE, related_name='lecture_request')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -261,6 +268,8 @@ class Lecture(models.Model):
     duration = models.IntegerField(null=True, blank=True)  # Длительность лекции в минутах (нет необходимости использовать DateTimeRangeField)
     cost = models.IntegerField(default=0)  # стоимость лекции
     description = models.TextField(null=True, blank=True)
+
+    objects = LectureManager()
 
     def __str__(self):
         return f'{self.name}'

@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from workroomsapp.models import LecturerCalendar, Lecturer
 from workroomsapp.serializers.calendar_serializers import LecturerCalendarSerializer
 from workroomsapp.utils import workroomsapp_permissions
+from workroomsapp.utils.responses.calendar_responses import success
 
 
 class LecturerCalendarAPIView(APIView):
@@ -15,4 +16,4 @@ class LecturerCalendarAPIView(APIView):
             context={'request': request}
         )
 
-        return Response(data=serializer.data)
+        return success(serializer.data['calendar'])

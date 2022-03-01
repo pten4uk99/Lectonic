@@ -68,7 +68,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
             msg = 'Проверьте правильность ввода пароля'
             raise ValidationError(msg)
 
-        return make_password(password)
+        return password
 
 
 class UserLoginSerializer(serializers.Serializer):
