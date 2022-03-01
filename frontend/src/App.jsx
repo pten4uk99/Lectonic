@@ -8,8 +8,14 @@ import ChangePassword from '~@/Authorization/jsx/ChangePassword'
 import ContinueRegistration from '~@/Authorization/jsx/ContinueRegistration'
 import ConfirmEmail from '~@/Authorization/jsx/ConfirmEmail'
 import UserBasicInfo from '~@/UserArea/jsx/UserBasicInfo'
-import ChooseRole from '~@/ChooseRoleSteps/jsx/ChooseRole'
+import ChooseRole from '~@/RegistrationRole/jsx/RegistrationRole'
 import Lecturer from '~@/WorkRooms/Lecturer/jsx/Lecturer'
+import RegistrationRole from '~@/RegistrationRole/jsx/RegistrationRole'
+import LecturerStep2 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep2'
+import LecturerStep3 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep3'
+import LecturerStep4 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep4'
+
+
 
 function App() {
   //   const isAuthentikated = !!token;
@@ -26,7 +32,10 @@ function App() {
             element={<ContinueRegistration />}
           />
           <Route path='/user_basic-info' element={<UserBasicInfo />} />
-          <Route path='/user_choose-role' element={<ChooseRole />} />
+          <Route path='/register_choose-role' element={<RegistrationRole />} />
+          <Route path='/register_lecturer2' element={<LecturerStep2 />} />
+          <Route path='/register_lecturer3' element={<LecturerStep3 />} />
+          <Route path='/register_lecturer4' element={<LecturerStep4 />} />
           <Route path='/user_profile' element={<Lecturer />} />
           <Route path='/change_password' element={<ChangePassword />} />
           <Route path='*' element={<NotFoundPage />} />
