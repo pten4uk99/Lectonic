@@ -1,8 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
-from authapp.models import Token
-from workroomsapp.models import User
+from authapp.models import Token, User
 
 
 class TestLogin(APITestCase):

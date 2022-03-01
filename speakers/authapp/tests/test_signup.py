@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
@@ -15,6 +16,17 @@ class TestSignup(APITestCase):
             User.objects.filter(email=data['email']).exists(), True,
             msg='Пользователь не был создан в базе данных'
         )
+
+    def test_password_was_hashed(self):
+        data = {'email': 'admin@admin.ru', 'password': '12345678'}
+
+        self.client.post(reverse('signup'), data)
+        self.assertEqual(
+            User.objects.get(email=data['email']).check_password(data['password']),
+            True,
+            msg='Пароль неверно захешировался'
+        )
+
 
     def test_user_successful_authenticated(self):
         data = {'email': 'admin@admin.ru', 'password': '12345678'}
