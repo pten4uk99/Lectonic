@@ -4,7 +4,7 @@ import datetime as datetime
 from django.contrib.auth import get_user_model
 from django.db import models
 
-User = get_user_model()
+BaseUser = get_user_model()
 
 
 class City(models.Model):
@@ -88,7 +88,7 @@ class Person(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='person')
     rating = models.IntegerField(default=0)
     # photo = models.CharField(max_length=200, null=True, blank=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='person')
+    user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, related_name='person')
     is_lecturer = models.BooleanField(default=False)
     is_project_admin = models.BooleanField(default=False)
     is_customer = models.BooleanField(default=False)
@@ -115,7 +115,7 @@ class Person(models.Model):
 
 class Lecturer(models.Model):
     """Лектор"""
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='lecturer')
+    person = models.OneToOneField('Person', on_delete=models.CASCADE, related_name='lecturer')
     performances_links = models.ManyToManyField('Link', related_name='perf_lecturer')  # ссылки на выступления. Лекторы могут выступать по двое, поэтому ManyToMany
     publication_links = models.ManyToManyField('Link', related_name='pub_lecturer')  # ссылки на публикации. Так же, у публикации может быть несколько авторов
     education = models.TextField(blank=True, null=True)
@@ -185,14 +185,70 @@ class RepresentativePerson(models.Model):
     middle_name = models.CharField(max_length=100, null=True, blank=True)
 
 
+class OptionalImage(models.Model):
+    optional = models.ForeignKey('Optional', on_delete=models.CASCADE, related_name='optional_images')
+    photo = models.OneToOneField('Image', on_delete=models.CASCADE)
+
+
 class Optional(models.Model):  # помещение, оборудование
     hall_address = models.CharField(max_length=200, blank=True, null=True)  # адрес помещения
     equipment = models.CharField(max_length=500, blank=True, null=True)  # перечисление имеющегося оборудования
 
 
+class Respondent(models.Model):
+    """Откликнувшийся на заявку на лекцию"""
+    person = models.OneToOneField('Person', on_delete=models.CASCADE)
+    confirmed = models.BooleanField(default=False)
+
+
+class LectureRequest(models.Model):
+    respondents = models.ManyToManyField('Respondent')
+    lecture = models.OneToOneField('Lecture', on_delete=models.CASCADE, related_name='lecture_request')
+    event = models.OneToOneField('Event', on_delete=models.CASCADE, related_name='lecture_request')
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+
+class LecturerLectureRequest(models.Model):
+    lecture_request = models.OneToOneField(
+        'LectureRequest',
+        on_delete=models.CASCADE,
+        related_name='lecturer_lecture_request'
+    )
+    lecturer = models.ForeignKey(
+        'Lecturer',
+        on_delete=models.CASCADE,
+        related_name='lecturer_lecture_request'
+    )
+
+
+class CustomerLectureRequest(models.Model):
+    lecture_request = models.OneToOneField(
+        'LectureRequest',
+        on_delete=models.CASCADE,
+        related_name='customer_lecture_request')
+    customer = models.OneToOneField(
+        'Customer',
+        on_delete=models.CASCADE,
+        related_name='customer_lecture_request'
+    )
+
+
+class CompanyLectureRequest(models.Model):
+    lecture_request = models.OneToOneField(
+        'LectureRequest',
+        on_delete=models.CASCADE,
+        related_name='company_lecture_request'
+    )
+    company = models.OneToOneField(
+        'Company',
+        on_delete=models.CASCADE,
+        related_name='company_lecture_request'
+    )
+
+
 class Lecture(models.Model):
     """Лекция"""
-    lecturers = models.ManyToManyField('Lecturer', related_name='lectures')
     name = models.CharField(max_length=100)
     optional = models.OneToOneField(
         'Optional',
@@ -202,13 +258,9 @@ class Lecture(models.Model):
         related_name='lecture'
     )
     status = models.BooleanField(null=True, blank=True)  # 3 варианта: подтверждена, отклонена, не просмотрена
-    event = models.OneToOneField('Event', on_delete=models.CASCADE)
     duration = models.IntegerField(null=True, blank=True)  # Длительность лекции в минутах (нет необходимости использовать DateTimeRangeField)
     cost = models.IntegerField(default=0)  # стоимость лекции
     description = models.TextField(null=True, blank=True)
-    lecturer_name = models.CharField(max_length=300, null=True, blank=True)
-    sys_created_at = models.DateTimeField(auto_now_add=True)
-    sys_modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f'{self.name}'

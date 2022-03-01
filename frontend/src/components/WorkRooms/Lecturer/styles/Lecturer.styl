@@ -1,0 +1,294 @@
+.profile__header
+  position absolute
+  width 100%
+  box-shadow 0 0 60px rgba(0, 0, 0, 0.2)
+  background-color white
+  z-index 4
+
+.header__nav-chat
+  cursor pointer
+  margin-right 48px
+
+.full__profile
+  width 100%
+  font-family 'Montserrat', sans-serif
+  font-size 14px
+
+.full__profile > .lecturer__background
+  position absolute
+  width 100%
+
+.full__profile > .lecturer__background > img
+  width 100%
+
+.full__profile > .lecturer__main
+  position relative
+  top 444px
+  width 100%
+  height 2150px
+  background-color white
+  box-shadow 0 0 60px rgba(0, 0, 0, 0.2)
+
+.lecturer__profile__header
+  display flex
+  position absolute
+  top 108px
+  left 60px
+  z-index 5
+
+.lecturer__profile__header > .profile-photo > img
+  width 160px
+  height 160px
+
+.additional-info
+  position absolute
+  display flex
+  align-items center
+  top 188px
+  text-decoration underline
+  color rgba(0, 37, 255, 1)
+  font-size 12px
+
+.additional-info > .edit-photo
+  margin-right 12px
+
+.profile-photo > .edit-photo
+  position absolute
+  bottom 0
+  width 60px
+  height 36px
+
+.profile-name
+  align-self center
+  display flex
+  flex-direction column
+  margin-left 28px
+  font-weight 500
+  font-size 20px
+
+.profile-name > span
+  margin-bottom 4px
+
+.lecturer__main > .lecturer__wrapper
+  position absolute
+  left 60px
+  height 100%
+
+.lecturer__profile, .customer__profile
+  position absolute
+  top 396px
+  left 60px
+  display flex
+  justify-content center
+  align-items center
+  width 150px
+  height 48px
+  background-color rgba(219, 219, 219, 1)
+  border-radius 8px 8px 0 0
+  box-shadow 0 -20px 40px rgba(0, 0, 0, 0.1)
+  color rgba(0, 0, 0, 1)
+  font-size 14px
+  font-weight 700
+  cursor pointer
+
+.customer__profile
+  left 210px
+
+.lecturer__profile.active, .customer__profile.active
+  color rgba(0, 37, 255, 1)
+  background-color white
+  z-index 5
+
+.lecturer__wrapper > .in-projects
+  display flex
+  flex-direction column
+  margin-top 39px
+
+.lecturer__main .header
+  margin-bottom 20px
+
+.in-projects > .projects
+  display flex
+
+.projects > .project
+  position relative
+  display flex
+  justify-content center
+  align-items center
+  margin-right 12px
+  width 167px
+  height 36px
+  background-color rgba(219, 219, 219, 1)
+  border-radius 45px
+  font-weight 700
+
+.projects > .project > span
+  display flex
+  justify-content center
+  align-items center
+  position absolute
+  right 0
+  width 24px
+  height 24px
+  border-radius 50%
+  transform translate(10px, -13px)
+  font-weight 500
+  color white
+  font-size 11px
+  background-color rgba(95, 181, 255, 1)
+
+.created-lectures
+  margin-top 51px
+
+section > .header
+  display flex
+
+section > .header > span
+  display flex
+  justify-content center
+  align-items center
+  width 24px
+  height 24px
+  margin-left 8px
+  transform translate(0, -3px)
+  background-color rgba(219, 219, 219, 1)
+  border-radius 50%
+  font-size 11px
+  font-weight 500
+
+.lecture__cards
+  display flex
+
+.potential-orders
+  margin-top 51px
+
+.lecture__cards > .lecture__card__empty
+  margin-right 12px
+  z-index 4
+  transition transform 0.2s
+
+.lecture__card__empty:hover
+  transform scale(1.15)
+  background-color #fff
+  z-index 5
+
+.confirmed-lectures
+  margin-top 103px
+
+.lecturer-calendar
+  margin-top 51px
+
+.bottom
+  display flex
+  margin-top 28px
+  align-items center
+
+.bottom > .header
+  margin-right 12px
+
+.bottom > .header > span
+  justify-self center
+  width 12px
+  height 12px
+  margin-right 8px
+  transform translate(0, 3px)
+
+.bottom > .header > .first
+  background-color rgba(180, 180, 180, 1)
+
+.bottom > .header > .second
+  background-color rgba(0, 37, 255, 1)
+
+.lecturer__card
+  display flex
+  flex-direction column
+  align-items center
+  width 240px
+  height 316px
+  background-color transparent
+  transition transform 0.2s
+
+.lecturer__card:hover
+  transform scale(1.15)
+  background-color #fff
+  z-index 5
+
+.lecturer__card > .photo
+  margin-top 28px
+
+.lecturer__card > .card-header
+  margin-top 12px
+  width 200px
+  height 40px
+  text-align center
+  font-size 16px
+  font-weight 700
+
+.lecturer__card > .card-body
+  margin-top 4px
+  width 200px
+  text-align center
+  font-size 12px
+
+footer.my_footer
+  position relative
+  top 444px
+  background-color var(--add-grey)
+  width 100%
+  height 139px
+
+.my_footer > .footer-wrapper
+  display flex
+  padding 36px 0px 5px
+  margin-left 27%
+
+.history
+  position relative
+  top 447px
+  z-index 4
+
+.history > img
+  width 100%
+
+.shadow
+  position absolute
+  top 2645px
+  z-index 4
+
+.shadow > img
+  width 100%
+
+// @import 'LectureCard.css'
+// @import 'PotentialCard.css'
+
+/*
+чтоб по-быстрому, ниже пропишу стиль для дивов ролей профиля Лектор и Заказчик
+ */
+.profile-roles-btn
+  background-color var(--add-grey)
+  border-radius 45px
+  font-size 14px
+  line-height 17px
+  font-weight 700
+  padding 10px 20px
+  height 16px
+  margin-top 40px
+  cursor default
+
+.lecturer-role
+  margin-left 178px
+  margin-right 12px
+
+.add-lecturer-role
+  position absolute
+  top 40px
+  transform translate(390px, 0)
+  cursor pointer
+
+/* подгон свг под попап */
+.profile__chat-svg
+  padding 0
+  margin-left -36px
+  margin-bottom -48px
+  margin-top -72px
+  width 1053px

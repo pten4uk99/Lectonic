@@ -78,8 +78,8 @@ class UserLoginSerializer(serializers.Serializer):
     def get_object(self):
         ''' Из переданных данных получает объект пользователя '''
 
-        # if self.context['request'].user.is_authenticated:
-        #     raise serializers.ValidationError('Данный пользователь уже авторизован')
+        if self.context['request'].user.is_authenticated:
+            raise serializers.ValidationError('Данный пользователь уже авторизован')
 
         user = User.objects.filter(email=self.initial_data.get('email')).first()
         return user

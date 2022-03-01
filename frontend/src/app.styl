@@ -1,0 +1,227 @@
+/* шрифты работают через ссылку в index.html */
+
+*
+  margin 0
+  padding 0
+
+p
+  margin 0
+  
+/* переменные для цветов в проекте */
+:root
+  --main-blue #0025ff
+  --main-black #000000
+  --main-white #ffffff
+  --add-pink #ff00c1
+  --add-purple #b924ff
+  --add-yellow #ffe600
+  --add-emerald #00d378
+  --add-darkGrey #b4b4b4
+  --add-grey #dbdbdb
+  --add-greyDisable #c4c4c4
+  --add-darkBlue #00051A
+  --add-lightBllue #5FB5FF
+  --add-orange #FF8A00
+  --add-greyPattern #F7F7F7
+  --main-grey alpha(rgb(180 180 180), 1)
+  --main-border-color alpha(rgb(219 219 219), 1)
+
+body
+  padding 0px
+  margin 0px
+  color var(--main-black)
+  background-color var(--main-white)
+  font-family 'Montserrat', sans-serif
+
+/* чтоб футер был прибит к низу, но не заезжал на контент при скролле */
+html, body
+  height 100%
+
+#root
+  min-height 100%
+  display flex
+  flex-direction column
+
+main
+  flex 1 1 auto
+  padding-bottom 50px
+
+/* Заголовки */
+h1
+  font-weight 500
+  font-size 28px
+  line-height 34px
+
+h2
+  font-weight 700
+  font-size 20px
+  line-height 24px
+  padding 0
+
+h3
+  font-weight 700
+  font-size 16px
+  line-height 20px
+
+h4
+  font-weight 700
+  font-size 14px
+  line-height 17px
+
+h5
+  font-weight 700
+  font-size 14px
+  line-height 17px
+  text-decoration-line underline
+
+
+/* КНОПКИ */
+/*Main buttons*/
+.btn
+  width 320px
+  border-radius 30px
+  font-weight 500
+  font-size 14px
+  line-height 17px
+  padding 14px 0px
+  border none
+  background-color var(--add-purple)
+  color var(--main-white)
+  cursor pointer
+  transform rotate(360deg)
+
+.btn:disabled
+  background-color var(--add-greyDisable)
+  cursor not-allowed
+
+.btn:hover:not(:disabled)
+  color rgba(255, 255, 255, 0.6)
+
+.btn-outline
+  width 320px
+  border-radius 30px
+  font-weight 500
+  font-size 14px
+  line-height 17px
+  padding 14px 0px
+  border 1px solid var(--add-purple)
+  background-color var(--main-white)
+  color var(--add-purple)
+  cursor pointer
+
+/*ниже кнопки будут переделаны и переименованы в соответствии с UI KIT_2*/
+.btn-notChosen
+  background var(--main-white)
+  border 1px solid var(--main-black)
+  border-radius 45px
+  padding 9px 20px
+  margin-right 12px
+  cursor pointer
+
+.btn-chosen
+  background var(--main-blue)
+  color var(--main-white)
+  border none
+  font-weight 700
+  border-radius 45px
+  padding 9px 20px
+  margin-right 12px
+  cursor pointer
+
+.btn-addedTopic
+  background var(--add-grey)
+  border none
+  border-radius 45px
+  padding 9px 20px
+  margin-right 12px
+  cursor pointer
+  font-size 14px
+  line-height 17px
+
+/* Формы input */
+.form__input
+  width 352px
+  outline none
+  border none
+  border-bottom 1px solid var(--main-black)
+  font-size 14px
+  line-height 17px
+  padding-bottom 8px
+  cursor pointer
+  /* caret: var(--main-black); */
+  border-radius 0
+
+.form__input::placeholder
+  color var(--add-darkGrey)
+
+.form__input:disabled
+  border-bottom 1px solid var(--add-darkGrey)
+
+.form__input:focus
+  border-bottom 1px solid var(--main-blue) !important
+
+.form__input:focus::-webkit-input-placeholder
+  color transparent
+
+.form__input:focus::-moz-placeholder
+  color transparent
+
+.form__input:focus:-moz-placeholder
+  color transparent
+
+.form__input:focus:-ms-input-placeholder
+  color transparent
+
+.form__input:not(:placeholder-shown)
+  border-bottom 1px solid var(--add-darkGrey)
+
+/* TEXTAREA */
+.form__textarea
+  width 471px
+  min-height 180px
+  border 1px solid var(--add-darkGrey)
+  border-radius 18px
+  font-family 'Montserrat', sans-serif
+  font-size 14px
+  line-height 17px
+  padding-top 9px
+  padding-left 20px
+  resize none
+
+.form__textarea::placeholder
+  color var(--add-darkGrey)
+
+.form__textarea:focus
+  outline none
+
+/* В Safari убирает иконку автозаполнения */
+::-webkit-credentials-auto-fill-button
+  visibility hidden
+  pointer-events none
+  position absolute
+  right 0
+
+/* Текст, сопровождающий иконки */
+.role-text
+  font-size 14px
+  line-height 17px
+  font-weight 700
+  color var(--main-blue)
+
+.addRole-text, .additional-text
+  font-size 12px
+  line-height 15px
+  text-decoration-line underline
+  color var(--main-blue)
+
+.required-sign
+  color var(--add-pink)
+
+/*Адаптив под разную ширину экранов*/
+@media screen and (max-width: 720px) {
+  .is-desktop {
+    display: none !important; } }
+
+@media screen and (min-width: 721px) {
+  .is-mobile {
+    display: none !important; } }

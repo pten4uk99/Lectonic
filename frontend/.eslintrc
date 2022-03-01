@@ -1,0 +1,23 @@
+env: 
+  browser: true,
+  es2021: true,
+  amd: true,
+  node: true,
+
+extends: ["eslint:recommended","plugin:react/recommended"]
+
+parserOptions: 
+  sourceType: "module"
+  
+parser: "@babel/eslint-parser"
+
+rules: 
+  semi: ["warn", "never"]
+  quotes: [2, "single", "avoid-escape"]
+  react/prop-types: "off"
+  no-unused-vars:  "off"
+  # no-unused-vars:  ["error", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }]
+
+settings: 
+    react: 
+      version: 'detect'
