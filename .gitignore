@@ -162,8 +162,4 @@ sup*
 
 # Server
 staticfiles/
-<<<<<<< HEAD
-=======
-
->>>>>>> a47da6c620d35a3f552c295d51944468c54cff52
 node_modules/
