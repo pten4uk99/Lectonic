@@ -9,7 +9,7 @@ module.exports = merge(baseWebpackConfig, {
     static: baseWebpackConfig.externals.paths.dist,
     port: 3000,
     hot: true,
-    open: true,
+    open: false,
     watchFiles: baseWebpackConfig.externals.paths.src,
     historyApiFallback: true,
   },
