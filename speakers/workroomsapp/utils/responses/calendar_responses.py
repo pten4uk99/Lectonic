@@ -1,9 +1,19 @@
 from speakers.utils import response
 
+DOES_NOT_EXIST = 'Календарь лектора не существует'
+
 
 def success(data):
     return response.get_response(
-        status=response.CREATE,
+        status=response.SUCCESS,
         data=data,
+        status_code=200
+    )
+
+
+def does_not_exist():
+    return response.get_response(
+        status=response.ERROR,
+        detail=DOES_NOT_EXIST,
         status_code=200
     )

@@ -1,0 +1,50 @@
+.dates__list {
+    display: grid;
+    grid-template-columns: repeat(7, 66px);
+    grid-template-rows: repeat(6, 66px);
+    margin: 0 40px;
+}
+
+
+.dates__list > .dates__underlines {
+    position: absolute;
+    transform: translate(6px, -2px);
+    width: 448px;
+}
+
+.dates__underlines > .dates__underline {
+    height: 1px;
+    margin-top: 66px;
+    background-color: var(--main-border-color);
+}
+
+
+@media screen and (max-width: 1900px) {
+    .dates__list {
+        grid-template-columns: repeat(7, 58px);
+    }
+
+    .dates__list > .dates__underlines {
+        position: absolute;
+        transform: translate(2px, -2px);
+        width: 402px;
+    }
+
+    .dates__underlines > .dates__underline {
+        height: 1px;
+        margin-top: 66px;
+        background-color: var(--main-border-color);
+    }
+}
+
+@media screen and (max-width: 1240px) {
+    .dates__list {
+        grid-template-columns: repeat(7, 45px);
+        grid-template-rows: repeat(6, 45px);
+        margin: 0 20px;
+    }
+
+    .dates__list > .dates__underlines {
+        display: none;
+    }
+}
