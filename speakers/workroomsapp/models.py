@@ -211,7 +211,6 @@ class Respondent(models.Model):
 class LectureRequest(models.Model):
     respondents = models.ManyToManyField('Respondent', related_name='lecture_requests')
     lecture = models.OneToOneField('Lecture', on_delete=models.CASCADE, related_name='lecture_request')
-    event = models.OneToOneField('Event', on_delete=models.CASCADE, related_name='lecture_request')
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
@@ -282,6 +281,7 @@ class Calendar(models.Model):
 
 class Event(models.Model):
     datetime = models.DateTimeField()
+    event = models.ForeignKey('LectureRequest', on_delete=models.CASCADE, related_name='events')
 
 
 class LecturerCalendar(models.Model):

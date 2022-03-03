@@ -1,6 +1,5 @@
 from django.urls import path
 
-from .views.lector_views import *
 from .views.calendar_views import *
 from .views.person_views import *
 
@@ -11,6 +10,6 @@ urlpatterns = [
 
     path('calendar/lecturer/', LecturerCalendarAPIView.as_view(), name='lecturer_calendar'),
 
-    path('lecturer/lecture/', LectorLecturesAPIView.as_view()),
-    path('lecturer/lecture/add_to_archive/', ArchiveLecture.as_view()),
+    # path('lecturer/lecture/', LectorLecturesAPIView.as_view()),
+    # path('lecturer/lecture/add_to_archive/', ArchiveLecture.as_view()),
 ]

@@ -22,3 +22,7 @@ class LecturerCalendarAPIView(APIView):
         )
 
         return responses.success(serializer.data['calendar'])
+
+    def post(self, request):
+        print(request.FILES)
+        return Response(status=200)
