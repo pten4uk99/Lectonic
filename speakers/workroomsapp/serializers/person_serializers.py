@@ -1,8 +1,6 @@
 import re
 import datetime
 
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
 from rest_framework import serializers
 
 from workroomsapp.models import Person, City, DocumentImage, Image
@@ -74,18 +72,11 @@ class DocumentImageSerializer(serializers.Serializer):
         ]
 
     def create(self, validated_data):
-        passport = validated_data['passport']
-        selfie = validated_data['selfie']
-
-        default_storage.save(passport.name, ContentFile(passport.read()))
-        default_storage.save(selfie.name, ContentFile(selfie.read()))
-
         return DocumentImage.objects.create(
             person=Person.objects.first(),
-            passport=Image.objects.create(photo=passport),
-            selfie=Image.objects.create(photo=selfie),
+            passport=Image.objects.create(photo=validated_data['passport']),
+            selfie=Image.objects.create(photo=validated_data['selfie']),
         )
-
 
 
 class CitySerializer(serializers.ModelSerializer):

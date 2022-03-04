@@ -281,7 +281,7 @@ class Calendar(models.Model):
 
 class Event(models.Model):
     datetime = models.DateTimeField()
-    event = models.ForeignKey('LectureRequest', on_delete=models.CASCADE, related_name='events')
+    lecture_request = models.ForeignKey('LectureRequest', on_delete=models.CASCADE, related_name='events')
 
 
 class LecturerCalendar(models.Model):
