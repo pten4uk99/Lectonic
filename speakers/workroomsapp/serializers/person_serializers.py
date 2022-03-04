@@ -1,9 +1,11 @@
 import re
 import datetime
 
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from rest_framework import serializers
 
-from workroomsapp.models import Person, City
+from workroomsapp.models import Person, City, DocumentImage, Image
 
 
 class PersonSerializer(serializers.ModelSerializer):
@@ -58,6 +60,32 @@ class PersonSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Дата не может быть позже текущей')
 
         return birth_date
+
+
+class DocumentImageSerializer(serializers.Serializer):
+    passport = serializers.FileField()
+    selfie = serializers.FileField()
+
+    class Meta:
+        model = DocumentImage
+        fields = [
+            'passport',
+            'selfie'
+        ]
+
+    def create(self, validated_data):
+        passport = validated_data['passport']
+        selfie = validated_data['selfie']
+
+        default_storage.save(passport.name, ContentFile(passport.read()))
+        default_storage.save(selfie.name, ContentFile(selfie.read()))
+
+        return DocumentImage.objects.create(
+            person=Person.objects.first(),
+            passport=Image.objects.create(photo=passport),
+            selfie=Image.objects.create(photo=selfie),
+        )
+
 
 
 class CitySerializer(serializers.ModelSerializer):

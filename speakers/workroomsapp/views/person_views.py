@@ -1,8 +1,11 @@
 from django.db import transaction
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
+from rest_framework.parsers import MultiPartParser, FileUploadParser
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from authapp.models import User
 from workroomsapp.docs.docs import person_docs
 from workroomsapp.models import City, Person
 from workroomsapp.serializers.person_serializers import *
@@ -61,6 +64,29 @@ class PersonAPIView(APIView):
             serializer.validated_data['city'] = serializer.validated_data['city'].name
 
         return person_responses.patched(data={**serializer.validated_data})
+
+
+class ImageAPIView(APIView):
+    def post(self, request):
+        print(request.data['photo'].file)
+        # serializer = ImageSerializer(data=request.data)
+        # serializer.is_valid(raise_exception=True)
+        # serializer.save()
+        return Response(200)
+
+
+class DocumentImageCreateAPIVIew(APIView):
+    parser_classes = [MultiPartParser, FileUploadParser]
+
+    def post(self, request):
+        print(request.data)
+        serializer = DocumentImageSerializer(
+            data=request.data,
+            context={'request': {'person': {'user': User.objects.first()}}}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(200)
 
 
 class CityAPIView(APIView):

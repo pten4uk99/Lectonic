@@ -62,19 +62,45 @@ class LectureManager(models.Manager):
 
 class LecturerManager(models.Manager):
     @transaction.atomic
-    def create_lecturer(self, person: object = None,
-                        education: str = None, optional: object = None):
+    def create_lecturer(self, person: object = None, performances_links: list = None,
+                        publication_links: list = None, domain: list = None,
+                        diploma_image: list = None, hall_address: str = None,
+                        equipment: str = None, education: str = None):
         if not person:
             raise exceptions.ValidationError('Обязательное поле Person не заполнено')
 
-        calendar = workrooms_models.Calendar.objects.create()
+        optional = workrooms_models.Optional.objects.create(
+            hall_address=hall_address,
+            equipment=equipment
+        )
+
         lecturer = workrooms_models.Lecturer.objects.create(
             person=person,
             optional=optional,
             education=education
         )
+
+        if domain is not None:
+            for domain_id in domain:
+                workrooms_models.LecturerDomain.objects.create(lecturer=lecturer, domain=domain_id)
+        if performances_links is not None:
+            for perf_link in performances_links:
+                lecturer.performances_links.add(workrooms_models.Link.objects.create(perf_link))
+        if publication_links is not None:
+            for pub_link in publication_links:
+                lecturer.publication_links.add(pub_link)
+
+        for image in diploma_image:
+            workrooms_models.DiplomaImage.objects.create(
+                lecturer=lecturer,
+                image=workrooms_models.Image.objects.create(photo=image))
+
+        calendar = workrooms_models.Calendar.objects.create()
         workrooms_models.LecturerCalendar.objects.create(
             lecturer=lecturer, calendar=calendar)
+
+        person.is_lecturer = True
+        person.save()
 
         return lecturer
 

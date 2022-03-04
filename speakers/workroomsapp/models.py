@@ -47,8 +47,8 @@ class CompanyDomain(models.Model):
 
 class LecturerDomain(models.Model):
     """Сфера деятельности лектора"""
-    lecturer = models.ForeignKey('Lecturer', on_delete=models.CASCADE)  # лектор
-    domain = models.OneToOneField('Domain', on_delete=models.CASCADE)  # сфера деятельности
+    lecturer = models.ForeignKey('Lecturer', on_delete=models.CASCADE, related_name='lecturer_domains')  # лектор
+    domain = models.OneToOneField('Domain', on_delete=models.CASCADE, related_name='lecturer_domain')  # сфера деятельности
 
     def __str__(self):
         return f'Сфера деятельности: {self.domain.name}. Лектор: {self.company.person.name}'

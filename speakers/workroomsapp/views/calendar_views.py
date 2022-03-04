@@ -1,4 +1,3 @@
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from workroomsapp.models import LecturerCalendar, Lecturer
@@ -22,7 +21,3 @@ class LecturerCalendarAPIView(APIView):
         )
 
         return responses.success(serializer.data['calendar'])
-
-    def post(self, request):
-        print(request.FILES)
-        return Response(status=200)

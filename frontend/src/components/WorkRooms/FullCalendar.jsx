@@ -18,7 +18,7 @@ function FullCalendar(props) {
       body: formData
   }
   fetch(
-    `http://127.0.0.1:8000/api/workrooms/calendar/lecturer/`,
+    `http://127.0.0.1:8000/api/workrooms/profile/upload_document/`,
     options
   )
   }
@@ -26,7 +26,8 @@ function FullCalendar(props) {
   return (
     <div className='calendar__wrapper'>
       <form action="" onSubmit={(e) => clickHandler(e)}>
-        <input type="file" name='picture'/>
+        <input type="file" name='passport'/>
+        <input type="file" name='selfie'/>
         <input type="submit"/>
       </form>
       <Calendar />
