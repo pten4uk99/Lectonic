@@ -27,7 +27,7 @@ PersonGetView = {
 
 PersonPatchView = {
     'request_body': PersonCreationSchema,  # Сериализатор
-    'operation_description': 'Получение базового профиля для текущего пользователя. ' + DESCRIPTION,  # Развернутое описание
+    'operation_description': 'Получение базового профиля для текущего пользователя. ' + DESCRIPTION,
     'operation_summary': 'Получение базового профиля',  # Краткое описание
     'deprecated': False,  # Если True, помечает API как не рабочее
     'responses': {
@@ -43,6 +43,28 @@ city_name = openapi.Parameter(
     type=openapi.TYPE_STRING,
     required=True,
 )
+
+DocumentImageCreateView = {
+    'request_body': DocumentImageCreationSchema,
+    'operation_description': 'Загрузка фотографий документов для лектора или заказчика. '
+                             'Чтобы все успешно загрузилось, нужно создать базовый профиль. ' + DESCRIPTION,
+    'operation_summary': 'Загрузка документов',  # Краткое описание
+    'deprecated': False,  # Если True, помечает API как не рабочее
+    'responses': {
+        201: DocumentImageCreationSchema201,
+        400: DocumentImageCreationSchema400
+    },
+}
+
+DocumentImageGetView = {
+    'operation_description': 'Получение ссылок фотографий документов для лектора или заказчика. ' + DESCRIPTION,
+    'operation_summary': 'Получение фотографий документов',  # Краткое описание
+    'deprecated': False,  # Если True, помечает API как не рабочее
+    'responses': {
+        200: DocumentImageGetSchema201,
+        400: DocumentImageGetSchema400
+    },  # Схемы ответов сервера
+}
 
 CityGetView = {
     'manual_parameters': [city_name],

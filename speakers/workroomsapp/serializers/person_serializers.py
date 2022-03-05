@@ -3,7 +3,7 @@ import datetime
 
 from rest_framework import serializers
 
-from workroomsapp.models import Person, City
+from workroomsapp.models import Person, City, DocumentImage
 
 
 class PersonSerializer(serializers.ModelSerializer):
@@ -58,6 +58,58 @@ class PersonSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Дата не может быть позже текущей')
 
         return birth_date
+
+
+class DocumentImageCreateSerializer(serializers.Serializer):
+    passport = serializers.FileField()
+    selfie = serializers.FileField()
+
+    class Meta:
+        model = DocumentImage
+        fields = [
+            'passport',
+            'selfie'
+        ]
+
+    def validate_passport(self, passport):
+        image_format = passport.name.split('.')[-1]
+
+        if image_format not in ['jpg', 'jpeg', 'png']:
+            msg = 'Паспорт может быть только в формате "jpg", "jpeg" или "png"'
+            raise serializers.ValidationError(msg)
+
+        passport.name = 'passport.' + image_format
+
+        return passport
+
+    def validate_selfie(self, selfie):
+        image_format = selfie.name.split('.')[-1]
+
+        if image_format not in ['jpg', 'jpeg', 'png']:
+            msg = 'Селфи может быть только в формате "jpg", "jpeg" или "png"'
+            raise serializers.ValidationError(msg)
+
+        selfie.name = 'selfie.' + image_format
+
+        return selfie
+
+    def create(self, validated_data):
+        DocumentImage.objects.all().delete()  # ТОЛЬКО В РЕЖИМЕ РАЗРАБОТКИ!!!
+
+        document_image = DocumentImage.objects.create(
+            person=self.context['request'].user.person,
+        )
+        document_image.passport = validated_data['passport']
+        document_image.selfie = validated_data['selfie']
+        document_image.save()
+
+        return document_image
+
+
+class DocumentImageGetSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = DocumentImage
+        fields = ['passport', 'selfie']
 
 
 class CitySerializer(serializers.ModelSerializer):

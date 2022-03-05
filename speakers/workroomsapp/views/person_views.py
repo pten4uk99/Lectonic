@@ -1,10 +1,8 @@
-from django.db import transaction
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
 from rest_framework.views import APIView
 
 from workroomsapp.docs.docs import person_docs
-from workroomsapp.models import City, Person
 from workroomsapp.serializers.person_serializers import *
 from workroomsapp.utils.responses import person_responses
 
@@ -61,6 +59,32 @@ class PersonAPIView(APIView):
             serializer.validated_data['city'] = serializer.validated_data['city'].name
 
         return person_responses.patched(data={**serializer.validated_data})
+
+
+class DocumentImageAPIVIew(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(**person_docs.DocumentImageCreateView)
+    def post(self, request):
+        serializer = DocumentImageCreateSerializer(
+            data=request.data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return person_responses.photo_created()
+
+    @swagger_auto_schema(**person_docs.DocumentImageGetView)
+    def get(self, request):
+        document_image = DocumentImage.objects.filter(person=request.user.person).first()
+
+        if not document_image:
+            return person_responses.document_image_does_not_exist()
+
+        serializer = DocumentImageGetSerializer(
+            document_image,
+            context={'request': request})
+        return person_responses.success(serializer.data)
 
 
 class CityAPIView(APIView):

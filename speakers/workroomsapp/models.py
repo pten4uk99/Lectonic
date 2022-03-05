@@ -1,10 +1,12 @@
-from statistics import mode
-
-import datetime as datetime
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from workroomsapp.utils.workroomsapp_managers import LectureManager, CustomerManager, LecturerManager, CompanyManager
+from speakers.settings import BASE_DIR
+from workroomsapp.utils.managers.company_manager import CompanyManager
+from workroomsapp.utils.managers.customer_manager import CustomerManager
+from workroomsapp.utils.managers.lecture_manager import LectureManager
+from workroomsapp.utils.managers.lecturer_manager import LecturerManager
+from workroomsapp.utils.paths_for_media import document_image
 
 BaseUser = get_user_model()
 
@@ -47,8 +49,8 @@ class CompanyDomain(models.Model):
 
 class LecturerDomain(models.Model):
     """Сфера деятельности лектора"""
-    lecturer = models.ForeignKey('Lecturer', on_delete=models.CASCADE)  # лектор
-    domain = models.OneToOneField('Domain', on_delete=models.CASCADE)  # сфера деятельности
+    lecturer = models.ForeignKey('Lecturer', on_delete=models.CASCADE, related_name='lecturer_domains')  # лектор
+    domain = models.OneToOneField('Domain', on_delete=models.CASCADE, related_name='lecturer_domain')  # сфера деятельности
 
     def __str__(self):
         return f'Сфера деятельности: {self.domain.name}. Лектор: {self.company.person.name}'
@@ -63,22 +65,19 @@ class LectureDomain(models.Model):
         return f'Сфера деятельности: {self.domain.name}. Лекция: {self.company.person.name}'
 
 
-class Image(models.Model):
-    """Изображение"""
-    photo = models.ImageField()  # надо подумать как и куда загружать
-
-
 class DocumentImage(models.Model):
     """Фотографии для подтверждения личности: фото паспорта и селфи с паспортом"""
     person = models.OneToOneField('Person', on_delete=models.CASCADE, related_name='document_image')  # связь к Person, потому что и у заказчика и у лектора документы одинаковые
-    passport = models.OneToOneField('Image', on_delete=models.CASCADE, related_name='document_image')  # фото паспорта
-    selfie = models.OneToOneField('Image', on_delete=models.CASCADE)  # селфи с паспортом
+    passport = models.ImageField(upload_to=document_image)  # фото паспорта
+    selfie = models.ImageField(upload_to=document_image)  # селфи с паспортом
+
+    # def save(self, **kwargs):
 
 
 class DiplomaImage(models.Model):
     """Фотографии дипломов лектора"""
     lecturer = models.ForeignKey('Lecturer', on_delete=models.CASCADE, related_name='diploma_image')
-    image = models.OneToOneField('Image', on_delete=models.CASCADE, related_name='diploma_image')
+    diploma = models.ImageField()
 
 
 class Person(models.Model):
@@ -157,7 +156,7 @@ class Company(models.Model):
     name = models.CharField(max_length=100)  # название организации
     company_form = models.ForeignKey('CompanyForm', on_delete=models.CASCADE, null=True, blank=True)  # ЗАО, ООО, ОАО
     specialization = models.TextField(null=True, blank=True)  # описание специализации компании
-    document = models.OneToOneField('Image', on_delete=models.CASCADE)
+    document = models.ImageField()
     representative_person = models.OneToOneField(
         'RepresentativePerson',
         on_delete=models.CASCADE,
@@ -194,7 +193,7 @@ class RepresentativePerson(models.Model):
 
 class OptionalImage(models.Model):
     optional = models.ForeignKey('Optional', on_delete=models.CASCADE, related_name='optional_images')
-    photo = models.OneToOneField('Image', on_delete=models.CASCADE)
+    photo = models.ImageField()
 
 
 class Optional(models.Model):  # помещение, оборудование
@@ -211,7 +210,6 @@ class Respondent(models.Model):
 class LectureRequest(models.Model):
     respondents = models.ManyToManyField('Respondent', related_name='lecture_requests')
     lecture = models.OneToOneField('Lecture', on_delete=models.CASCADE, related_name='lecture_request')
-    event = models.OneToOneField('Event', on_delete=models.CASCADE, related_name='lecture_request')
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
@@ -282,6 +280,7 @@ class Calendar(models.Model):
 
 class Event(models.Model):
     datetime = models.DateTimeField()
+    lecture_request = models.ForeignKey('LectureRequest', on_delete=models.CASCADE, related_name='events')
 
 
 class LecturerCalendar(models.Model):
