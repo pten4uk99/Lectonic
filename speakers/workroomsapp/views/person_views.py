@@ -1,13 +1,8 @@
-from django.db import transaction
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
-from rest_framework.parsers import MultiPartParser, FileUploadParser
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from authapp.models import User
 from workroomsapp.docs.docs import person_docs
-from workroomsapp.models import City, Person
 from workroomsapp.serializers.person_serializers import *
 from workroomsapp.utils.responses import person_responses
 
@@ -66,27 +61,30 @@ class PersonAPIView(APIView):
         return person_responses.patched(data={**serializer.validated_data})
 
 
-class ImageAPIView(APIView):
+class DocumentImageAPIVIew(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(**person_docs.DocumentImageCreateView)
     def post(self, request):
-        print(request.data['photo'].file)
-        # serializer = ImageSerializer(data=request.data)
-        # serializer.is_valid(raise_exception=True)
-        # serializer.save()
-        return Response(200)
-
-
-class DocumentImageCreateAPIVIew(APIView):
-    parser_classes = [MultiPartParser, FileUploadParser]
-
-    def post(self, request):
-        print(request.data)
-        serializer = DocumentImageSerializer(
+        serializer = DocumentImageCreateSerializer(
             data=request.data,
-            context={'request': {'person': {'user': User.objects.first()}}}
+            context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(200)
+        return person_responses.photo_created()
+
+    @swagger_auto_schema(**person_docs.DocumentImageGetView)
+    def get(self, request):
+        document_image = DocumentImage.objects.filter(person=request.user.person).first()
+
+        if not document_image:
+            return person_responses.document_image_does_not_exist()
+
+        serializer = DocumentImageGetSerializer(
+            document_image,
+            context={'request': request})
+        return person_responses.success(serializer.data)
 
 
 class CityAPIView(APIView):

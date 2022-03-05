@@ -4,14 +4,89 @@ from speakers.utils import response
 from speakers.utils.swagger_response import get_default_response
 from workroomsapp.utils.responses import person_responses
 
+DocumentImageCreationSchema = Schema(
+    title='Загрузка фотографии для профиля пользователя',
+    type='object',
+    properties={
+        'passport': Schema(
+            type='string',
+            format='byte',
+            enum=['Тут должна быть фотография в байтах']
+        ),
+        'selfie': Schema(
+            type='string',
+            format='byte',
+            enum=['Тут должна быть фотография в байтах']
+        ),
+    },
+    required=['selfie', 'passport']
+)
+
+DocumentImageCreationSchema201 = Schema(
+    title='Успешная загрузка фотографий',
+    type='object',
+    properties={
+        **get_default_response(
+            status=response.CREATE,
+            detail=person_responses.PHOTO_CREATED
+        ),
+        "data": Schema(
+            type='string',
+            enum=['[]']
+        ),
+    },
+)
+
+DocumentImageCreationSchema400 = Schema(
+    title='Ошибка в формате изображения',
+    type='object',
+    properties={
+        "field_name": Schema(
+            type='string',
+            enum=['Паспорт/Селфи может быть только в формате "jpg", "jpeg" или "png"']
+        ),
+    },
+)
+
+DocumentImageGetSchema201 = Schema(
+    title='Всё у вас получилось)',
+    type='object',
+    properties={
+        **get_default_response(
+            status=response.SUCCESS,
+        ),
+        'data': Schema(
+            type='array',
+            items=Schema(
+                type='object',
+                properties={
+                    'passport': Schema(
+                        type='string',
+                        enum=['https://dev.lectonic.ru/media/1010001/documents/1010001_passport.png']
+                    ),
+                    'selfie': Schema(
+                        type='string',
+                        enum=['https://dev.lectonic.ru/media/1010001/documents/1010001_selfie.png']
+                    ),
+                }
+            )
+        )
+    },
+)
+
+DocumentImageGetSchema400 = Schema(
+    title='Ничего у вас не вышло(',
+    type='object',
+    properties={
+        **get_default_response(
+            status=response.EMPTY,
+            detail=person_responses.PHOTO_DOES_NOT_EXIST
+        )
+    },
+)
 
 PersonCreationSchema = Schema(
-    title='',
-    description='',
     type='object',
-    format='',
-    enum=[],
-    pattern='',
     properties={
         "first_name": Schema(
             description='Имя',
@@ -56,17 +131,11 @@ PersonCreationSchema = Schema(
         ),
     },
     required=["first_name", "last_name", "birth_date", "city"],
-    default=None,
-    read_only=None
 )
 
 PersonCreationSchema201 = Schema(
     title='Успешное создание базового профиля пользователя',
-    description='',
     type='object',
-    format='',
-    enum=[],
-    pattern='',
     properties={
         **get_default_response(
             status=response.CREATE,
@@ -81,18 +150,11 @@ PersonCreationSchema201 = Schema(
             ),
         ),
     },
-    required=[],
-    default=None,
-    read_only=None
 )
 
 PersonCreationSchema400 = Schema(
     title='Профиль уже существует',
-    description='',
     type='object',
-    format='',
-    enum=[],
-    pattern='',
     properties={
         **get_default_response(
             status=response.ERROR,
@@ -103,18 +165,11 @@ PersonCreationSchema400 = Schema(
             enum=['[]']
         ),
     },
-    required=[],
-    default=None,
-    read_only=None
 )
 
 PersonGetSchema200 = Schema(
     title='Успешное получение данных профиля',
-    description='',
     type='object',
-    format='',
-    enum=[],
-    pattern='',
     properties={
         **get_default_response(
             status=response.SUCCESS,
@@ -128,18 +183,11 @@ PersonGetSchema200 = Schema(
             ),
         )
     },
-    required=[],
-    default=None,
-    read_only=None
 )
 
 PersonGetSchema400 = Schema(
     title='Профиля для текущего пользователя не существует',
-    description='',
     type='object',
-    format='',
-    enum=[],
-    pattern='',
     properties={
         **get_default_response(
             status=response.ERROR,
@@ -150,18 +198,11 @@ PersonGetSchema400 = Schema(
             enum=['[]']
         ),
     },
-    required=[],
-    default=None,
-    read_only=None
 )
 
 PersonPatchSchema200 = Schema(
     title='Данные профиля успешно изменены',
-    description='',
     type='object',
-    format='',
-    enum=[],
-    pattern='',
     properties={
         **get_default_response(
             status=response.SUCCESS,
@@ -178,18 +219,11 @@ PersonPatchSchema200 = Schema(
             ),
         ),
     },
-    required=[],
-    default=None,
-    read_only=None
 )
 
 PersonPatchSchema400 = Schema(
     title='Профиля для текущего пользователя не существует',
-    description='',
     type='object',
-    format='',
-    enum=[],
-    pattern='',
     properties={
         **get_default_response(
             status=response.ERROR,
@@ -200,18 +234,11 @@ PersonPatchSchema400 = Schema(
             enum=['[]']
         ),
     },
-    required=[],
-    default=None,
-    read_only=None
 )
 
 CityGetSchema200 = Schema(
     title='Список городов из базы',
-    description='',
     type='object',
-    format='',
-    enum=[],
-    pattern='',
     properties={
         **get_default_response(
             status=response.SUCCESS
@@ -229,18 +256,11 @@ CityGetSchema200 = Schema(
             )
         ),
     },
-    required=[],
-    default=None,
-    read_only=None
 )
 
 CityGetSchema224 = Schema(
     title='Совпадений по введенной части названия не найдено',
-    description='',
     type='object',
-    format='',
-    enum=[],
-    pattern='',
     properties={
         **get_default_response(
             status=response.EMPTY
@@ -250,7 +270,4 @@ CityGetSchema224 = Schema(
             enum=['[]']
         ),
     },
-    required=[],
-    default=None,
-    read_only=None
 )
