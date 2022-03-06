@@ -3,7 +3,7 @@ import datetime
 
 from rest_framework import serializers
 
-from workroomsapp.models import Person, City, DocumentImage
+from workroomsapp.models import Person, City, DocumentImage, Domain
 
 
 class PersonSerializer(serializers.ModelSerializer):
@@ -95,15 +95,11 @@ class DocumentImageCreateSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         DocumentImage.objects.all().delete()  # ТОЛЬКО В РЕЖИМЕ РАЗРАБОТКИ!!!
-
-        document_image = DocumentImage.objects.create(
+        return DocumentImage.objects.create(
             person=self.context['request'].user.person,
+            passport=validated_data['passport'],
+            selfie=validated_data['selfie']
         )
-        document_image.passport = validated_data['passport']
-        document_image.selfie = validated_data['selfie']
-        document_image.save()
-
-        return document_image
 
 
 class DocumentImageGetSerializer(serializers.HyperlinkedModelSerializer):
@@ -121,4 +117,15 @@ class CitySerializer(serializers.ModelSerializer):
             'id',
             'name',
             'region'
+        ]
+
+
+class DomainGetSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(error_messages={'required': 'Обязательное поле'})
+
+    class Meta:
+        model = Domain
+        fields = [
+            'id',
+            'name'
         ]

@@ -81,7 +81,11 @@ DocumentImageGetSchema400 = Schema(
         **get_default_response(
             status=response.EMPTY,
             detail=person_responses.PHOTO_DOES_NOT_EXIST
-        )
+        ),
+        "data": Schema(
+            type='string',
+            enum=['[]']
+        ),
     },
 )
 
@@ -268,6 +272,26 @@ CityGetSchema224 = Schema(
         "data": Schema(
             type='string',
             enum=['[]']
+        ),
+    },
+)
+
+DomainGetSchema200 = Schema(
+    title='Список тематик из базы',
+    type='object',
+    properties={
+        **get_default_response(
+            status=response.SUCCESS
+        ),
+        "data": Schema(
+            type='array',
+            items=Schema(
+                type='object',
+                properties={
+                    'id': Schema(type='number', enum=['9']),
+                    'name': Schema(type='string', enum=['Дизаин']),
+                }
+            )
         ),
     },
 )
