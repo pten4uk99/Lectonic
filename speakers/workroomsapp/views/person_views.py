@@ -10,7 +10,7 @@ from workroomsapp.utils.responses import person_responses
 class PersonAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    @swagger_auto_schema(**person_docs.PersonCreationView)
+    @swagger_auto_schema(**person_docs.PersonCreationDoc)
     def post(self, request):
         if Person.objects.filter(user=request.user).first():
             return person_responses.profile_is_existing()
@@ -27,7 +27,7 @@ class PersonAPIView(APIView):
 
         return person_responses.created(data={**serializer.validated_data, 'city': city.name})
 
-    @swagger_auto_schema(**person_docs.PersonGetView)
+    @swagger_auto_schema(**person_docs.PersonGetDoc)
     def get(self, request):
         person = Person.objects.filter(user=request.user).first()
 
@@ -41,7 +41,7 @@ class PersonAPIView(APIView):
             'city': City.objects.get(pk=serializer.data['city']).name
         })
 
-    @swagger_auto_schema(**person_docs.PersonPatchView)
+    @swagger_auto_schema(**person_docs.PersonPatchDoc)
     def patch(self, request):
         person = Person.objects.filter(user=request.user).first()
 
@@ -64,7 +64,7 @@ class PersonAPIView(APIView):
 class DocumentImageAPIVIew(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    @swagger_auto_schema(**person_docs.DocumentImageCreateView)
+    @swagger_auto_schema(**person_docs.DocumentImageCreateDoc)
     def post(self, request):
         serializer = DocumentImageCreateSerializer(
             data=request.data,
@@ -74,7 +74,7 @@ class DocumentImageAPIVIew(APIView):
         serializer.save()
         return person_responses.photo_created()
 
-    @swagger_auto_schema(**person_docs.DocumentImageGetView)
+    @swagger_auto_schema(**person_docs.DocumentImageGetDoc)
     def get(self, request):
         document_image = DocumentImage.objects.filter(person=request.user.person).first()
 
@@ -87,10 +87,10 @@ class DocumentImageAPIVIew(APIView):
         return person_responses.success(serializer.data)
 
 
-class CityAPIView(APIView):
+class CityGetAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    @swagger_auto_schema(**person_docs.CityGetView)
+    @swagger_auto_schema(**person_docs.CityGetDoc)
     def get(self, request):
         serializer = CitySerializer(data=request.GET)
         serializer.is_valid(raise_exception=True)
@@ -103,3 +103,12 @@ class CityAPIView(APIView):
         cities_ser = CitySerializer(cities, many=True)
 
         return person_responses.success(cities_ser.data)
+
+
+class DomainGetAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(**person_docs.DomainGetDoc)
+    def get(self, request):
+        serializer = DomainGetSerializer(Domain.objects.all(), many=True)
+        return person_responses.success(serializer.data)

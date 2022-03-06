@@ -6,7 +6,7 @@ from workroomsapp.utils.managers.company_manager import CompanyManager
 from workroomsapp.utils.managers.customer_manager import CustomerManager
 from workroomsapp.utils.managers.lecture_manager import LectureManager
 from workroomsapp.utils.managers.lecturer_manager import LecturerManager
-from workroomsapp.utils.paths_for_media import document_image
+from workroomsapp.utils.paths_for_media import document_image, diploma_image
 
 BaseUser = get_user_model()
 
@@ -71,13 +71,11 @@ class DocumentImage(models.Model):
     passport = models.ImageField(upload_to=document_image)  # фото паспорта
     selfie = models.ImageField(upload_to=document_image)  # селфи с паспортом
 
-    # def save(self, **kwargs):
-
 
 class DiplomaImage(models.Model):
     """Фотографии дипломов лектора"""
-    lecturer = models.ForeignKey('Lecturer', on_delete=models.CASCADE, related_name='diploma_image')
-    diploma = models.ImageField()
+    lecturer = models.ForeignKey('Lecturer', on_delete=models.CASCADE, related_name='diploma_images')
+    diploma = models.ImageField(upload_to=diploma_image)
 
 
 class Person(models.Model):
