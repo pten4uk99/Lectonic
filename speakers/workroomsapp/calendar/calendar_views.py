@@ -1,9 +1,8 @@
 from rest_framework.views import APIView
 
-from workroomsapp.models import LecturerCalendar, Lecturer
-from workroomsapp.serializers.calendar_serializers import LecturerCalendarSerializer
-from workroomsapp.utils import workroomsapp_permissions
-from workroomsapp.utils.responses import calendar_responses as responses
+from workroomsapp.models import LecturerCalendar
+from workroomsapp.base.calendar_serializers import LecturerCalendarSerializer
+from workroomsapp.calendar import calendar_responses as responses
 
 
 class LecturerCalendarAPIView(APIView):

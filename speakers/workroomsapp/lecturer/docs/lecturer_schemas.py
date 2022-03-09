@@ -2,7 +2,7 @@ from drf_yasg.openapi import Schema
 
 from speakers.utils import response
 from speakers.utils.swagger_response import get_default_response
-from workroomsapp.utils.responses import lecturer_responses
+from workroomsapp.lecturer import lecturer_responses
 
 DiplomaImageCreationSchema = Schema(
     title='Загрузка фотографии для профиля пользователя',

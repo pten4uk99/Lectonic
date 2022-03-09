@@ -7,10 +7,10 @@ from workroomsapp import models as workrooms_models
 class CompanyManager(models.Manager):
     @transaction.atomic
     def create_company(self, person: object = None,
-                       name: str = None, company_form: (int, object) = None,
+                       name: str = None, company_form: int = None,
                        specialization: str = None, document: object = None,
                        representative_person: dict = None, legal_address: str = None,
-                       actial_address: str = None, optional: object = None,
+                       actual_address: str = None, optional: object = None,
                        is_verified: bool = False):
         if not person:
             raise exceptions.ValidationError('Обязательное поле person не заполнено')
@@ -33,7 +33,7 @@ class CompanyManager(models.Manager):
             document=document,
             representative_person=representative_person,
             legal_address=legal_address,
-            actial_address=actial_address,
+            actual_address=actual_address,
             is_verified=is_verified,
             optional=optional
         )

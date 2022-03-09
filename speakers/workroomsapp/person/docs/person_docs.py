@@ -1,8 +1,7 @@
 from drf_yasg import openapi
 
-from workroomsapp.docs.schemas.person_schemas import *
-from workroomsapp.serializers.person_serializers import PersonSerializer
-from workroomsapp.utils.responses.person_responses import DESCRIPTION
+from workroomsapp.person.docs.person_schemas import *
+from workroomsapp.person.person_responses import DESCRIPTION
 
 PersonCreationDoc = {
     'request_body': PersonCreationSchema,  # Сериализатор
