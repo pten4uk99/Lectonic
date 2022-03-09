@@ -55,10 +55,10 @@ class TestLectureCreate(APITestCase):
 
         self.client.post(reverse('lecturer'), self.lecturer_data)
 
-    def test_lecture_as_lecturer_was_created(self):
-        response = self.client.post(reverse('lecture'), self.lecture_data)
-        print(response.data)
-        # self.assertEqual(
-        #     response.status_code, 201,
-        #     msg='Неверный статус ответа при создании профиля заказчика'
-        # )
+    # def test_lecture_as_lecturer_was_created(self):
+    #     response = self.client.post(reverse('lecture'), self.lecture_data)
+    #     print(response.data)
+    #     # self.assertEqual(
+    #     #     response.status_code, 201,
+    #     #     msg='Неверный статус ответа при создании профиля заказчика'
+    #     # )
