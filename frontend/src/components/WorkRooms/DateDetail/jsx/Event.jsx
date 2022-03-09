@@ -1,19 +1,44 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { connect } from 'react-redux'
 
 function Event(props) {
   let [className, setClass] = useState('left-block')
+  let eventInfo = useRef()
+  let [dynamicCircleHeight, setCircleHeight] = useState(24)
+  let [eventDetail, setEventDetail] = useState(false)
+  let [eventDetailHeight, setEventHeight] = useState('0px')
+
   useEffect(() => {
-    if (props.status) setClass('left-block grey')
+    if (!props.status) setClass('left-block grey')
   }, [])
+
+  useEffect(() => {
+    if (!eventDetail) {
+      setEventHeight('42px')
+      setCircleHeight(24)
+    } else {
+      setEventHeight(`${eventInfo.current.scrollHeight}px`)
+      setCircleHeight(eventInfo.current.scrollHeight - 13.4)
+    }
+  }, [eventDetail])
+
   return (
     <li className='date-detail__event'>
       <div className={className}>
         <div className='circle' />
-        <div className='dynamic-circle' />
+        <div
+          className='dynamic-circle'
+          style={{ height: dynamicCircleHeight }}
+        />
       </div>
-      <div className='event-info'>
-        <div className='header'>{props.header}</div>
+      <div
+        className='event-info'
+        ref={eventInfo}
+        style={{ height: eventDetailHeight }}
+      >
+        <div className='header' onClick={() => setEventDetail(!eventDetail)}>
+          {props.header}
+        </div>
         <div className='theme'>
           Тема: <span>{props.theme}</span>
         </div>
@@ -28,8 +53,8 @@ function Event(props) {
         </div>
       </div>
       <div className='time-range'>
-        <span className='start'>10:00</span>
-        <span className='end'>12:00</span>
+        <span className='start'>{props.timeStart}</span>
+        <span className='end'>{props.timeEnd}</span>
       </div>
     </li>
   )

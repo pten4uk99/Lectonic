@@ -1,10 +1,8 @@
-from django.db import transaction
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
 from rest_framework.views import APIView
 
 from workroomsapp.docs.docs import person_docs
-from workroomsapp.models import City, Person
 from workroomsapp.serializers.person_serializers import *
 from workroomsapp.utils.responses import person_responses
 
@@ -12,7 +10,7 @@ from workroomsapp.utils.responses import person_responses
 class PersonAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    @swagger_auto_schema(**person_docs.PersonCreationView)
+    @swagger_auto_schema(**person_docs.PersonCreationDoc)
     def post(self, request):
         if Person.objects.filter(user=request.user).first():
             return person_responses.profile_is_existing()
@@ -29,7 +27,7 @@ class PersonAPIView(APIView):
 
         return person_responses.created(data={**serializer.validated_data, 'city': city.name})
 
-    @swagger_auto_schema(**person_docs.PersonGetView)
+    @swagger_auto_schema(**person_docs.PersonGetDoc)
     def get(self, request):
         person = Person.objects.filter(user=request.user).first()
 
@@ -43,7 +41,7 @@ class PersonAPIView(APIView):
             'city': City.objects.get(pk=serializer.data['city']).name
         })
 
-    @swagger_auto_schema(**person_docs.PersonPatchView)
+    @swagger_auto_schema(**person_docs.PersonPatchDoc)
     def patch(self, request):
         person = Person.objects.filter(user=request.user).first()
 
@@ -63,10 +61,36 @@ class PersonAPIView(APIView):
         return person_responses.patched(data={**serializer.validated_data})
 
 
-class CityAPIView(APIView):
+class DocumentImageAPIVIew(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    @swagger_auto_schema(**person_docs.CityGetView)
+    @swagger_auto_schema(**person_docs.DocumentImageCreateDoc)
+    def post(self, request):
+        serializer = DocumentImageCreateSerializer(
+            data=request.data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return person_responses.photo_created()
+
+    @swagger_auto_schema(**person_docs.DocumentImageGetDoc)
+    def get(self, request):
+        document_image = DocumentImage.objects.filter(person=request.user.person).first()
+
+        if not document_image:
+            return person_responses.document_image_does_not_exist()
+
+        serializer = DocumentImageGetSerializer(
+            document_image,
+            context={'request': request})
+        return person_responses.success(serializer.data)
+
+
+class CityGetAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(**person_docs.CityGetDoc)
     def get(self, request):
         serializer = CitySerializer(data=request.GET)
         serializer.is_valid(raise_exception=True)
@@ -79,3 +103,12 @@ class CityAPIView(APIView):
         cities_ser = CitySerializer(cities, many=True)
 
         return person_responses.success(cities_ser.data)
+
+
+class DomainGetAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(**person_docs.DomainGetDoc)
+    def get(self, request):
+        serializer = DomainGetSerializer(Domain.objects.all(), many=True)
+        return person_responses.success(serializer.data)

@@ -3,7 +3,7 @@ import datetime
 
 from rest_framework import serializers
 
-from workroomsapp.models import Person, City
+from workroomsapp.models import Person, City, DocumentImage, Domain
 
 
 class PersonSerializer(serializers.ModelSerializer):
@@ -60,6 +60,54 @@ class PersonSerializer(serializers.ModelSerializer):
         return birth_date
 
 
+class DocumentImageCreateSerializer(serializers.Serializer):
+    passport = serializers.FileField()
+    selfie = serializers.FileField()
+
+    class Meta:
+        model = DocumentImage
+        fields = [
+            'passport',
+            'selfie'
+        ]
+
+    def validate_passport(self, passport):
+        image_format = passport.name.split('.')[-1]
+
+        if image_format not in ['jpg', 'jpeg', 'png']:
+            msg = 'Паспорт может быть только в формате "jpg", "jpeg" или "png"'
+            raise serializers.ValidationError(msg)
+
+        passport.name = 'passport.' + image_format
+
+        return passport
+
+    def validate_selfie(self, selfie):
+        image_format = selfie.name.split('.')[-1]
+
+        if image_format not in ['jpg', 'jpeg', 'png']:
+            msg = 'Селфи может быть только в формате "jpg", "jpeg" или "png"'
+            raise serializers.ValidationError(msg)
+
+        selfie.name = 'selfie.' + image_format
+
+        return selfie
+
+    def create(self, validated_data):
+        DocumentImage.objects.all().delete()  # ТОЛЬКО В РЕЖИМЕ РАЗРАБОТКИ!!!
+        return DocumentImage.objects.create(
+            person=self.context['request'].user.person,
+            passport=validated_data['passport'],
+            selfie=validated_data['selfie']
+        )
+
+
+class DocumentImageGetSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = DocumentImage
+        fields = ['passport', 'selfie']
+
+
 class CitySerializer(serializers.ModelSerializer):
     name = serializers.CharField(error_messages={'required': 'Обязательное поле'})
 
@@ -69,4 +117,15 @@ class CitySerializer(serializers.ModelSerializer):
             'id',
             'name',
             'region'
+        ]
+
+
+class DomainGetSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(error_messages={'required': 'Обязательное поле'})
+
+    class Meta:
+        model = Domain
+        fields = [
+            'id',
+            'name'
         ]

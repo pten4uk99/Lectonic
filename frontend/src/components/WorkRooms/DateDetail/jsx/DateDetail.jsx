@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import Event from './Event'
-import { checkEqualDates } from '~@/WorkRooms/Calendar/jsx/utils/date'
+import { checkEqualDates } from '~@/WorkRooms/Calendar/utils/date'
 
 function DateDetail(props) {
+  let year = props.date.getFullYear()
   let month = getMonth(props.date.getMonth())
   let day = getDay(props.date.getDate())
   let [events, setEvents] = useState(null)
@@ -18,56 +19,48 @@ function DateDetail(props) {
       setEvents(null)
     }
   }, [props.date])
-  return events ? (
+
+  return (
     <div className='date-detail__wrapper'>
-      <header className='date-detail__header'>
+      <div className='date-detail__header'>
         <span>
-          {day}.{month}
+          {day}.{month}.{year}
         </span>
-      </header>
-      <div className='date-detail__body'>
-        <main className='date-detail__main'>
-          {events.map((event, index) => {
-            return event.status ? (
-              <Event
-                key={index}
-                header='Лекция подтверждена'
-                status={false}
-                theme={event.theme}
-                lecturer={event.lecturer}
-                listener={event.listener}
-                address={event.address}
-              />
-            ) : (
-              <Event
-                key={index}
-                header='Лекция не подтверждена'
-                status={true}
-                theme={event.theme}
-                lecturer={event.lecturer}
-                listener={event.listener}
-                address={event.address}
-              />
-            )
-          })}
-        </main>
       </div>
-    </div>
-  ) : (
-    <div className='date-detail__wrapper'>
-      <header className='date-detail__header'>
-        <span>
-          {day}.{month}
-        </span>
-      </header>
-      <div className='no-events'>
-        <p>На данный момент у Вас нет запланированных мероприятий.</p>
-        <p>
-          Вы можете создать одно или несколько мероприятий, чтобы потенциальные
-          слушатели могли откликнуться
-        </p>
-        <button className='create-event'>Создать мероприятие</button>
-      </div>
+      {events ? (
+        <div className='date-detail__body'>
+          <main className='date-detail__main'>
+            {events.map((event, index) => {
+              return (
+                <Event
+                  key={index}
+                  header={
+                    event.status
+                      ? 'Лекция подтверждена'
+                      : 'Лекция не подтверждена'
+                  }
+                  status={event.status}
+                  theme={event.theme}
+                  lecturer={event.lecturer}
+                  listener={event.listener}
+                  address={event.address}
+                  timeStart={event.timeStart}
+                  timeEnd={event.timeEnd}
+                />
+              )
+            })}
+          </main>
+        </div>
+      ) : (
+        <div className='no-events'>
+          <p>На данный момент у Вас нет запланированных мероприятий.</p>
+          <p>
+            Вы можете создать одно или несколько мероприятий, чтобы
+            потенциальные слушатели могли откликнуться
+          </p>
+          <button className='create-event'>Создать мероприятие</button>
+        </div>
+      )}
     </div>
   )
 }

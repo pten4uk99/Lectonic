@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase
 from workroomsapp.models import City
 
 
-class TestPersonGet(APITestCase):
+class TestCityGet(APITestCase):
 
     def setUp(self):
         signup_data = {'email': 'admin@admin.ru', 'password': '12345678'}

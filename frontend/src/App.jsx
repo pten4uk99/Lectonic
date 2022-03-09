@@ -8,13 +8,11 @@ import ChangePassword from '~@/Authorization/jsx/ChangePassword'
 import ContinueRegistration from '~@/Authorization/jsx/ContinueRegistration'
 import ConfirmEmail from '~@/Authorization/jsx/ConfirmEmail'
 import UserBasicInfo from '~@/UserArea/jsx/UserBasicInfo'
-import ChooseRole from '~@/RegistrationRole/jsx/RegistrationRole'
-import Lecturer from '~@/WorkRooms/Lecturer/jsx/Lecturer'
+import FullCalendar from "./components/WorkRooms/FullCalendar";
 import RegistrationRole from '~@/RegistrationRole/jsx/RegistrationRole'
 import LecturerStep2 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep2'
 import LecturerStep3 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep3'
 import LecturerStep4 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep4'
-
 
 
 function App() {
@@ -36,7 +34,7 @@ function App() {
           <Route path='/register_lecturer2' element={<LecturerStep2 />} />
           <Route path='/register_lecturer3' element={<LecturerStep3 />} />
           <Route path='/register_lecturer4' element={<LecturerStep4 />} />
-          <Route path='/user_profile' element={<Lecturer />} />
+          <Route path='/user_profile' element={<FullCalendar />} />
           <Route path='/change_password' element={<ChangePassword />} />
           <Route path='*' element={<NotFoundPage />} />
         </Routes>

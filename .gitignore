@@ -8,6 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+media/
 build/
 develop-eggs/
 dist/
@@ -162,5 +163,4 @@ sup*
 
 # Server
 staticfiles/
-
 node_modules/

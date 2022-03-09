@@ -1,10 +1,14 @@
-from statistics import mode
-
-import datetime as datetime
 from django.contrib.auth import get_user_model
 from django.db import models
 
-User = get_user_model()
+from speakers.settings import BASE_DIR
+from workroomsapp.utils.managers.company_manager import CompanyManager
+from workroomsapp.utils.managers.customer_manager import CustomerManager
+from workroomsapp.utils.managers.lecture_manager import LectureManager
+from workroomsapp.utils.managers.lecturer_manager import LecturerManager
+from workroomsapp.utils.paths_for_media import document_image, diploma_image
+
+BaseUser = get_user_model()
 
 
 class City(models.Model):
@@ -45,8 +49,8 @@ class CompanyDomain(models.Model):
 
 class LecturerDomain(models.Model):
     """Сфера деятельности лектора"""
-    lecturer = models.ForeignKey('Lecturer', on_delete=models.CASCADE)  # лектор
-    domain = models.OneToOneField('Domain', on_delete=models.CASCADE)  # сфера деятельности
+    lecturer = models.ForeignKey('Lecturer', on_delete=models.CASCADE, related_name='lecturer_domains')  # лектор
+    domain = models.OneToOneField('Domain', on_delete=models.CASCADE, related_name='lecturer_domain')  # сфера деятельности
 
     def __str__(self):
         return f'Сфера деятельности: {self.domain.name}. Лектор: {self.company.person.name}'
@@ -61,22 +65,17 @@ class LectureDomain(models.Model):
         return f'Сфера деятельности: {self.domain.name}. Лекция: {self.company.person.name}'
 
 
-class Image(models.Model):
-    """Изображение"""
-    photo = models.ImageField()  # надо подумать как и куда загружать
-
-
 class DocumentImage(models.Model):
     """Фотографии для подтверждения личности: фото паспорта и селфи с паспортом"""
     person = models.OneToOneField('Person', on_delete=models.CASCADE, related_name='document_image')  # связь к Person, потому что и у заказчика и у лектора документы одинаковые
-    passport = models.OneToOneField('Image', on_delete=models.CASCADE, related_name='document_image')  # фото паспорта
-    selfie = models.OneToOneField('Image', on_delete=models.CASCADE)  # селфи с паспортом
+    passport = models.ImageField(upload_to=document_image)  # фото паспорта
+    selfie = models.ImageField(upload_to=document_image)  # селфи с паспортом
 
 
 class DiplomaImage(models.Model):
     """Фотографии дипломов лектора"""
-    lecturer = models.ForeignKey('Lecturer', on_delete=models.CASCADE, related_name='diploma_image')
-    image = models.OneToOneField('Image', on_delete=models.CASCADE, related_name='diploma_image')
+    lecturer = models.ForeignKey('Lecturer', on_delete=models.CASCADE, related_name='diploma_images')
+    diploma = models.ImageField(upload_to=diploma_image)
 
 
 class Person(models.Model):
@@ -88,7 +87,7 @@ class Person(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='person')
     rating = models.IntegerField(default=0)
     # photo = models.CharField(max_length=200, null=True, blank=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='person')
+    user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, related_name='person')
     is_lecturer = models.BooleanField(default=False)
     is_project_admin = models.BooleanField(default=False)
     is_customer = models.BooleanField(default=False)
@@ -115,7 +114,7 @@ class Person(models.Model):
 
 class Lecturer(models.Model):
     """Лектор"""
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='lecturer')
+    person = models.OneToOneField('Person', on_delete=models.CASCADE, related_name='lecturer')
     performances_links = models.ManyToManyField('Link', related_name='perf_lecturer')  # ссылки на выступления. Лекторы могут выступать по двое, поэтому ManyToMany
     publication_links = models.ManyToManyField('Link', related_name='pub_lecturer')  # ссылки на публикации. Так же, у публикации может быть несколько авторов
     education = models.TextField(blank=True, null=True)
@@ -126,6 +125,8 @@ class Lecturer(models.Model):
         on_delete=models.CASCADE,
         related_name='lecturer'
     )
+
+    objects = LecturerManager()
 
 
 class Link(models.Model):
@@ -143,6 +144,7 @@ class Customer(models.Model):
         on_delete=models.CASCADE,
         related_name='customer'
     )
+    objects = CustomerManager()
     # остальные поля исходят из других моделей к этой, так как ForeignKey
 
 
@@ -152,7 +154,7 @@ class Company(models.Model):
     name = models.CharField(max_length=100)  # название организации
     company_form = models.ForeignKey('CompanyForm', on_delete=models.CASCADE, null=True, blank=True)  # ЗАО, ООО, ОАО
     specialization = models.TextField(null=True, blank=True)  # описание специализации компании
-    document = models.OneToOneField('Image', on_delete=models.CASCADE)
+    document = models.ImageField()
     representative_person = models.OneToOneField(
         'RepresentativePerson',
         on_delete=models.CASCADE,
@@ -168,6 +170,8 @@ class Company(models.Model):
         related_name='company'
     )
     is_verified = models.BooleanField(default=False)
+
+    objects = CompanyManager()
 
     def __str__(self):
         return f'{self.name}'
@@ -185,14 +189,69 @@ class RepresentativePerson(models.Model):
     middle_name = models.CharField(max_length=100, null=True, blank=True)
 
 
+class OptionalImage(models.Model):
+    optional = models.ForeignKey('Optional', on_delete=models.CASCADE, related_name='optional_images')
+    photo = models.ImageField()
+
+
 class Optional(models.Model):  # помещение, оборудование
     hall_address = models.CharField(max_length=200, blank=True, null=True)  # адрес помещения
     equipment = models.CharField(max_length=500, blank=True, null=True)  # перечисление имеющегося оборудования
 
 
+class Respondent(models.Model):
+    """Откликнувшийся на заявку на лекцию"""
+    person = models.OneToOneField('Person', on_delete=models.CASCADE)
+    confirmed = models.BooleanField(default=False)
+
+
+class LectureRequest(models.Model):
+    respondents = models.ManyToManyField('Respondent', related_name='lecture_requests')
+    lecture = models.OneToOneField('Lecture', on_delete=models.CASCADE, related_name='lecture_request')
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+
+class LecturerLectureRequest(models.Model):
+    lecture_request = models.OneToOneField(
+        'LectureRequest',
+        on_delete=models.CASCADE,
+        related_name='lecturer_lecture_request'
+    )
+    lecturer = models.ForeignKey(
+        'Lecturer',
+        on_delete=models.CASCADE,
+        related_name='lecturer_lecture_request'
+    )
+
+
+class CustomerLectureRequest(models.Model):
+    lecture_request = models.OneToOneField(
+        'LectureRequest',
+        on_delete=models.CASCADE,
+        related_name='customer_lecture_request')
+    customer = models.OneToOneField(
+        'Customer',
+        on_delete=models.CASCADE,
+        related_name='customer_lecture_request'
+    )
+
+
+class CompanyLectureRequest(models.Model):
+    lecture_request = models.OneToOneField(
+        'LectureRequest',
+        on_delete=models.CASCADE,
+        related_name='company_lecture_request'
+    )
+    company = models.OneToOneField(
+        'Company',
+        on_delete=models.CASCADE,
+        related_name='company_lecture_request'
+    )
+
+
 class Lecture(models.Model):
     """Лекция"""
-    lecturers = models.ManyToManyField('Lecturer', related_name='lectures')
     name = models.CharField(max_length=100)
     optional = models.OneToOneField(
         'Optional',
@@ -202,13 +261,11 @@ class Lecture(models.Model):
         related_name='lecture'
     )
     status = models.BooleanField(null=True, blank=True)  # 3 варианта: подтверждена, отклонена, не просмотрена
-    event = models.OneToOneField('Event', on_delete=models.CASCADE)
     duration = models.IntegerField(null=True, blank=True)  # Длительность лекции в минутах (нет необходимости использовать DateTimeRangeField)
     cost = models.IntegerField(default=0)  # стоимость лекции
     description = models.TextField(null=True, blank=True)
-    lecturer_name = models.CharField(max_length=300, null=True, blank=True)
-    sys_created_at = models.DateTimeField(auto_now_add=True)
-    sys_modified_at = models.DateTimeField(auto_now=True)
+
+    objects = LectureManager()
 
     def __str__(self):
         return f'{self.name}'
@@ -221,6 +278,7 @@ class Calendar(models.Model):
 
 class Event(models.Model):
     datetime = models.DateTimeField()
+    lecture_request = models.ForeignKey('LectureRequest', on_delete=models.CASCADE, related_name='events')
 
 
 class LecturerCalendar(models.Model):
