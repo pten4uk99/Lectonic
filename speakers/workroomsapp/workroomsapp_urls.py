@@ -1,8 +1,9 @@
 from django.urls import path
 
-from .views.calendar_views import *
-from .views.lecturer_views import *
-from .views.person_views import *
+from workroomsapp.lecture.lecture_views import *
+from workroomsapp.lecturer.lecturer_views import *
+from workroomsapp.customer.customer_views import *
+from workroomsapp.person.person_views import *
 
 
 urlpatterns = [
@@ -11,6 +12,10 @@ urlpatterns = [
     path('city/', CityGetAPIView.as_view(), name='city'),
     path('domain/', DomainGetAPIView.as_view(), name='domain'),
 
+    path('lecture/', LectureAPIView.as_view(), name='lecture'),
+
     path('lecturer/', LecturerCreateAPIView.as_view(), name='lecturer'),
     path('lecturer/diploma_photos/', DiplomaImageAPIView.as_view(), name='diploma_images'),
+
+    path('customer/', CustomerAPIView.as_view(), name='customer'),
 ]
