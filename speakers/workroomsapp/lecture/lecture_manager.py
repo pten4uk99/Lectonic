@@ -6,10 +6,10 @@ from workroomsapp import models as workrooms_models
 
 class LectureManager(models.Manager):
     @transaction.atomic
-    def create_as_lecturer(self, name: str, lecturer: object = None,
-                           datetime: object = None, hall_address: str = None,
-                           equipment: str = None, lecture_type: str = None,
-                           status: bool = None,
+    def create_as_lecturer(self, name: str, photo: object = None,
+                           lecturer: object = None, datetime: object = None,
+                           hall_address: str = None, equipment: str = None,
+                           lecture_type: str = None, status: bool = None,
                            duration: int = None, cost: int = 0,
                            description: str = ""):
 
@@ -34,17 +34,18 @@ class LectureManager(models.Manager):
             description=description
         )
 
-        event = workrooms_models.Event.objects.create(datetime=datetime)
+        lecture_request = workrooms_models.LectureRequest.objects.create(lecture=lecture)
 
-        lecture_request = workrooms_models.LectureRequest.objects.create(
-            lecture=lecture, event=event)
+        event = workrooms_models.Event.objects.create(
+            datetime=datetime, lecture_request=lecture_request)
 
         if lecturer.lecturer_calendar:
             calendar = lecturer.lecturer_calendar.calendar
-            calendar.events.add(lecture_request.event)
+            calendar.events.add(event)
             calendar.save()
 
         return workrooms_models.LecturerLectureRequest.objects.create(
             lecturer=lecturer,
-            lecture_request=lecture_request
+            lecture_request=lecture_request,
+            photo=photo
         )

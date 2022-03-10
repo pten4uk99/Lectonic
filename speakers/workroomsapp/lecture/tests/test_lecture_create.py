@@ -1,13 +1,16 @@
 import datetime
+import os.path
 
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from authapp.models import User
-from workroomsapp.models import City, Person, Domain, Lecturer, Customer
+from speakers.settings import BASE_DIR
+from speakers.utils.tests import test_image
+from workroomsapp.models import *
 
 
-class TestLectureCreate(APITestCase):
+class TestLectureAsLecturerCreate(APITestCase):
     signup_data = {'email': 'admin@admin.ru', 'password': '12345678'}
     profile_data = {
         'first_name': 'Пётр-Петр',
@@ -32,7 +35,7 @@ class TestLectureCreate(APITestCase):
     }
     lecture_data = {
         'name': 'Лекция супер хорошая лекция',
-        'datetime': datetime.datetime.now() - datetime.timedelta(days=5),
+        'datetime': '2020-03-15',
         'hall_address': 'Москва, ул. Не московская, д. Домашний',
         'type': 'offline',
         'equipment': 'Руки, ноги, доска, полет.',
@@ -55,10 +58,53 @@ class TestLectureCreate(APITestCase):
 
         self.client.post(reverse('lecturer'), self.lecturer_data)
 
-    # def test_lecture_as_lecturer_was_created(self):
-    #     response = self.client.post(reverse('lecture'), self.lecture_data)
-    #     print(response.data)
-    #     # self.assertEqual(
-    #     #     response.status_code, 201,
-    #     #     msg='Неверный статус ответа при создании профиля заказчика'
-    #     # )
+    def test_lecture_as_lecturer_was_created(self):
+        with self.settings(
+                MEDIA_URL='test_media',
+                MEDIA_ROOT=os.path.join(BASE_DIR, 'test_media')
+        ):
+            self.lecture_data['photo'] = test_image.start()
+            response = self.client.post(reverse('lecture'), self.lecture_data)
+            print(response.data)
+            self.assertEqual(
+                response.status_code, 201,
+                msg='Неверный статус ответа при создании запроса на лекцию от лектора'
+            )
+
+            self.assertEqual(
+                LectureRequest.objects.all().exists(), True,
+                msg='В базе не создан LectureRequest'
+            )
+            self.assertEqual(
+                Lecture.objects.all().exists(), True,
+                msg='В базе не создан Lecture'
+            )
+            self.assertEqual(
+                Optional.objects.all().exists(), True,
+                msg='В базе не создан Optional'
+            )
+            self.assertEqual(
+                Event.objects.all().exists(), True,
+                msg='В базе не создан Event'
+            )
+            self.assertEqual(
+                Calendar.objects.all().exists(), True,
+                msg='В базе не создан Calendar'
+            )
+            self.assertEqual(
+                LecturerCalendar.objects.all().exists(), True,
+                msg='В базе не создан LecturerCalendar'
+            )
+            self.assertEqual(
+                LecturerLectureRequest.objects.all().exists(), True,
+                msg='В базе не создан LecturerLectureRequest'
+            )
+        test_image.stop()
+
+    def test_exist_lecture_request(self):
+        self.client.post(reverse('lecture'), self.lecture_data)
+        self.assertEqual(
+            hasattr(Lecture.objects.first(), 'lecture_request'), True,
+            msg='У созданной лекции нет аттрибута lecture_request'
+        )
+

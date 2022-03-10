@@ -5,7 +5,7 @@ from workroomsapp.company.company_manager import CompanyManager
 from workroomsapp.customer.customer_manager import CustomerManager
 from workroomsapp.lecture.lecture_manager import LectureManager
 from workroomsapp.lecturer.lecturer_manager import LecturerManager
-from workroomsapp.utils.paths_for_media import document_image, diploma_image
+from workroomsapp.utils.paths_for_media import document_image, diploma_image, lecturer_lecture_image, person_image
 
 BaseUser = get_user_model()
 
@@ -85,7 +85,6 @@ class Person(models.Model):
     birth_date = models.DateField()
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='person')
     rating = models.IntegerField(default=0)
-    # photo = models.CharField(max_length=200, null=True, blank=True)
     user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, related_name='person')
     is_lecturer = models.BooleanField(default=False)
     is_project_admin = models.BooleanField(default=False)
@@ -189,11 +188,13 @@ class RepresentativePerson(models.Model):
 
 
 class OptionalImage(models.Model):
+    """Фотография помещения"""
     optional = models.ForeignKey('Optional', on_delete=models.CASCADE, related_name='optional_images')
     photo = models.ImageField()
 
 
-class Optional(models.Model):  # помещение, оборудование
+class Optional(models.Model):
+    """Помещение, оборудование"""
     hall_address = models.CharField(max_length=200, blank=True, null=True)  # адрес помещения
     equipment = models.CharField(max_length=500, blank=True, null=True)  # перечисление имеющегося оборудования
 
@@ -222,6 +223,7 @@ class LecturerLectureRequest(models.Model):
         on_delete=models.CASCADE,
         related_name='lecturer_lecture_request'
     )
+    photo = models.ImageField(upload_to=lecturer_lecture_image, null=True)
 
 
 class CustomerLectureRequest(models.Model):

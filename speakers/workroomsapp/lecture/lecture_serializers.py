@@ -5,6 +5,7 @@ from workroomsapp.models import Lecture
 
 class LectureCreateAsLecturerSerializer(serializers.Serializer):
     name = serializers.CharField()
+    photo = serializers.FileField()
     datetime = serializers.DateTimeField()
     hall_address = serializers.CharField()
     equipment = serializers.CharField()
@@ -17,6 +18,7 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
     class Meta:
         fields = [
             'name',
+            'photo',
             'hall_address',
             'equipment',
             'type',
@@ -30,6 +32,7 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
         return Lecture.objects.create_as_lecturer(
             lecturer=self.context['request'].user.person.lecturer,
             name=validated_data.get('name'),
+            photo=validated_data.get('photo'),
             datetime=validated_data.get('datetime'),
             hall_address=validated_data.get('hall_address'),
             equipment=validated_data.get('equipment'),
