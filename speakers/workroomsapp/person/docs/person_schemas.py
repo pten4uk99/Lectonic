@@ -2,7 +2,7 @@ from drf_yasg.openapi import Schema
 
 from speakers.utils import response
 from speakers.utils.swagger_response import get_default_response
-from workroomsapp.utils.responses import person_responses
+from workroomsapp.person import person_responses
 
 DocumentImageCreationSchema = Schema(
     title='Загрузка фотографии для профиля пользователя',

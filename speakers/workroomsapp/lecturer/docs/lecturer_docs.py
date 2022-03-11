@@ -1,5 +1,5 @@
-from workroomsapp.docs.schemas.lecturer_schemas import *
-from workroomsapp.utils.responses.lecturer_responses import DESCRIPTION
+from workroomsapp.lecturer.docs.lecturer_schemas import *
+from workroomsapp.lecturer.lecturer_responses import DESCRIPTION
 
 DiplomaImageCreateDoc = {
     'request_body': DiplomaImageCreationSchema,

@@ -1,11 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from speakers.settings import BASE_DIR
-from workroomsapp.utils.managers.company_manager import CompanyManager
-from workroomsapp.utils.managers.customer_manager import CustomerManager
-from workroomsapp.utils.managers.lecture_manager import LectureManager
-from workroomsapp.utils.managers.lecturer_manager import LecturerManager
+from workroomsapp.company.company_manager import CompanyManager
+from workroomsapp.customer.customer_manager import CustomerManager
+from workroomsapp.lecture.lecture_manager import LectureManager
+from workroomsapp.lecturer.lecturer_manager import LecturerManager
 from workroomsapp.utils.paths_for_media import document_image, diploma_image
 
 BaseUser = get_user_model()
@@ -235,6 +234,7 @@ class CustomerLectureRequest(models.Model):
         on_delete=models.CASCADE,
         related_name='customer_lecture_request'
     )
+    listeners = models.IntegerField()
 
 
 class CompanyLectureRequest(models.Model):
@@ -248,10 +248,17 @@ class CompanyLectureRequest(models.Model):
         on_delete=models.CASCADE,
         related_name='company_lecture_request'
     )
+    listeners = models.IntegerField()
 
 
 class Lecture(models.Model):
     """Лекция"""
+    TYPES = [
+        ('online', 'Онлайн'),
+        ('offline', 'Оффлайн'),
+        ('hybrid', 'Гибрид')
+    ]
+
     name = models.CharField(max_length=100)
     optional = models.OneToOneField(
         'Optional',
@@ -260,6 +267,7 @@ class Lecture(models.Model):
         blank=True,
         related_name='lecture'
     )
+    type = models.CharField(max_length=20, choices=TYPES)
     status = models.BooleanField(null=True, blank=True)  # 3 варианта: подтверждена, отклонена, не просмотрена
     duration = models.IntegerField(null=True, blank=True)  # Длительность лекции в минутах (нет необходимости использовать DateTimeRangeField)
     cost = models.IntegerField(default=0)  # стоимость лекции

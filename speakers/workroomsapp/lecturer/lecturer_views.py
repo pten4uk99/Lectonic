@@ -1,12 +1,11 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from workroomsapp.docs.docs import lecturer_docs
-from workroomsapp.serializers.lecturer_serializers import *
+from workroomsapp.lecturer.docs import lecturer_docs
+from workroomsapp.lecturer.lecturer_serializers import *
 from workroomsapp.utils import workroomsapp_permissions
-from workroomsapp.utils.responses import lecturer_responses
+from workroomsapp.lecturer import lecturer_responses
 
 
 class DiplomaImageAPIView(APIView):

@@ -2,9 +2,9 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
 from rest_framework.views import APIView
 
-from workroomsapp.docs.docs import person_docs
-from workroomsapp.serializers.person_serializers import *
-from workroomsapp.utils.responses import person_responses
+from workroomsapp.person.docs import person_docs
+from workroomsapp.person.person_serializers import *
+from workroomsapp.person import person_responses
 
 
 class PersonAPIView(APIView):
