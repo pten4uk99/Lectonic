@@ -19,7 +19,7 @@ export default function Main() {
       <Modal
         isOpened={open}
         onModalClose={() => setOpen(false)}
-        styleBody={{ width: '432px' }}
+        styleBody={{ width: '400px' }}
       >
         <Authorization />
       </Modal>

@@ -1,5 +1,5 @@
 import React from 'react'
-// import '~/styles/ChooseRole.styl'
+// import '~/styles/RegistrationRole.styl'
 
 export default function ChooseRole_Customer_step1(props) {
   return (

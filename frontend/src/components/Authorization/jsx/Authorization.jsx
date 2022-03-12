@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 // import '~/styles/Authorization.styl'
-import eyeOpen from '~/assets/img/eyeOpen.svg'
-import eyeClose from '~/assets/img/eyeClose.svg'
+import eyeOpen from '~/assets/img/eye-open.svg'
+import eyeClose from '~/assets/img/eye-close.svg'
 import 'regenerator-runtime/runtime'
 import { baseURL } from '~/ProjectConstants'
 
@@ -92,18 +92,21 @@ export default function Authorization() {
   }
 
   //отправка данных на сервер
-  let userSignUpEmail = new URLSearchParams()
-  userSignUpEmail.append('email', `${signUpValue.email}`)
-  console.log('userSignUpEmail: ', userSignUpEmail)
+ // let userSignUpEmail = new URLSearchParams()
+ // userSignUpEmail.append('email', `${signUpValue.email}`)
+  let userSignUpEmail = {
+    email: signUpValue.email,
+  }
+  console.log('userSignUpEmail: ', JSON.stringify(userSignUpEmail))
 
   async function onSubmitSignUpEmail(e) {
     e.preventDefault()
     await fetch(`${baseURL}/api/email/email_confirmation/`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
-      body: userSignUpEmail,
+      body: JSON.stringify(userSignUpEmail),
       credentials: 'include',
     })
       .then(response => {
@@ -191,6 +194,7 @@ export default function Authorization() {
         </h2>
 
         <h2
+          className='auth__header__SignUp-text'
           onClick={handleSignUpShow}
           style={{
             color: signUpShown ? 'var(--main-blue)' : 'var(--add-darkGrey)',
@@ -237,15 +241,15 @@ export default function Authorization() {
                   : '',
               }}
             />
-            {errorMessagePassword && (
-              <div className='form__input-error'>{errorMessagePassword}</div>
-            )}
             <img
               className='password-icon'
               src={hiddenSignIn ? eyeClose : eyeOpen}
               alt={hiddenSignIn ? 'показать' : 'скрыть'}
               onClick={handleHiddenSignIn}
             />
+            {errorMessagePassword && (
+              <div className='form__input-error'>{errorMessagePassword}</div>
+            )}
           </div>
 
           <div
@@ -285,15 +289,15 @@ export default function Authorization() {
 
         <div className='auth__bottom-text'>
           Ещё нет аккаунта?{' '}
-          <h5 onClick={handleSignUpShow}>Зарегистрироваться</h5>
+          <span onClick={handleSignUpShow}>Зарегистрироваться</span>
         </div>
       </div>
 
       {/* Блок Регистрация Почта*/}
       <div style={{ display: signUpShown ? 'block' : 'none' }}>
-        <div className='auth__text'>Для регистрации введите Ваш e-mail</div>
+        <div className='auth__text'>Для регистрации введите Ваш E-mail</div>
         <form className='auth__form'>
-          <div className='auth__form__input-wrapper'>
+          <div className='input-wrapper__signup-email'>
             <input
               className='form__input signUpEmail'
               name='email'
@@ -321,7 +325,7 @@ export default function Authorization() {
               onChange={handleAgree}
             />
             <label id='auth__form__checkbox-signUpLabel' htmlFor='checkbox'>
-              Я даю согласие на обработку персональных данных
+              Даю согласие на обработку персональных данных
             </label>
           </div>
 
