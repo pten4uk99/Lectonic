@@ -20,6 +20,12 @@ export default function LecturerStep3() {
     setNoSelected(true);
   }
 
+  /*согласие с условиями пользовательского соглашения*/
+  const [isAgreed, setAgreed] = useState(false)
+  function changeAgreement() {
+    setAgreed(!isAgreed)
+  }
+
   /*кнопка Следующий шаг*/
   function toLecturerStep4() {
     navigate("/register_lecturer4")
@@ -28,7 +34,7 @@ export default function LecturerStep3() {
   return (
     <>
       <StepsBar 
-        style={{marginLeft: "50%"}}
+        style={{marginLeft: "67%"}}
         step3={{color: "var(--main-blue)"}}/>
       
       <div className="step-block-wrapper">
@@ -53,7 +59,7 @@ export default function LecturerStep3() {
             onClick={saysNo}>Нет</button>
         </div>
         
-        <div className="step-block margin-bottom-24">
+        <div className="step-block-with-textarea margin-bottom-24">
           <p 
             className="step-block__left-part left-part-with-textarea"
             style={{color: noSelected ? "var(--add-darkGrey" : ""}}>
@@ -66,19 +72,37 @@ export default function LecturerStep3() {
           </textarea>
         </div>
 
-        <div className="step-block margin-bottom-24">
+        <div className="step-block-with-textarea margin-bottom-24">
           <p className="step-block__left-part left-part-with-textarea">Оборудование:</p>
           <textarea
             className="form__textarea textarea-height88"
             placeholder="Перечислите имеющееся для лекций оборудование">
           </textarea>
         </div>
+        
+      <div className="step-block">
+        <div className="step-block__left-part"></div>
+        <div>
+          <div className="auth__form__checkbox-wrapper">
+            <input
+              className="auth__form__checkbox-switch"
+              id="checkbox"
+              type="checkbox"
+              checked={isAgreed}
+              onChange={changeAgreement}
+            />
+            <label htmlFor="checkbox">
+              Я ознакомился и соглашаюсь с условиями пользовательского соглашения
+            </label>
+          </div>
+          <p className="step-block__user-agreement">Условия пользовательского соглашения</p>
+        </div>
       </div>
-      <div className="steps__btns">
-        <button className="btn-outline margin-right-12">Продолжить позже</button>
+      </div>
+      <div className="step-block steps__btn">
+        <div className="step-block__left-part"></div>
         <button
-          className="btn"
-          onClick={toLecturerStep4}>Следующий шаг</button>
+          className="btn">Следующий шаг</button>
       </div>
     </>
   )

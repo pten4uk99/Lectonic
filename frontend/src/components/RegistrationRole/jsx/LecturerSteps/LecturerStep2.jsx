@@ -19,7 +19,7 @@ export default function LecturerStep2() {
   return (
     <>
       <StepsBar 
-        style={{marginLeft: "25%"}}
+        style={{marginLeft: "33%"}}
         step2={{color: "var(--main-blue)"}}/>
 
       <div className="step-block-wrapper">
@@ -86,8 +86,8 @@ export default function LecturerStep2() {
           </p>
         </div>
       </div>
-      <div className="steps__btns">
-        <button className="btn-outline margin-right-12">Продолжить позже</button>
+      <div className="step-block steps__btn">
+        <div className="step-block__left-part"></div>
         <button
           className="btn"
           onClick={toLecturerStep3}>Следующий шаг</button>

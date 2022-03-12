@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 // import '~/styles/DropDownTest.styl'
 import downArrow from '~/assets/img/down-arrow.svg'
-import upArrow from '~/assets/img/up-arrow.svg'
+//import upArrow from '~/assets/img/up-arrow.svg'
 
 export default function DropDownTest(props) {
   let { selectDetails } = props
@@ -25,29 +25,30 @@ export default function DropDownTest(props) {
 
   return (
     <div className='select'>
-      <div className='select__top-wrapper'>
+      <div className='select-top'>
         <input
-          className='select__top__input'
+          className='select-top__input'
           placeholder={props.placeholder}
           style={props.style}
           value={chosenValue}
           onChange={handleSelectInputChange}
         />
         <img
-          className='select__top__arrow'
-          src={isSelectOpen ? upArrow : downArrow}
+          className='select-top__arrow'
+          src={downArrow}
+          style={{transform: isSelectOpen ? 'rotate(180deg)' : ''}}
           onClick={openSelectBottom}
         />
       </div>
 
       <div
-        className='select__bottom-wrapper'
-        style={{ display: isSelectOpen ? 'block' : 'none' }}
+        className='select-bottom'
+        style={{ display: isSelectOpen ? 'block' : 'none'}}
       >
         {selectDetails.options.map(item => {
           return (
             <div
-              className='select__bottom__option'
+              className='select-bottom__option'
               key={item}
               onClick={() => handleSelectChooseOption(item)}
             >

@@ -14,59 +14,35 @@ export default function LecturerStep1(props) {
     options: ['Лидеры-доноры', 'Клуб Эльбрус'],
   }
   
-  /*добавление ссылок*/
-  /*тут пока вопрос у меня*/
-  let videoLinksArray = [
-    {
-     /* 'name' : '1',*/
-      'value' : ''
-    },
-    {
-      /* 'name' : '1',*/
-      'value' : ''
-    }
-  ]
+  /*добавление ссылок видео выступлений*/
+  const [videoLinksList, setVideoLinksList] = useState([{videoLink: ''}]);
+  console.log("videoLinksList: ", videoLinksList);
   
-  const [videoLinks, setVideoLinks] = useState( videoLinksArray)
-  function onChangeVideoLinks(e) {
-    setVideoLinks( [...videoLinks, {value : e.target.value}] )
-    //console.log('videoLinks: ', videoLinks)
-    console.log('target: ', [...videoLinks])
-  }
+  function handleVideoLinkAdd() {
+    setVideoLinksList([...videoLinksList, {videoLink: ''}]);
+  };
+  
+  function handleVideoLinkChange (e, index) {
+    const {name, value} = e.target;
+    const list = [...videoLinksList];
+    list[index][name] = value;
+    setVideoLinksList(list);
+  };
 
-  let mappedVideoLinks = videoLinksArray.map((link, index) => {
-    return <div key={index} className="step-block margin-bottom-24">
-    <p className="step-block__left-part"></p>
-    <input
-      className='input__add-link'
-      type="text"
-      placeholder="https://"
-    //  name={link.name}
-      value={link.value}
-      onChange={onChangeVideoLinks}/>
-    <Icons
-      className='add-link__icon'
-      srcNormal={addLinkIcon}
-      srcHovered={addHoveredIcon}
-      onClick={addVideoLink}
-      alt="добавить"/>
-  </div> 
-  })
-  
-  const [publicationLinks, setPublicationLinks] = useState({
-    link1: '',
-  })
-  function onChangePublicationLinks(e) {
-    setPublicationLinks({ ...publicationLinks, [e.target.name]: e.target.value })
-    console.log('pubLinks: ', publicationLinks)
-  }
-  
-  function addVideoLink() {
-    videoLinksArray.push({
-      'value' : ''
-    })
-    console.log("444", videoLinksArray)
-  }
+  /*добавление ссылок публикаций*/
+  const [publicationList, setPublicationList] = useState([{publicationLink: ''}]);
+  console.log("publicationList: ", publicationList);
+
+  function handlePublicationAdd() {
+    setPublicationList([...publicationList, {publicationLink: ''}]);
+  };
+
+  function handlePublicationChange (e, index) {
+    const {name, value} = e.target;
+    const list = [...publicationList];
+    list[index][name] = value;
+    setPublicationList(list);
+  };
   
   return (
     <>
@@ -80,41 +56,52 @@ export default function LecturerStep1(props) {
           placeholder='Выберете тематику'
           style={{ width: '249px' }}/>
       </div>
+      
+      {videoLinksList.map((singleVideoLink, index) => (
+        <div key={index} className="step-block margin-bottom-24">
+          <p className="step-block__left-part">
+            {videoLinksList.length - videoLinksList.length === index  && "Ссылки на видео Ваших выступлений:"}
+          </p>
+          <input
+            className='input__add-link'
+            placeholder="https://"
+            type="text"
+            name="videoLink"
+            id="videoLink"
+            value={singleVideoLink.videoLink}
+            onChange={(e) => handleVideoLinkChange(e, index)}
+          />
+          <Icons
+            className='add-link__icon'
+            srcNormal={addLinkIcon}
+            srcHovered={addHoveredIcon}
+            onClick={handleVideoLinkAdd}
+            alt="добавить"/>
+        </div>
+      ))}
 
-      <div className="step-block margin-bottom-24">
-        <p className="step-block__left-part">
-          Ссылки на видео Ваших выступлений:
-        </p>
-        <input
-          className='input__add-link'
-          placeholder="https://"
-          name="linkk1"
-          value={videoLinks.linkk1}
-          onChange={onChangeVideoLinks}/>
-        <Icons
-          className='add-link__icon'
-          srcNormal={addLinkIcon}
-          srcHovered={addHoveredIcon}
-          alt="добавить"/>
-      </div>
-
-      <div className="step-block margin-bottom-24">
-        <p className="step-block__left-part">
-          Ссылки на Ваши публикации:
-        </p>
-        <input
-          className='input__add-link'
-          placeholder="https://"
-          name="linkk1"
-          value={publicationLinks.linkk1}
-          onChange={onChangePublicationLinks}/>
-        <Icons
-          className='add-link__icon'
-          srcNormal={addLinkIcon}
-          srcHovered={addHoveredIcon}
-          alt="добавить"/>
-      </div>
-      {mappedVideoLinks}
+      {publicationList.map((singlePublication, index) => (
+        <div key={index} className="step-block margin-bottom-24">
+          <p className="step-block__left-part">
+            {publicationList.length - publicationList.length === index  && "Ссылки на Ваши публикации:"}
+          </p>
+          <input
+            className='input__add-link'
+            placeholder="https://"
+            type="text"
+            name="publicationLink"
+            id="publicationLink"
+            value={singlePublication.publicationLink}
+            onChange={(e) => handlePublicationChange(e, index)}
+          />
+          <Icons
+            className='add-link__icon'
+            srcNormal={addLinkIcon}
+            srcHovered={addHoveredIcon}
+            onClick={handlePublicationAdd}
+            alt="добавить"/>
+        </div>
+      ))}
     </>
   )
 }

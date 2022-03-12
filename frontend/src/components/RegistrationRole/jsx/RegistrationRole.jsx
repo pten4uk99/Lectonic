@@ -14,7 +14,6 @@ import ChooseRole_Customer_step4 from './IndividualSteps/ChooseRole_Customer_ste
 import profileSelected from '~/assets/img/header_profile-selected.svg'
 import StepsBar from "./StepsBar";
 
-//пока есть вопрос по логике переключения шагов, уточняю
 export default function RegistrationRole() {
   const navigate = useNavigate()
   
@@ -40,7 +39,8 @@ export default function RegistrationRole() {
   return (
     <>
       <Header src={profileSelected} />
-      <StepsBar />
+      <StepsBar
+        step1={{color: "var(--main-blue)"}}/>
 
       <div className="step-block-wrapper">
         <div className='step-block margin-bottom-36 step-block__head-text'>
@@ -72,9 +72,9 @@ export default function RegistrationRole() {
         {lecturerSelected && <LecturerStep1 />}
         
       </div>
-      <div className="steps__btns">
-        <button className="btn-outline margin-right-12">Продолжить позже</button>
-        <button 
+      <div className="step-block steps__btn">
+        <div className="step-block__left-part"></div>
+        <button
           className="btn"
           onClick={toLecturerStep2}
           disabled={!lecturerSelected && !customerSelected}>Следующий шаг</button>

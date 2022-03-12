@@ -1,22 +1,20 @@
 .auth {
   margin: 0px 40px;
-  padding-top: 56px;
-  padding-bottom: 60px;
+  padding-top: 52px;
+  padding-bottom: 51px;
   position: relative;
 }
 
 .auth__header {
+  width: 212px;
   display: flex;
-  margin-bottom: 36px;
+  justify-content: space-between;
+  margin-bottom: 32px;
 }
 
-h2 {
+.auth__header__SignIn-text, .auth__header__SignUp-text {
   cursor: pointer;
   margin: 0px;
-}
-
-.auth__header__SignIn-text {
-  padding-right: 47px;
 }
 
 .auth__text {
@@ -27,8 +25,8 @@ h2 {
 }
 
 .auth__text p {
-  font-size: 12px;
-  line-height: 15px;
+  font-size: 11px;
+  line-height: 13px;
   margin: 8px 0px 0px;
 }
 
@@ -42,14 +40,19 @@ h5 {
 .auth__form__password-forgotten {
   text-align: right;
   color: var(--main-blue);
-  font-size: 12px;
-  line-height: 15px;
+  font-size: 11px;
+  line-height: 13px;
   text-decoration: underline;
-  margin: 12px 0px 20px;
+  margin: 8px 0px 20px;
   cursor: pointer;
 }
 
 /*ИНПУТЫ*/
+.input-temporary-margin {
+  margin-bottom: 36px;
+  position: relative;
+}
+  
 .auth__form__input-wrapper {
   position: relative;
 }
@@ -74,22 +77,17 @@ h5 {
 .password-icon {
   cursor: pointer;
   position: absolute;
-  left: 330px;
-  top: 6px;
+  left: 296px;
 }
 
-.password-icon.password1 {
-  top: 7px;
-  z-index: 2;
-}
-
+npm
 /*КНОПКИ*/
 .auth__form__btn {
   margin-bottom: 20px;
 }
 
 .auth__form__btn.signUp {
-  margin: 36px 0px 0px;
+  margin: 0px 0px 5px;
 }
 
 .auth__socials {
@@ -140,6 +138,15 @@ h5 {
   text-align: center;
   display: block;
 }
+  
+.auth__bottom-text>span {
+  color: var(--main-blue);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  text-decoration-line: underline;
+  cursor: pointer;
+}
 
 /*checkbox */
 .auth__form__checkbox-wrapper {
@@ -161,7 +168,7 @@ h5 {
     --background: var(--add-grey);
     -webkit-appearance: none;
     -moz-appearance: none;
-    height: 20px;
+    height: 16px;
     outline: none;
     display: inline-block;
     vertical-align: top;
@@ -190,8 +197,8 @@ h5 {
   }
 
   input[type="checkbox"] + label {
-    font-size: 12px;
-    line-height: 15px;
+    font-size: 11px;
+    line-height: 13px;
     display: inline-block;
     vertical-align: center;
     cursor: pointer;
@@ -200,26 +207,26 @@ h5 {
 
   #auth__form__checkbox-signUpLabel {
     position: absolute;
-    right: -20px;
-    top: 2px;
+    right: -8px;
+    top: 1px;
   }
 
   input[type="checkbox"].auth__form__checkbox-switch {
-    width: 36px;
+    width: 28px;
     border-radius: 45px;
   }
   input[type="checkbox"].auth__form__checkbox-switch:after {
     left: 2px;
     top: 2px;
     border-radius: 50%;
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     background: var(--ab, var(--border));
     transform: translateX(var(--x, 0));
   }
   input[type="checkbox"].auth__form__checkbox-switch:checked {
     --ab: var(--active-inner);
-    --x: 16px;
+    --x: 12px;
   }
 }
 
@@ -238,4 +245,8 @@ h5 {
 
 .auth__password-forgotten {
   padding-bottom: 60px;
+}
+  
+.input-wrapper__signup-email {
+  margin-bottom: 20px;
 }
