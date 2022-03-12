@@ -12,7 +12,7 @@ class IsLecturer(BasePermission):
 
     def has_permission(self, request, view):
         return (isinstance(request.user, User) and
-                Person.objects.filter(user=request.user).first() and
+                hasattr(request.user, 'person') and
                 request.user.person.is_lecturer)
 
 
@@ -21,7 +21,7 @@ class IsProjectAdmin(BasePermission):
 
     def has_permission(self, request, view):
         return (isinstance(request.user, User) and
-                Person.objects.filter(user=request.user).first() and
+                hasattr(request.user, 'person') and
                 request.user.person.is_project_admin)
 
 
@@ -30,7 +30,7 @@ class IsCustomer(BasePermission):
 
     def has_permission(self, request, view):
         return (isinstance(request.user, User) and
-                Person.objects.filter(user=request.user).first() and
+                hasattr(request.user, 'person') and
                 request.user.person.is_customer)
 
 
@@ -40,5 +40,5 @@ class IsVerified(BasePermission):
 
     def has_permission(self, request, view):
         return (isinstance(request.user, User) and
-                Person.objects.filter(user=request.user).first() and
+                hasattr(request.user, 'person') and
                 request.user.person.is_verified)

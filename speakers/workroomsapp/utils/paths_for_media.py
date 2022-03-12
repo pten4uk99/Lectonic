@@ -7,7 +7,7 @@ def get_id_with_prefix(self_id):
 
 
 def person_image(instance, filename):
-    user_id = get_id_with_prefix(instance.person.user.pk)
+    user_id = get_id_with_prefix(instance.user.pk)
     path = f'{user_id}/photo/{user_id}_{filename}'
 
     if default_storage.exists(path):

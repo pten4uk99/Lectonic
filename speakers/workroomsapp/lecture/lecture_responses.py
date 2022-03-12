@@ -1,6 +1,6 @@
 from speakers.utils import response
 
-LECTURE_AS_LECTURER_CREATED = 'Запрос на лекцию успешно создан'
+LECTURE_AS_LECTURER_CREATED = 'Лекция успешно создана'
 
 DESCRIPTION = '\n\nВсе возможные статусы ответов:\n' \
               f'"{response.SUCCESS}"\n' \

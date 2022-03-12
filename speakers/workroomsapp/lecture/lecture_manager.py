@@ -11,7 +11,7 @@ class LectureManager(models.Manager):
                            hall_address: str = None, equipment: str = None,
                            lecture_type: str = None, status: bool = None,
                            duration: int = None, cost: int = 0,
-                           description: str = ""):
+                           description: str = "", domain: list = None):
 
         if not lecturer:
             raise exceptions.ValidationError(
@@ -34,6 +34,13 @@ class LectureManager(models.Manager):
             description=description
         )
 
+        if domain is not None:
+            for domain_id in domain:
+                workrooms_models.LectureDomain.objects.create(
+                    lecture=lecture,
+                    domain=workrooms_models.Domain.objects.get(pk=int(domain_id))
+                )
+
         lecture_request = workrooms_models.LectureRequest.objects.create(lecture=lecture)
 
         event = workrooms_models.Event.objects.create(
@@ -43,7 +50,6 @@ class LectureManager(models.Manager):
             calendar = lecturer.lecturer_calendar.calendar
             calendar.events.add(event)
             calendar.save()
-
         return workrooms_models.LecturerLectureRequest.objects.create(
             lecturer=lecturer,
             lecture_request=lecture_request,

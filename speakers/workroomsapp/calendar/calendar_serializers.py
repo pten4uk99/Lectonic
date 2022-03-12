@@ -54,7 +54,8 @@ class LecturerCalendarSerializer(serializers.ModelSerializer):
             found = False
             for date in data:
                 if date.get('date') == str(datetime.datetime(year, month, day)):
-                    date['events'].append(new_event)
+                    if new_event not in date['events']:
+                        date['events'].append(new_event)
                     found = True
 
             if not found:
