@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 // import '~/styles/Authorization.styl'
-import eyeOpen from '~/assets/img/eyeOpen.svg'
-import eyeClose from '~/assets/img/eyeClose.svg'
+import eyeOpen from '~/assets/img/eye-open.svg'
+import eyeClose from '~/assets/img/eye-close.svg'
 import 'regenerator-runtime/runtime'
 import { baseURL } from '~/ProjectConstants'
 
 function AuthSignUpPassword() {
-  //!!!ниже будет повторение кода из Authorisation.js, пока так, лаконичное решение будет позже
+  //!!!ниже будет повторение кода из Authorisation.js, пока так
 
   //Для перехода
   const navigate = useNavigate()
@@ -194,6 +194,7 @@ function AuthSignUpPassword() {
         </h2>
 
         <h2
+          className='auth__header__SignUp-text'
           onClick={handleSignUpShow}
           style={{
             color: signUpShown ? 'var(--main-blue)' : 'var(--add-darkGrey)',
@@ -240,16 +241,15 @@ function AuthSignUpPassword() {
                   : '',
               }}
             />
-            {errorMessagePassword && (
-              <div className='form__input-error'>{errorMessagePassword}</div>
-            )}
-
             <img
               className='password-icon'
               src={hiddenSignIn ? eyeClose : eyeOpen}
               alt={hiddenSignIn ? 'показать' : 'скрыть'}
               onClick={handleHiddenSignIn}
             />
+            {errorMessagePassword && (
+              <div className='form__input-error'>{errorMessagePassword}</div>
+            )}
           </div>
 
           <div
@@ -289,7 +289,7 @@ function AuthSignUpPassword() {
 
         <div className='auth__bottom-text'>
           Ещё нет аккаунта?{' '}
-          <h5 onClick={handleSignUpShow}>Зарегистрироваться</h5>
+          <span onClick={handleSignUpShow}>Зарегистрироваться</span>
         </div>
       </div>
 
@@ -302,7 +302,7 @@ function AuthSignUpPassword() {
           <p>Пароль должен содержать не менее 8 символов</p>
         </div>
         <form className='auth__form'>
-          <div className='auth__form__input-wrapper'>
+          <div className='input-temporary-margin'>
             <input
               className='form__input'
               name='password'
@@ -317,14 +317,14 @@ function AuthSignUpPassword() {
               }}
             />
             <img
-              className='password-icon password1'
+              className='password-icon'
               src={hiddenSignUp ? eyeClose : eyeOpen}
               alt={hiddenSignUp ? 'показать' : 'скрыть'}
               onClick={handleHiddenSignUp}
             />
           </div>
 
-          <div className='auth__form__input-wrapper'>
+          <div className='input-temporary-margin'>
             <input
               className='form__input password2'
               name='password2'
@@ -342,15 +342,15 @@ function AuthSignUpPassword() {
                     : '',
               }}
             />
-            {errorSignUpPassword && (
-              <div className='form__input-error'>{errorSignUpPassword}</div>
-            )}
             <img
               className='password-icon'
               src={hiddenSignUp ? eyeClose : eyeOpen}
               alt={hiddenSignUp ? 'показать' : 'скрыть'}
               onClick={handleHiddenSignUp}
             />
+            {errorSignUpPassword && (
+              <div className='form__input-error'>{errorSignUpPassword}</div>
+            )}
             {signUpValue.password &&
               signUpValue.password2 &&
               signUpValue.password !== signUpValue.password2 && (
