@@ -40,7 +40,7 @@ function Event(props) {
           {props.header}
         </div>
         <div className='theme'>
-          Тема: <span>{props.theme}</span>
+          Тема: <span>{props.name}</span>
         </div>
         <div className='lecturer'>
           Лектор: <span>{props.lecturer}</span>

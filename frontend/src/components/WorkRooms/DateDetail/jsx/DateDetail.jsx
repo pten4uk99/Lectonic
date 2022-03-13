@@ -40,12 +40,12 @@ function DateDetail(props) {
                       : 'Лекция не подтверждена'
                   }
                   status={event.status}
-                  theme={event.theme}
+                  name={event.name}
                   lecturer={event.lecturer}
                   listener={event.listener}
                   address={event.address}
-                  timeStart={event.timeStart}
-                  timeEnd={event.timeEnd}
+                  timeStart={event.start}
+                  timeEnd={event.end}
                 />
               )
             })}

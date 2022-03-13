@@ -19,7 +19,7 @@ function EventMultiple(props) {
             </>
           ) : (
             <>
-              <div className='event-multiple half-grey'></div>
+              <div className='event-multiple half-grey'/>
               <div className='event-multiple half-blue' />
               <span className='events-length'>{props.events.length}</span>
             </>

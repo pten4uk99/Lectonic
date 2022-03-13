@@ -4,3 +4,6 @@ export function ActivateDateDetail(date) {
 export function DeactivateDateDetail(date) {
   return { type: 'DEACTIVATE', payload: { date: date } }
 }
+export function UpdateEvents(events) {
+  return { type: 'UPDATE_EVENTS', payload: events }
+}
