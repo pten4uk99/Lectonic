@@ -38,7 +38,7 @@ class LecturerCalendarSerializer(serializers.ModelSerializer):
             lecture = event.lecture_request.lecture
 
             new_event = {
-                'lecturer': f'{person.last_name} {person.first_name}{ person.middle_name or ""}',
+                'lecturer': f'{person.last_name} {person.first_name} {person.middle_name or ""}',
                 'name': lecture.name,
                 'status': lecture.status,
             }

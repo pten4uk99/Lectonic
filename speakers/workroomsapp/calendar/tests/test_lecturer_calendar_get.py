@@ -30,46 +30,31 @@ class TestLecturerCalendarGet(APITestCase):
         self.client.post(reverse('profile'), temp_profile_data)
         self.client.post(reverse('lecturer'), temp_lecturer_data)
 
-        self.client.post(reverse('lecture_as_lecturer'),
-                         {
-                             'name': 'Моя лектушка',
-                             'photo': test_image.create_image(),
-                             'domain': ['1', '2', '3'],
-                             'datetime': '2022-03-12',
-                             'duration': '30',
-                             'type': 'offline'
-                         })
-        self.client.post(reverse('lecture_as_lecturer'),
-                         {
-                             'name': 'Твоя лектушка',
-                             'photo': test_image.create_image(),
-                             'domain': ['1', '2', '3'],
-                             'datetime': '2022-03-12',
-                             'duration': '30',
-                             'type': 'offline'
-                         })
-        self.client.post(reverse('lecture_as_lecturer'),
-                         {
-                             'name': 'Ее лектушка',
-                             'photo': test_image.create_image(),
-                             'domain': ['1', '2', '3'],
-                             'datetime': '2022-03-12',
-                             'duration': '30',
-                             'type': 'offline'
-                         })
-        self.client.post(reverse('lecture_as_lecturer'),
-                         {
-                             'name': 'Его лектушка',
-                             'photo': test_image.create_image(),
-                             'domain': ['1', '2', '3'],
-                             'datetime': '2022-03-18',
-                             'duration': '30',
-                             'type': 'offline'
-                         })
+        for i in range(3):
+            self.client.post(reverse('lecture_as_lecturer'),
+                             {
+                                 'name': f'Моя лектушка {i}',
+                                 'photo': test_image.create_image(),
+                                 'domain': ['1', '2', '3'],
+                                 'datetime': datetime.datetime.now() + datetime.timedelta(days=i + 1),
+                                 'duration': '30',
+                                 'type': 'offline'
+                             })
+        for i in range(4, 7):
+            self.client.post(reverse('lecture_as_lecturer'),
+                             {
+                                 'name': f'Моя лектушка {i}',
+                                 'photo': test_image.create_image(),
+                                 'domain': ['1', '2', '3'],
+                                 'datetime': datetime.datetime.now() + datetime.timedelta(days=i - 2),
+                                 'duration': '30',
+                                 'type': 'offline'
+                             })
 
     def test_get_calendar(self):
         response = self.client.get(
-            reverse('lecturer_calendar'), {'year': 2022, 'month': 3})
+            reverse('lecturer_calendar'), {'year': datetime.datetime.now().year,
+                                           'month': datetime.datetime.now().month})
         self.assertEqual(
             'data' in response.data and type(response.data['data']) == list, True,
             msg='В ответе нет списка data'
@@ -79,6 +64,14 @@ class TestLecturerCalendarGet(APITestCase):
             msg='В словаре списка data нет ключа date'
         )
         self.assertEqual(
-            len(response.data['data'][0]['events']), 3,
+            len(response.data['data'][0]['events']), 1,
+            msg='Неверное количество событий'
+        )
+        self.assertEqual(
+            len(response.data['data'][1]['events']), 2,
+            msg='Неверное количество событий'
+        )
+        self.assertEqual(
+            len(response.data['data'][2]['events']), 2,
             msg='Неверное количество событий'
         )
