@@ -1,3 +1,4 @@
-from django.test import TestCase
+from django.core import mail
+from django.urls import reverse
+from rest_framework.test import APITestCase
 
-# Create your tests here.

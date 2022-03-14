@@ -1,28 +1,11 @@
 import React, { useState } from 'react'
-import Header from './Header'
-import Modal from './Modal'
-import Authorization from '~@/Authorization/jsx/Authorization'
-import profileSelected from '~/assets/img/header_profile-selected.svg'
-import profile from '~/assets/img/header_profile.svg'
 import mainIllustration from '~/assets/img/main-illustration.svg'
-// import '~/styles/Main.styl'
+import {ActivateModal, DeactivateModal} from "../redux/actions/header";
+import {connect} from "react-redux";
 
-export default function Main() {
-  const [open, setOpen] = useState(false) //открыто модальное окно или нет
-
+function Main(props) {
   return (
     <>
-      <Header
-        src={open ? profileSelected : profile}
-        onOpenAuth={() => setOpen(true)}
-      />
-      <Modal
-        isOpened={open}
-        onModalClose={() => setOpen(false)}
-        styleBody={{ width: '400px' }}
-      >
-        <Authorization />
-      </Modal>
       <div className="main">
         <div className="main__text-wrapper">
           <p className="main__text-header">
@@ -33,7 +16,7 @@ export default function Main() {
             Работаем, чтобы слушатели слышали,
             <br />а лекторы читали.
           </p>
-          <button className="btn main__btn" onClick={() => setOpen(true)}>
+          <button className="btn main__btn" onClick={props.ActivateModal}>
             Присоединиться
           </button>
         </div>
@@ -49,3 +32,10 @@ export default function Main() {
   );
 }
 
+export default connect(
+  state => ({store: state}),
+  dispatch => ({
+    ActivateModal: () => dispatch(ActivateModal()),
+    DeactivateModal: () => dispatch(DeactivateModal())
+  })
+)(Main)

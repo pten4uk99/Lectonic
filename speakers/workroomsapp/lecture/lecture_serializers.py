@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import serializers
 
 from workroomsapp.models import Lecture
@@ -5,37 +7,47 @@ from workroomsapp.models import Lecture
 
 class LectureCreateAsLecturerSerializer(serializers.Serializer):
     name = serializers.CharField()
+    photo = serializers.FileField()
+    domain = serializers.ListField()
     datetime = serializers.DateTimeField()
-    hall_address = serializers.CharField()
-    equipment = serializers.CharField()
+    hall_address = serializers.CharField(required=False)
+    equipment = serializers.CharField(required=False)
     type = serializers.CharField()
-    status = serializers.BooleanField()
     duration = serializers.IntegerField()
-    cost = serializers.IntegerField()
-    description = serializers.CharField()
+    cost = serializers.IntegerField(required=False)
+    description = serializers.CharField(required=False)
 
     class Meta:
         fields = [
             'name',
+            'photo',
+            'domain',
+            'datetime',
             'hall_address',
             'equipment',
             'type',
-            'status',
             'duration',
             'cost',
             'description',
         ]
 
+    def validate_datetime(self, date):
+        if date.hour == 0 and date.minute == 0:
+            raise serializers.ValidationError('Дата должна быть в формате YYYY-MM-DDTHH:MM')
+        return date
+
     def create(self, validated_data):
         return Lecture.objects.create_as_lecturer(
             lecturer=self.context['request'].user.person.lecturer,
             name=validated_data.get('name'),
+            photo=validated_data.get('photo'),
+            domain=validated_data.get('domain'),
             datetime=validated_data.get('datetime'),
             hall_address=validated_data.get('hall_address'),
             equipment=validated_data.get('equipment'),
             lecture_type=validated_data.get('type'),
-            status=validated_data.get('status'),
+            status=False,
             duration=validated_data.get('duration'),
-            cost=validated_data.get('cost'),
+            cost=validated_data.get('cost', 0),
             description=validated_data.get('description'),
         )

@@ -8,19 +8,19 @@ from workroomsapp.models import Person, City, DocumentImage, Domain
 
 class PersonSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    photo = serializers.FileField()
     city = serializers.PrimaryKeyRelatedField(queryset=City.objects.all())
 
     class Meta:
         model = Person
         exclude = [
-            'id',
-            'rating',
-            'sys_created_at',
-            'sys_modified_at',
             'is_lecturer',
-            'is_project_admin',
             'is_customer',
-            'is_verified'
+            'is_verified',
+            'rating',
+            'is_project_admin',
+            'sys_created_at',
+            'sys_modified_at'
         ]
 
     def name_validator(self, name):

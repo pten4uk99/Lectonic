@@ -5,13 +5,17 @@ import { combineReducers, createStore } from 'redux'
 import { Provider } from 'react-redux'
 import reportWebVitals from './reportWebVitals'
 import App from '~/App'
-import calendar from '~/components/WorkRooms/Calendar/redux/reducers/calendar'
-import dateDetail from '~/components/WorkRooms/DateDetail/redux/reducers/dateDetail'
+import calendar from '~/components/WorkRooms/FullCalendar/Calendar/redux/reducers/calendar'
+import dateDetail from '~/components/WorkRooms/FullCalendar/DateDetail/redux/reducers/dateDetail'
 import '~/index.styl'
+import header from "~@/Layout/redux/reducers/header";
+import profile from "~@/WorkRooms/WorkRoom/redux/reducers/profile";
 
 console.clear()
 
 let reducer = combineReducers({
+  header,
+  profile,
   calendar,
   dateDetail,
 })

@@ -1,0 +1,129 @@
+.date-detail__event {
+    display: flex;
+    justify-content: space-between;
+
+    padding: 10px 5px;
+
+    transition: transform .1s;
+}
+
+.date-detail__event:hover {
+    transform: translateX(5px);
+    background-color: #F5F5F5;
+}
+
+.date-detail__event > .left-block,
+.date-detail__event > .time-range {
+    display: flex;
+    flex-direction: column;
+}
+
+.date-detail__event > .left-block > .circle {
+    width: 12px;
+    height: 12px;
+
+    border-radius: 50%;
+    background-color: rgba(0, 37, 255, 1);
+}
+
+.left-block.grey > .circle {
+    background-color: rgba(180, 180, 180, 1);
+}
+
+.date-detail__event > .left-block > .dynamic-circle {
+    margin-top: 4px;
+
+    width: 12px;
+    height: 96px;
+
+    border-radius: 18px;
+    background-color: rgba(0, 37, 255, 1);
+
+    transition: height .1s;
+}
+
+.left-block.grey > .dynamic-circle {
+    background-color: rgba(180, 180, 180, 1);
+}
+
+.date-detail__event > .event-info {
+    transform: translateX(-50px);
+    width: 516px;
+    margin-left: 12px;
+
+    transition: height .1s, transform .1s;
+    transform-origin: left;
+
+    overflow: hidden;
+}
+
+.date-detail__event > .event-info > .theme,
+.date-detail__event > .event-info > .lecturer,
+.date-detail__event > .event-info > .listener,
+.date-detail__event > .event-info > .address {
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.date-detail__event > .event-info span {
+    font-weight: 700;
+}
+
+
+.date-detail__event > .event-info > .header {
+    margin-bottom: 0;
+    font-weight: 700;
+
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.date-detail__event > .event-info > .theme {
+    margin-top: 8px;
+}
+
+.date-detail__event > .time-range {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+}
+
+.date-detail__event > .time-range > .start {
+    margin-bottom: 8px;
+}
+
+.date-detail__event > .time-range > .end {
+    color: rgba(180, 180, 180, 1)
+}
+
+
+@media screen and (max-width: 1900px) {
+    .date-detail__event > .event-info {
+        transform: translateX(-30px);
+        width: 409px;
+    }
+
+    .date-detail__event > .event-info:hover {
+        transform: translateX(-30px);
+    }
+}
+
+@media screen and (max-width: 1400px) {
+    .date-detail__event > .event-info {
+        width: 289px;
+    }
+}
+
+@media screen and (max-width: 1240px) {
+    .date-detail__event > .event-info {
+        transform: translateX(-5px);
+        width: 289px;
+    }
+
+    .date-detail__event > .event-info:hover {
+        transform: translateX(-5px);
+    }
+}

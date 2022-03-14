@@ -1,28 +1,27 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, override_settings
 
-from authapp.models import User
-from workroomsapp.models import City, Person
+from speakers.utils.tests import data
+from speakers.utils.tests.upload_image import test_image
+from workroomsapp.models import City
 
 
+@override_settings(MEDIA_URL=test_image.MEDIA_URL, MEDIA_ROOT=test_image.MEDIA_ROOT)
 class TestPersonPatch(APITestCase):
+    signup_data = data.SIGNUP.copy()
+    profile_data = data.PROFILE.copy()
+    profile_data['city'] = '1'
 
     def setUp(self):
-        signup_data = {'email': 'admin@admin.ru', 'password': '12345678'}
-        self.client.post(reverse('signup'), signup_data)
-
-        person_data = {
-            'first_name': 'Пётр-Петр',
-            'last_name': 'Петр',
-            'middle_name': 'Петрович',
-            'birth_date': '2020-01-18',
-            'city': '1',
-            'description': 'Описанюшка',
-        }
+        temp_signup_data = self.signup_data.copy()
+        self.profile_data['photo'] = test_image.create_image()
+        temp_profile_data = self.profile_data.copy()
+        self.client.post(reverse('signup'), temp_signup_data)
 
         City.objects.create(name='Москва', pk=1)
         City.objects.create(name='Ярославль', pk=2)
-        self.client.post(reverse('profile'), person_data)
+
+        self.client.post(reverse('profile'), temp_profile_data)
 
     def test_credentials(self):
         self.client.get(reverse('logout'))
@@ -33,7 +32,7 @@ class TestPersonPatch(APITestCase):
         )
 
     def test_person_successful_patched(self):
-        data = {
+        temp_data = {
             'first_name': 'Василий',
             'last_name': 'Головнов',
             'middle_name': 'Головиныч',
@@ -42,7 +41,7 @@ class TestPersonPatch(APITestCase):
             'description': 'Новая описанюшка',
         }
 
-        for key, value in data.items():
+        for key, value in temp_data.items():
             response = self.client.patch(reverse('profile'), {key: value})
             self.assertEqual(
                 response.status_code, 200,
@@ -63,7 +62,7 @@ class TestPersonPatch(APITestCase):
         )
 
     def test_wrong_data(self):
-        data = {
+        temp_data = {
             'first_name': 'Василий1',
             'last_name': 'ГоловновD',
             'middle_name': 1,
@@ -71,7 +70,7 @@ class TestPersonPatch(APITestCase):
             'city': 'Ярославль',
         }
 
-        for key, value in data.items():
+        for key, value in temp_data.items():
             response = self.client.patch(reverse('profile'), {key: value})
             self.assertEqual(
                 response.status_code, 400,

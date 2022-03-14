@@ -24,6 +24,7 @@ class PersonAPIView(APIView):
 
         serializer.validated_data.pop('user')
         city = serializer.validated_data.pop('city')
+        serializer.validated_data.pop('photo')
 
         return person_responses.created(data={**serializer.validated_data, 'city': city.name})
 

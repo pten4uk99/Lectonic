@@ -37,10 +37,13 @@ class LecturerCalendarSerializer(serializers.ModelSerializer):
             person = event.lecture_request.lecturer_lecture_request.lecturer.person
             lecture = event.lecture_request.lecture
 
+            time_end = event.datetime + datetime.timedelta(minutes=lecture.duration)
             new_event = {
-                'lecturer': f'{person.last_name} {person.first_name}{ person.middle_name or ""}',
+                'lecturer': f'{person.last_name} {person.first_name} {person.middle_name or ""}',
                 'name': lecture.name,
                 'status': lecture.status,
+                'start': event.datetime.strftime('%H:%M'),
+                'end': time_end.strftime('%H:%M')
             }
 
             if not data:
@@ -54,7 +57,8 @@ class LecturerCalendarSerializer(serializers.ModelSerializer):
             found = False
             for date in data:
                 if date.get('date') == str(datetime.datetime(year, month, day)):
-                    date['events'].append(new_event)
+                    if new_event not in date['events']:
+                        date['events'].append(new_event)
                     found = True
 
             if not found:

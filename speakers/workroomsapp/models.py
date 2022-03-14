@@ -5,7 +5,7 @@ from workroomsapp.company.company_manager import CompanyManager
 from workroomsapp.customer.customer_manager import CustomerManager
 from workroomsapp.lecture.lecture_manager import LectureManager
 from workroomsapp.lecturer.lecturer_manager import LecturerManager
-from workroomsapp.utils.paths_for_media import document_image, diploma_image
+from workroomsapp.utils.paths_for_media import document_image, diploma_image, lecturer_lecture_image, person_image
 
 BaseUser = get_user_model()
 
@@ -40,7 +40,7 @@ class CustomerDomain(models.Model):
 class CompanyDomain(models.Model):
     """Сфера деятельности заказчика: юрлицо"""
     company = models.ForeignKey('Company', on_delete=models.CASCADE)  # компания
-    domain = models.OneToOneField('Domain', on_delete=models.CASCADE)  # сфера деятельности
+    domain = models.ForeignKey('Domain', on_delete=models.CASCADE)  # сфера деятельности
 
     def __str__(self):
         return f'Сфера деятельности: {self.domain.name}. Заказчик: {self.company.person.name}'
@@ -49,7 +49,7 @@ class CompanyDomain(models.Model):
 class LecturerDomain(models.Model):
     """Сфера деятельности лектора"""
     lecturer = models.ForeignKey('Lecturer', on_delete=models.CASCADE, related_name='lecturer_domains')  # лектор
-    domain = models.OneToOneField('Domain', on_delete=models.CASCADE, related_name='lecturer_domain')  # сфера деятельности
+    domain = models.ForeignKey('Domain', on_delete=models.CASCADE, related_name='lecturer_domain')  # сфера деятельности
 
     def __str__(self):
         return f'Сфера деятельности: {self.domain.name}. Лектор: {self.company.person.name}'
@@ -58,7 +58,7 @@ class LecturerDomain(models.Model):
 class LectureDomain(models.Model):
     """Сфера деятельности лекции"""
     lecture = models.ForeignKey('Lecture', on_delete=models.CASCADE)  # лекция
-    domain = models.OneToOneField('Domain', on_delete=models.CASCADE)  # сфера деятельности
+    domain = models.ForeignKey('Domain', on_delete=models.CASCADE)  # сфера деятельности
 
     def __str__(self):
         return f'Сфера деятельности: {self.domain.name}. Лекция: {self.company.person.name}'
@@ -79,13 +79,13 @@ class DiplomaImage(models.Model):
 
 class Person(models.Model):
     """Базовый профиль пользователя"""
+    photo = models.ImageField(upload_to=person_image, null=True)  # убрать null=True после заливки на сервер
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, null=True, blank=True)
     birth_date = models.DateField()
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='person')
     rating = models.IntegerField(default=0)
-    # photo = models.CharField(max_length=200, null=True, blank=True)
     user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, related_name='person')
     is_lecturer = models.BooleanField(default=False)
     is_project_admin = models.BooleanField(default=False)
@@ -189,11 +189,13 @@ class RepresentativePerson(models.Model):
 
 
 class OptionalImage(models.Model):
+    """Фотография помещения"""
     optional = models.ForeignKey('Optional', on_delete=models.CASCADE, related_name='optional_images')
     photo = models.ImageField()
 
 
-class Optional(models.Model):  # помещение, оборудование
+class Optional(models.Model):
+    """Помещение, оборудование"""
     hall_address = models.CharField(max_length=200, blank=True, null=True)  # адрес помещения
     equipment = models.CharField(max_length=500, blank=True, null=True)  # перечисление имеющегося оборудования
 
@@ -222,6 +224,7 @@ class LecturerLectureRequest(models.Model):
         on_delete=models.CASCADE,
         related_name='lecturer_lecture_request'
     )
+    photo = models.ImageField(upload_to=lecturer_lecture_image, null=True)
 
 
 class CustomerLectureRequest(models.Model):
@@ -268,7 +271,7 @@ class Lecture(models.Model):
         related_name='lecture'
     )
     type = models.CharField(max_length=20, choices=TYPES)
-    status = models.BooleanField(null=True, blank=True)  # 3 варианта: подтверждена, отклонена, не просмотрена
+    status = models.BooleanField(default=False)  # подтверждена/не просмотрена
     duration = models.IntegerField(null=True, blank=True)  # Длительность лекции в минутах (нет необходимости использовать DateTimeRangeField)
     cost = models.IntegerField(default=0)  # стоимость лекции
     description = models.TextField(null=True, blank=True)
