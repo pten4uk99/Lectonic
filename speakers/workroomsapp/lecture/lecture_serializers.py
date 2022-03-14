@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import serializers
 
 from workroomsapp.models import Lecture
@@ -20,6 +22,7 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
             'name',
             'photo',
             'domain',
+            'datetime',
             'hall_address',
             'equipment',
             'type',
@@ -27,6 +30,11 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
             'cost',
             'description',
         ]
+
+    def validate_datetime(self, date):
+        if date.hour == 0 and date.minute == 0:
+            raise serializers.ValidationError('Дата должна быть в формате YYYY-MM-DDTHH:MM')
+        return date
 
     def create(self, validated_data):
         return Lecture.objects.create_as_lecturer(

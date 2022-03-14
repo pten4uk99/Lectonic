@@ -5,7 +5,7 @@ import DatesList from './DatesList'
 import {
   DeactivateSwap,
   DeactivateSwapClass,
-} from '~@/WorkRooms/Calendar/redux/actions/calendar'
+} from '~@/WorkRooms/FullCalendar/Calendar/redux/actions/calendar'
 
 function DatesListSwappable(props) {
   let [swapClass, setSwapClass] = useState('dates-list__wrapper')

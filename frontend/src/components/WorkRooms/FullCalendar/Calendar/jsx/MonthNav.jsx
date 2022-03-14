@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 import {
   SwapMonthToNext,
   SwapMonthToPrev,
-} from '~@/WorkRooms/Calendar/redux/actions/calendar'
-import { MONTHS } from '~@/WorkRooms/Calendar/utils/calendar'
+} from '~@/WorkRooms/FullCalendar/Calendar/redux/actions/calendar'
+import { MONTHS } from '~@/WorkRooms/FullCalendar/Calendar/utils/calendar'
 import {getEventsForMonth} from "../ajax/dateDetail";
 import {UpdateEvents} from "../../DateDetail/redux/actions/dateDetail";
 

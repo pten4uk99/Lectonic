@@ -18,7 +18,8 @@ class TestLectureAsLecturerCreate(APITestCase):
     lecture_data = data.LECTURE.copy()
 
     def setUp(self):
-        self.lecture_data['photo'] = test_image.create_image()
+        temp_data = self.lecture_data.copy()
+        temp_data['photo'] = test_image.create_image()
         self.client.post(reverse('signup'), self.signup_data)
         user = User.objects.get(email=self.signup_data['email'])
         Person.objects.create(
@@ -33,10 +34,13 @@ class TestLectureAsLecturerCreate(APITestCase):
         self.client.post(reverse('lecturer'), self.lecturer_data)
 
     def test_lecture_as_lecturer_was_created(self):
-        response = self.client.post(reverse('lecture_as_lecturer'), self.lecture_data)
+        temp_data = self.lecture_data.copy()
+        temp_data['photo'] = test_image.create_image()
+        response = self.client.post(reverse('lecture_as_lecturer'), temp_data)
         self.assertEqual(
             response.status_code, 201,
-            msg='Неверный статус ответа при создании запроса на лекцию от лектора'
+            msg='Неверный статус ответа при создании запроса на лекцию от лектора\n'
+                f'Ответ: {response.data}'
         )
 
         self.assertEqual(
@@ -79,5 +83,17 @@ class TestLectureAsLecturerCreate(APITestCase):
             os.path.exists(Lecture.objects.first().lecture_request.lecturer_lecture_request.photo.path),
             True,
             msg='Неверный путь изображения лекции'
+        )
+
+    def test_wrong_date(self):
+        temp_data = self.lecture_data.copy()
+        temp_data['photo'] = test_image.create_image()
+        temp_data['datetime'] = '2020-03-15'
+        response = self.client.post(reverse('lecture_as_lecturer'), self.lecture_data)
+        self.assertEqual(
+            response.status_code,
+            400,
+            msg='Неверный статус ответа при неверно переданной дате\n'
+                f'Ответ: {response.data}'
         )
 

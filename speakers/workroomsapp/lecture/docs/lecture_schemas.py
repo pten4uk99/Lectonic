@@ -18,9 +18,9 @@ LectureAsLecturerCreationSchema = Schema(
             enum=['Фотография в байтах']
         ),
         "datetime": Schema(
-            description='Назначенная дата лекции',
+            description='Назначенная дата и время лекции в формате: YYYY-MM-DDTHH:MM',
             type='string',
-            enum=['2020-07-26']
+            enum=['2020-07-26T15:30']
         ),
         "duration": Schema(
             description='Длительность лекции в минутах',

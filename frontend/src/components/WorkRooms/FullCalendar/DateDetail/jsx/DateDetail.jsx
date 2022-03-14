@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import Event from './Event'
-import { checkEqualDates } from '~@/WorkRooms/Calendar/utils/date'
+import { checkEqualDates } from '~@/WorkRooms/FullCalendar/Calendar/utils/date'
 
 function DateDetail(props) {
   let year = props.date.getFullYear()

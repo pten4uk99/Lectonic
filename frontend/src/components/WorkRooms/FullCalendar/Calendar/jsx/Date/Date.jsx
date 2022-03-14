@@ -5,12 +5,12 @@ import {
   SetHoverDate,
   SwapMonthToNext,
   SwapMonthToPrev,
-} from '~@/WorkRooms/Calendar/redux/actions/calendar'
+} from '~@/WorkRooms/FullCalendar/Calendar/redux/actions/calendar'
 import {
   checkEqualDates,
   checkNeedSwapToNextMonth,
   checkNeedSwapToPrevMonth,
-} from '~@/WorkRooms/Calendar/utils/date'
+} from '~@/WorkRooms/FullCalendar/Calendar/utils/date'
 import Events from './Events/Events'
 
 function Date(props) {

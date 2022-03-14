@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { getCalendar } from '~@/WorkRooms/Calendar/utils/calendar'
+import { getCalendar } from '~@/WorkRooms/FullCalendar/Calendar/utils/calendar'
 import Date from './Date'
 
 function DatesList(props) {
