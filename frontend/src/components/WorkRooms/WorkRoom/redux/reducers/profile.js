@@ -13,6 +13,11 @@ const initialState = {
 
 export default function profile(state=initialState, action) {
   switch (action.type) {
+    case "UPDATE_PROFILE":
+      return {
+        ...action.payload, 
+        utils: {...state.utils}
+      }
     case "SWAP_TO_LECTURER":
       return {
         ...state,

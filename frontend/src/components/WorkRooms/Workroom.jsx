@@ -3,6 +3,7 @@ import ProfileInfo from "./WorkRoom/jsx/ProfileInfo";
 import background from '~/assets/img/workrooms/user-account_bg.svg';
 import {connect} from "react-redux";
 import FullCalendar from "~@/WorkRooms/FullCalendar/FullCalendar";
+import CreatedLectures from "./WorkRoom/jsx/Lecturer/CreatedLectures";
 
 function Workroom(){
 
@@ -13,6 +14,7 @@ function Workroom(){
           </div>
           <div className="user-account__wrapper">
             <div className="user-account__content">
+              <CreatedLectures/>
               <FullCalendar/>
             </div>
           </div>

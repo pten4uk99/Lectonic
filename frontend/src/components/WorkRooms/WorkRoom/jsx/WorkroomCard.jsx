@@ -9,33 +9,25 @@ function WoorkroomCard(props){
     let createLection = 'workroom-card__hide'; // скрыто по умолчанию
     let client = 'workroom-card__hide';
 
-if (props.data.lectorCard)
-{
-    box += "workroom-card__box-lector";
-    boxDescription = 'workroom-card__box-description workroom-card__box-description--padding';
-
-} 
-else if (props.data.createLection)
-{
-    box = 'workroom-card__box workroom-card__create-lection--background';
-    boxName = "workroom-card__create-lection-text";
-    createLection = 'workroom-card__create-lection-btn';
-    boxImg = 'workroom-card__hide';
-    boxDescription = 'workroom-card__hide';
-} 
-else if (props.data.lectionConfirm)
-{
-    button = 'workroom-card__box-btn';
-    box = 'workroom-card__box workroom-card__box--box-shadow';
-    client = 'workroom-card__show';
-} 
-else 
-{
-    button = 'workroom-card__box-btn workroom-card__box-btn--margin';
-    box = 'workroom-card__box workroom-card__box--box-shadow';
-    boxDescription = 'workroom-card__box-description';
-    client = 'workroom-card__show';
-}
+    if (props.data.lectorCard) {
+        box += "workroom-card__box-lector";
+        boxDescription = 'workroom-card__box-description workroom-card__box-description--padding';
+    } else if (props.data.createLection) {
+        box = 'workroom-card__box workroom-card__create-lection--background';
+        boxName = "workroom-card__create-lection-text";
+        createLection = 'workroom-card__create-lection-btn';
+        boxImg = 'workroom-card__hide';
+        boxDescription = 'workroom-card__hide';
+    } else if (props.data.lectionConfirm) {
+        button = 'workroom-card__box-btn';
+        box = 'workroom-card__box workroom-card__box--box-shadow';
+        client = 'workroom-card__show';
+    } else {
+        button = 'workroom-card__box-btn workroom-card__box-btn--margin';
+        box = 'workroom-card__box workroom-card__box--box-shadow';
+        boxDescription = 'workroom-card__box-description';
+        client = 'workroom-card__show';
+    }
 
     return (
         <div className={box}>
@@ -43,8 +35,8 @@ else
                 <img className={boxImg} src={props.data.img}/>
             </div>
             <div className={createLection}>
-                <div className='workroom-card__line'></div>
-                <div className='workroom-card__line workroom-card__line-rotate'></div>
+                <div className='workroom-card__line'/>
+                <div className='workroom-card__line workroom-card__line-rotate'/>
             </div>
             <h2 className={boxName}>{props.data.name}</h2>
             <p className={boxDescription}>{props.data.description}</p>
