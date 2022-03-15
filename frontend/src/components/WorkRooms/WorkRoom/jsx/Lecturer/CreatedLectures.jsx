@@ -4,6 +4,7 @@ import tooltip from "~/assets/img/workrooms/workroom/tooltip.svg";
 import WorkroomCard from "../WorkroomCard";
 
 
+
 function CreatedLectures(props){
     return (
         <section className="block__created-lectures">
@@ -16,7 +17,7 @@ function CreatedLectures(props){
             <div className="new-lecture">
               <WorkroomCard data={{
                 name: 'Создать лекцию',
-                createLection: true,
+                createLecture: true,
               }}/>
             </div>
           </div>

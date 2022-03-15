@@ -4,30 +4,34 @@
     width: 215px;
     height: 308px;
     border-radius: 18px;
+    border: 1px solid #DBDBDB;
     padding: 20px;
     text-align: center;
     position: relative;
     margin-right: 12px;
-    img{
-        margin-bottom: 15px;
-    }
 }
 
 .workroom-card__box-lector{
     height: 215px;
+    border: none;
     padding-top: 0;
     padding-bottom: 0;
 }
 
-.workroom-card__boxi-wrapper{
+.workroom-card__box-wrapper{
     display: block;
-    width: 175px;
+    max-width: 175px;
+    height: 80px;
+    border-radius: 50%;
     margin: 0 auto;
+    img{
+        width: inherit;
+        height: inherit;
+    }
 }
 
-
 .workroom-card__box--box-shadow{
-    box-shadow: 0px 4px 40px rgba(0, 6, 32, 0.2);
+    box-shadow: 0px 4px 40px rgba(0, 6, 32, 0.1);
 }
 
 .workroom-card__box-name{
@@ -36,6 +40,7 @@
     font-size: 16px;
     line-height: 20px;
     white-space: pre-line
+    margin-top: 16px;
 }
 
 .workroom-card__box-description{
@@ -75,7 +80,7 @@
 
 // стили по карточке "создать лекцию"
 
-.workroom-card__create-lection-text{
+.workroom-card__create-lecture-text{
     font-style: normal;
     font-weight: bold;
     font-size: 14px;
@@ -84,12 +89,12 @@
     margin-top: 20px;
 }
 
-.workroom-card__create-lection--background{
+.workroom-card__create-lecture--background{
     background: #DBDBDB;
     padding: 88.5px 63.5px;
 }
 
-.workroom-card__create-lection-btn{
+.workroom-card__create-lecture-btn{
     width: 88px;
     height: 88px;
     margin: 0 auto;
@@ -101,15 +106,8 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    .workroom-card__line{
-        width: 65px;
-        height: 6px;
-        background: #B4B4B4;
-        border-radius: 5px;
-    }
-    .workroom-card__line-rotate{
-        position: absolute;
-        transform: rotate(90deg);
+    img{
+        margin: 0;
     }
 }
 
