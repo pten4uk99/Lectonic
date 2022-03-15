@@ -7,7 +7,16 @@ from .authapp_serializers import (
     UserLoginSerializer
 )
 from .docs import authapp_docs
+from .models import User
 from .utils import authapp_responses
+
+
+class CheckAuthenticationAPIView(APIView):
+    @swagger_auto_schema(**authapp_docs.CheckAuthenticationDocs)
+    def get(self, request):
+        if not isinstance(request.user, User):
+            return authapp_responses.unauthorized()
+        return authapp_responses.success()
 
 
 class UserCreationView(APIView):  # Возможно в будущем переделается на дженерик
