@@ -2,6 +2,45 @@ from drf_yasg.openapi import Schema
 
 from authapp.utils import authapp_responses
 from speakers.utils import response
+from speakers.utils.swagger_response import get_default_response
+
+CheckAuthenticationSchema200 = Schema(
+    title='Пользователь авторизован',
+    description='',
+    type='object',
+    format='',
+    enum=[],
+    pattern='',
+    properties={
+        **get_default_response(
+            status=response.SUCCESS,
+            detail=authapp_responses.SUCCESS
+        ),
+        "data": Schema(
+            type='string',
+            enum=['[]']
+        ),
+    },
+)
+
+CheckAuthenticationSchema400 = Schema(
+    title='Пользователь не авторизован',
+    description='',
+    type='object',
+    format='',
+    enum=[],
+    pattern='',
+    properties={
+        **get_default_response(
+            status=response.ERROR,
+            detail=authapp_responses.UNAUTHORIZED
+        ),
+        "data": Schema(
+            type='string',
+            enum=['[]']
+        ),
+    },
+)
 
 UserProfileCreationSchema400 = Schema(
     title='',

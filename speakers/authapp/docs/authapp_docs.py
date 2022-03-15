@@ -2,6 +2,16 @@ from authapp.authapp_serializers import UserCreateSerializer, UserLoginSerialize
 from authapp.docs.authapp_schemas import *
 from authapp.utils.authapp_responses import DESCRIPTION
 
+CheckAuthenticationDocs = {
+    'operation_description': 'Проверка авторизован ли пользователь.',
+    'operation_summary': 'Проверка авторизации',  # Краткое описание
+    'deprecated': False,  # Если True, помечает API как не рабочее
+    'responses': {
+        200: CheckAuthenticationSchema200,
+        400: CheckAuthenticationSchema400,
+    },  # Схемы ответов сервера
+}
+
 UserProfileCreationView = {
     'request_body': UserCreateSerializer,  # Сериализатор
     'operation_description': 'Регистрация нового пользователя. ' + DESCRIPTION,  # Развернутое описание
