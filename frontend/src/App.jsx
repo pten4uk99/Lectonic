@@ -22,7 +22,7 @@ function App() {
   return (
     <>
       <Header/>
-      <main>
+      <main >
         <Routes>
           <Route path='/' element={<Main />} />
           <Route path='/verify_email' element={<VerifyEmail />} />
