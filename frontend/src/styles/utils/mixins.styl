@@ -1,0 +1,18 @@
+/* add PX (or original value) as backup */
+px2rem(value)
+  value
+
+  if (value == inherit)
+    value
+    /* do nothing, "inherit" has no unit */
+  else
+    remify(value)
+
+/* separate mixin, so it can be used elsewhere */
+remify(value)
+  u = unit(value)
+
+  if (u == 'px')
+    return unit((value / $fontSize), 'rem')
+  else
+    return unit(value, u)

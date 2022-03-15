@@ -1,0 +1,68 @@
+.label
+  justify-self right
+  font-size $fsSmall
+
+.pill
+  padding px2rem(6px) px2rem(20px)
+  border-radius $bdRad
+  background $main-white
+  border 1px solid $main-black
+  display initial
+
+  &-grey
+    background $add-grey
+    border none
+
+  &-blue
+    background $main-blue
+    border none
+    color $main-white
+
+.flex
+  display flex
+  flex-flow row wrap
+  align-items center
+  font-size $fsNorm
+  gap px2rem(6px)
+
+.selector
+  border-radius $bdRad
+  background-color $main-white
+  height 2rem
+  border solid $add-grey $bdWid
+  appearance none
+  background-repeat no-repeat
+
+  // background-position-x right
+  &:first-child
+    color $add-darkGrey
+    padding-left 1rem
+
+.text-area, .text-input
+  height 100%
+  width px2rem(440px)
+
+.text-area
+  padding 1rem
+  border-radius $bdRad
+  border solid $add-grey $bdWid
+
+.text-input
+  padding 0.5rem 0
+  border none
+  width px2rem(320px)
+  border-bottom solid $add-grey $bdWid
+  font-size $fsNorm
+
+  &:focus
+    // outline none // Don't do this!!! Needed for screen-readers
+    outline $main-white
+    box-shadow none
+
+.big-button
+  border-radius $bdRad
+  border none
+  background $add-purple
+  padding px2rem(12px) px2rem(135px)
+  color $main-white
+  font-size $fsNorm

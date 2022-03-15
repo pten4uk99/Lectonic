@@ -13,7 +13,8 @@ import LecturerStep2 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep2'
 import LecturerStep3 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep3'
 import LecturerStep4 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep4'
 import Workroom from "~@/WorkRooms/Workroom";
-import Header from "./components/Layout/jsx/Header";
+import Header from "~@/Layout/jsx/Header";
+import CreateEvent from "~@/CreateEvent/CreateEvent";
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
             element={<ContinueRegistration />}
           />
           <Route path='/user_basic-info' element={<UserBasicInfo />} />
+          <Route path='/create_event' element={<CreateEvent />} />
           <Route path='/register_choose-role' element={<RegistrationRole />} />
           <Route path='/register_lecturer2' element={<LecturerStep2 />} />
           <Route path='/register_lecturer3' element={<LecturerStep3 />} />
