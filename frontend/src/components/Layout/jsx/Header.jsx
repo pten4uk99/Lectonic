@@ -12,7 +12,6 @@ import {connect} from "react-redux";
 
 
 function Header(props) {
-  console.log(logo, iconSearch);
   return (
     <>
       <header className="header">

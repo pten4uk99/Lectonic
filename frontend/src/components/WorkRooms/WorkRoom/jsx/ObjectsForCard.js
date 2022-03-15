@@ -5,8 +5,8 @@ let objectsForCard = [
         description: 'Лекции: Лидеры-доноры',
         img: '../../../assets/img/Workrooms/WorkroomCard/img_1.png',
         lectorCard: true,
-        createLection: false,
-        lectionConfirm: false
+        createLecture: false,
+        lectureConfirm: false
     },
     // Объект для карточки - Лекции без помещений
     {
@@ -15,8 +15,8 @@ let objectsForCard = [
         textBtn: 'Откликнуться',
         img: '../../../assets/img/Workrooms/WorkroomCard/img_2.png',
         lectorCard: false,
-        createLection: false,
-        lectionConfirm: false
+        createLecture: false,
+        lectureConfirm: false
     },
     // Объект для карточки - Потенциальные лекции
     {
@@ -25,15 +25,15 @@ let objectsForCard = [
         textBtn: 'Статус мероприятия',
         img: '../../../assets/img/Workrooms/WorkroomCard/img_3.png',
         lectorCard: false,
-        createLection: false,
-        lectionConfirm: true,
+        createLecture: false,
+        lectureConfirm: true,
     },
     // Объект для карточки - Создать лекцию
     {
         name: 'Создать лекцию',
         lectorCard: false,
-        createLection: true,
-        lectionConfirm: false
+        createLecture: true,
+        lectureConfirm: false
     }
 ];
 
