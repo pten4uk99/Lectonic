@@ -63,6 +63,7 @@ export default connect(
   })
 )(Date)
 
+
 function getClassName(props) {
   let className = 'calendar-date'
 
