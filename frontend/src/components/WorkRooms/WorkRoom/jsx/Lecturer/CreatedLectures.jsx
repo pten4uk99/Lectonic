@@ -20,6 +20,45 @@ function CreatedLectures(props){
                 createLecture: true,
               }}/>
             </div>
+            <div className="created-lectures">
+              <WorkroomCard data={{
+                name: 'Лидеры-доноры',
+                description: 'Лекции от создателей проекта о донорстве',
+                textBtn: 'Статус мероприятия',
+                img: '',
+            }}/>              
+              <WorkroomCard data={{
+                name: 'Лидеры-доноры',
+                description: 'Лекции от создателей проекта о донорстве',
+                textBtn: 'Статус мероприятия',
+                img: '',
+            }}/>
+                            <WorkroomCard data={{
+                name: 'Лидеры-доноры',
+                description: 'Лекции от создателей проекта о донорстве',
+                textBtn: 'Статус мероприятия',
+                img: '',
+            }}/>
+                            <WorkroomCard data={{
+                name: 'Лидеры-доноры',
+                description: 'Лекции от создателей проекта о донорстве',
+                textBtn: 'Статус мероприятия',
+                img: '',
+            }}/>
+                            <WorkroomCard data={{
+                name: 'Лидеры-доноры',
+                description: 'Лекции от создателей проекта о донорстве',
+                textBtn: 'Статус мероприятия',
+                img: '',
+            }}/>
+                            <WorkroomCard data={{
+                name: 'Лидеры-доноры',
+                description: 'Лекции от создателей проекта о донорстве',
+                textBtn: 'Статус мероприятия',
+                img: '',
+            }}/>
+              
+            </div>
           </div>
           
           <div className="workroom__block-underline"/>
