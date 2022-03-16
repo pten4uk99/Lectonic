@@ -7,6 +7,7 @@
   font-weight 700
 
 .main-subheading
+  width 399px
   font-size $fsNorm
   font-weight normal
 
@@ -21,15 +22,13 @@
       display none
     .add-photo
       display inline
-      position relative
-      top 10px
       margin-left 8px
       text-decoration underline
       font-size 11px
       color rgba(0, 37, 255, 1)
     .icon
       position relative
-      top 22px
+      top 12px
       
   .add-photo__input
     display none
@@ -42,7 +41,6 @@
     
   .add-photo
     display none
-
 
   .title-img
     position relative
@@ -58,6 +56,20 @@
   select
     width px2rem(250px)
     background-position 95%
+    outline none
+    cursor pointer
+
+.date
+  &.flex
+    .open-calendar
+      display flex
+      align-items center
+      cursor pointer
+      .date-link
+        color $main-blue
+        margin-left 8px
+        font-size 11px
+        text-decoration: underline
 
 .time
   select

@@ -14,7 +14,7 @@ import LecturerStep3 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep3'
 import LecturerStep4 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep4'
 import Workroom from "~@/WorkRooms/Workroom";
 import Header from "~@/Layout/jsx/Header";
-import CreateEvent from "~@/CreateEvent/CreateEvent";
+import CreateEvent from "~@/CreateEvent/jsx/CreateEvent";
 
 
 function App() {

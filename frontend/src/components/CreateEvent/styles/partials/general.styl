@@ -3,11 +3,12 @@
   font-size $fsSmall
 
 .pill
-  padding px2rem(6px) px2rem(20px)
+  padding px2rem(7px) px2rem(20px)
   border-radius $bdRad
   background $main-white
   border 1px solid $main-black
   display initial
+  cursor pointer
 
   &-grey
     background $add-grey
@@ -15,7 +16,7 @@
 
   &-blue
     background $main-blue
-    border none
+    border 1px solid $main-blue
     color $main-white
 
 .flex
@@ -41,11 +42,18 @@
 .text-area, .text-input
   height 100%
   width px2rem(440px)
+  font-family 'Montserrat', sans-serif
 
 .text-area
-  padding 1rem
+  padding px2rem(8px) px2rem(20px)
   border-radius $bdRad
   border solid $add-grey $bdWid
+  outline none
+  resize none
+  
+  &::placeholder
+    color $add-darkGrey
+    font-size 12px
 
 .text-input
   padding 0.5rem 0

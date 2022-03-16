@@ -5,7 +5,7 @@
   grid-auto-rows 1fr
   grid-template-areas '. heading' '. subheading' 'cover-l cover' 'domain-l domains' 'topic-l topic' 'type-l type' 'date-l date' 'time-l time' 'workspace-l workspace' 'address-l address' 'equip-l equip' 'desc-l desc' 'fee-l fee' '. submit' '. .' '. .'
   grid-template-columns 2fr 3fr
-  grid-template-rows repeat(2, 0.1fr) 0.5fr repeat(6, 0.1fr) repeat(2, 0.3fr) 1fr repeat(4, 0.1fr)
+  grid-template-rows repeat(2, 0.1fr) 0.2fr repeat(6, 0.1fr) repeat(2, 0.3fr) 1fr repeat(4, 0.1fr)
   gap 1.5em 2em
 
   margin-top: 100px
@@ -70,7 +70,10 @@
 .address-l
   grid-area address-l
   align-self start
-  margin-top $marginTop
+  margin-top 7px
+  
+  &.disabled
+    color $add-darkGrey
 
 .address
   grid-area address
@@ -79,7 +82,7 @@
 .equip-l
   grid-area equip-l
   align-self start
-  margin-top $marginTop
+  margin-top 7px
 
 .equip
   grid-area equip
@@ -88,7 +91,7 @@
 .desc-l
   grid-area desc-l
   align-self start
-  margin-top $marginTop
+  margin-top 7px
 
 .desc
   grid-area desc
