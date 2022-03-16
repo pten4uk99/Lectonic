@@ -1,10 +1,5 @@
 import {baseURL} from "~/ProjectConstants";
 
-const body = JSON.stringify({
-  email: "pten4ik99@yandex.ru",
-  password: "12345678"
-})
-
 const HEADERS = {
   'Content-Type': 'application/json',
 }

@@ -12,6 +12,7 @@ class LectureAsLecturerAPIView(APIView):
 
     @swagger_auto_schema(**lecture_docs.LectureAsLecturerCreateDoc)
     def post(self, request):
+        print(request.data)
         serializer = LectureCreateAsLecturerSerializer(
             data=request.data,
             context={'request': request}

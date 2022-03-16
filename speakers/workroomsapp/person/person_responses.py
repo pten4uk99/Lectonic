@@ -51,7 +51,7 @@ def patched(data):
 def success(data):
     return response.get_response(
         status=response.SUCCESS,
-        data=[data],
+        data=data,
         status_code=200
     )
 
