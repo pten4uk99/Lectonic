@@ -9,11 +9,12 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
     name = serializers.CharField()
     photo = serializers.FileField()
     domain = serializers.ListField()
-    datetime = serializers.DateTimeField()
+    date = serializers.DateField()
+    time_start = serializers.TimeField()
+    time_end = serializers.TimeField()
     hall_address = serializers.CharField(required=False)
     equipment = serializers.CharField(required=False)
     type = serializers.CharField()
-    duration = serializers.IntegerField()
     cost = serializers.IntegerField(required=False)
     description = serializers.CharField(required=False)
 
@@ -22,19 +23,23 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
             'name',
             'photo',
             'domain',
-            'datetime',
             'hall_address',
             'equipment',
             'type',
-            'duration',
             'cost',
             'description',
         ]
 
-    def validate_datetime(self, date):
-        if date.hour == 0 and date.minute == 0:
-            raise serializers.ValidationError('Дата должна быть в формате YYYY-MM-DDTHH:MM')
-        return date
+    def validate(self, data):
+        date = data.pop('date')
+        time_start = data.pop('time_start')
+        time_end = data.pop('time_end')
+
+        data['datetime'] = datetime.datetime(date.year, date.month, date.day,
+                                             time_start.hour, time_start.minute)
+        data['duration'] = (datetime.timedelta(hours=time_end.hour, minutes=time_end.minute) -
+                            datetime.timedelta(hours=time_start.hour, minutes=time_end.minute)).seconds // 60
+        return data
 
     def create(self, validated_data):
         return Lecture.objects.create_as_lecturer(

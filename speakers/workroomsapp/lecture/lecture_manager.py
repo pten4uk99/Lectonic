@@ -1,5 +1,6 @@
 from django.core import exceptions
 from django.db import models, transaction
+from django.utils.timezone import make_aware
 
 from workroomsapp import models as workrooms_models
 
@@ -35,16 +36,16 @@ class LectureManager(models.Manager):
         )
 
         if domain is not None:
-            for domain_id in domain:
+            for name in domain:
                 workrooms_models.LectureDomain.objects.create(
                     lecture=lecture,
-                    domain=workrooms_models.Domain.objects.get(pk=int(domain_id))
+                    domain=workrooms_models.Domain.objects.get(name=name)
                 )
 
         lecture_request = workrooms_models.LectureRequest.objects.create(lecture=lecture)
 
         event = workrooms_models.Event.objects.create(
-            datetime=datetime, lecture_request=lecture_request)
+            datetime=make_aware(datetime), lecture_request=lecture_request)
 
         if lecturer.lecturer_calendar:
             calendar = lecturer.lecturer_calendar.calendar

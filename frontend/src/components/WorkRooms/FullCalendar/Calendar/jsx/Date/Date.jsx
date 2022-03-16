@@ -28,7 +28,7 @@ function Date(props) {
     if (checkEqualDates(props.store.calendar.checkedDate, props.date))
       setActive(true)
     else setActive(false)
-  }, [props.date])
+  }, [props.store.dateDetail])
 
   useEffect(() => {
     if (checkEqualDates(props.store.calendar.hoverDate, props.date))

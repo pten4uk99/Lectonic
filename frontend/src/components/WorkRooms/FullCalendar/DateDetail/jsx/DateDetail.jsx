@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import Event from './Event'
 import { checkEqualDates } from '~@/WorkRooms/FullCalendar/Calendar/utils/date'
+import {useNavigate} from "react-router-dom";
 
 function DateDetail(props) {
+  let navigate = useNavigate()
   let year = props.date.getFullYear()
   let month = getMonth(props.date.getMonth())
   let day = getDay(props.date.getDate())
@@ -58,7 +60,8 @@ function DateDetail(props) {
             Вы можете создать одно или несколько мероприятий, чтобы
             потенциальные слушатели могли откликнуться
           </p>
-          <button className='create-event'>Создать мероприятие</button>
+          <button className='create-event' 
+                  onClick={() => navigate('/create_event')}>Создать мероприятие</button>
         </div>
       )}
     </div>
