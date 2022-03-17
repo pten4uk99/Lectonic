@@ -1,15 +1,9 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 // import '~/styles/VerifyEmail.styl'
-import Header from '~@/Layout/jsx/Header'
-import profileSelected from '~/assets/img/header_profile-selected.svg'
-import DropDownTest from '~@/UserArea/jsx/DropDownTest'
 
 function VerifyEmail() {
   return (
     <>
-      <Header src={profileSelected} />
-
       <div className='verify__wrapper'>
         <h2>Подтверждение e-mail</h2>
         <p>Мы отправили письмо на электронную почту</p>

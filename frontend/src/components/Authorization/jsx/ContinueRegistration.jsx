@@ -1,8 +1,5 @@
 import React, { useState } from 'react'
-import Header from '~@/Layout/jsx/Header'
 import Modal from '~@/Layout/jsx/Modal'
-import profileSelected from '~/assets/img/header_profile-selected.svg'
-import profile from '~/assets/img/header_profile.svg'
 import AuthSignUpPassword from './AuthSignUpPassword'
 
 function ContinueRegistration() {
@@ -10,10 +7,6 @@ function ContinueRegistration() {
 
   return (
     <div>
-      <Header
-        src={open ? profileSelected : profile}
-        onOpenAuth={() => setOpen(true)}
-      />
       <Modal
         isOpened={open}
         onModalClose={() => setOpen(false)}
@@ -21,6 +14,8 @@ function ContinueRegistration() {
       >
         <AuthSignUpPassword />
       </Modal>
+      <div className="continue-register-main">
+      </div>
     </div>
   )
 }

@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router-dom'
 import eyeOpen from '~/assets/img/eye-open.svg'
 import eyeClose from '~/assets/img/eye-close.svg'
 import 'regenerator-runtime/runtime'
+import { useAuth} from '../../../hook/useAuth'
 import { baseURL } from '~/ProjectConstants'
 
 export default function Authorization() {
-  const navigate = useNavigate() //Для перехода
-
+  const navigate = useNavigate();
+  const {signIn} = useAuth();
+  
   //вывод текста ошибки под инпутами
   const [errorSignUpEmail, setErrorSignUpEmail] = useState('')
 
@@ -62,7 +64,7 @@ export default function Authorization() {
           setErrorMessagePassword(data.password[0])
         }
         if (data.status == ('logged_in' || 'signed_in')) {
-          navigate('/user_profile')
+          signIn(userSignIn, () => navigate('/user_profile'))
         }
       })
       .catch(error => {

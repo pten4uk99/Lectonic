@@ -12,38 +12,41 @@ import RegistrationRole from '~@/RegistrationRole/jsx/RegistrationRole'
 import LecturerStep2 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep2'
 import LecturerStep3 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep3'
 import LecturerStep4 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep4'
-import Workroom from "~@/WorkRooms/Workroom";
-import Header from "~@/Layout/jsx/Header";
-import CreateEvent from "~@/CreateEvent/jsx/CreateEvent";
-
+import Workroom from "~@/WorkRooms/Workroom"
+import Header from "~@/Layout/jsx/Header"
+import CreateEvent from "~@/CreateEvent/jsx/CreateEvent"
+import  RequireAuth  from './hoc/RequireAuth'
+import {AuthProvider} from './hoc/AuthProvider';
 
 function App() {
-  //   const isAuthentikated = !!token;
-
+ 
   return (
     <>
-      <Header/>
-      <main>
-        <Routes>
-          <Route path='/' element={<Main />} />
-          <Route path='/verify_email' element={<VerifyEmail />} />
-          <Route path='/confirm_email' element={<ConfirmEmail />} />
-          <Route
-            path='/continue_registration'
-            element={<ContinueRegistration />}
-          />
-          <Route path='/user_basic-info' element={<UserBasicInfo />} />
-          <Route path='/create_event' element={<CreateEvent />} />
-          <Route path='/register_choose-role' element={<RegistrationRole />} />
-          <Route path='/register_lecturer2' element={<LecturerStep2 />} />
-          <Route path='/register_lecturer3' element={<LecturerStep3 />} />
-          <Route path='/register_lecturer4' element={<LecturerStep4 />} />
-          <Route path='/user_profile' element={<Workroom />} />
-          <Route path='/change_password' element={<ChangePassword />} />
-          <Route path='*' element={<NotFoundPage />} />
-        </Routes>
-      </main>
-      <Footer />
+      <AuthProvider>
+        <Header/>
+        <main>
+          <Routes>
+            <Route path='/' element={<Main/>}/>
+            <Route path='/verify_email' element={<VerifyEmail />} />
+            <Route path='/confirm_email' element={<ConfirmEmail />} />
+            <Route path='/continue_registration' element={<ContinueRegistration />} />
+            <Route path='/user_basic-info' element={<UserBasicInfo />} />
+            <Route path='/create_event' element={<CreateEvent />} />
+            <Route path='/register_choose-role' element={<RegistrationRole />} />
+            <Route path='/register_lecturer2' element={<LecturerStep2 />} />
+            <Route path='/register_lecturer3' element={<LecturerStep3 />} />
+            <Route path='/register_lecturer4' element={<LecturerStep4 />} />
+            <Route path='/user_profile' element={
+              <RequireAuth>
+                <Workroom />
+              </RequireAuth>
+            } />
+            <Route path='/change_password' element={<ChangePassword />} />
+            <Route path='*' element={<NotFoundPage />} />
+          </Routes>
+        </main>
+        <Footer />
+      </AuthProvider>
     </>
   )
 }
