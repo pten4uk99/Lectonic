@@ -6,8 +6,10 @@ import eyeClose from '~/assets/img/eye-close.svg'
 import 'regenerator-runtime/runtime'
 import { useAuth} from '../../../hook/useAuth'
 import { baseURL } from '~/ProjectConstants'
+import {connect} from "react-redux";
+import {DeactivateModal} from "../../Layout/redux/actions/header";
 
-export default function Authorization() {
+function Authorization(props) {
   const navigate = useNavigate();
   const {signIn} = useAuth();
   
@@ -63,8 +65,9 @@ export default function Authorization() {
         if ('password' in data) {
           setErrorMessagePassword(data.password[0])
         }
-        if (data.status == ('logged_in' || 'signed_in')) {
+        if (data.status === ('logged_in' || 'signed_in')) {
           signIn(userSignIn, () => navigate('/user_profile'))
+          props.DeactivateModal()
         }
       })
       .catch(error => {
@@ -381,3 +384,10 @@ export default function Authorization() {
     </div>
   )
 }
+
+export default connect(
+  state => ({store: state}),
+  dispatch => ({
+    DeactivateModal: () => dispatch(DeactivateModal())
+  })
+)(Authorization)
