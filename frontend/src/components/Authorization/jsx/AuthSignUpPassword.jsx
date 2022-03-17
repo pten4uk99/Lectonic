@@ -5,13 +5,11 @@ import eyeOpen from '~/assets/img/eye-open.svg'
 import eyeClose from '~/assets/img/eye-close.svg'
 import 'regenerator-runtime/runtime'
 import { baseURL } from '~/ProjectConstants'
-import { useAuth} from '../../../hook/useAuth'
 
 function AuthSignUpPassword() {
   //!!!ниже будет повторение кода из Authorisation.js, пока так
   
   const navigate = useNavigate();
-  const {signIn} = useAuth();
   
   const [errorMessageEmail, setErrorMessageEmail] = useState('')
   const [errorMessagePassword, setErrorMessagePassword] = useState('')

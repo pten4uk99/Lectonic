@@ -7,11 +7,15 @@ import profileSelected from '~/assets/img/header_profile-selected.svg'
 import profile from '~/assets/img/header_profile.svg'
 import Modal from "./Modal";
 import Authorization from "../../Authorization/jsx/Authorization";
-import {ActivateModal, DeactivateModal} from "../redux/actions/header";
+import {ActivateModal, ActiveProfileDropdown, DeactivateModal} from "../redux/actions/header";
 import {connect} from "react-redux";
+import ProfileDropDown from "./ProfileDropDown";
 
 
 function Header(props) {
+  let profileDropDownActive = props.store.header.profileDropDownActive
+  let loggedIn = props.store.permissions.logged_in
+  
   return (
     <>
       <header className="header">
@@ -23,13 +27,16 @@ function Header(props) {
           <img className="header__nav-search is-desktop"
                src={iconSearch}
                alt="поиск" />
-  
-          <img
-            className="header__nav-profile is-desktop"
-            src={props.store.header.modalActive ? profileSelected : profile}
-            alt="меню"
-            onClick={props.ActivateModal}
-          />
+
+          {loggedIn ?
+            (<img className="header__nav-profile is-desktop" 
+                  src={profileSelected}
+                  alt="меню" 
+                  onClick={() => props.ActiveProfileDropdown(!profileDropDownActive)}/>) :
+            (<img className="header__nav-profile is-desktop" 
+                  src={props.store.header.modalActive ? profileSelected : profile} 
+                  alt="меню" 
+                  onClick={props.ActivateModal}/>)}
   
           {/*бургер под мобильные*/}
           <img
@@ -45,6 +52,7 @@ function Header(props) {
         styleBody={{ width: '400px' }}>
         <Authorization />
       </Modal>
+      <ProfileDropDown/>
     </>
   );
 }
@@ -53,6 +61,9 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     ActivateModal: () => dispatch(ActivateModal()),
-    DeactivateModal: () => dispatch(DeactivateModal())
+    DeactivateModal: () => dispatch(DeactivateModal()),
+    ActiveProfileDropdown: 
+      (active) => dispatch(ActiveProfileDropdown(active)),
   })
 )(Header)
+

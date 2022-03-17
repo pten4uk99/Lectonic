@@ -11,10 +11,12 @@ import '~/index.styl'
 import header from "~@/Layout/redux/reducers/header";
 import profile from "~@/WorkRooms/WorkRoom/redux/reducers/profile";
 import event from "~@/CreateEvent/redux/reducers/event";
+import permissions from "~@/Authorization/redux/reducers/permissions";
 
 console.clear()
 
 let reducer = combineReducers({
+  permissions,
   header,
   event,
   profile,

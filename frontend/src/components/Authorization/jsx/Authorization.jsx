@@ -4,14 +4,12 @@ import { useNavigate } from 'react-router-dom'
 import eyeOpen from '~/assets/img/eye-open.svg'
 import eyeClose from '~/assets/img/eye-close.svg'
 import 'regenerator-runtime/runtime'
-import { useAuth} from '../../../hook/useAuth'
 import { baseURL } from '~/ProjectConstants'
 import {connect} from "react-redux";
 import {DeactivateModal} from "../../Layout/redux/actions/header";
 
 function Authorization(props) {
   const navigate = useNavigate();
-  const {signIn} = useAuth();
   
   //вывод текста ошибки под инпутами
   const [errorSignUpEmail, setErrorSignUpEmail] = useState('')
@@ -45,6 +43,7 @@ function Authorization(props) {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(userSignIn),
     })
       .then(response => {
@@ -66,7 +65,7 @@ function Authorization(props) {
           setErrorMessagePassword(data.password[0])
         }
         if (data.status === ('logged_in' || 'signed_in')) {
-          signIn(userSignIn, () => navigate('/user_profile'))
+          navigate('/user_profile')
           props.DeactivateModal()
         }
       })
@@ -124,7 +123,7 @@ function Authorization(props) {
         //ниже идет проверка наличия ключа в объекте дата.
         if ('email' in data) {
           setErrorSignUpEmail(data.email[0])
-        } else if (data.status == 'success') {
+        } else if (data.status === 'success') {
           window.sessionStorage.setItem('email', signUpValue.email) //чтоб отобразить почту на /verify_email
           navigate('/verify_email')
         }
