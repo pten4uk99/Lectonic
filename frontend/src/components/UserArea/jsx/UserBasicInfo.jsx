@@ -120,7 +120,6 @@ export default function UserBasicInfo() {
 
   return (
     <>
-      <Header src={profileSelected} />
       <div className='userInfo'>
         <h2 className='userInfo__text-header'>Информация профиля</h2>
         <p className='userInfo__text'>

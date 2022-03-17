@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import mainIllustration from '~/assets/img/main-illustration.svg'
 import {ActivateModal, DeactivateModal} from "../redux/actions/header";
 import {connect} from "react-redux";

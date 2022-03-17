@@ -5,13 +5,14 @@ import eyeOpen from '~/assets/img/eye-open.svg'
 import eyeClose from '~/assets/img/eye-close.svg'
 import 'regenerator-runtime/runtime'
 import { baseURL } from '~/ProjectConstants'
+import { useAuth} from '../../../hook/useAuth'
 
 function AuthSignUpPassword() {
   //!!!ниже будет повторение кода из Authorisation.js, пока так
-
-  //Для перехода
-  const navigate = useNavigate()
-
+  
+  const navigate = useNavigate();
+  const {signIn} = useAuth();
+  
   const [errorMessageEmail, setErrorMessageEmail] = useState('')
   const [errorMessagePassword, setErrorMessagePassword] = useState('')
 
@@ -62,7 +63,7 @@ function AuthSignUpPassword() {
           setErrorMessagePassword(data.password[0])
         }
         if (data.status == ('logged_in' || 'signed_in')) {
-          navigate('/user_profile')
+          signIn(userSignIn, () => navigate('/user_profile'))
         }
       })
       .catch(error => {
@@ -99,7 +100,6 @@ function AuthSignUpPassword() {
     email: window.sessionStorage.getItem('email'),
     password: signUpValue.password,
   }
-  console.log('USER Sign Up JSON: ', JSON.stringify(userSignUp))
 
   async function onSubmitSignUp(e) {
     e.preventDefault()
@@ -109,6 +109,7 @@ function AuthSignUpPassword() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(userSignUp),
+      credentials: 'include',
     })
       .then(response => {
         console.log('RESPONSE SIGNUP: ', response)

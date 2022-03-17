@@ -6,7 +6,6 @@ import profileIcon from '~/assets/img/header_profile.svg'
 export default function NotFoundPage() {
   return (
     <>
-      <Header src={profileIcon} />
       <div className='not-found'>
         <div className='not-found__text'>
           <h2>Ошибка</h2>
