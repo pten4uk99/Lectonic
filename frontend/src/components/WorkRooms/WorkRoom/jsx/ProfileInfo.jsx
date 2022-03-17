@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import download from '~/assets/img/workrooms/profileInfo/btn_download_photo.svg';
+import download from '~/assets/img/workrooms/profileInfo/btn-icon-edit.svg';
 import iconPlus from '~/assets/img/workrooms/profileInfo/btn_icon-plus.svg';
 import {SwapToCustomer, SwapToLecturer, UpdateProfile} from "../redux/actions/profile";
 import {connect} from "react-redux";
