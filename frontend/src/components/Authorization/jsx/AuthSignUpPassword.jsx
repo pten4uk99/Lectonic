@@ -5,8 +5,12 @@ import eyeOpen from '~/assets/img/eye-open.svg'
 import eyeClose from '~/assets/img/eye-close.svg'
 import 'regenerator-runtime/runtime'
 import { baseURL } from '~/ProjectConstants'
+import {login, signUp} from "../ajax";
+import {DeactivateModal} from "../../Layout/redux/actions/header";
+import {connect} from "react-redux";
 
-function AuthSignUpPassword() {
+
+function AuthSignUpPassword(props) {
   //!!!ниже будет повторение кода из Authorisation.js, пока так
   
   const navigate = useNavigate();
@@ -23,7 +27,6 @@ function AuthSignUpPassword() {
 
   function onChangeSignIn(e) {
     setSignInValue({ ...signInValue, [e.target.name]: e.target.value })
-    console.log('VALUE: ', signInValue)
   }
 
   //отправка данных на сервер
@@ -31,25 +34,16 @@ function AuthSignUpPassword() {
     email: signInValue.email,
     password: signInValue.password,
   }
-  console.log('USER Sign In: ', userSignIn)
 
-  async function onSubmitSignIn(e) {
+  function onSubmitSignIn(e) {
     e.preventDefault()
-    await fetch(`${baseURL}/api/auth/login/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userSignIn),
-    })
+    login(userSignIn)
       .then(response => {
-        console.log('RESPONSE SignIn: ', response)
         setErrorMessageEmail('') //очищаем стейты, чтоб при новом запросе они исчезли
         setErrorMessagePassword('')
         return response.json()
       })
       .then(data => {
-        console.log('data: ', data)
         //ниже идет проверка наличия ключа в объекте дата.
         if ('non_field_errors' in data) {
           setErrorMessagePassword(data.non_field_errors[0])
@@ -60,13 +54,12 @@ function AuthSignUpPassword() {
         if ('password' in data) {
           setErrorMessagePassword(data.password[0])
         }
-        if (data.status == ('logged_in' || 'signed_in')) {
-          signIn(userSignIn, () => navigate('/user_profile'))
+        if (data.status === ('logged_in' || 'signed_in')) {
+          navigate('/user_profile')
+          props.DeactivateModal()
         }
       })
-      .catch(error => {
-        console.log('ERROR SignIn: ', error)
-      })
+      .catch(error => console.log('ERROR SignIn: ', error))
   }
 
   //Checkbox не выходить из системы
@@ -87,7 +80,6 @@ function AuthSignUpPassword() {
   function onChangeSignUp(e) {
     setErrorSignUpPassword('')
     setSignUpValue({ ...signUpValue, [e.target.name]: e.target.value })
-    console.log('VALUE: ', signUpValue)
   }
 
   //стейты для вывода ошибок с сервера при регистрации пароля
@@ -95,36 +87,23 @@ function AuthSignUpPassword() {
 
   //отправка email и пароля на сервер
   let userSignUp = {
-    email: window.sessionStorage.getItem('email'),
+    email: props.email || window.localStorage.getItem('email'),
     password: signUpValue.password,
   }
 
-  async function onSubmitSignUp(e) {
+  function onSubmitSignUp(e) {
     e.preventDefault()
-    await fetch(`${baseURL}/api/auth/signup/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userSignUp),
-      credentials: 'include',
-    })
-      .then(response => {
-        console.log('RESPONSE SIGNUP: ', response)
-        return response.json()
-      })
+    signUp(userSignUp)
+      .then(response => response.json())
       .then(data => {
-        console.log('data: ', data)
         if ('password' in data) {
           setErrorSignUpPassword(data.password[0])
         }
-        if (data.status == 'signed_in') {
-          navigate('/user_basic-info')
+        if (data.status === 'signed_in') {
+          navigate('/create_profile')
         }
       })
-      .catch(error => {
-        console.log('ERROR: ', error)
-      })
+      .catch(error => console.log('ERROR: ', error))
   }
 
   //переключение блоков Вход и Регистрация
@@ -361,8 +340,7 @@ function AuthSignUpPassword() {
             className='btn auth__form__btn signUp'
             type='submit'
             onClick={onSubmitSignUp}
-            disabled={signUpValue.password !== signUpValue.password2}
-          >
+            disabled={signUpValue.password !== signUpValue.password2}>
             Продолжить
           </button>
         </form>
@@ -408,4 +386,9 @@ function AuthSignUpPassword() {
   )
 }
 
-export default AuthSignUpPassword
+export default connect(
+  state => ({store: state}),
+  dispatch => ({
+    DeactivateModal: () => dispatch(DeactivateModal())
+  })
+)(AuthSignUpPassword)

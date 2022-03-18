@@ -7,3 +7,6 @@ export function SwapToCustomer() {
 export function UpdateProfile(data) {
   return {type: "UPDATE_PROFILE", payload: data}
 }
+export function UpdateBirthDate(data) {
+  return {type: "UPDATE_BIRTH_DATE", payload: data}
+}

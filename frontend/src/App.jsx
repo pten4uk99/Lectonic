@@ -7,17 +7,14 @@ import VerifyEmail from '~@/Authorization/jsx/VerifyEmail'
 import ChangePassword from '~@/Authorization/jsx/ChangePassword'
 import ContinueRegistration from '~@/Authorization/jsx/ContinueRegistration'
 import ConfirmEmail from '~@/Authorization/jsx/ConfirmEmail'
-import UserBasicInfo from '~@/UserArea/jsx/UserBasicInfo'
+import SetProfileInfo from '~@/Profile/jsx/SetProfileInfo'
 import RegistrationRole from '~@/RegistrationRole/jsx/RegistrationRole'
-import LecturerStep2 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep2'
-import LecturerStep3 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep3'
-import LecturerStep4 from '~@/RegistrationRole/jsx/LecturerSteps/LecturerStep4'
 import Workroom from "~@/WorkRooms/Workroom"
 import Header from "~@/Layout/jsx/Header"
 import CreateEvent from "~@/CreateEvent/jsx/CreateEvent"
 import Permissions from "./components/Authorization/jsx/Permissions";
+import {permissions} from "./ProjectConstants";
 
-const IS_AUTHENTICATED = 'logged_in'
 
 function App() {
   return (
@@ -29,13 +26,10 @@ function App() {
               <Route path='/verify_email' element={<VerifyEmail />} />
               <Route path='/confirm_email' element={<ConfirmEmail />} />
               <Route path='/continue_registration' element={<ContinueRegistration />} />
-              <Route path='/user_basic-info' element={<UserBasicInfo />} />
-              <Route path='/register_choose-role' element={<RegistrationRole />} />
-              <Route path='/register_lecturer2' element={<LecturerStep2 />} />
-              <Route path='/register_lecturer3' element={<LecturerStep3 />} />
-              <Route path='/register_lecturer4' element={<LecturerStep4 />} />
-              <Route path='/user_profile' element={
-                <Permissions check={IS_AUTHENTICATED}>
+              <Route path='/create_profile' element={<SetProfileInfo />} />
+              <Route path='/add_role' element={<RegistrationRole />} />
+              <Route path='/workroom' element={
+                <Permissions check={permissions.isAuthenticated}>
                   <Workroom />
                 </Permissions>
               } />

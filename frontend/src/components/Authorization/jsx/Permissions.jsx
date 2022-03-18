@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {baseURL} from "~/ProjectConstants";
 import {connect} from "react-redux";
 import {SwapLogin} from "../redux/actions/permissions";
-import {Navigate, useLocation, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 
 function Permissions(props) {

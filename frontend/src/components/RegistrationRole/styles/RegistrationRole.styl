@@ -13,6 +13,28 @@
   margin-left: 8px;
 }
 
+.btn-role {
+  border-radius 45px
+  font-size 14px
+  font-weight 400
+  padding 6px 20px
+  border 1px solid var(--main-black)
+  background-color var(--main-white)
+  color var(--main-black)
+  cursor pointer
+}
+  
+.btn-role-selected {
+  border-radius 45px
+  font-size 14px
+  font-weight 700
+  padding 6px 20px
+  border 1px solid var(--main-blue)
+  background-color var(--main-blue)
+  color var(--main-white)
+  cursor pointer
+}
+
 .chooseRole__bottom-btns {
   padding-top: 16px;
   text-align: center;
@@ -35,6 +57,21 @@
   height: auto;
 }
   
+.lecturer-link__block {
+  display: flex
+  .lecturer-link__input-list {
+    display: flex
+    flex-direction: column
+    .lecturer-link__input {
+      display flex
+      margin-bottom: 24px
+      img {
+        transform: translateX(-45px)
+      }
+    }
+  }
+}
+  
 .step-block-with-textarea {
   display: flex;
   align-items: flex-start;
@@ -42,6 +79,8 @@
 
 .step-block__left-part{
   width: 41%;
+  box-sizing border-box
+  padding-top: 9px
   display: flex;
   justify-content: flex-end;
   text-align: right;
@@ -84,15 +123,7 @@
   line-height: 13px;
   cursor: pointer;
 }
-  
-.btn-file {
-  border: 1px solid var(--add-purple);
-  border-radius: 30px;
-  background: var(--main-white);
-  color: var(--add-purple);
-  padding: 7px 20px 8px;
-  cursor: pointer;
-}
+
 
 .step-block__right-comment {
    width:  460px;

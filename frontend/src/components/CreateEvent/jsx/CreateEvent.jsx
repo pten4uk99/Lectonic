@@ -73,7 +73,7 @@ function CreateEvent(props) {
             <input name='photo'
                    className='add-photo__input'
                    type='file'
-                   onChange={e => addPhotoHandler(e, props.UpdatePhoto, domainArray)}/>
+                   onChange={e => addPhotoHandler(e, props.UpdatePhoto)}/>
           <img className='title-img'
                src={titlePhotoSrc}
                alt='Обложка'/>
@@ -82,7 +82,7 @@ function CreateEvent(props) {
         <div className='domain-l label'>Тематика:</div>
         <div className='domains'>
           <div className='domain-list flex'>
-            <select className='selector' 
+            <select className='selector'
                     style={{ backgroundImage: `url(${downArrow})` }} 
                     onChange={e => domainSelectHandler(e, props)}>
               <option value='' disabled selected>Выберите тематику</option>
@@ -194,7 +194,7 @@ export default connect(
 )(CreateEvent)
 
 
-function addPhotoHandler(inputEvent, UpdatePhoto) {
+export function addPhotoHandler(inputEvent, UpdatePhoto) {
   let file = inputEvent.target.files[0]
   let reader = new FileReader()
   reader.readAsDataURL(file);
@@ -204,7 +204,7 @@ function addPhotoHandler(inputEvent, UpdatePhoto) {
   }
 }
 
-function domainSelectHandler(e, props) {
+export function domainSelectHandler(e, props) {
   if (props.store.event.domain.length >= 10) return e.target.value = '';
   let selectedDomain = e.target.selectedOptions[0].innerHTML;
   

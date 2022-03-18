@@ -1,9 +1,9 @@
 import React, {useState} from 'react'
 import {useNavigate} from 'react-router-dom'
-import StepsBar from "../StepsBar";
-// import '~/styles/RegistrationRole.styl'
+import {connect} from "react-redux";
 
-export default function LecturerStep3() {
+
+function LecturerStep3() {
   const navigate = useNavigate()
 
   /*переключение блоков Да/Нет*/
@@ -33,10 +33,6 @@ export default function LecturerStep3() {
   
   return (
     <>
-      <StepsBar 
-        style={{marginLeft: "67%"}}
-        step3={{color: "var(--main-blue)"}}/>
-      
       <div className="step-block-wrapper">
         <div className='step-block margin-bottom-36 step-block__head-text'>
           <h2 className='step-block__left-part'>
@@ -99,11 +95,16 @@ export default function LecturerStep3() {
         </div>
       </div>
       </div>
+      
       <div className="step-block steps__btn">
-        <div className="step-block__left-part"></div>
-        <button
-          className="btn">Следующий шаг</button>
+        <div className="step-block__left-part"/>
+        <button className="btn" type="submit">Завершить регистрацию</button>
       </div>
     </>
   )
 }
+
+export default connect(
+  state => ({store: state}),
+  dispatch => ({})
+)(LecturerStep3)

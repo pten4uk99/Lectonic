@@ -18,6 +18,15 @@ def confirmed(data):
     )
 
 
+def user_is_exist():
+    return response.get_response(
+        status=response.ERROR,
+        detail='Пользователь с таким e-mail уже зарегистрирован',
+        data=[],
+        status_code=400
+    )
+
+
 def bad_key():
     return response.get_response(
         status=response.ERROR,

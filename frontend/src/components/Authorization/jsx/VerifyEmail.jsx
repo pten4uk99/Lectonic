@@ -1,7 +1,9 @@
-import React from 'react'
-// import '~/styles/VerifyEmail.styl'
+import React, {useEffect} from 'react'
+import {DeactivateModal} from "../../Layout/redux/actions/header";
+import {connect} from "react-redux";
 
-function VerifyEmail() {
+
+function VerifyEmail(props) {
   return (
     <>
       <div className='verify__wrapper'>
@@ -22,4 +24,9 @@ function VerifyEmail() {
   )
 }
 
-export default VerifyEmail
+export default connect(
+  state => ({store: state}),
+  dispatch => ({
+    DeactivateModal: () => dispatch(DeactivateModal())
+  })
+)(VerifyEmail)

@@ -9,14 +9,16 @@ import calendar from '~/components/WorkRooms/FullCalendar/Calendar/redux/reducer
 import dateDetail from '~/components/WorkRooms/FullCalendar/DateDetail/redux/reducers/dateDetail'
 import '~/index.styl'
 import header from "~@/Layout/redux/reducers/header";
-import profile from "~@/WorkRooms/WorkRoom/redux/reducers/profile";
+import profile from "~@/Profile/redux/reducers/profile";
 import event from "~@/CreateEvent/redux/reducers/event";
 import permissions from "~@/Authorization/redux/reducers/permissions";
+import registerRole from "~@/RegistrationRole/redux/reducers/registerRole"
 
 console.clear()
 
 let reducer = combineReducers({
   permissions,
+  registerRole,
   header,
   event,
   profile,

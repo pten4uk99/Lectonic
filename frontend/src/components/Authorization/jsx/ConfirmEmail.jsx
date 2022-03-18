@@ -12,7 +12,7 @@ export default function ConfirmEmail() {
  console.log('emailToken: ', emailToken)
 
   //отправляем запрос GET при загрузке страницы
- fetch(`${baseURL}/api/email/email_confirmation/?key=${emailToken}`, {
+ fetch(`${baseURL}/api/email/email_confirmation?key=${emailToken}`, {
     method: 'GET',
     credentials: 'include',
   })
@@ -22,10 +22,9 @@ export default function ConfirmEmail() {
     })
     .then(data => {
       console.log('data: ', data)
-      if (data.status == 'error') {
-        navigate('/404')
-      } else if (data.status == 'success') {
-        navigate('/continue_registration')
+      if (data.status === 'error') navigate('/404') 
+      else if (data.status === 'confirmed') {
+        navigate('/continue_registration', {state: data.data[0].email})
       }
     })
     .catch(error => {
@@ -33,8 +32,7 @@ export default function ConfirmEmail() {
     })
 
   return (
-    <div>
-
-    </div>
+    <>
+    </>
   )
 }

@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 // import '~/styles/AddRole.styl'
 import addRoleIcon from '~/assets/img/add-icon.svg'
 import addRoleIconHover from '~/assets/img/add-icon-hover.svg'
-import Icons from '~@/UserArea/jsx/Icons'
-import DropdownElement from '~@/UserArea/jsx/DropdownElement'
+import Icons from '~@/Profile/jsx/Icons'
+import DropdownElement from '~@/Profile/jsx/DropdownElement'
 // import DropDownElement from '~/components/DropdownElement'
 
 export default function AddRole(props) {
