@@ -101,6 +101,7 @@ function AuthSignUpPassword(props) {
         }
         if (data.status === 'signed_in') {
           navigate('/create_profile')
+          props.DeactivateModal()
         }
       })
       .catch(error => console.log('ERROR: ', error))

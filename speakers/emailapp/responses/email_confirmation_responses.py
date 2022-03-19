@@ -13,7 +13,7 @@ def confirmed(data):
     return response.get_response(
         status=response.CONFIRM,
         detail='Электронная почта успешно подтверждена',
-        data=[data],
+        data=data,
         status_code=200
     )
 
@@ -22,7 +22,6 @@ def user_is_exist():
     return response.get_response(
         status=response.ERROR,
         detail='Пользователь с таким e-mail уже зарегистрирован',
-        data=[],
         status_code=400
     )
 

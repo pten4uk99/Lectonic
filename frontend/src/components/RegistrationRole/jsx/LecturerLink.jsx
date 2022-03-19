@@ -6,7 +6,7 @@ import addHoveredIcon from '~/assets/img/add-icon-hover.svg'
 
 
 function LecturerLink(props) {
-  let [numberLinks, setNumberLinks] = useState(1)
+  let [numberLinks, setNumberLinks] = useState(props.links.length || 1)
   
   function getLinksArr() {
     let arr = []
@@ -14,18 +14,22 @@ function LecturerLink(props) {
     return arr
   }
   
+  function handleBlur(e) {
+    props.blur(e.target.value, e.target.dataset.id)
+  }
+  
   return (
     <div className="lecturer-link__block">
       <p className="step-block__left-part">{props.label}</p>
       <div className="lecturer-link__input-list">
-        {getLinksArr().map((elem) => (
+        {getLinksArr().map((elem, index) => (
           <div key={elem} className="lecturer-link__input">
             <input className='input__add-link' 
                    placeholder="https://" 
-                   type="text" 
-                   name="videoLink" 
-                   id="videoLink" 
-                   value={props.value}/>
+                   type="text"
+                   data-id={index}
+                   defaultValue={props.links[index]} 
+                   onBlur={(e) => handleBlur(e)}/>
             <img src={addLinkIcon} 
                  alt="добавить ссылку" 
                  onClick={() => setNumberLinks(numberLinks + 1)}/>

@@ -38,6 +38,6 @@ def diploma_image_does_not_exist():
 def success(data):
     return response.get_response(
         status=response.SUCCESS,
-        data=[data],
+        data=data,
         status_code=200
     )

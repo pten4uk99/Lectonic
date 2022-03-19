@@ -25,10 +25,10 @@ class LecturerManager(models.Manager):
         )
 
         if domain is not None:
-            for domain_id in domain:
+            for name in domain:
                 workrooms_models.LecturerDomain.objects.create(
                     lecturer=lecturer,
-                    domain=workrooms_models.Domain.objects.get(pk=int(domain_id))
+                    domain=workrooms_models.Domain.objects.get(name=name)
                 )
 
         if performances_links is not None:

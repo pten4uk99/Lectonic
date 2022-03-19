@@ -6,6 +6,12 @@ from rest_framework import serializers
 from workroomsapp.models import Person, City, DocumentImage, Domain
 
 
+class PersonPhotoGetSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Person
+        fields = ['photo']
+
+
 class PersonSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     photo = serializers.FileField()
@@ -58,6 +64,17 @@ class PersonSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Дата не может быть позже текущей')
 
         return birth_date
+
+    def validate_photo(self, photo):
+        image_format = photo.name.split('.')[-1]
+
+        if image_format not in ['jpg', 'jpeg', 'png']:
+            msg = 'Фотография может быть только в формате "jpg", "jpeg" или "png"'
+            raise serializers.ValidationError(msg)
+
+        photo.name = 'photo.' + image_format
+
+        return photo
 
 
 class DocumentImageCreateSerializer(serializers.Serializer):

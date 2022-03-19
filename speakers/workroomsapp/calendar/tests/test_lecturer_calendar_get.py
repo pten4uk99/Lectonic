@@ -22,9 +22,9 @@ class TestLecturerCalendarGet(APITestCase):
         temp_lecturer_data = self.lecturer_data.copy()
 
         City.objects.create(pk=1, name='Москова')
-        Domain.objects.create(pk=1, name='Москова')
-        Domain.objects.create(pk=2, name='Инопришленец')
-        Domain.objects.create(pk=3, name='Колхоз')
+        Domain.objects.create(pk=1, name='Канцелярия')
+        Domain.objects.create(pk=2, name='Бухгалтерия')
+        Domain.objects.create(pk=3, name='Юриспруденция')
 
         self.client.post(reverse('signup'), temp_signup_data)
         self.client.post(reverse('profile'), temp_profile_data)
@@ -35,9 +35,10 @@ class TestLecturerCalendarGet(APITestCase):
                              {
                                  'name': f'Моя лектушка {i}',
                                  'photo': test_image.create_image(),
-                                 'domain': ['1', '2', '3'],
-                                 'datetime': datetime.datetime.now() + datetime.timedelta(days=i + 1),
-                                 'duration': '30',
+                                 'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
+                                 'date': datetime.date.today() + datetime.timedelta(days=i),
+                                 'time_start': '15:30',
+                                 'time_end': '15:40',
                                  'type': 'offline'
                              })
         for i in range(4, 7):
@@ -45,8 +46,10 @@ class TestLecturerCalendarGet(APITestCase):
                              {
                                  'name': f'Моя лектушка {i}',
                                  'photo': test_image.create_image(),
-                                 'domain': ['1', '2', '3'],
-                                 'datetime': datetime.datetime.now() + datetime.timedelta(days=i - 2),
+                                 'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
+                                 'date': datetime.date.today() + datetime.timedelta(days=i-2),
+                                 'time_start': '15:30',
+                                 'time_end': '15:40',
                                  'duration': '30',
                                  'type': 'offline'
                              })
@@ -68,7 +71,7 @@ class TestLecturerCalendarGet(APITestCase):
             msg='Неверное количество событий'
         )
         self.assertEqual(
-            len(response.data['data'][1]['events']), 2,
+            len(response.data['data'][1]['events']), 1,
             msg='Неверное количество событий'
         )
         self.assertEqual(

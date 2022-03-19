@@ -24,7 +24,7 @@ function LecturerStep1(props) {
   }, [])
   
   useEffect(() => {
-    if (selectedDomains.length > 0) {
+    if (selectedDomains.length > 0 && domainArray) {
       let newDomainArray
       newDomainArray = domainArray.filter(elem => !selectedDomains.includes(elem.name))
       setDomainArray(newDomainArray)
@@ -51,8 +51,12 @@ function LecturerStep1(props) {
           </div>
       </div>
       
-      <LecturerLink label="Ссылки на видео Ваших выступлений:"/>
-      <LecturerLink label="Ссылки на видео Ваших публикаций:"/>
+      <LecturerLink label="Ссылки на видео Ваших выступлений:" 
+                    links={performancesLinks}
+                    blur={props.UpdatePerfLinks}/>
+      <LecturerLink label="Ссылки на видео Ваших публикаций:" 
+                    links={publicationLinks}
+                    blur={props.UpdatePubLinks}/>
     </>
   )
 }
@@ -61,7 +65,7 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     UpdateDomain: (domain) => dispatch(UpdateDomain(domain)),
-    UpdatePerfLinks: (links) => dispatch(UpdatePerfLinks(links)),
-    UpdatePubLinks: (links) => dispatch(UpdatePubLinks(links)),
+    UpdatePerfLinks: (link, index) => dispatch(UpdatePerfLinks(link, index)),
+    UpdatePubLinks: (link, index) => dispatch(UpdatePubLinks(link, index)),
   })
 )(LecturerStep1)

@@ -6,16 +6,53 @@ import {SwapSelectedRole, SwapStep} from "../../redux/actions/registerRole";
 import LecturerStep1 from "./LecturerStep1";
 import LecturerStep2 from "./LecturerStep2";
 import LecturerStep3 from "./LecturerStep3";
-import {createLecturer} from "../../ajax";
+import {createLecturer, uploadDiplomaPhotos, uploadDocumentPhoto} from "../../ajax";
 
 
 function LecturerSteps(props) {
+  let navigate = useNavigate()
   let currentStep = props.store.registerRole.step
+  
+  let role = props.store.registerRole
+  let domainList = props.store.event.domain
+  let perfLinks = role.performances_links
+  let pubLinks = role.publication_links
+  let education = role.education
+  let hallAddress = role.hall_address
+  let equipment = role.equipment
   
   function handleSubmit(e) {
     e.preventDefault()
-    let formData = new FormData(e.target)
+    let formData = new FormData()
+    
+    for (let link of pubLinks) formData.append('publication_links', link)
+    for (let link of perfLinks) formData.append('performances_links', link)
+    for (let domain of domainList) formData.append('domain', domain)
+    formData.set('education', education)
+    formData.set('hall_address', hallAddress)
+    formData.set('equipment', equipment)
+    
     createLecturer(formData)
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'created') {
+          let diploma = new File(role.diploma_photos, 'diploma.png')
+          let diplomaForm = new FormData()
+          diplomaForm.set('diploma', diploma)
+          uploadDiplomaPhotos(diplomaForm)
+            .then(response => response.json())
+            .then(data => navigate('/workroom'))
+            .catch(error => console.log(error))
+        }
+      })
+      .catch(error => console.log(error))
+    
+    let passport = new File([role.passport_photo], 'passport.png')
+    let selfie = new File([role.selfie_photo], 'selfie.png')
+    let documentForm = new FormData()
+    documentForm.set('passport', passport)
+    documentForm.set('selfie', selfie)
+    uploadDocumentPhoto(documentForm)
       .then(response => response.json())
       .then(data => console.log(data))
       .catch(error => console.log(error))

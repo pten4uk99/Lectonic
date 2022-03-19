@@ -9,7 +9,7 @@ PROFILE = {
 }
 
 LECTURER = {
-    'domain': ['1', '2', '3'],
+    'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
     'performances_links': [
         'https://dev.lectonic.ru/city/?name=Москова',
         'http://dev.lectonic.com/com/com'
@@ -25,12 +25,13 @@ LECTURER = {
 
 LECTURE = {
     'name': 'Лекция супер хорошая лекция',
-    'datetime': '2020-03-15T15:30',
-    'domain': ['1', '2', '3'],
+    'time_start': '15:30',
+    'time_end': '16:00',
+    'date': '2020-3-15',
+    'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
     'hall_address': 'Москва, ул. Не московская, д. Домашний',
     'type': 'offline',
     'equipment': 'Руки, ноги, доска, полет.',
-    'duration': '30',
     'cost': '1000',
     'description': 'Отличное описание блин'
 }

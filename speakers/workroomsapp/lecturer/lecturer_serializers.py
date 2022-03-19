@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from workroomsapp.models import Lecturer, Link, Person, DiplomaImage
+from workroomsapp.models import Lecturer, Link, Person, DiplomaImage, Domain
 
 
 class DiplomaImageCreateSerializer(serializers.Serializer):
@@ -53,12 +53,10 @@ class LecturerCreateSerializer(serializers.Serializer):
         ]
 
     def validate_domain(self, domain):
-        try:
-            validated_domain = list(map(int, domain))
-        except ValueError:
-            raise serializers.ValidationError('Тематика должна быть числом')
-
-        return validated_domain
+        for name in domain:
+            if not Domain.objects.filter(name=name).exists():
+                raise serializers.ValidationError('Данной тематики не существует')
+        return domain
 
     def create(self, validated_data):
         return Lecturer.objects.create_lecturer(

@@ -84,7 +84,7 @@ function SetProfileInfo(props) {
             <input type='file' 
                    name='photo'
                    id='avatar' 
-                   accept='image/*' 
+                   accept='image/jpeg, image/png' 
                    onChange={handleAvatarPreview}/>
           </div>
           

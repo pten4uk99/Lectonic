@@ -1,15 +1,7 @@
 import React, { useState } from 'react'
 import {useNavigate} from 'react-router-dom'
 
-import LecturerStep1 from './LecturerSteps/LecturerStep1'
-import LecturerStep2 from './LecturerSteps/LecturerStep2'
-import LecturerStep3 from './LecturerSteps/LecturerStep3'
-import LecturerStep4 from './LecturerSteps/LecturerStep4'
-import ChooseRole_Customer_step1 from './IndividualSteps/ChooseRole_Customer_step1'
-import ChooseRole_Customer_step2 from './IndividualSteps/ChooseRole_Customer_step2'
-import ChooseRole_Customer_step3 from './IndividualSteps/ChooseRole_Customer_step3'
-import ChooseRole_Customer_step4 from './IndividualSteps/ChooseRole_Customer_step4'
-import profileSelected from '~/assets/img/header_profile-selected.svg'
+import backArrow from "~/assets/img/back-arrow.svg"
 import StepsBar from "./StepsBar";
 import {SwapSelectedRole, SwapStep} from "../redux/actions/registerRole";
 import {connect} from "react-redux";
@@ -19,7 +11,6 @@ import LecturerSteps from "./LecturerSteps/LecturerSteps";
 function RegistrationRole(props) {
   let selectedRole = props.store.registerRole.selectedRole
   let currentStep = props.store.registerRole.step
-  const navigate = useNavigate()
   
   function handleChooseRole(to) {
     props.SwapSelectedRole(to)
@@ -37,9 +28,8 @@ function RegistrationRole(props) {
             <h2 className='step-block__left-part'>
               Выбор роли
             </h2>
-            <p>
-              Выберите Вашу основную роль на платформе:
-              <br/>
+            <p className="lecturer-right__header">
+              Выберите Вашу основную роль на платформе:<br/>
               лектор или заказчик лекции.
             </p>
           </div>
@@ -62,7 +52,13 @@ function RegistrationRole(props) {
         {selectedRole === 'lecturer' && <LecturerSteps/>}
       </div>
       
-      <div className="step-block steps__btn" style={currentStep > 2 ? {display: "none"} : {}}>
+      <div className="step-block steps__btn mb-148" style={currentStep > 2 ? {display: "none"} : {}}>
+        {currentStep > 1 && 
+          <div className="link-to-back" onClick={() => props.SwapStep(currentStep - 1)}>
+            <img src={backArrow} alt="предыдущий шаг"/>
+            <span>Предыдущий шаг</span>
+          </div>}
+        
         <div className="step-block__left-part"/>
         <button className="btn" 
                 onClick={() => props.SwapStep(currentStep + 1)} 

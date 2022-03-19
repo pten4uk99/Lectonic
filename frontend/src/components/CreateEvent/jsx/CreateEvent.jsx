@@ -31,7 +31,7 @@ function CreateEvent(props) {
   }, [])
   
   useEffect(() => {
-    if (selectedDomains.length > 0) {
+    if (selectedDomains.length > 0 && domainArray) {
       let newDomainArray
       newDomainArray = domainArray.filter(elem => !selectedDomains.includes(elem.name))
       setDomainArray(newDomainArray)
@@ -48,7 +48,7 @@ function CreateEvent(props) {
       .then(data => console.log(data))
       .catch(error => console.log('Ошибка в создании лекции: ', error))
     
-    navigate('/user_profile')
+    navigate('/workroom')
   }
   
   return (
