@@ -8,6 +8,8 @@ import { baseURL } from '~/ProjectConstants'
 import {connect} from "react-redux";
 import {DeactivateModal} from "../../Layout/redux/actions/header";
 import {emailConfirmation, login} from "../ajax";
+import {SwapLogin} from "../redux/actions/permissions";
+import {reverse} from "../../../ProjectConstants";
 
 function Authorization(props) {
   const navigate = useNavigate();
@@ -57,7 +59,8 @@ function Authorization(props) {
           setErrorMessagePassword(data.password[0])
         }
         if (data.status === ('logged_in' || 'signed_in')) {
-          navigate('/workroom')
+          props.SwapLogin(true)
+          navigate(reverse('workroom'))
           props.DeactivateModal()
         }
       })
@@ -106,7 +109,7 @@ function Authorization(props) {
           setErrorSignUpEmail(data.detail)
         } else if (data.status === 'success') {
           window.sessionStorage.setItem('email', signUpValue.email) //чтоб отобразить почту на /verify_email
-          navigate('/verify_email')
+          navigate(reverse('verify_email'))
           props.DeactivateModal()
         }
       })
@@ -158,7 +161,7 @@ function Authorization(props) {
 
   function onSubmitPasswordChange() {
     //пока нет api
-    navigate('/change_password')
+    navigate(reverse('change_password'))
   }
 
   return (
@@ -313,6 +316,7 @@ function Authorization(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
-    DeactivateModal: () => dispatch(DeactivateModal())
+    SwapLogin: (logged) => dispatch(SwapLogin(logged)),
+    DeactivateModal: () => dispatch(DeactivateModal()),
   })
 )(Authorization)

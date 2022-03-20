@@ -4,11 +4,12 @@ import Header from '~@/Layout/jsx/Header'
 // import '~/styles/ChangePassword.styl'
 import profileSelected from '~/assets/img/header_profile-selected.svg'
 import backArrow from '~/assets/img/back-arrow.svg'
+import {reverse} from "../../../ProjectConstants";
 
 export default function ChangePassword() {
   const navigate = useNavigate()
   function backToRegistration() {
-    navigate('/')
+    navigate(reverse('index'))
   }
 
   return (

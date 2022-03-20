@@ -1,20 +1,24 @@
 import React, { useState } from 'react'
-import {useNavigate} from 'react-router-dom'
+import {Routes, Route, useNavigate} from 'react-router-dom'
+import {connect} from "react-redux";
 
 import backArrow from "~/assets/img/back-arrow.svg"
 import StepsBar from "./StepsBar";
 import {SwapSelectedRole, SwapStep} from "../redux/actions/registerRole";
-import {connect} from "react-redux";
 import LecturerSteps from "./LecturerSteps/LecturerSteps";
+import Permissions from "../../Authorization/jsx/Permissions";
+import {permissions, reverse} from "../../../ProjectConstants";
 
 
 function RegistrationRole(props) {
+  let navigate = useNavigate()
+  
   let selectedRole = props.store.registerRole.selectedRole
   let currentStep = props.store.registerRole.step
   
   function handleChooseRole(to) {
     props.SwapSelectedRole(to)
-    props.SwapStep(1)
+    navigate(reverse('create_lecturer'))
   }
 
   return (
@@ -48,8 +52,9 @@ function RegistrationRole(props) {
                     }}>Заказчик</button>
           </div>
         </div>
-
-        {selectedRole === 'lecturer' && <LecturerSteps/>}
+        <Routes>
+          <Route path='lecturer' element={<LecturerSteps/>}/>
+        </Routes>
       </div>
       
       <div className="step-block steps__btn mb-148" style={currentStep > 2 ? {display: "none"} : {}}>

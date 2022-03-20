@@ -1,5 +1,6 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
+
 import Main from '~@/Layout/jsx/Main'
 import Footer from '~@/Layout/jsx/Footer'
 import NotFoundPage from '~@/Layout/jsx/NotFoundPage'
@@ -13,7 +14,7 @@ import Workroom from "~@/WorkRooms/Workroom"
 import Header from "~@/Layout/jsx/Header"
 import CreateEvent from "~@/CreateEvent/jsx/CreateEvent"
 import Permissions from "./components/Authorization/jsx/Permissions";
-import {permissions} from "./ProjectConstants";
+import {permissions, reverse} from "./ProjectConstants";
 
 
 function App() {
@@ -21,34 +22,20 @@ function App() {
     <>
         <Header/>
           <main>
-            <Routes>
-              <Route path='/' element={<Main/>}/>
-              <Route path='/verify_email' element={<VerifyEmail />} />
-              <Route path='/confirm_email' element={<ConfirmEmail />} />
-              <Route path='/continue_registration' element={<ContinueRegistration />} />
-              <Route path='/create_profile' element={
-                <Permissions check={permissions.isAuthenticated}>
-                  <SetProfileInfo />
-                </Permissions>
-              }/>
-              <Route path='/add_role' element={
-                <Permissions check={permissions.isAuthenticated}>
-                  <RegistrationRole/>
-                </Permissions>
-                  } />
-              <Route path='/workroom' element={
-                <Permissions check={permissions.isAuthenticated}>
-                  <Workroom />
-                </Permissions>
-              }/>
-              <Route path='/create_event' element={
-                <Permissions check={permissions.isAuthenticated}>
-                  <CreateEvent/>
-                </Permissions>
-                  }/>
-              <Route path='/change_password' element={<ChangePassword />} />
-              <Route path='*' element={<NotFoundPage />} />
-            </Routes>
+            <Permissions>
+              <Routes>
+                <Route path={reverse('index')} element={<Main/>}/>
+                <Route path={reverse('verify_email')} element={<VerifyEmail />} />
+                <Route path={reverse('confirm_email')} element={<ConfirmEmail />} />
+                <Route path={reverse('continue_signup')} element={<ContinueRegistration />} />
+                <Route path={reverse('create_profile')} element={<SetProfileInfo />}/>
+                <Route path={reverse('add_role')} element={<RegistrationRole/>}/>
+                <Route path={reverse('workroom')} element={<Workroom />}/>
+                <Route path={reverse('create_event')} element={<CreateEvent/>}/>
+                <Route path={reverse('change_password')} element={<ChangePassword />} />
+                <Route path='*' element={<NotFoundPage/>}/>
+              </Routes>
+            </Permissions>
           </main>
         <Footer />
     </>

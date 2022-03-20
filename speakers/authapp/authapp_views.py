@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 
 from .authapp_serializers import (
     UserCreateSerializer,
-    UserLoginSerializer
+    UserLoginSerializer, CheckAuthenticationSerializer
 )
 from .docs import authapp_docs
 from .models import User
@@ -16,7 +16,18 @@ class CheckAuthenticationAPIView(APIView):
     def get(self, request):
         if not isinstance(request.user, User):
             return authapp_responses.unauthorized()
-        return authapp_responses.success()
+        if not hasattr(request.user, 'person'):
+            return authapp_responses.not_a_person([{
+                'is_person': False,
+                'is_lecturer': False,
+                'is_customer': False
+            }])
+
+        serializer = CheckAuthenticationSerializer(request.user.person)
+        return authapp_responses.success_check_auth([{
+            **serializer.data,
+            'is_person': True
+        }])
 
 
 class UserCreationView(APIView):  # Возможно в будущем переделается на дженерик

@@ -1,6 +1,6 @@
 const initialState = {
   selectedRole: '',
-  step: 0,
+  step: 1,
   performances_links: [],
   publication_links: [],
   diploma_photos: [],

@@ -31,6 +31,24 @@ def success():
     )
 
 
+def success_check_auth(data):
+    return response.get_response(
+        status=response.SUCCESS,
+        detail=SUCCESS,
+        data=data,
+        status_code=200
+    )
+
+
+def not_a_person(data):
+    return response.get_response(
+        status=response.SUCCESS,
+        detail=SUCCESS,
+        data=data,
+        status_code=200
+    )
+
+
 def signed_in(data, cookie):
     return response.get_response(
         status=response.SIGN_IN,

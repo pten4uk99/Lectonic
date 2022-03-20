@@ -12,7 +12,7 @@ class DiplomaImageCreateSerializer(serializers.Serializer):
     def validate_diploma(self, diploma):
         image_format = diploma.name.split('.')[-1]
 
-        if image_format not in ['jpg', 'jpeg', 'png']:
+        if image_format not in ['jpg', 'jpeg', 'png', 'JPG']:
             msg = 'Диплом может быть только в формате "jpg", "jpeg" или "png"'
             raise serializers.ValidationError(msg)
 

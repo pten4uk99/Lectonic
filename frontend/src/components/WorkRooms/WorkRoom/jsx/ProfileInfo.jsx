@@ -4,9 +4,11 @@ import iconPlus from '~/assets/img/workrooms/profileInfo/btn_icon-plus.svg';
 import {SwapToCustomer, SwapToLecturer, UpdateProfile} from "../../../Profile/redux/actions/profile";
 import {connect} from "react-redux";
 import {getProfileInfo} from "../ajax/workRooms";
+import {useNavigate} from "react-router-dom";
 
 
 function ProfileInfo(props){
+  let navigate = useNavigate()
   const profile = props.store.profile
   const utils = props.store.profile.utils
   let btnClassName = "profile-about__btn-role"
@@ -14,7 +16,10 @@ function ProfileInfo(props){
   useEffect(() => {
     getProfileInfo()
       .then(response => response.json())
-      .then(data => props.UpdateProfile(data.data[0]))
+      .then(data => {
+        if (data.status === 'success') props.UpdateProfile(data.data[0])
+        else if (data.status === 'error') navigate('/create_profile')
+      })
       .catch(error => console.log(error))
   }, [])
   

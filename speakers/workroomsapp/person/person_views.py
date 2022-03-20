@@ -109,7 +109,7 @@ class CityGetAPIView(APIView):
 
         cities_ser = CitySerializer(cities, many=True)
 
-        return person_responses.success([cities_ser.data])
+        return person_responses.success(cities_ser.data)
 
 
 class DomainGetAPIView(APIView):

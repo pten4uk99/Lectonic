@@ -4,6 +4,8 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from workroomsapp.models import Person
+
 User = get_user_model()
 
 
@@ -12,6 +14,16 @@ errors = {
     'required': 'Обязательное поле',
     'invalid': 'e-mail введен некорректно'
 }
+
+
+class CheckAuthenticationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Person
+        fields = [
+            'is_lecturer',
+            'is_customer',
+            'is_verified'
+        ]
 
 
 class UserCreateSerializer(serializers.ModelSerializer):

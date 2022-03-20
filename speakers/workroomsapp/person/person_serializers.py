@@ -68,7 +68,7 @@ class PersonSerializer(serializers.ModelSerializer):
     def validate_photo(self, photo):
         image_format = photo.name.split('.')[-1]
 
-        if image_format not in ['jpg', 'jpeg', 'png']:
+        if image_format not in ['jpg', 'jpeg', 'png', 'JPG']:
             msg = 'Фотография может быть только в формате "jpg", "jpeg" или "png"'
             raise serializers.ValidationError(msg)
 
@@ -91,7 +91,7 @@ class DocumentImageCreateSerializer(serializers.Serializer):
     def validate_passport(self, passport):
         image_format = passport.name.split('.')[-1]
 
-        if image_format not in ['jpg', 'jpeg', 'png']:
+        if image_format not in ['jpg', 'jpeg', 'png', 'JPG']:
             msg = 'Паспорт может быть только в формате "jpg", "jpeg" или "png"'
             raise serializers.ValidationError(msg)
 
@@ -102,7 +102,7 @@ class DocumentImageCreateSerializer(serializers.Serializer):
     def validate_selfie(self, selfie):
         image_format = selfie.name.split('.')[-1]
 
-        if image_format not in ['jpg', 'jpeg', 'png']:
+        if image_format not in ['jpg', 'jpeg', 'png', 'JPG']:
             msg = 'Селфи может быть только в формате "jpg", "jpeg" или "png"'
             raise serializers.ValidationError(msg)
 

@@ -39,11 +39,9 @@ function Header(props) {
                   onClick={props.ActivateModal}/>)}
   
           {/*бургер под мобильные*/}
-          <img
-            className="header__nav-burger is-mobile"
-            src={burgerMenu}
-            alt="меню"
-          />
+          <img className="header__nav-burger is-mobile" 
+               src={burgerMenu} 
+               alt="меню"/>
         </nav>
       </header>
       <Modal

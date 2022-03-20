@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 
 import {connect} from "react-redux";
@@ -7,10 +7,13 @@ import LecturerStep1 from "./LecturerStep1";
 import LecturerStep2 from "./LecturerStep2";
 import LecturerStep3 from "./LecturerStep3";
 import {createLecturer, uploadDiplomaPhotos, uploadDocumentPhoto} from "../../ajax";
+import {reverse} from "../../../../ProjectConstants";
 
 
 function LecturerSteps(props) {
   let navigate = useNavigate()
+  if (props.store.permissions.is_lecturer) navigate(reverse('workroom'))
+  
   let currentStep = props.store.registerRole.step
   
   let role = props.store.registerRole
@@ -22,6 +25,7 @@ function LecturerSteps(props) {
   let equipment = role.equipment
   
   function handleSubmit(e) {
+    console.log('пошол субмит блин')
     e.preventDefault()
     let formData = new FormData()
     
@@ -36,12 +40,13 @@ function LecturerSteps(props) {
       .then(response => response.json())
       .then(data => {
         if (data.status === 'created') {
+          console.log('лекция создава успешно')
           let diploma = new File(role.diploma_photos, 'diploma.png')
           let diplomaForm = new FormData()
           diplomaForm.set('diploma', diploma)
           uploadDiplomaPhotos(diplomaForm)
             .then(response => response.json())
-            .then(data => navigate('/workroom'))
+            .then(data => navigate(reverse('workroom')))
             .catch(error => console.log(error))
         }
       })
@@ -58,6 +63,10 @@ function LecturerSteps(props) {
       .catch(error => console.log(error))
   }
 
+  useEffect(() => {
+    props.SwapSelectedRole('lecturer')
+  }, [])
+  
   return (
     <form onSubmit={(e) => handleSubmit(e)}>
       {currentStep === 0 ? 

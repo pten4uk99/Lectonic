@@ -47,8 +47,10 @@ function LecturerStep3(props) {
         <div className="step-block margin-bottom-12">
           <p className="step-block__left-part">Помещение для лекций:</p>
           <button className={`${yesSelected ? "btn-role-selected" : "btn-role"} margin-right-12`} 
+                  type='button'
                   onClick={saysYes}>Есть</button>
           <button className={`${noSelected ? "btn-role-selected" : "btn-role"}`} 
+                  type='button'
                   onClick={saysNo}>Нет</button>
         </div>
         

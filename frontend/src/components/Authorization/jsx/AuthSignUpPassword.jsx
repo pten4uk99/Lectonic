@@ -8,6 +8,8 @@ import { baseURL } from '~/ProjectConstants'
 import {login, signUp} from "../ajax";
 import {DeactivateModal} from "../../Layout/redux/actions/header";
 import {connect} from "react-redux";
+import {reverse} from "../../../ProjectConstants";
+import {SwapLogin} from "../redux/actions/permissions";
 
 
 function AuthSignUpPassword(props) {
@@ -55,6 +57,7 @@ function AuthSignUpPassword(props) {
           setErrorMessagePassword(data.password[0])
         }
         if (data.status === ('logged_in' || 'signed_in')) {
+          props.SwapLogin(true)
           navigate('/user_profile')
           props.DeactivateModal()
         }
@@ -100,7 +103,8 @@ function AuthSignUpPassword(props) {
           setErrorSignUpPassword(data.password[0])
         }
         if (data.status === 'signed_in') {
-          navigate('/create_profile')
+          props.SwapLogin(true)
+          navigate(reverse('create_profile'))
           props.DeactivateModal()
         }
       })
@@ -153,7 +157,7 @@ function AuthSignUpPassword(props) {
 
   function onSubmitPasswordChange() {
     //пока нет api
-    navigate('/change_password')
+    navigate(reverse('change_password'))
   }
 
   return (
@@ -249,11 +253,9 @@ function AuthSignUpPassword(props) {
             <label htmlFor='checkbox'>Не выходить из системы</label>
           </div>
 
-          <button
-            className='btn auth__form__btn'
-            type='submit'
-            onClick={onSubmitSignIn}
-          >
+          <button className='btn auth__form__btn' 
+                  type='submit' 
+                  onClick={onSubmitSignIn}>
             Войти
           </button>
         </form>
@@ -390,6 +392,7 @@ function AuthSignUpPassword(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
-    DeactivateModal: () => dispatch(DeactivateModal())
+    SwapLogin: (logged) => dispatch(SwapLogin(logged)),
+    DeactivateModal: () => dispatch(DeactivateModal()),
   })
 )(AuthSignUpPassword)

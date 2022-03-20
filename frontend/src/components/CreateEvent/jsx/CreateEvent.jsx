@@ -11,6 +11,7 @@ import {
 } from "../redux/actions/event";
 import {createEvent, getDomainArray} from "../ajax/event";
 import {useNavigate} from "react-router-dom";
+import {reverse} from "../../../ProjectConstants";
 
 
 function CreateEvent(props) {
@@ -48,7 +49,7 @@ function CreateEvent(props) {
       .then(data => console.log(data))
       .catch(error => console.log('Ошибка в создании лекции: ', error))
     
-    navigate('/workroom')
+    navigate(reverse('workroom'))
   }
   
   return (

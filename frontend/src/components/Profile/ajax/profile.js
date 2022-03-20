@@ -15,4 +15,3 @@ export function createProfile(formData) {
   }
   return fetch(`${baseURL}/api/workrooms/profile/`, options)
 }
-

@@ -11,11 +11,13 @@ import {connect} from "react-redux";
 import {UpdateBirthDate} from "../redux/actions/profile";
 import {createProfile, getCities} from "../ajax/profile";
 import {useNavigate} from "react-router-dom";
+import {reverse} from "../../../ProjectConstants";
 
 
 function SetProfileInfo(props) {
   let birth_date = props.store.profile.birth_date
   let navigate = useNavigate()
+  if (props.store.permissions.is_person) navigate(reverse('workroom'))
   
   //отображение выбранного аватара
   let [avatarPreview, setAvatarPreview] = useState(null) //выбранный файл для отправки на сервер
@@ -53,7 +55,7 @@ function SetProfileInfo(props) {
     createProfile(formData)
       .then(response => response.json())
       .then(data => {
-        if (data.status === 'created') navigate('/add_role')
+        if (data.status === 'created') navigate(reverse('add_role'))
       })
       .catch(error => console.log('Ошибка в создании профиля: ', error))
   }

@@ -52,16 +52,16 @@ class EmailConfirmationView(APIView):
     @swagger_auto_schema(**emailapp_docs.EmailConfirmationDocCh2)
     def get(self, request):
         key = request.GET.get('key')
-        return confirmed({'email': 'pten4ik99@yandex.ru'})
         if not key:
             return key_not_in_get()
 
         confirmation = EmailConfirmation.objects.filter(key=key).first()
+        print(key, confirmation)
 
         if confirmation and confirmation.check_lifetime():
             confirmation.confirmed = True
             confirmation.save()
-            return confirmed({'email': confirmation.email})
+            return confirmed([{'email': confirmation.email}])
 
         if confirmation and not confirmation.check_lifetime():
             confirmation.delete()
