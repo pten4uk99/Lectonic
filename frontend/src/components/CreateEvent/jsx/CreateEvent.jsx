@@ -12,19 +12,39 @@ import {
 import {createEvent, getDomainArray} from "../ajax/event";
 import {useNavigate} from "react-router-dom";
 import {reverse} from "../../../ProjectConstants";
+import Modal from "../../Layout/jsx/Modal";
+import Calendar from "../../WorkRooms/FullCalendar/Calendar/jsx/Calendar";
+import {ActivateModal} from "../../Layout/redux/actions/header";
 
 
 function CreateEvent(props) {
   let navigate = useNavigate()
+  useEffect(() => {
+    if (
+      !props.store.permissions.is_lecturer && 
+      !props.store.permissions.is_customer
+    ) navigate(reverse('add_role'))
+  }, [props.store.permissions.is_lecturer, props.store.permissions.is_customer])
+
+  
   let selectedDomains = props.store.event.domain
   let eventType = props.store.event.type
   let place = props.store.event.place
   let payment = props.store.event.payment
   let titlePhotoSrc = props.store.event.photo
   
+  let [requiredFields, setRequiredFields] = useState({
+    name: '',
+    // date: '',
+    // timeStart: '',
+    // timeEnd: ''
+  })
+  
   let [domainArray, setDomainArray] = useState(null)
+  let [activeCalendar, setActiveCalendar] = useState(false)
   
   useEffect(() => {
+    props.UpdatePhoto('')
     getDomainArray()
       .then(response => response.json())
       .then(data => setDomainArray(data.data))
@@ -46,10 +66,8 @@ function CreateEvent(props) {
     formData.set('type', eventType)
     createEvent(formData)
       .then(response => response.json())
-      .then(data => console.log(data))
+      .then(data => {if (data.status === 'created') navigate(reverse('workroom'))})
       .catch(error => console.log('Ошибка в создании лекции: ', error))
-    
-    navigate(reverse('workroom'))
   }
   
   return (
@@ -65,7 +83,10 @@ function CreateEvent(props) {
           </h2>
         </div>
         
-        <div className='cover-l label'> Обложка:</div>
+        <div className='cover-l label'>
+          Обложка:
+          <span className="required-sign step-block__required-sign">*</span>
+        </div>
         <label className={titlePhotoSrc ? 'cover' : 'cover no-photo'}>
           <img className='icon' 
                src={photoIcon} 
@@ -80,7 +101,10 @@ function CreateEvent(props) {
                alt='Обложка'/>
         </label>
         
-        <div className='domain-l label'>Тематика:</div>
+        <div className='domain-l label'>
+          Тематика:
+          <span className="required-sign step-block__required-sign">*</span>
+        </div>
         <div className='domains'>
           <div className='domain-list flex'>
             <select className='selector'
@@ -97,9 +121,15 @@ function CreateEvent(props) {
           </div>
         </div>
         
-        <div className='topic-l label'>Тема лекции:</div>
+        <div className='topic-l label'>
+          Тема лекции:
+          <span className="required-sign step-block__required-sign">*</span>
+        </div>
         <div className='topic flex'>
-          <input name='name' type='text' className='text-input'/>
+          <input name='name' 
+                 type='text' 
+                 className='text-input' 
+                 onChange={(e) => setRequiredFields({...requiredFields, name: e.target.value})}/>
         </div>
         
         <div className='type-l label'>Тип лекции:</div>
@@ -112,16 +142,26 @@ function CreateEvent(props) {
                onClick={() => props.SwapEventType('hybrid')}>Гибрид</div>
         </div>
         
-        <div className='date-l label'>Дата:</div>
+        <div className='date-l label'>
+          Дата:
+          <span className="required-sign step-block__required-sign">*</span>
+        </div>
         <div className='date flex'>
-          <div className='open-calendar'>
+          <div className='open-calendar' onClick={props.ActivateModal}>
             <img src={calendarIcon} alt=""/>
             <div className='date-link'>Открыть календарь</div>
             <input name='date' type="date" style={{marginLeft: 50}}/>
           </div>
+          <Modal styleWrapper={{background: 'background: rgba(0, 5, 26, 1)'}} 
+                 styleBody={{width: 616, height: 934}}>
+              <Calendar/>
+          </Modal>
         </div>
         
-        <div className='time-l label'>Время:</div>
+        <div className='time-l label'>
+          Время:
+          <span className="required-sign step-block__required-sign">*</span>
+        </div>
         <div className='time flex'>
           <span>c</span>
           <input name='time_start' type="time"/>
@@ -173,10 +213,14 @@ function CreateEvent(props) {
           {payment ? <input name='cost' 
                             className='text-input' 
                             type='number' 
+                            step={1000}
+                            min={0}
                             placeholder='Укажите цену'/> : <></>}
         </div>
         <div className='submit'>
-          <button className='big-button' type='submit'>Создать</button>
+          <button className=' btn big-button' 
+                  type='submit' 
+                  disabled={checkRequiredFields(requiredFields, props)}>Создать</button>
         </div>
       </div>
     </form>
@@ -186,6 +230,7 @@ function CreateEvent(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
+    ActivateModal: () => dispatch(ActivateModal()),
     UpdatePhoto: (photo) => dispatch(UpdatePhoto(photo)),
     UpdateDomain: (domain) => dispatch(UpdateDomain(domain)),
     SwapEventType: (type) => dispatch(SwapEventType(type)),
@@ -211,4 +256,13 @@ export function domainSelectHandler(e, props) {
   
   props.UpdateDomain(selectedDomain);
   e.target.value = '';
+}
+
+function checkRequiredFields(obj, props) {
+  if ((props.store.event.domain.length < 1) || !props.store.event.photo) return true
+  
+  for (let field in obj) {
+    if (!obj[field]) return true
+  }
+  return false
 }

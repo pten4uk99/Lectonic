@@ -1,23 +1,31 @@
 import React, {useEffect, useState} from 'react'
+import {connect} from "react-redux";
+import {useNavigate} from "react-router-dom";
 
 import photoIcon from '~/assets/img/photo-icon.svg'
 import locationIcon from '~/assets/img/location-icon.svg'
 import birthdateIcon from '~/assets/img/birthdate-icon.svg'
 import infoIcon from '~/assets/img/Info-icon.svg'
-import profileSelected from '~/assets/img/header_profile-selected.svg'
-import { baseURL } from '~/ProjectConstants'
 import {getDaysArr, getMonthsArr, getYearsArr} from "./utils/date";
-import {connect} from "react-redux";
 import {UpdateBirthDate} from "../redux/actions/profile";
 import {createProfile, getCities} from "../ajax/profile";
-import {useNavigate} from "react-router-dom";
 import {reverse} from "../../../ProjectConstants";
+import {SwapPerson} from "../../Authorization/redux/actions/permissions";
 
 
 function SetProfileInfo(props) {
   let birth_date = props.store.profile.birth_date
   let navigate = useNavigate()
-  if (props.store.permissions.is_person) navigate(reverse('workroom'))
+  
+  useEffect(() => {
+    if (props.store.permissions.is_person) navigate(reverse('workroom'))
+  }, [props.store.permissions.is_person])
+  
+  let [requiredFields, setRequiredFields] = useState({
+    lastName: '',
+    firstName: '',
+    city: '',
+  })
   
   //отображение выбранного аватара
   let [avatarPreview, setAvatarPreview] = useState(null) //выбранный файл для отправки на сервер
@@ -39,8 +47,16 @@ function SetProfileInfo(props) {
       .then(response => response.json())
       .then(data => setCities(data.data))
       .catch(error => console.log('ERROR: ', error))
+    setRequiredFields({...requiredFields, city: e.target.value})
   }
-
+  
+  let [errorMessages, setErrorMessages] = useState({
+    firstName: '',
+    lastName: '',
+    middleName: '',
+    birthDate: ''
+  })
+  
   function handleFormSubmit(e) {
     e.preventDefault()
     let formData = new FormData(e.target)
@@ -55,7 +71,18 @@ function SetProfileInfo(props) {
     createProfile(formData)
       .then(response => response.json())
       .then(data => {
-        if (data.status === 'created') navigate(reverse('add_role'))
+        if (data.status === 'created') {
+          props.SwapPerson(true)
+          navigate(reverse('add_role'))
+        }
+        else {
+          setErrorMessages({
+            firstName: data?.first_name || '',
+            lastName: data?.last_name || '',
+            middleName: data?.middle_name || '',
+            birthDate: data?.birth_date || '',
+          })
+        }
       })
       .catch(error => console.log('Ошибка в создании профиля: ', error))
   }
@@ -94,16 +121,20 @@ function SetProfileInfo(props) {
             <input name='first_name' 
                    className='form__input'
                    type='text' 
-                   placeholder='Фамилия'/>
+                   placeholder='Фамилия' 
+                   onChange={(e) => setRequiredFields({...requiredFields, lastName: e.target.value})}/>
             <span className='required-sign'>*</span>
+            {errorMessages.firstName && (<div className='form__input-error'>{errorMessages.firstName}</div>)}
           </div>
 
           <div className='userInfo__form__input-container'>
             <input name='last_name' 
                    className='form__input'
                    type='text' 
-                   placeholder='Имя'/>
+                   placeholder='Имя' 
+                   onChange={(e) => setRequiredFields({...requiredFields, firstName: e.target.value})}/>
             <span className='required-sign'>*</span>
+            {errorMessages.lastName && (<div className='form__input-error'>{errorMessages.lastName}</div>)}
           </div>
 
           <div className='userInfo__form__input-container'>
@@ -111,12 +142,17 @@ function SetProfileInfo(props) {
                    className='form__input' 
                    type='text' 
                    placeholder='Отчество'/>
+            {errorMessages.middleName && (<div className='form__input-error'>{errorMessages.middleName}</div>)}
           </div>
 
           <div className='userInfo__form__inputIcon-container'>
             <img className='location-icon' src={locationIcon} />
             <div className='dropDown-wrapper'>
-              <input type="text" list="cities" name='city' onChange={(e) => handleCityChange(e)}/>
+              <input type="text" 
+                     list="cities" 
+                     name="city"
+                     autoComplete='none'
+                     onChange={(e) => handleCityChange(e)}/>
               <datalist id="cities">
                 {cities ? 
                   cities.map((city) => <option key={city.id}
@@ -137,6 +173,7 @@ function SetProfileInfo(props) {
                   <option key={index} value={elem}>{elem}</option>
                 ))}
               </select>
+              {errorMessages.birthDate && (<div className='form__input-error'>{errorMessages.birthDate}</div>)}
             </div>
 
             <div className='dropDown-wrapper'>
@@ -163,7 +200,9 @@ function SetProfileInfo(props) {
                       className='form__textarea textarea-height178' 
                       placeholder='Напишите о себе'/>
           </div>
-          <button type='submit' className='btn userInfo__btn'>Продолжить</button>
+          <button type='submit' 
+                  className='btn userInfo__btn' 
+                  disabled={checkRequiredFields(requiredFields)}>Продолжить</button>
         </form>
       </div>
     </>
@@ -173,6 +212,15 @@ function SetProfileInfo(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
-    UpdateBirthDate: (data) => dispatch(UpdateBirthDate(data))
+    SwapPerson: (is_person) => dispatch(SwapPerson(is_person)),
+    UpdateBirthDate: (data) => dispatch(UpdateBirthDate(data)),
   })
 )(SetProfileInfo)
+
+
+function checkRequiredFields(obj) {
+  for (let field in obj) {
+    if (!obj[field]) return true
+  }
+  return false
+}

@@ -16,12 +16,8 @@ export default function ConfirmEmail() {
     method: 'GET',
     credentials: 'include',
   })
-    .then(response => {
-      console.log('RESPONSE: ', response)
-      return response.json()
-    })
+    .then(response => response.json())
     .then(data => {
-      console.log('data: ', data)
       if (data.status === 'error') navigate('/404') 
       else if (data.status === 'confirmed') {
         navigate(reverse('continue_signup'), {state: data.data[0].email})

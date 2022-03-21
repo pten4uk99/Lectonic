@@ -36,6 +36,7 @@ function LecturerStep1(props) {
       <div className="step-block margin-bottom-24">
         <p className="step-block__left-part">
           Тематика лекций:
+          <span className="required-sign step-block__required-sign">*</span>
         </p>
         <div className='domain-list flex'>
             <select className='selector'

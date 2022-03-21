@@ -4,9 +4,9 @@ let today = DateTime.now()
 
 const initialState = {
   photo: "",
-  first_name: "Никита",
-  last_name: "Павленко",
-  middle_name: "Михайлович",
+  first_name: "",
+  last_name: "",
+  middle_name: "",
   is_lecturer: true,
   is_customer: false,
   utils: {

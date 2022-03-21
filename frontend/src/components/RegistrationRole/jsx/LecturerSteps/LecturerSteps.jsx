@@ -2,17 +2,22 @@ import React, {useEffect, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 
 import {connect} from "react-redux";
-import {SwapSelectedRole, SwapStep} from "../../redux/actions/registerRole";
+import {SwapStep} from "../../redux/actions/registerRole";
 import LecturerStep1 from "./LecturerStep1";
 import LecturerStep2 from "./LecturerStep2";
 import LecturerStep3 from "./LecturerStep3";
 import {createLecturer, uploadDiplomaPhotos, uploadDocumentPhoto} from "../../ajax";
 import {reverse} from "../../../../ProjectConstants";
+import {SwapLecturer} from "../../../Authorization/redux/actions/permissions";
 
 
 function LecturerSteps(props) {
   let navigate = useNavigate()
-  if (props.store.permissions.is_lecturer) navigate(reverse('workroom'))
+  
+  useEffect(() => {
+    if (props.store.permissions.is_lecturer) navigate(reverse('workroom'))
+  }, [props.store.permissions.is_lecturer])
+  
   
   let currentStep = props.store.registerRole.step
   
@@ -25,7 +30,6 @@ function LecturerSteps(props) {
   let equipment = role.equipment
   
   function handleSubmit(e) {
-    console.log('пошол субмит блин')
     e.preventDefault()
     let formData = new FormData()
     
@@ -40,13 +44,16 @@ function LecturerSteps(props) {
       .then(response => response.json())
       .then(data => {
         if (data.status === 'created') {
-          console.log('лекция создава успешно')
           let diploma = new File(role.diploma_photos, 'diploma.png')
           let diplomaForm = new FormData()
           diplomaForm.set('diploma', diploma)
+          
           uploadDiplomaPhotos(diplomaForm)
             .then(response => response.json())
-            .then(data => navigate(reverse('workroom')))
+            .then(data => {
+              props.SwapLecturer(true)
+              navigate(reverse('workroom'))
+            })
             .catch(error => console.log(error))
         }
       })
@@ -62,10 +69,6 @@ function LecturerSteps(props) {
       .then(data => console.log(data))
       .catch(error => console.log(error))
   }
-
-  useEffect(() => {
-    props.SwapSelectedRole('lecturer')
-  }, [])
   
   return (
     <form onSubmit={(e) => handleSubmit(e)}>
@@ -85,7 +88,7 @@ function LecturerSteps(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
-    SwapSelectedRole: (role) => dispatch(SwapSelectedRole(role)),
+    SwapLecturer: (is_lecturer) => dispatch(SwapLecturer(is_lecturer)),
     SwapStep: (step) => dispatch(SwapStep(step))
   })
 )(LecturerSteps)

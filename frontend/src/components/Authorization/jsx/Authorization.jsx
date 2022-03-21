@@ -11,12 +11,12 @@ import {emailConfirmation, login} from "../ajax";
 import {SwapLogin} from "../redux/actions/permissions";
 import {reverse} from "../../../ProjectConstants";
 
+
 function Authorization(props) {
   const navigate = useNavigate();
   
   //вывод текста ошибки под инпутами
   const [errorSignUpEmail, setErrorSignUpEmail] = useState('')
-  console.log(errorSignUpEmail)
   const [errorMessageEmail, setErrorMessageEmail] = useState('')
   const [errorMessagePassword, setErrorMessagePassword] = useState('')
 

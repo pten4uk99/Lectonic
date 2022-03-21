@@ -1,4 +1,5 @@
 import React from 'react'
+import {connect} from "react-redux";
 import { Routes, Route } from 'react-router-dom'
 
 import Main from '~@/Layout/jsx/Main'
@@ -17,7 +18,7 @@ import Permissions from "./components/Authorization/jsx/Permissions";
 import {permissions, reverse} from "./ProjectConstants";
 
 
-function App() {
+function App(props) {
   return (
     <>
         <Header/>
@@ -29,7 +30,7 @@ function App() {
                 <Route path={reverse('confirm_email')} element={<ConfirmEmail />} />
                 <Route path={reverse('continue_signup')} element={<ContinueRegistration />} />
                 <Route path={reverse('create_profile')} element={<SetProfileInfo />}/>
-                <Route path={reverse('add_role')} element={<RegistrationRole/>}/>
+                <Route path='/add_role/*' element={<RegistrationRole/>}/>
                 <Route path={reverse('workroom')} element={<Workroom />}/>
                 <Route path={reverse('create_event')} element={<CreateEvent/>}/>
                 <Route path={reverse('change_password')} element={<ChangePassword />} />
@@ -42,4 +43,7 @@ function App() {
   )
 }
 
-export default App
+export default connect(
+  state => ({store: state}),
+  dispatch => ({})
+)(App)

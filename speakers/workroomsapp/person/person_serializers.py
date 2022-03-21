@@ -53,6 +53,8 @@ class PersonSerializer(serializers.ModelSerializer):
         return self.name_validator(last_name)
 
     def validate_middle_name(self, middle_name):
+        if not middle_name:
+            return middle_name
         return self.name_validator(middle_name)
 
     def validate_birth_date(self, birth_date):

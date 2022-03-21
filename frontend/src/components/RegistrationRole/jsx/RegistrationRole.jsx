@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import {Routes, Route, useNavigate} from 'react-router-dom'
+import React, {useEffect, useState} from 'react'
+import {Routes, Route, useNavigate, useLocation} from 'react-router-dom'
 import {connect} from "react-redux";
 
 import backArrow from "~/assets/img/back-arrow.svg"
 import StepsBar from "./StepsBar";
-import {SwapSelectedRole, SwapStep} from "../redux/actions/registerRole";
+import {SwapStep} from "../redux/actions/registerRole";
 import LecturerSteps from "./LecturerSteps/LecturerSteps";
 import Permissions from "../../Authorization/jsx/Permissions";
 import {permissions, reverse} from "../../../ProjectConstants";
@@ -12,15 +12,22 @@ import {permissions, reverse} from "../../../ProjectConstants";
 
 function RegistrationRole(props) {
   let navigate = useNavigate()
+  useEffect(() => {
+    if (!props.store.permissions.is_person) navigate(reverse('create_profile'))
+  }, [props.store.permissions.is_person])
   
-  let selectedRole = props.store.registerRole.selectedRole
+  
+  let location = useLocation()
   let currentStep = props.store.registerRole.step
   
-  function handleChooseRole(to) {
-    props.SwapSelectedRole(to)
-    navigate(reverse('create_lecturer'))
+  function handleDisabledButton() {
+    if (currentStep === 1) return !(props.store.event.domain.length > 0)
+    else if (currentStep === 2) {
+      return !(props.store.registerRole.passport_photo && 
+      props.store.registerRole.selfie_photo)
+    }
   }
-
+  
   return (
     <>
       <StepsBar step={currentStep}/>
@@ -43,12 +50,14 @@ function RegistrationRole(props) {
               <p>Кто вы?</p>
               <span className="required-sign step-block__required-sign">*</span>
             </div>
-            <button className={`${selectedRole === 'lecturer' ? "btn-role-selected" : "btn-role"} margin-right-12`} 
-                    onClick={() => handleChooseRole('lecturer')}>Лектор</button>
-            <button className={`${selectedRole === 'customer' ? "btn-role-selected" : "btn-role"}`} 
+            <button className={`${location.pathname === reverse('create_lecturer') ? 
+              "btn-role-selected" : "btn-role"} margin-right-12`} 
+                    onClick={() => navigate(reverse('create_lecturer'))}>Лектор</button>
+            <button className={`${location.pathname === reverse('create_customer') ? 
+              "btn-role-selected" : "btn-role"}`} 
                     style={{cursor: 'not-allowed'}} 
                     onClick={() => {
-                      // props.SwapSelectedRole('customer')
+                      // navigate(reverse('create_customer'))
                     }}>Заказчик</button>
           </div>
         </div>
@@ -67,7 +76,7 @@ function RegistrationRole(props) {
         <div className="step-block__left-part"/>
         <button className="btn" 
                 onClick={() => props.SwapStep(currentStep + 1)} 
-                disabled={!selectedRole}>Следующий шаг</button>
+                disabled={handleDisabledButton()}>Следующий шаг</button>
       </div>
     </>
   )
@@ -77,7 +86,6 @@ function RegistrationRole(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
-    SwapSelectedRole: (role) => dispatch(SwapSelectedRole(role)),
     SwapStep: (step) => dispatch(SwapStep(step))
   })
 )(RegistrationRole)

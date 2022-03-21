@@ -1,5 +1,4 @@
 const initialState = {
-  selectedRole: '',
   step: 1,
   performances_links: [],
   publication_links: [],
@@ -13,8 +12,6 @@ const initialState = {
 
 export default function registerRole(state=initialState, action) {
   switch (action.type) {
-    case "SWAP_SELECTED_ROLE":
-      return {...state, selectedRole: action.payload.role}
     case "SWAP_STEP":
       return {...state, step: action.payload.step}  
     case "UPDATE_PERF_LINKS":

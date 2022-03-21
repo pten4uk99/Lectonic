@@ -13,7 +13,7 @@ const routes = {
   
   'create_profile': '/create_profile',
   
-  'add_role': '/add_role/*',
+  'add_role': '/add_role',
   'create_lecturer': '/add_role/lecturer',
   
   'workroom': '/workroom',

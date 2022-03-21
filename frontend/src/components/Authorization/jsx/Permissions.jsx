@@ -10,9 +10,30 @@ import {getProfileInfo} from "../../WorkRooms/WorkRoom/ajax/workRooms";
 
 function Permissions(props) {
   let loggedIn = props.store.permissions.logged_in
+  let isPerson = props.store.permissions.is_person
+  let isLecturer = props.store.permissions.is_lecturer
+  let isCustomer = props.store.permissions.is_customer
   
   let navigate = useNavigate()
   let location = useLocation()
+  
+  function allPermissionsDefined() {
+    let perms = props.store.permissions
+    for (let perm in perms) {
+      if (perms[perm] === undefined) return false
+    }
+    return true
+  }
+  
+  function notNeedPermissions() {
+    console.log(location.pathname)
+    switch (location.pathname) {
+      case reverse('index'):
+        return true
+      case "*":
+        return true
+    }
+  }
   
   const options = {
     method: 'GET',
@@ -23,7 +44,8 @@ function Permissions(props) {
   }
   
   useEffect(() => {
-    if (loggedIn === undefined) {
+    console.log('ОБНОВЛЕНИЕ ПЕРМИШЕНОВ')
+
       fetch(`${baseURL}/api/auth/check_authentication/`, options)
         .then(response => response.json())
         .then(data => {
@@ -41,12 +63,12 @@ function Permissions(props) {
           }
         })
         .catch(error => console.log(error))
-    }
+
   }, [loggedIn])
   
   return (
     <>
-      {props.children}
+      {(allPermissionsDefined() || notNeedPermissions()) && props.children}
     </>
   )
 }
