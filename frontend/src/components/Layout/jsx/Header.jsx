@@ -29,14 +29,16 @@ function Header(props) {
                alt="поиск" />
 
           {loggedIn ?
-            (<img className="header__nav-profile is-desktop" 
-                  src={profileSelected}
-                  alt="меню" 
-                  onClick={() => props.ActiveProfileDropdown(!profileDropDownActive)}/>) :
-            (<img className="header__nav-profile is-desktop" 
-                  src={props.store.header.modalActive ? profileSelected : profile} 
-                  alt="меню" 
-                  onClick={props.ActivateModal}/>)}
+            <div className="header__profile-photo-block" 
+                 onClick={() => props.ActiveProfileDropdown(!profileDropDownActive)}>
+              <img className="header__nav-profile-photo is-desktop" 
+                   src={props.store.profile.photo} 
+                   alt="меню"/>
+            </div> : 
+            <img className="header__nav-profile is-desktop" 
+                 src={props.store.header.modalActive ? profileSelected : profile} 
+                 alt="меню" 
+                 onClick={props.ActivateModal}/>}
   
           {/*бургер под мобильные*/}
           <img className="header__nav-burger is-mobile" 

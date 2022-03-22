@@ -11,7 +11,11 @@ function FullCalendar(props) {
         <Calendar/>
         <DateDetail date={props.store.calendar.checkedDate} />
       </div>
-      <div className="workroom__block-underline"/>
+      <div className="calendar__block-tooltips">
+        <div className="tooltip__not-confirmed"><span/>Событие не подтверждено</div>
+        <div className="tooltip__confirmed"><span/>Событие подтверждено</div>
+      </div>
+      <div className="workroom__block-underline calendar"/>
     </div>
   )
 }

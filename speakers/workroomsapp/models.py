@@ -262,7 +262,7 @@ class Lecture(models.Model):
         ('hybrid', 'Гибрид')
     ]
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=500)
     optional = models.OneToOneField(
         'Optional',
         on_delete=models.CASCADE,

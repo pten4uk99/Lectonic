@@ -1,9 +1,16 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import mainIllustration from '~/assets/img/main-illustration.svg'
 import {ActivateModal, DeactivateModal} from "../redux/actions/header";
 import {connect} from "react-redux";
+import {useNavigate} from "react-router-dom";
+import {reverse} from "../../../ProjectConstants";
 
 function Main(props) {
+  let navigate = useNavigate()
+  useEffect(() => {
+    if (props.store.permissions.logged_in) navigate(reverse('workroom'))
+  }, [props.store.permissions.logged_in])
+  
   return (
     <>
       <div className="main">

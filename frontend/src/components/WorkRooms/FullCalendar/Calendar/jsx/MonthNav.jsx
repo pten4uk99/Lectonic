@@ -7,31 +7,23 @@ import {
 import { MONTHS } from '~@/WorkRooms/FullCalendar/Calendar/utils/calendar'
 import {getEventsForMonth} from "../ajax/dateDetail";
 import {UpdateEvents} from "../../DateDetail/redux/actions/dateDetail";
-import {useNavigate} from "react-router-dom";
-import {reverse} from "../../../../../ProjectConstants";
 
 
 function MonthNav(props) {
-  let permissions = props.store.permissions
-  let navigate = useNavigate()
-  let currentMonth = props.store.currentDate.getMonth()
-  let currentYear = props.store.currentDate.getFullYear()
+  let currentMonth = props.store.calendar.currentDate.getMonth()
+  let currentYear = props.store.calendar.currentDate.getFullYear()
   
   function updateEvents(year, month) {
-    getEventsForMonth(year, month + 1)
-      .then(response => {
-        if (response.status === 403) {
-          if (permissions.is_person) navigate(reverse('lecturer_workroom'))
-          else if (permissions.logged_in) navigate(reverse('create_profile'))
-        }
-        return response.json()
-      })
+    if (!props.store.header.modalActive) {
+      getEventsForMonth(year, month + 1)
+      .then(response => response.json())
       .then(data => props.UpdateEvents(data.data))
       .catch(error => console.log('Ошибка при получении данных календаря (MonthNav: 21):', error))
+    }
   }
   useEffect(() => {
     updateEvents(currentYear, currentMonth)
-  }, [])
+  }, [props.store.header.modalActive])
 
   return (
     <nav className='month-nav'>
@@ -49,7 +41,7 @@ function MonthNav(props) {
 }
 
 export default connect(
-  state => ({ store: state.calendar }),
+  state => ({ store: state }),
   dispatch => ({
     SwapMonthToNext: () => dispatch(SwapMonthToNext()),
     SwapMonthToPrev: () => dispatch(SwapMonthToPrev()),

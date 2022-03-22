@@ -1,20 +1,20 @@
 import React, {useEffect, useRef, useState} from 'react'
+import {connect} from "react-redux";
+import {useNavigate} from "react-router-dom";
 
 import calendarIcon from '~/assets/img/event/calendar-icon.svg'
 import photoIcon from '~/assets/img/photo-icon.svg'
 import downArrow from '~/assets/img/down-arrow.svg'
-import {connect} from "react-redux";
 import {
   SwapEventType, SwapPayment, SwapPlace,
   UpdateDomain,
   UpdatePhoto
 } from "../redux/actions/event";
 import {createEvent, getDomainArray} from "../ajax/event";
-import {useNavigate} from "react-router-dom";
 import {reverse} from "../../../ProjectConstants";
 import Modal from "../../Layout/jsx/Modal";
-import Calendar from "../../WorkRooms/FullCalendar/Calendar/jsx/Calendar";
 import {ActivateModal} from "../../Layout/redux/actions/header";
+import CalendarModal, {getMonth} from "./CalendarModal";
 
 
 function CreateEvent(props) {
@@ -27,6 +27,7 @@ function CreateEvent(props) {
   }, [props.store.permissions.is_lecturer, props.store.permissions.is_customer])
 
   
+  let checkedDate = props.store.calendar.checkedDate
   let selectedDomains = props.store.event.domain
   let eventType = props.store.event.type
   let place = props.store.event.place
@@ -35,13 +36,16 @@ function CreateEvent(props) {
   
   let [requiredFields, setRequiredFields] = useState({
     name: '',
-    // date: '',
+    date: checkedDate,
     // timeStart: '',
     // timeEnd: ''
   })
   
+  useEffect(() => {
+    setRequiredFields({...requiredFields, date: checkedDate})
+  }, [checkedDate])
+  
   let [domainArray, setDomainArray] = useState(null)
-  let [activeCalendar, setActiveCalendar] = useState(false)
   
   useEffect(() => {
     props.UpdatePhoto('')
@@ -63,10 +67,14 @@ function CreateEvent(props) {
     e.preventDefault()
     let formData = new FormData(e.target)
     selectedDomains.map((elem) => formData.append('domain',  elem))
+    formData.set(
+      'date', 
+      `${requiredFields.date.getFullYear()}-${requiredFields.date.getMonth() + 1}-${requiredFields.date.getDate()}`)
     formData.set('type', eventType)
     createEvent(formData)
       .then(response => response.json())
-      .then(data => {if (data.status === 'created') navigate(reverse('workroom'))})
+      .then(data => {
+        if (data.status === 'created') navigate(reverse('workroom'))})
       .catch(error => console.log('Ошибка в создании лекции: ', error))
   }
   
@@ -129,6 +137,7 @@ function CreateEvent(props) {
           <input name='name' 
                  type='text' 
                  className='text-input' 
+                 autoComplete='none'
                  onChange={(e) => setRequiredFields({...requiredFields, name: e.target.value})}/>
         </div>
         
@@ -149,12 +158,16 @@ function CreateEvent(props) {
         <div className='date flex'>
           <div className='open-calendar' onClick={props.ActivateModal}>
             <img src={calendarIcon} alt=""/>
-            <div className='date-link'>Открыть календарь</div>
-            <input name='date' type="date" style={{marginLeft: 50}}/>
+            {checkedDate ? 
+              <div className="calendar-modal__date ml-8">
+                {checkedDate.getDate()} {getMonth(checkedDate.getMonth())}
+              </div> : 
+              <div className='date-link'>Открыть календарь</div>}
+            
           </div>
           <Modal styleWrapper={{background: 'background: rgba(0, 5, 26, 1)'}} 
-                 styleBody={{width: 616, height: 934}}>
-              <Calendar/>
+                 styleBody={{width: 1045, height: 681}}>
+              <CalendarModal/>
           </Modal>
         </div>
         
@@ -218,7 +231,7 @@ function CreateEvent(props) {
                             placeholder='Укажите цену'/> : <></>}
         </div>
         <div className='submit'>
-          <button className=' btn big-button' 
+          <button className='btn big-button' 
                   type='submit' 
                   disabled={checkRequiredFields(requiredFields, props)}>Создать</button>
         </div>

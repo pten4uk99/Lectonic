@@ -4,11 +4,12 @@ import Event from './Event'
 import { checkEqualDates } from '~@/WorkRooms/FullCalendar/Calendar/utils/date'
 import {useNavigate} from "react-router-dom";
 
+
 function DateDetail(props) {
   let navigate = useNavigate()
-  let year = props.date.getFullYear()
-  let month = getMonth(props.date.getMonth())
-  let day = getDay(props.date.getDate())
+  let year = props.date?.getFullYear()
+  let month = getMonth(props.date?.getMonth())
+  let day = getDay(props.date?.getDate())
   let [events, setEvents] = useState(null)
 
   useEffect(() => {

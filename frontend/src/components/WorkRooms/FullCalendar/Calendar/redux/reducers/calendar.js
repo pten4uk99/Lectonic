@@ -3,8 +3,8 @@ let date = new Date()
 const initialState = {
   today: date,
   currentDate: date,
-  checkedDate: date,
-  hoverDate: date,
+  checkedDate: undefined,
+  hoverDate: undefined,
   swap: false,
   swapSideClass: '',
 }

@@ -3,6 +3,7 @@ import React, {useEffect} from 'react'
 import closeIcon from '~/assets/img/icon-close.svg'
 import {connect} from "react-redux";
 import {ActivateModal, DeactivateModal} from "../redux/actions/header";
+import {SetCheckedDate} from "../../WorkRooms/FullCalendar/Calendar/redux/actions/calendar";
 
 
 function Modal(props) {
@@ -22,7 +23,7 @@ function Modal(props) {
           <img className='modal__close' 
              src={closeIcon} 
              alt='закрыть' 
-             onClick={props.DeactivateModal}/>
+             onClick={() => {props.DeactivateModal(); props.SetCheckedDate('')}}/>
         </div>
         <div className="modal__body">
           {props.children}
@@ -36,6 +37,7 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     ActivateModal: () => dispatch(ActivateModal()),
-    DeactivateModal: () => dispatch(DeactivateModal())
+    DeactivateModal: () => dispatch(DeactivateModal()),
+    SetCheckedDate: (date) => dispatch(SetCheckedDate(date))
   })
 )(Modal)
