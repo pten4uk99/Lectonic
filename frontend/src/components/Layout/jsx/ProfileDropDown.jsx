@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {logout} from "../ajax";
 import {ActiveProfileDropdown} from "../redux/actions/header";
 import {SwapLogin} from "../../Authorization/redux/actions/permissions";
+import {baseURL, reverse} from "../../../ProjectConstants";
 
 
 function ProfileDropDown(props) {
@@ -16,6 +17,10 @@ function ProfileDropDown(props) {
         <li className="profile-drop-down__item" 
             onClick={() => logoutHandler(navigate, props)}>
           Выйти
+        </li>        
+        <li className="profile-drop-down__item" 
+            onClick={() => userDeleteHandler(navigate, props)}>
+          <span style={{color: 'red', fontWeight: 700}}>Удалить пользователя</span>
         </li>
       </ul>
     </div>
@@ -37,6 +42,27 @@ function logoutHandler(navigate, props) {
     .then(() => {
       props.ActiveProfileDropdown(false)
       props.SwapLogin(false)
-      navigate('/')
+      navigate(reverse('index'))
     })
+}
+
+
+// Временное удаление пользователя в таком виде для удобства разработки
+function userDeleteHandler(navigate, props) {
+  fetch(`${baseURL}/api/auth/delete`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include'
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'deleted') {
+        props.ActiveProfileDropdown(false)
+        props.SwapLogin(false)
+        navigate(reverse('index'))
+      }
+    })
+    .catch(error => console.log(error))
 }

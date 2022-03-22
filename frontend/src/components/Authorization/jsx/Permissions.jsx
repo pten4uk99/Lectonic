@@ -10,9 +10,6 @@ import {getProfileInfo} from "../../WorkRooms/WorkRoom/ajax/workRooms";
 
 function Permissions(props) {
   let loggedIn = props.store.permissions.logged_in
-  let isPerson = props.store.permissions.is_person
-  let isLecturer = props.store.permissions.is_lecturer
-  let isCustomer = props.store.permissions.is_customer
   
   let navigate = useNavigate()
   let location = useLocation()
@@ -30,8 +27,16 @@ function Permissions(props) {
     switch (location.pathname) {
       case reverse('index'):
         return true
+      case reverse('confirm_email'):
+        return true
+      case reverse('continue_signup'):
+        return true      
+      case reverse('verify_email'):
+        return true
       case "*":
         return true
+      default:
+        return false
     }
   }
   
@@ -44,8 +49,6 @@ function Permissions(props) {
   }
   
   useEffect(() => {
-    console.log('ОБНОВЛЕНИЕ ПЕРМИШЕНОВ')
-
       fetch(`${baseURL}/api/auth/check_authentication/`, options)
         .then(response => response.json())
         .then(data => {
@@ -59,7 +62,7 @@ function Permissions(props) {
             
           } else if (data.status === 'error') {
             props.SwapLogin(false)
-            navigate(reverse('index'))
+            if (!notNeedPermissions()) navigate(reverse('index'))
           }
         })
         .catch(error => console.log(error))

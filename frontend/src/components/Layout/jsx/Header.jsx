@@ -46,10 +46,9 @@ function Header(props) {
                alt="меню"/>
         </nav>
       </header>
-      <Modal
-        isOpened={props.store.header.modalActive}
-        onModalClose={() => props.DeactivateModal()}
-        styleBody={{ width: '400px' }}>
+      <Modal isOpened={props.store.header.modalActive} 
+             onModalClose={() => props.DeactivateModal()} 
+             styleBody={{ width: '400px' }}>
         <Authorization />
       </Modal>
       <ProfileDropDown/>
