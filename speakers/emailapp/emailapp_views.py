@@ -57,7 +57,7 @@ class EmailConfirmationView(APIView):
 
         confirmation = EmailConfirmation.objects.filter(key=key).first()
 
-        if confirmation.confirmed:
+        if confirmation and confirmation.confirmed:
             return confirmed([{'email': confirmation.email}])
 
         if confirmation and confirmation.check_lifetime():
