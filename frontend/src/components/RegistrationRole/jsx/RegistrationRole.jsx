@@ -7,7 +7,7 @@ import StepsBar from "./StepsBar";
 import LecturerSteps from "./LecturerSteps/LecturerSteps";
 import {reverse} from "../../../ProjectConstants";
 import CustomerSteps from "./CustomerSteps/CustomerSteps";
-import {SwapAddRoleStep} from "../redux/actions/main";
+import {SwapAddRoleStep, SwapChooseRoleVisible} from "../redux/actions/main";
 
 
 function RegistrationRole(props) {
@@ -30,6 +30,21 @@ function RegistrationRole(props) {
       } else return false // для удобства верстки заказчика кнопка всегда будет кликабельна
     }
   }
+  
+  useEffect(() => {
+    if (location.pathname === reverse('create_lecturer')) {
+      if (currentStep > 1) props.SwapChooseRoleVisible(false)
+      else props.SwapChooseRoleVisible(true)
+    } else if (location.pathname === reverse('create_customer')) {
+      if (props.store.addRole.customer.isCompany) {
+        if (currentStep > 1) props.SwapChooseRoleVisible(false)
+        else props.SwapChooseRoleVisible(true)
+      } else {
+        if (currentStep > 2) props.SwapChooseRoleVisible(false)
+        else props.SwapChooseRoleVisible(true)
+      }
+    }
+  }, [currentStep])
   
   return (
     <>
@@ -58,9 +73,9 @@ function RegistrationRole(props) {
                     onClick={() => navigate(reverse('create_lecturer'))}>Лектор</button>
             <button className={`${location.pathname === reverse('create_customer') ? 
               "btn-role-selected" : "btn-role"}`} 
-                    // style={{cursor: 'not-allowed'}} 
+                    style={{cursor: 'not-allowed'}} 
                     onClick={() => {
-                      navigate(reverse('create_customer'))
+                      // navigate(reverse('create_customer'))
                     }}>Заказчик</button>
           </div>
         </div>
@@ -90,6 +105,7 @@ function RegistrationRole(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
-    SwapAddRoleStep: (step) => dispatch(SwapAddRoleStep(step))
+    SwapAddRoleStep: (step) => dispatch(SwapAddRoleStep(step)),
+    SwapChooseRoleVisible: (visible) => dispatch(SwapChooseRoleVisible(visible)),
   })
 )(RegistrationRole)
