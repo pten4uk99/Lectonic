@@ -4,6 +4,9 @@ import {SwapAddRoleStep, SwapChooseRoleVisible, SwapIsCustomer} from "../../redu
 import {SwapIsCompany} from "../../redux/actions/customer";
 import CustomerStep1 from "./CustomerStep1";
 import CustomerStep2 from "./CustomerStep2";
+import CompanyStep1 from "./CompanyStep1";
+import CompanyStep2 from "./CompanyStep2";
+import CompanyStep3 from "./CompanyStep3";
 
 
 function CustomerSteps(props) {
@@ -43,9 +46,9 @@ function CustomerSteps(props) {
       <div className="customer-steps__steps-block">
         <form>
           {role.isCompany ?
-            <>
-              Компания
-            </> :
+            currentStep === 1 ? <CompanyStep1/> :
+              currentStep === 2 ? <CompanyStep2/> :
+                currentStep === 3 && <CompanyStep3/> :
             role.isCompany !== undefined &&
               currentStep === 2 ? <CustomerStep1/> :
               currentStep === 3 && <CustomerStep2/>
