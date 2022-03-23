@@ -8,7 +8,7 @@ import LecturerStep3 from "./LecturerStep3";
 import {createLecturer, uploadDiplomaPhotos, uploadDocumentPhoto} from "../../ajax";
 import {reverse} from "../../../../ProjectConstants";
 import {SwapLecturer} from "../../../Authorization/redux/actions/permissions";
-import {SwapAddRoleStep} from "../../redux/actions/main";
+import {SwapAddRoleStep, SwapChooseRoleVisible} from "../../redux/actions/main";
 
 
 function LecturerSteps(props) {
@@ -89,6 +89,7 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     SwapLecturer: (is_lecturer) => dispatch(SwapLecturer(is_lecturer)),
-    SwapAddRoleStep: (step) => dispatch(SwapAddRoleStep(step))
+    SwapAddRoleStep: (step) => dispatch(SwapAddRoleStep(step)),
+    SwapChooseRoleVisible: (visible) => dispatch(SwapChooseRoleVisible(visible)),
   })
 )(LecturerSteps)
