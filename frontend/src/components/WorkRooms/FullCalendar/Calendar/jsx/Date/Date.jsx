@@ -13,6 +13,7 @@ import {
 } from '~@/WorkRooms/FullCalendar/Calendar/utils/date'
 import Events from './Events/Events'
 
+
 function Date(props) {
   let [hover, setHover] = useState(false)
   let [active, setActive] = useState(false)
@@ -24,31 +25,31 @@ function Date(props) {
     })
     if (currentEvents.length > 0) setEvents(currentEvents[0].events)
     else setEvents(null)
-
-    if (checkEqualDates(props.store.calendar.checkedDate, props.date))
-      setActive(true)
-    else setActive(false)
+    
+    if (!props.store.header.modalActive) {
+      if (checkEqualDates(props.store.calendar.checkedDate, props.date))
+        setActive(true)
+      else setActive(false)      
+    } else setActive(false)
   }, [props.store.dateDetail])
 
   useEffect(() => {
-    if (checkEqualDates(props.store.calendar.hoverDate, props.date))
-      setHover(true)
-    else setHover(false)
+    if (!props.store.header.modalActive) {
+      if (checkEqualDates(props.store.calendar.hoverDate, props.date))
+        setHover(true)
+      else setHover(false)
+    } else setHover(false)
   }, [props.store.calendar.hoverDate])
 
   return (
-    <div
-      className={getClassName(props)}
-      onClick={() => clickHandler(props)}
-      onMouseEnter={() => {
-        hoverHandler(props, true)
-      }}
-      onMouseLeave={() => {
-        hoverHandler(props, false)
-      }}
-    >
+    <div className={getClassName(props)} 
+         onClick={() => clickHandler(props)} 
+         onMouseEnter={() => {hoverHandler(props, true)}} 
+         onMouseLeave={() => {hoverHandler(props, false)}}>
       <span>{props.date.getDate()}</span>
-      <Events events={events} dateHover={hover} dateActive={active} />
+      
+      {!props.store.header.modalActive && 
+        <Events events={events} dateHover={hover} dateActive={active}/>}
     </div>
   )
 }
@@ -81,9 +82,7 @@ function getClassName(props) {
 function clickHandler(props) {
   if (checkNeedSwapToNextMonth(props.date, props.store.calendar.currentDate)) {
     props.SwapMonthToNext()
-  } else if (
-    checkNeedSwapToPrevMonth(props.date, props.store.calendar.currentDate)
-  ) {
+  } else if (checkNeedSwapToPrevMonth(props.date, props.store.calendar.currentDate)) {
     props.SwapMonthToPrev()
   }
   props.SetCheckedDate(props.date)

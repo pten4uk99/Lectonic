@@ -93,39 +93,6 @@ h5
   color var(--add-purple)
   cursor pointer
   
-/*Role buttons*/
-.btn-role {
-  border-radius 45px
-  font-size 14px
-  line-height 17px
-  font-weight 400
-  padding 6px 20px 9px
-  border 1px solid var(--main-black)
-  background-color var(--main-white)
-  color var(--main-black)
-  cursor pointer
-}
-  
-.btn-role:hover {
-  font-weight 700
-  padding 6px 19px 9px
-  border 1px solid var(--main-blue)
-  background-color var(--main-blue)
-  color var(--main-white)
-  cursor pointer
-}
-  
-.btn-role-selected {
-  border-radius 45px
-  font-size 14px
-  line-height 17px
-  font-weight 700
-  padding 6px 19px 9px
-  border 1px solid var(--main-blue)
-  background-color var(--main-blue)
-  color var(--main-white)
-  cursor pointer
-}
 
 /*ниже кнопки будут переделаны и переименованы в соответствии с UI KIT_2*/
 .btn-notChosen
@@ -268,6 +235,17 @@ h5
 .required-sign
   color var(--add-pink)
 
+.navigate-back__block {
+  display flex
+  justify-content: center;
+  align-items: center
+  position: absolute
+  left: 52px
+  top: 96px
+  width: 50px
+  height: 50px
+  cursor: pointer
+}
 /*Адаптив под разную ширину экранов*/
 @media screen and (max-width: 720px) {
   .is-desktop {

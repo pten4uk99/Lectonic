@@ -34,7 +34,7 @@ def created(data):
     return response.get_response(
         status=response.CREATE,
         detail=CREATED,
-        data=[data],
+        data=data,
         status_code=201
     )
 
@@ -43,7 +43,7 @@ def patched(data):
     return response.get_response(
         status=response.SUCCESS,
         detail=PATCHED,
-        data=[data],
+        data=data,
         status_code=200
     )
 

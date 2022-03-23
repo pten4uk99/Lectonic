@@ -26,7 +26,7 @@ class PersonAPIView(APIView):
         city = serializer.validated_data.pop('city')
         serializer.validated_data.pop('photo')
 
-        return person_responses.created(data={**serializer.validated_data, 'city': city.name})
+        return person_responses.created([{**serializer.validated_data, 'city': city.name}])
 
     @swagger_auto_schema(**person_docs.PersonGetDoc)
     def get(self, request):
@@ -36,11 +36,17 @@ class PersonAPIView(APIView):
             return person_responses.profile_does_not_exist()
 
         serializer = PersonSerializer(person)
+        photo_serializer = PersonPhotoGetSerializer(
+            person,
+            context={'request': request}
+        )
+        serializer.data.pop('photo')
 
-        return person_responses.success({
+        return person_responses.success([{
             **serializer.data,
-            'city': City.objects.get(pk=serializer.data['city']).name
-        })
+            'city': City.objects.get(pk=serializer.data['city']).name,
+            **photo_serializer.data
+        }])
 
     @swagger_auto_schema(**person_docs.PersonPatchDoc)
     def patch(self, request):
@@ -59,7 +65,7 @@ class PersonAPIView(APIView):
         if 'city' in serializer.validated_data:
             serializer.validated_data['city'] = serializer.validated_data['city'].name
 
-        return person_responses.patched(data={**serializer.validated_data})
+        return person_responses.patched([serializer.validated_data])
 
 
 class DocumentImageAPIVIew(APIView):
@@ -85,7 +91,7 @@ class DocumentImageAPIVIew(APIView):
         serializer = DocumentImageGetSerializer(
             document_image,
             context={'request': request})
-        return person_responses.success(serializer.data)
+        return person_responses.success([serializer.data])
 
 
 class CityGetAPIView(APIView):

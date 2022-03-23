@@ -1,11 +1,15 @@
 import React, {useState} from 'react'
-import {useNavigate} from 'react-router-dom'
-import StepsBar from "../StepsBar";
-// import '~/styles/RegistrationRole.styl'
+import {connect} from "react-redux";
 
-export default function LecturerStep3() {
-  const navigate = useNavigate()
+import backArrow from "~/assets/img/back-arrow.svg"
+import {UpdateEquipment, UpdateHallAddress} from "../../redux/actions/lecturer";
+import {SwapAddRoleStep} from "../../redux/actions/main";
 
+
+function LecturerStep3(props) {
+  let address = props.store.addRole.lecturer.hall_address
+  let equipment = props.store.addRole.lecturer.equipment
+  
   /*переключение блоков Да/Нет*/
   const [yesSelected, setYesSelected] = useState(false);
   const [noSelected, setNoSelected] = useState(true);
@@ -25,72 +29,62 @@ export default function LecturerStep3() {
   function changeAgreement() {
     setAgreed(!isAgreed)
   }
-
-  /*кнопка Следующий шаг*/
-  function toLecturerStep4() {
-    navigate("/register_lecturer4")
-  }
   
   return (
     <>
-      <StepsBar 
-        style={{marginLeft: "67%"}}
-        step3={{color: "var(--main-blue)"}}/>
-      
       <div className="step-block-wrapper">
         <div className='step-block margin-bottom-36 step-block__head-text'>
           <h2 className='step-block__left-part'>
-            Дополнительная<br/>информация
+            Дополнительная<br/>
+            информация
           </h2>
-          <p>
-            Если у Вас имеется помещение и/или оборудование, которые Вы хотитe
-            <br/>
+          <p className="lecturer-right__header">
+            Если у Вас имеется помещение и/или оборудование, которые Вы хотитe<br/>
             использовать для проведения лекций, пожалуйста, заполните поля ниже.
           </p>
         </div>
 
         <div className="step-block margin-bottom-12">
           <p className="step-block__left-part">Помещение для лекций:</p>
-          <button 
-            className={`${yesSelected ? "btn-role-selected" : "btn-role"} margin-right-12`}
-            onClick={saysYes}>Есть</button>
-          <button
-            className={`${noSelected ? "btn-role-selected" : "btn-role"}`}
-            onClick={saysNo}>Нет</button>
+          <button className={`${yesSelected ? "btn-role-selected" : "btn-role"} margin-right-12`} 
+                  type='button'
+                  onClick={saysYes}>Есть</button>
+          <button className={`${noSelected ? "btn-role-selected" : "btn-role"}`} 
+                  type='button'
+                  onClick={saysNo}>Нет</button>
         </div>
         
         <div className="step-block-with-textarea margin-bottom-24">
-          <p 
-            className="step-block__left-part left-part-with-textarea"
-            style={{color: noSelected ? "var(--add-darkGrey" : ""}}>
+          <p className="step-block__left-part left-part-with-textarea" 
+             style={{color: noSelected ? "var(--add-darkGrey" : ""}}>
             Адрес:
           </p>
-          <textarea
-            className="form__textarea textarea-height88"
-            placeholder="Введите адрес помещения для лекций"
-            disabled={noSelected}>
+          <textarea className="form__textarea textarea-height88" 
+                    placeholder="Введите адрес помещения для лекций" 
+                    readOnly={noSelected}
+                    defaultValue={address}
+                    onBlur={(e) => props.UpdateHallAddress(e.target.value)}>
           </textarea>
         </div>
 
         <div className="step-block-with-textarea margin-bottom-24">
           <p className="step-block__left-part left-part-with-textarea">Оборудование:</p>
-          <textarea
-            className="form__textarea textarea-height88"
-            placeholder="Перечислите имеющееся для лекций оборудование">
+          <textarea className="form__textarea textarea-height88" 
+                    placeholder="Перечислите имеющееся для лекций оборудование" 
+                    defaultValue={equipment}
+                    onBlur={(e) => props.UpdateEquipment(e.target.value)}>
           </textarea>
         </div>
         
       <div className="step-block">
-        <div className="step-block__left-part"></div>
+        <div className="step-block__left-part"/>
         <div>
           <div className="auth__form__checkbox-wrapper">
-            <input
-              className="auth__form__checkbox-switch"
-              id="checkbox"
-              type="checkbox"
-              checked={isAgreed}
-              onChange={changeAgreement}
-            />
+            <input className="auth__form__checkbox-switch" 
+                   id="checkbox" 
+                   type="checkbox" 
+                   checked={isAgreed} 
+                   onChange={changeAgreement}/>
             <label htmlFor="checkbox">
               Я ознакомился и соглашаюсь с условиями пользовательского соглашения
             </label>
@@ -99,11 +93,24 @@ export default function LecturerStep3() {
         </div>
       </div>
       </div>
-      <div className="step-block steps__btn">
-        <div className="step-block__left-part"></div>
-        <button
-          className="btn">Следующий шаг</button>
+      
+      <div className="step-block steps__btn mb-148">
+          <div className="link-to-back" onClick={() => props.SwapAddRoleStep(2)}>
+            <img src={backArrow} alt="предыдущий шаг"/>
+            <span>Предыдущий шаг</span>
+          </div>
+        <div className="step-block__left-part"/>
+        <button className="btn" type="submit">Завершить регистрацию</button>
       </div>
     </>
   )
 }
+
+export default connect(
+  state => ({store: state}),
+  dispatch => ({
+    SwapAddRoleStep: (step) => dispatch(SwapAddRoleStep(step)),
+    UpdateHallAddress: (address) => dispatch(UpdateHallAddress(address)),
+    UpdateEquipment: (equipment) => dispatch(UpdateEquipment(equipment)),
+  })
+)(LecturerStep3)

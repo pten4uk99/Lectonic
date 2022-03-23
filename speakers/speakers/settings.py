@@ -44,7 +44,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    r'^http://(localhost|192\.168\.1\.51|127\.0\.0\.1):[\d]+$',
+    r'^http://(localhost|192\.168\.1\.[0-9][0-9]|127\.0\.0\.1):[\d]+$',
 ]
 
 CORS_ALLOW_CREDENTIALS = True

@@ -3,24 +3,28 @@ import { connect } from 'react-redux'
 import Event from './Event'
 import { checkEqualDates } from '~@/WorkRooms/FullCalendar/Calendar/utils/date'
 import {useNavigate} from "react-router-dom";
+import {reverse} from "../../../../../ProjectConstants";
+import {SetCheckedDate} from "../../Calendar/redux/actions/calendar";
+
 
 function DateDetail(props) {
   let navigate = useNavigate()
-  let year = props.date.getFullYear()
-  let month = getMonth(props.date.getMonth())
-  let day = getDay(props.date.getDate())
+  
+  let date = props.store.calendar.checkedDate
+  let year = date?.getFullYear()
+  let month = getMonth(date?.getMonth())
+  let day = getDay(date?.getDate())
   let [events, setEvents] = useState(null)
 
   useEffect(() => {
-    let currentEvents = props.store.dateDetail.filter(value => {
-      return checkEqualDates(value.date, props.date)
-    })
-    if (currentEvents.length > 0) {
-      setEvents(currentEvents[0].events)
-    } else {
-      setEvents(null)
+    if (props.store.calendar.currentDate.getMonth() === date?.getMonth()) {
+      let currentEvents = props.store.dateDetail.filter(value => {
+        return checkEqualDates(value.date, date)
+      })
+      if (currentEvents.length > 0) setEvents(currentEvents[0].events) 
+      else setEvents(null)
     }
-  }, [props.date])
+  }, [date, props.store.dateDetail])
 
   return (
     <div className='date-detail__wrapper'>
@@ -38,8 +42,8 @@ function DateDetail(props) {
                   key={index}
                   header={
                     event.status
-                      ? 'Лекция подтверждена'
-                      : 'Лекция не подтверждена'
+                      ? 'Подтвержденная лекция'
+                      : 'Неподтвержденная лекция'
                   }
                   status={event.status}
                   name={event.name}
@@ -61,7 +65,7 @@ function DateDetail(props) {
             потенциальные слушатели могли откликнуться
           </p>
           <button className='create-event' 
-                  onClick={() => navigate('/create_event')}>Создать мероприятие</button>
+                  onClick={() => navigate(reverse('create_event'))}>Создать мероприятие</button>
         </div>
       )}
     </div>
@@ -70,8 +74,11 @@ function DateDetail(props) {
 
 export default connect(
   state => ({ store: state }),
-  dispatch => ({})
+  dispatch => ({
+    SetCheckedDate: (date) => dispatch(SetCheckedDate(date))
+  })
 )(DateDetail)
+
 
 function getMonth(month) {
   let newMonth = month + 1

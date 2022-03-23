@@ -4,3 +4,6 @@ export function ActivateModal() {
 export function DeactivateModal() {
   return {type: "DEACTIVATE_MODAL"}
 }
+export function ActiveProfileDropdown(active) {
+  return {type: "SET_PROFILE_DROPDOWN", payload: {active: active}}
+}

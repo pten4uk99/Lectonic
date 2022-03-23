@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from rest_framework.views import APIView
 from drf_yasg.utils import swagger_auto_schema
 
+from authapp.models import User
 from .emailapp_serializers import EmailSerializer
 from .models import EmailConfirmation
 from .responses.email_confirmation_responses import *
@@ -20,6 +21,9 @@ class EmailConfirmationView(APIView):
         serializer = EmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.data['email']
+
+        if User.objects.filter(email=email).first():
+            return user_is_exist()
 
         email_confirmation, created = EmailConfirmation.objects.get_or_create(email=email)
 
@@ -48,16 +52,18 @@ class EmailConfirmationView(APIView):
     @swagger_auto_schema(**emailapp_docs.EmailConfirmationDocCh2)
     def get(self, request):
         key = request.GET.get('key')
-
         if not key:
             return key_not_in_get()
 
         confirmation = EmailConfirmation.objects.filter(key=key).first()
 
+        if confirmation.confirmed:
+            return confirmed([{'email': confirmation.email}])
+
         if confirmation and confirmation.check_lifetime():
             confirmation.confirmed = True
             confirmation.save()
-            return confirmed(confirmation.email)
+            return confirmed([{'email': confirmation.email}])
 
         if confirmation and not confirmation.check_lifetime():
             confirmation.delete()

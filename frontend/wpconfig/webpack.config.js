@@ -28,6 +28,7 @@ module.exports = {
   output: {
     filename: 'js/[name].[chunkhash].js',
     path: PATHS.build,
+    publicPath: '/',
   },
   optimization: {
     splitChunks: {

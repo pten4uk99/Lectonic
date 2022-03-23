@@ -1,0 +1,65 @@
+.calendar-modal__wrapper {
+  display: flex
+  .calendar-modal__right-block {
+    display: flex
+    flex-direction: column
+    align-items: center
+    margin-top: 55px
+    margin-left: 63px
+    
+    .calendar-modal__header {
+      font-size: 18px
+      font-weight: 700
+      color: $main-blue
+    }
+    
+    .calendar-modal__tooltip {
+      margin-top: 32px
+    }
+    
+    .calendar-modal__dates-block {
+      display: flex
+      flex-direction: column
+      align-items: center
+      margin-top: 24px
+      .span {
+        display: block
+        text-align: center
+      }
+      
+      .calendar-modal__dates-list {
+        display: grid
+        grid-template-columns: repeat(4, 93px)
+        grid-auto-rows: 32px
+        justify-content: center
+        align-items: center
+        
+        margin-top: 12px
+        grid-column-gap: 8px
+        grid-row-gap: 12px
+      }
+    }
+  }
+  .calendar-modal__button {
+    display: flex
+    justify-content: center;
+    align-items: center
+
+    margin-top: 44px
+  }
+}
+
+.calendar-modal__date {
+  display: flex
+  justify-content: center
+  align-items: center
+
+  padding: 6px 20px
+  
+  border: 1px solid #000000
+  border-radius: 45px
+  
+  &.ml-8 {
+    margin-left: 8px
+  }
+}
