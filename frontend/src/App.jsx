@@ -12,8 +12,8 @@ import ConfirmEmail from '~@/Authorization/jsx/ConfirmEmail'
 import SetProfileInfo from '~@/Profile/jsx/SetProfileInfo'
 import RegistrationRole from '~@/RegistrationRole/jsx/RegistrationRole'
 import Workroom from "~@/WorkRooms/Workroom"
+import CreateEvent from "~@/WorkRooms/CreateEvent/jsx/CreateEvent"
 import Header from "~@/Layout/jsx/Header"
-import CreateEvent from "~@/CreateEvent/jsx/CreateEvent"
 import Permissions from "./components/Authorization/jsx/Permissions";
 import {permissions, reverse} from "./ProjectConstants";
 

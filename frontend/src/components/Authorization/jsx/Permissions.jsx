@@ -4,7 +4,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 
 import {baseURL} from "~/ProjectConstants";
 import {SwapCustomer, SwapLecturer, SwapLogin, SwapPerson} from "../redux/actions/permissions";
-import {permissions, reverse} from "../../../ProjectConstants";
+import {permissions, reverse, withoutPermissionsList} from "../../../ProjectConstants";
 import {getProfileInfo} from "../../WorkRooms/WorkRoom/ajax/workRooms";
 
 
@@ -23,20 +23,8 @@ function Permissions(props) {
   }
   
   function notNeedPermissions() {
-    console.log(location.pathname)
-    switch (location.pathname) {
-      case reverse('index'):
-        return true
-      case reverse('confirm_email'):
-        return true
-      case reverse('continue_signup'):
-        return true      
-      case reverse('verify_email'):
-        return true
-      case "*":
-        return true
-      default:
-        return false
+    for (let route of withoutPermissionsList) {
+      if (location.pathname === route) return true
     }
   }
   

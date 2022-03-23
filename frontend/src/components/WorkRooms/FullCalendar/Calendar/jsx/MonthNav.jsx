@@ -16,24 +16,25 @@ function MonthNav(props) {
   function updateEvents(year, month) {
     if (!props.store.header.modalActive) {
       getEventsForMonth(year, month + 1)
-      .then(response => response.json())
-      .then(data => props.UpdateEvents(data.data))
-      .catch(error => console.log('Ошибка при получении данных календаря (MonthNav: 21):', error))
+        .then(response => response.json())
+        .then(data => props.UpdateEvents(data.data))
+        .catch(error => console.log('Ошибка при получении данных календаря (MonthNav: 21):', error))
     }
   }
+  
   useEffect(() => {
     updateEvents(currentYear, currentMonth)
-  }, [props.store.header.modalActive])
+  }, [props.store.header.modalActive, props.store.calendar.currentDate])
 
   return (
     <nav className='month-nav'>
-      <div onClick={() => {props.SwapMonthToPrev(); updateEvents(currentYear, currentMonth - 1)}}>
+      <div onClick={props.SwapMonthToPrev}>
         <button className='left' />
       </div>
       <span>
         {getMonth(currentMonth)} {currentYear}
       </span>
-      <div onClick={() => {props.SwapMonthToNext(); updateEvents(currentYear, currentMonth + 1)}}>
+      <div onClick={props.SwapMonthToNext}>
         <button className='right' />
       </div>
     </nav>

@@ -2,13 +2,13 @@ import React, {useEffect, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 
 import {connect} from "react-redux";
-import {SwapStep} from "../../redux/actions/registerRole";
 import LecturerStep1 from "./LecturerStep1";
 import LecturerStep2 from "./LecturerStep2";
 import LecturerStep3 from "./LecturerStep3";
 import {createLecturer, uploadDiplomaPhotos, uploadDocumentPhoto} from "../../ajax";
 import {reverse} from "../../../../ProjectConstants";
 import {SwapLecturer} from "../../../Authorization/redux/actions/permissions";
+import {SwapAddRoleStep} from "../../redux/actions/main";
 
 
 function LecturerSteps(props) {
@@ -19,9 +19,9 @@ function LecturerSteps(props) {
   }, [props.store.permissions.is_lecturer])
   
   
-  let currentStep = props.store.registerRole.step
+  let currentStep = props.store.addRole.main.step
   
-  let role = props.store.registerRole
+  let role = props.store.addRole.lecturer
   let domainList = props.store.event.domain
   let perfLinks = role.performances_links
   let pubLinks = role.publication_links
@@ -89,6 +89,6 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     SwapLecturer: (is_lecturer) => dispatch(SwapLecturer(is_lecturer)),
-    SwapStep: (step) => dispatch(SwapStep(step))
+    SwapAddRoleStep: (step) => dispatch(SwapAddRoleStep(step))
   })
 )(LecturerSteps)

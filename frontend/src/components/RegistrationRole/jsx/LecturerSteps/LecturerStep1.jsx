@@ -1,17 +1,17 @@
 import React, {useEffect, useState} from 'react'
 import {connect} from "react-redux";
 
-import {getDomainArray} from "../../../CreateEvent/ajax/event";
-import {domainSelectHandler} from "~@/CreateEvent/jsx/CreateEvent";
-import {UpdateDomain} from "~@/CreateEvent/redux/actions/event";
-import {UpdatePerfLinks, UpdatePubLinks} from "../../redux/actions/registerRole";
-import LecturerLink from "../LecturerLink";
+import {getDomainArray} from "../../../WorkRooms/CreateEvent/ajax/event";
+import {domainSelectHandler} from "~@/WorkRooms/CreateEvent/jsx/CreateEvent";
+import {UpdateDomain} from "~@/WorkRooms/CreateEvent/redux/actions/event";
+import {UpdatePerfLinks, UpdatePubLinks} from "../../redux/actions/lecturer";
+import LecturerLink from "./LecturerLink";
 
 
 function LecturerStep1(props) {
   let selectedDomains = props.store.event.domain
-  let performancesLinks = props.store.registerRole.performances_links
-  let publicationLinks = props.store.registerRole.publication_links
+  let performancesLinks = props.store.addRole.lecturer.performances_links
+  let publicationLinks = props.store.addRole.lecturer.publication_links
   
   
   let [domainArray, setDomainArray] = useState(null)

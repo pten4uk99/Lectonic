@@ -9,7 +9,7 @@ function FullCalendar(props) {
       <div className="workroom__block-header"><span>Календарь лектора</span></div>
       <div className='calendar__wrapper'>
         <Calendar/>
-        <DateDetail date={props.store.calendar.checkedDate} />
+        <DateDetail/>
       </div>
       <div className="calendar__block-tooltips">
         <div className="tooltip__not-confirmed"><span/>Событие не подтверждено</div>

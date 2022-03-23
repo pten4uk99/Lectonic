@@ -1,5 +1,4 @@
 const initialState = {
-  step: 1,
   performances_links: [],
   publication_links: [],
   diploma_photos: [],
@@ -10,10 +9,8 @@ const initialState = {
   equipment: ''
 }
 
-export default function registerRole(state=initialState, action) {
+export default function lecturer(state=initialState, action) {
   switch (action.type) {
-    case "SWAP_STEP":
-      return {...state, step: action.payload.step}  
     case "UPDATE_PERF_LINKS":
       let newPerfObj = {...state}
       newPerfObj.performances_links[action.payload.index] = action.payload.link

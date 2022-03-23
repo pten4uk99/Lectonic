@@ -58,7 +58,7 @@ function AuthSignUpPassword(props) {
         }
         if (data.status === ('logged_in' || 'signed_in')) {
           props.SwapLogin(true)
-          navigate('/user_profile')
+          navigate(reverse('workroom'))
           props.DeactivateModal()
         }
       })
@@ -90,7 +90,7 @@ function AuthSignUpPassword(props) {
 
   //отправка email и пароля на сервер
   let userSignUp = {
-    email: props.email || window.localStorage.getItem('email'),
+    email: props.email,
     password: signUpValue.password,
   }
 

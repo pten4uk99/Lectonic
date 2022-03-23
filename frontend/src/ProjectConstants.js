@@ -1,9 +1,4 @@
-export const baseURL = 'http://127.0.0.1:8000';
-
-export const permissions = {
-  isAuthenticated: 'logged_in',
-  isPerson: 'is_person'
-}
+export const baseURL = 'http://127.0.0.1:8000'; // случайно могу иногда забыть поменять на dev.lectonic.ru
 
 const routes = {
   'index': '/',
@@ -15,13 +10,24 @@ const routes = {
   
   'add_role': '/add_role',
   'create_lecturer': '/add_role/lecturer',
+  'create_customer': '/add_role/customer',
   
   'workroom': '/workroom',
   
   'create_event': '/create_event',
   'change_password': '/change_password',
-}
+} // сюда прописываем все роуты и их имена (имя: роут)
 
 export function reverse(name) {
   return routes[name]
 }
+
+
+export const withoutPermissionsList = [
+  reverse('index'),
+  reverse('confirm_email'),
+  reverse('continue_signup'),
+  reverse('verify_email'),
+  
+  '*', // звездочка должна быть последней
+]

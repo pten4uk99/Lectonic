@@ -1,14 +1,14 @@
 import React, {useState} from 'react'
-import {useNavigate} from 'react-router-dom'
 import {connect} from "react-redux";
 
 import backArrow from "~/assets/img/back-arrow.svg"
-import {SwapStep, UpdateEquipment, UpdateHallAddress} from "../../redux/actions/registerRole";
+import {UpdateEquipment, UpdateHallAddress} from "../../redux/actions/lecturer";
+import {SwapAddRoleStep} from "../../redux/actions/main";
 
 
 function LecturerStep3(props) {
-  let address = props.store.registerRole.hall_address
-  let equipment = props.store.registerRole.equipment
+  let address = props.store.addRole.lecturer.hall_address
+  let equipment = props.store.addRole.lecturer.equipment
   
   /*переключение блоков Да/Нет*/
   const [yesSelected, setYesSelected] = useState(false);
@@ -95,7 +95,7 @@ function LecturerStep3(props) {
       </div>
       
       <div className="step-block steps__btn mb-148">
-          <div className="link-to-back" onClick={() => props.SwapStep(2)}>
+          <div className="link-to-back" onClick={() => props.SwapAddRoleStep(2)}>
             <img src={backArrow} alt="предыдущий шаг"/>
             <span>Предыдущий шаг</span>
           </div>
@@ -109,7 +109,7 @@ function LecturerStep3(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
-    SwapStep: (step) => dispatch(SwapStep(step)),
+    SwapAddRoleStep: (step) => dispatch(SwapAddRoleStep(step)),
     UpdateHallAddress: (address) => dispatch(UpdateHallAddress(address)),
     UpdateEquipment: (equipment) => dispatch(UpdateEquipment(equipment)),
   })

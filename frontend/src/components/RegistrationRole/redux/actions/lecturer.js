@@ -1,6 +1,3 @@
-export function SwapStep(step) {
-  return {type: "SWAP_STEP", payload: {step: step}}
-}
 export function UpdatePerfLinks(link ,index) {
   return {type: "UPDATE_PERF_LINKS", payload: {link: link, index: index}}
 }

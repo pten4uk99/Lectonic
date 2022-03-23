@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 
 import Calendar from "~@/WorkRooms/FullCalendar/Calendar/jsx/Calendar";
 import {MONTHS} from "~@/WorkRooms/FullCalendar/Calendar/utils/calendar";
-import {DeactivateModal} from "../../Layout/redux/actions/header";
+import {DeactivateModal} from "../../../Layout/redux/actions/header";
 
 
 function CalendarModal(props) {

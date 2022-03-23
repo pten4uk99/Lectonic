@@ -24,9 +24,9 @@ function Header(props) {
         </Link>
   
         <nav className="header__nav">
-          <img className="header__nav-search is-desktop"
-               src={iconSearch}
-               alt="поиск" />
+          {/*<img className="header__nav-search is-desktop"*/}
+          {/*     src={iconSearch}*/}
+          {/*     alt="поиск" />*/}
 
           {loggedIn ?
             <div className="header__profile-photo-block" 

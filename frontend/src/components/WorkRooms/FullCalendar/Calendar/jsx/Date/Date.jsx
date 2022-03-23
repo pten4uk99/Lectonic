@@ -82,9 +82,7 @@ function getClassName(props) {
 function clickHandler(props) {
   if (checkNeedSwapToNextMonth(props.date, props.store.calendar.currentDate)) {
     props.SwapMonthToNext()
-  } else if (
-    checkNeedSwapToPrevMonth(props.date, props.store.calendar.currentDate)
-  ) {
+  } else if (checkNeedSwapToPrevMonth(props.date, props.store.calendar.currentDate)) {
     props.SwapMonthToPrev()
   }
   props.SetCheckedDate(props.date)

@@ -7,14 +7,14 @@ import {
   UpdateEducation,
   UpdatePassportPhoto,
   UpdateSelfiePhoto
-} from "../../redux/actions/registerRole";
+} from "../../redux/actions/lecturer";
 
 
 function LecturerStep2(props) {
-  let diplomaImage = props.store.registerRole.diploma_photos
-  let passportImage = props.store.registerRole.passport_photo
-  let selfieImage = props.store.registerRole.selfie_photo
-  let education = props.store.registerRole.education
+  let diplomaImage = props.store.addRole.lecturer.diploma_photos
+  let passportImage = props.store.addRole.lecturer.passport_photo
+  let selfieImage = props.store.addRole.lecturer.selfie_photo
+  let education = props.store.addRole.lecturer.education
 
   
   return (

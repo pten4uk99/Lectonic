@@ -3,14 +3,19 @@ import Modal from '~@/Layout/jsx/Modal'
 import AuthSignUpPassword from './AuthSignUpPassword'
 import {connect} from "react-redux";
 import {ActivateModal, DeactivateModal} from "../../Layout/redux/actions/header";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
+import {reverse} from "../../../ProjectConstants";
 
 function ContinueRegistration(props) {
   let location = useLocation()
+  let navigate = useNavigate()
 
   useEffect(() => {
     props.ActivateModal()
-    window.localStorage.setItem('email', 'admin@admin.ru')
+    if (!location.state) {
+      navigate(reverse('workroom'))
+      props.DeactivateModal()
+    }
   }, [])
   
   return (

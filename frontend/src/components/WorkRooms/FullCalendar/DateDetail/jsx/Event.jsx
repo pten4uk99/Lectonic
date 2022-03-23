@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { connect } from 'react-redux'
 
+import lecturePhoto from '~/assets/img/TEST_PHOTO_LECTURE.svg'
+import lecturerPhoto from '~/assets/img/TEST_PHOTO_LECTURER.svg'
+
+
 function Event(props) {
   let [className, setClass] = useState('left-block')
   let eventInfo = useRef()
@@ -15,7 +19,7 @@ function Event(props) {
   useEffect(() => {
     if (!eventDetail) {
       setEventHeight('42px')
-      setCircleHeight(24)
+      setCircleHeight(40)
     } else {
       setEventHeight(`${eventInfo.current.scrollHeight}px`)
       setCircleHeight(eventInfo.current.scrollHeight - 13.4)
@@ -25,17 +29,22 @@ function Event(props) {
   return (
     <li className='date-detail__event'>
       <div className={className}>
-        <div className='circle' />
-        <div
-          className='dynamic-circle'
-          style={{ height: dynamicCircleHeight }}
-        />
+        <div className='circle'/>
+        <div className='dynamic-circle' style={{ height: dynamicCircleHeight }}/>
       </div>
-      <div
-        className='event-info'
-        ref={eventInfo}
-        style={{ height: eventDetailHeight }}
-      >
+      
+      <div className="date-detail__event-photo-block">
+        <div className="lecturer-photo">
+          <img src={lecturerPhoto} alt="инициалы создателя"/>
+        </div>
+        <div className="event-photo">
+          <img src={lecturePhoto} alt="обложка"/>
+        </div>
+      </div>
+      
+      <div className='event-info' 
+           ref={eventInfo} 
+           style={{ height: eventDetailHeight }}>
         <div className='header' onClick={() => setEventDetail(!eventDetail)}>
           {props.header}
         </div>
@@ -52,6 +61,7 @@ function Event(props) {
           Место: <span>{props.address}</span>
         </div>
       </div>
+      
       <div className='time-range'>
         <span className='start'>{props.timeStart}</span>
         <span className='end'>{props.timeEnd}</span>
