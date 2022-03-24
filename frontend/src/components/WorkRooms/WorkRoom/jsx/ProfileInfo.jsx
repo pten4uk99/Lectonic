@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import download from '~/assets/img/workrooms/profileInfo/btn_download_photo.svg';
+import download from '~/assets/img/workrooms/profileInfo/btn-icon-edit.svg';
 import iconPlus from '~/assets/img/workrooms/profileInfo/btn_icon-plus.svg';
 import {SwapToCustomer, SwapToLecturer, UpdateProfile} from "../../../Profile/redux/actions/profile";
 import {connect} from "react-redux";
@@ -37,14 +37,16 @@ function ProfileInfo(props){
         <span>{profile.last_name}</span>
         <span>{profile.first_name}</span>
         <span>{profile.middle_name}</span>
+      </div>
+      <div className="profile-about__btn-box">
+        <button className="profile-about__btn-add-role">
+          <img src={iconPlus} alt="icon-plus"/>
+        </button>
+        <button className={utils.lecturer ? btnClassName + " active" : btnClassName} 
+                onClick={props.SwapToLecturer}>Лектор</button>
+        <button className={utils.customer ? btnClassName + " active" : btnClassName} 
+                onClick={props.SwapToCustomer}>Заказчик</button>
       </div> 
-      <button className="profile-about__btn-add-role">
-        <img src={iconPlus} alt="icon-plus"/>
-      </button>
-      <button className={utils.lecturer ? btnClassName + " active" : btnClassName} 
-              onClick={props.SwapToLecturer}>Лектор</button>
-      <button className={utils.customer ? btnClassName + " active" : btnClassName} 
-              onClick={props.SwapToCustomer}>Заказчик</button>
     </div>
     )
 }
