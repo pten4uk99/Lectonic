@@ -3,6 +3,8 @@ import re
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from speakers.utils.constants import EMAIL_VALIDATOR
+
 errors = {
     'blank': 'Поле не может быть пустым',
     'required': 'Обязательное поле',
@@ -29,7 +31,7 @@ class EmailSerializer(serializers.Serializer):
         5. В строке не может быть пробелов
         '''
 
-        match = re.findall(r'^[\w.]+@\w+\.[a-z]{2,4}$', email)
+        match = re.findall(EMAIL_VALIDATOR, email)
 
         if not match:
             raise ValidationError('Некорректный e-mail')
