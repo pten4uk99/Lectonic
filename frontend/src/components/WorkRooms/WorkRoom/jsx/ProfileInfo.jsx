@@ -32,14 +32,16 @@ function ProfileInfo(props){
         <span>{profile.last_name}</span>
         <span>{profile.first_name}</span>
         <span>{profile.middle_name}</span>
+      </div>
+      <div className="profile-about__btn-box">
+        <button className="profile-about__btn-add-role">
+          <img src={iconPlus} alt="icon-plus"/>
+        </button>
+        <button className={utils.lecturer ? btnClassName + " active" : btnClassName} 
+                onClick={props.SwapToLecturer}>Лектор</button>
+        <button className={utils.customer ? btnClassName + " active" : btnClassName} 
+                onClick={props.SwapToCustomer}>Заказчик</button>
       </div> 
-      <button className="profile-about__btn-add-role">
-        <img src={iconPlus} alt="icon-plus"/>
-      </button>
-      <button className={utils.lecturer ? btnClassName + " active" : btnClassName} 
-              onClick={props.SwapToLecturer}>Лектор</button>
-      <button className={utils.customer ? btnClassName + " active" : btnClassName} 
-              onClick={props.SwapToCustomer}>Заказчик</button>
     </div>
     )
 }

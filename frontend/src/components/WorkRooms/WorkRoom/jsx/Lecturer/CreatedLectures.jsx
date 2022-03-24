@@ -2,9 +2,7 @@ import React from "react";
 import {connect} from "react-redux";
 import tooltip from "~/assets/img/workrooms/workroom/tooltip.svg";
 import WorkroomCard from "../WorkroomCard";
-import DropDown from "~@/Utils/jsx/DropDown";
-
-
+//import DropDown from "~@/Utils/jsx/DropDown";
 
 function CreatedLectures(props){
   
@@ -21,7 +19,6 @@ function CreatedLectures(props){
                   name: 'Создать лекцию',
                   createLecture: true,
               }}/>
-              <DropDown data={["Саратов","Москва","Питер","Рязань","Самара","Волгоград","Сызрань","Астрахань","Куйбышев"]}/>
             </div>
           </div>
           

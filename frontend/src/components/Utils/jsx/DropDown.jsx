@@ -8,16 +8,9 @@ function DropDown(props) {
   let [chosenValue, setChosenValue] = useState('');
   let dropdown = 'dropdownbox';
 
-  const filteredElements = elements.filter(element => {
-    return element.toLowerCase().includes(chosenValue.toLowerCase())
-  })
-
-  //console.log(chosenValue);
-
   function changeValue(value){
     setChosenValue(value);
     setSelectOpen(false);
-    
   }
 
   function openSelectBottom() {
@@ -51,17 +44,7 @@ function DropDown(props) {
           </div>
           <div className={isSelectOpen ? dropdown + " show" : dropdown}>
             <div className='dropdown-box'>
-                {filteredElements.length != 0 ? 
-                    filteredElements.map((elem,index) => {
-                      return (
-                        <div 
-                              className="dropdown-item" 
-                              key={index}
-                              onClick={() => changeValue(elem)}>
-                              {elem}
-                        </div>)
-                    }) :
-                    elements.map((elem,index) => {
+              {elements.map((elem,index) => {
                       return (
                         <div 
                               className="dropdown-item" 
