@@ -19,8 +19,8 @@ function CreatedLectures(props){
           <div className="cards-block">
             <div className="new-lecture" onClick={() => navigate('/create_event')}>
               <WorkroomCard data={{
-                name: 'Создать лекцию',
-                createLecture: true,
+                  name: 'Создать лекцию',
+                  createLecture: true,
               }}/>
             </div>
             <div className="created-lectures">
