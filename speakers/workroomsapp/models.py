@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from speakers.utils.validators import PhotoValidator
 from workroomsapp.company.company_manager import CompanyManager
 from workroomsapp.customer.customer_manager import CustomerManager
 from workroomsapp.lecture.lecture_manager import LectureManager
@@ -70,11 +71,22 @@ class DocumentImage(models.Model):
     passport = models.ImageField(upload_to=document_image)  # фото паспорта
     selfie = models.ImageField(upload_to=document_image)  # селфи с паспортом
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.passport and self.selfie:
+            PhotoValidator(self.passport.path).save()
+            PhotoValidator(self.selfie.path).save()
+
 
 class DiplomaImage(models.Model):
     """Фотографии дипломов лектора"""
     lecturer = models.ForeignKey('Lecturer', on_delete=models.CASCADE, related_name='diploma_images')
     diploma = models.ImageField(upload_to=diploma_image)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.diploma:
+            PhotoValidator(self.diploma.path).save()
 
 
 class Person(models.Model):
@@ -109,6 +121,11 @@ class Person(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.photo:
+            PhotoValidator(self.photo.path).save()
 
 
 class Lecturer(models.Model):

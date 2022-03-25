@@ -12,6 +12,11 @@ LectureAsLecturerCreationSchema = Schema(
             type='string',
             enum=['Лекция Юрия Цезаря'],
         ),
+        "domain": Schema(
+            description='Тематика лекции',
+            type='array',
+            items=Schema(type='string', enum=['Генеалогия'])
+        ),
         "photo": Schema(
             description='Фотография лекции',
             type='bytes',

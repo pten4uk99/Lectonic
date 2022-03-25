@@ -24,7 +24,9 @@ class PersonAPIView(APIView):
 
         serializer.validated_data.pop('user')
         city = serializer.validated_data.pop('city')
-        serializer.validated_data.pop('photo')
+
+        if 'photo' in serializer.validated_data:
+            serializer.validated_data.pop('photo')
 
         return person_responses.created([{**serializer.validated_data, 'city': city.name}])
 
@@ -36,11 +38,13 @@ class PersonAPIView(APIView):
             return person_responses.profile_does_not_exist()
 
         serializer = PersonSerializer(person)
+
         photo_serializer = PersonPhotoGetSerializer(
             person,
             context={'request': request}
         )
-        serializer.data.pop('photo')
+        if 'photo' in serializer.data:
+            serializer.data.pop('photo')
 
         return person_responses.success([{
             **serializer.data,
@@ -65,7 +69,15 @@ class PersonAPIView(APIView):
         if 'city' in serializer.validated_data:
             serializer.validated_data['city'] = serializer.validated_data['city'].name
 
-        return person_responses.patched([serializer.validated_data])
+        if 'photo' in serializer.validated_data:
+            serializer.validated_data.pop('photo')
+
+        photo_serializer = PersonPhotoGetSerializer(person, context={'request': request})
+        return person_responses.patched([{
+            **serializer.validated_data,
+            **photo_serializer.data
+        }])
+
 
 
 class DocumentImageAPIVIew(APIView):

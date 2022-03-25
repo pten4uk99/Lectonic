@@ -29,10 +29,6 @@ def document_image(instance, filename):
 def diploma_image(instance, filename):
     user_id = get_id_with_prefix(instance.lecturer.person.user.pk)
     path = f'{user_id}/diploma/{user_id}_{filename}'
-
-    if default_storage.exists(path):
-        default_storage.delete(path)
-
     return path
 
 

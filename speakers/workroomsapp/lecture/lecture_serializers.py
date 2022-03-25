@@ -32,13 +32,7 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
 
     def validate_lecture(self, lecture):
         image_format = lecture.name.split('.')[-1]
-
-        if image_format not in ['jpg', 'jpeg', 'png', 'JPG']:
-            msg = 'Фотография может быть только в формате "jpg", "jpeg" или "png"'
-            raise serializers.ValidationError(msg)
-
         lecture.name = 'lecture.' + image_format
-
         return lecture
 
     def validate(self, data):

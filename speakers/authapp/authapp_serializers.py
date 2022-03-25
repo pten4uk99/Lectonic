@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from speakers.utils.constants import EMAIL_VALIDATOR
+from speakers.utils.validators import EMAIL_VALIDATOR
 from workroomsapp.models import Person
 
 User = get_user_model()

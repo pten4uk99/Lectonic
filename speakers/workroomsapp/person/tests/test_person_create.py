@@ -1,5 +1,6 @@
 import datetime
 
+from PIL import Image
 from django.urls import reverse
 from rest_framework.test import APITestCase, override_settings
 
@@ -16,7 +17,6 @@ class TestPersonCreate(APITestCase):
     profile_data['city'] = '1'
 
     def setUp(self):
-        self.profile_data['photo'] = test_image.create_image()
         temp_data = self.signup_data.copy()
         self.client.post(reverse('signup'), temp_data)
         City.objects.create(name='Москва', pk=1)

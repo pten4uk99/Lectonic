@@ -1,6 +1,7 @@
 import re
 import datetime
 
+from django.core.files.storage import default_storage
 from rest_framework import serializers
 
 from workroomsapp.models import Person, City, DocumentImage, Domain
@@ -14,7 +15,7 @@ class PersonPhotoGetSerializer(serializers.HyperlinkedModelSerializer):
 
 class PersonSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    photo = serializers.FileField()
+    photo = serializers.FileField(required=False)
     city = serializers.PrimaryKeyRelatedField(queryset=City.objects.all())
 
     class Meta:
@@ -69,14 +70,13 @@ class PersonSerializer(serializers.ModelSerializer):
 
     def validate_photo(self, photo):
         image_format = photo.name.split('.')[-1]
-
-        if image_format not in ['jpg', 'jpeg', 'png', 'JPG']:
-            msg = 'Фотография может быть только в формате "jpg", "jpeg" или "png"'
-            raise serializers.ValidationError(msg)
-
         photo.name = 'photo.' + image_format
-
         return photo
+
+    def update(self, instance, validated_data):
+        if 'photo' in validated_data and instance.photo:
+            default_storage.delete(instance.photo.path)
+        return super().update(instance, validated_data)
 
 
 class DocumentImageCreateSerializer(serializers.Serializer):
@@ -92,24 +92,12 @@ class DocumentImageCreateSerializer(serializers.Serializer):
 
     def validate_passport(self, passport):
         image_format = passport.name.split('.')[-1]
-
-        if image_format not in ['jpg', 'jpeg', 'png', 'JPG']:
-            msg = 'Паспорт может быть только в формате "jpg", "jpeg" или "png"'
-            raise serializers.ValidationError(msg)
-
         passport.name = 'passport.' + image_format
-
         return passport
 
     def validate_selfie(self, selfie):
         image_format = selfie.name.split('.')[-1]
-
-        if image_format not in ['jpg', 'jpeg', 'png', 'JPG']:
-            msg = 'Селфи может быть только в формате "jpg", "jpeg" или "png"'
-            raise serializers.ValidationError(msg)
-
         selfie.name = 'selfie.' + image_format
-
         return selfie
 
     def create(self, validated_data):

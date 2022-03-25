@@ -3,7 +3,7 @@ import re
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from speakers.utils.constants import EMAIL_VALIDATOR
+from speakers.utils.validators import EMAIL_VALIDATOR
 
 errors = {
     'blank': 'Поле не может быть пустым',
