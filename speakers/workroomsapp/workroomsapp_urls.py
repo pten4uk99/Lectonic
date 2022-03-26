@@ -1,6 +1,6 @@
 from django.urls import path
 
-from workroomsapp.calendar.calendar_views import *
+from workroomsapp.calendar.lecturer.lecturer_calendar_views import *
 from workroomsapp.lecture.lecture_views import *
 from workroomsapp.lecturer.lecturer_views import *
 from workroomsapp.customer.customer_views import *
@@ -14,6 +14,7 @@ urlpatterns = [
     path('domain/', DomainGetAPIView.as_view(), name='domain'),
 
     path('lecture/as_lecturer/', LectureAsLecturerAPIView.as_view(), name='lecture_as_lecturer'),
+    path('lecture/as_customer/', LectureAsLecturerAPIView.as_view(), name='lecture_as_lecturer'),
 
     path('calendar/lecturer/', LecturerCalendarAPIView.as_view(), name='lecturer_calendar'),
 

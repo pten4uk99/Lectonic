@@ -9,17 +9,17 @@ from workroomsapp.models import City, Domain
 
 
 @override_settings(MEDIA_URL=test_image.MEDIA_URL, MEDIA_ROOT=test_image.MEDIA_ROOT)
-class TestLecturerCalendarGet(APITestCase):
+class TestCustomerCalendarGet(APITestCase):
     signup_data = data.SIGNUP.copy()
     profile_data = data.PROFILE.copy()
     profile_data['city'] = '1'
-    lecturer_data = data.LECTURER.copy()
+    customer_data = data.CUSTOMER.copy()
 
     def setUp(self):
         temp_signup_data = self.signup_data.copy()
         temp_profile_data = self.profile_data.copy()
         temp_profile_data['photo'] = test_image.create_image()
-        temp_lecturer_data = self.lecturer_data.copy()
+        temp_customer_data = self.customer_data.copy()
 
         City.objects.create(pk=1, name='Москова')
         Domain.objects.create(pk=1, name='Канцелярия')
@@ -28,7 +28,7 @@ class TestLecturerCalendarGet(APITestCase):
 
         self.client.post(reverse('signup'), temp_signup_data)
         self.client.post(reverse('profile'), temp_profile_data)
-        self.client.post(reverse('lecturer'), temp_lecturer_data)
+        self.client.post(reverse('customer'), temp_customer_data)
 
         for i in range(3):
             self.client.post(reverse('lecture_as_lecturer'),

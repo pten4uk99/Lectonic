@@ -6,7 +6,8 @@ from workroomsapp.company.company_manager import CompanyManager
 from workroomsapp.customer.customer_manager import CustomerManager
 from workroomsapp.lecture.lecture_manager import LectureManager
 from workroomsapp.lecturer.lecturer_manager import LecturerManager
-from workroomsapp.utils.paths_for_media import document_image, diploma_image, lecturer_lecture_image, person_image
+from workroomsapp.utils.paths_for_media import document_image, diploma_image, lecturer_lecture_image, person_image, \
+    customer_lecture_image
 
 BaseUser = get_user_model()
 
@@ -255,6 +256,7 @@ class CustomerLectureRequest(models.Model):
         related_name='customer_lecture_request'
     )
     listeners = models.IntegerField()
+    photo = models.ImageField(upload_to=customer_lecture_image, null=True)
 
 
 class CompanyLectureRequest(models.Model):

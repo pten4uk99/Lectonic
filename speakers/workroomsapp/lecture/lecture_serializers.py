@@ -2,6 +2,7 @@ import datetime
 
 from rest_framework import serializers
 
+from workroomsapp.lecture.utils import check_datetime_for_lecture
 from workroomsapp.models import Lecture
 
 
@@ -35,15 +36,31 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
         lecture.name = 'lecture.' + image_format
         return lecture
 
+    def validate_photo(self, photo):
+        image_format = photo.name.split('.')[-1]
+        photo.name = 'photo.' + image_format
+        return photo
+
     def validate(self, data):
         date = data.pop('date')
         time_start = data.pop('time_start')
         time_end = data.pop('time_end')
 
+        # Когда будет реализовано создание лекции на несколько дат, тут надо будет делать цикл,
+        # В котором для каждой даты вызывается эта функция отдельно.
+        if not check_datetime_for_lecture(
+                self.context['request'].user.person.lecturer, date, time_start, time_end):
+            raise serializers.ValidationError('Событие на выбранное время уже существует')
+
         data['datetime'] = datetime.datetime(date.year, date.month, date.day,
                                              time_start.hour, time_start.minute)
-        data['duration'] = (datetime.timedelta(hours=time_end.hour, minutes=time_end.minute) -
-                            datetime.timedelta(hours=time_start.hour, minutes=time_end.minute)).seconds // 60
+
+        if data['datetime'] < datetime.datetime.now() + datetime.timedelta(days=1):
+            raise serializers.ValidationError('Между созданием и проведением лекции должно быть не менее 24 часов')
+
+        data['duration'] = ((datetime.datetime(date.year, date.month, date.day,
+                                               time_end.hour, time_end.minute)) - data['datetime']).seconds // 60
+
         return data
 
     def create(self, validated_data):

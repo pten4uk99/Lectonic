@@ -85,15 +85,61 @@ class TestLectureAsLecturerCreate(APITestCase):
             msg='Неверный путь изображения лекции'
         )
 
-    def test_wrong_date(self):
+    def test_with_existing_datetime(self):
         temp_data = self.lecture_data.copy()
         temp_data['photo'] = test_image.create_image()
-        temp_data['datetime'] = '2020-03-15'
-        response = self.client.post(reverse('lecture_as_lecturer'), self.lecture_data)
+        self.client.post(reverse('lecture_as_lecturer'), temp_data)
+
+        temp_data['photo'] = test_image.create_image()
+        response2 = self.client.post(reverse('lecture_as_lecturer'), temp_data)
         self.assertEqual(
-            response.status_code,
+            response2.status_code,
             400,
-            msg='Неверный статус ответа при неверно переданной дате\n'
-                f'Ответ: {response.data}'
+            msg='Неверный статус ответа при создании события на существующую дату\n'
+                f'Ответ: {response2.data}'
+        )
+
+        temp_data['photo'] = test_image.create_image()
+        temp_data['time_start'] = '15:40'
+        temp_data['time_end'] = '16:40'
+        response3 = self.client.post(reverse('lecture_as_lecturer'), temp_data)
+        self.assertEqual(
+            response3.status_code,
+            400,
+            msg='Неверный статус ответа при создании события на существующую дату\n'
+                f'Ответ: {response3.data}'
+        )
+
+        temp_data['photo'] = test_image.create_image()
+        temp_data['time_start'] = '16:00'
+        temp_data['time_end'] = '17:00'
+        response4 = self.client.post(reverse('lecture_as_lecturer'), temp_data)
+        self.assertEqual(
+            response4.status_code,
+            201,
+            msg='Неверный статус ответа при создании события на не существующую дату\n'
+                f'Ответ: {response4.data}'
+        )
+
+        temp_data['photo'] = test_image.create_image()
+        temp_data['time_start'] = '15:15'
+        temp_data['time_end'] = '15:30'
+        response5 = self.client.post(reverse('lecture_as_lecturer'), temp_data)
+        self.assertEqual(
+            response5.status_code,
+            201,
+            msg='Неверный статус ответа при создании события на не существующую дату\n'
+                f'Ответ: {response5.data}'
+        )
+
+        temp_data['photo'] = test_image.create_image()
+        temp_data['time_start'] = '15:15'
+        temp_data['time_end'] = '15:45'
+        response5 = self.client.post(reverse('lecture_as_lecturer'), temp_data)
+        self.assertEqual(
+            response5.status_code,
+            400,
+            msg='Неверный статус ответа при создании события на существующую дату\n'
+                f'Ответ: {response5.data}'
         )
 
