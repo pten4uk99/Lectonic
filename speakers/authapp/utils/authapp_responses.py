@@ -19,7 +19,7 @@ def unauthorized():
     return response.get_response(
         status=response.ERROR,
         detail=UNAUTHORIZED,
-        status_code=401
+        status_code=200
     )
 
 
