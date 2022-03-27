@@ -1,6 +1,6 @@
 from speakers.utils import response
 
-LECTURE_AS_LECTURER_CREATED = 'Лекция успешно создана'
+LECTURE_CREATED = 'Лекция успешно создана'
 
 DESCRIPTION = '\n\nВсе возможные статусы ответов:\n' \
               f'"{response.SUCCESS}"\n' \
@@ -9,9 +9,9 @@ DESCRIPTION = '\n\nВсе возможные статусы ответов:\n' \
               f'"{response.ERROR}"'
 
 
-def lecture_as_lecturer_created():
+def lecture_created():
     return response.get_response(
         status=response.CREATE,
-        detail=LECTURE_AS_LECTURER_CREATED,
+        detail=LECTURE_CREATED,
         status_code=201
     )

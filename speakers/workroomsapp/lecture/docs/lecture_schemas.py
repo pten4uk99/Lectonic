@@ -62,7 +62,7 @@ LectureAsLecturerCreateSchema201 = Schema(
     properties={
         **get_default_response(
             status=response.CREATE,
-            detail=lecture_responses.LECTURE_AS_LECTURER_CREATED
+            detail=lecture_responses.LECTURE_CREATED
         ),
         "data": Schema(
             type='string',

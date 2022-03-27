@@ -51,7 +51,7 @@ def lecturer_lecture_image(instance, filename):
 def customer_lecture_image(instance, filename):
     lecture_id = get_id_with_prefix(instance.lecture_request.lecture.pk)
 
-    user_id = get_id_with_prefix(instance.lecturer.person.user.pk)
+    user_id = get_id_with_prefix(instance.customer.person.user.pk)
     path = f'{user_id}/lectures/customer/{lecture_id}_{filename}'
 
     if user_id is None:

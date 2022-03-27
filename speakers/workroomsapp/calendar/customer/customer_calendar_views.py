@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 
 from workroomsapp.calendar.customer.customer_calendar_serializers import CustomerCalendarSerializer
 from workroomsapp.models import CustomerCalendar
-from workroomsapp.calendar.lecturer import lecturer_calendar_responses as responses
+from workroomsapp.calendar.customer import customer_calendar_responses as responses
 from workroomsapp.utils import workroomsapp_permissions
 
 

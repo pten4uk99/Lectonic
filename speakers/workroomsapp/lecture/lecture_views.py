@@ -18,4 +18,18 @@ class LectureAsLecturerAPIView(APIView):
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return lecture_responses.lecture_as_lecturer_created()
+        return lecture_responses.lecture_created()
+
+
+class LectureAsCustomerAPIView(APIView):
+    permission_classes = [workroomsapp_permissions.IsCustomer]
+
+    @swagger_auto_schema(deprecated=True)
+    def post(self, request):
+        serializer = LectureCreateAsCustomerSerializer(
+            data=request.data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return lecture_responses.lecture_created()

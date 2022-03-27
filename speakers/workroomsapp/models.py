@@ -250,7 +250,7 @@ class CustomerLectureRequest(models.Model):
         'LectureRequest',
         on_delete=models.CASCADE,
         related_name='customer_lecture_request')
-    customer = models.OneToOneField(
+    customer = models.ForeignKey(
         'Customer',
         on_delete=models.CASCADE,
         related_name='customer_lecture_request'
@@ -291,7 +291,6 @@ class Lecture(models.Model):
     )
     type = models.CharField(max_length=20, choices=TYPES)
     status = models.BooleanField(default=False)  # подтверждена/не просмотрена
-    duration = models.IntegerField(null=True, blank=True)  # Длительность лекции в минутах (нет необходимости использовать DateTimeRangeField)
     cost = models.IntegerField(default=0)  # стоимость лекции
     description = models.TextField(null=True, blank=True)
 
@@ -307,7 +306,8 @@ class Calendar(models.Model):
 
 
 class Event(models.Model):
-    datetime = models.DateTimeField()
+    datetime_start = models.DateTimeField()
+    datetime_end = models.DateTimeField()
     lecture_request = models.ForeignKey('LectureRequest', on_delete=models.CASCADE, related_name='events')
 
 

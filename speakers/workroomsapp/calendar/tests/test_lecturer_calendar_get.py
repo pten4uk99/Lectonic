@@ -36,9 +36,8 @@ class TestLecturerCalendarGet(APITestCase):
                                  'name': f'Моя лектушка {i}',
                                  'photo': test_image.create_image(),
                                  'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
-                                 'date': datetime.date.today() + datetime.timedelta(days=i),
-                                 'time_start': f'{15 + i}:30',
-                                 'time_end': f'{16 + i}:00',
+                                 'datetime': [str(datetime.datetime.now() + datetime.timedelta(days=2 + i)) + ',' +
+                                              str(datetime.datetime.now() + datetime.timedelta(days=2 + i, hours=1))],
                                  'type': 'offline'
                              })
         for i in range(4, 7):
@@ -47,10 +46,8 @@ class TestLecturerCalendarGet(APITestCase):
                                  'name': f'Моя лектушка {i}',
                                  'photo': test_image.create_image(),
                                  'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
-                                 'date': datetime.date.today() + datetime.timedelta(days=i-2),
-                                 'time_start': f'{15 + i}:30',
-                                 'time_end': f'{15 + i}:40',
-                                 'duration': '30',
+                                 'datetime': [str(datetime.datetime.now() + datetime.timedelta(days=2 + i)) + ',' +
+                                              str(datetime.datetime.now() + datetime.timedelta(days=2 + i, hours=1))],
                                  'type': 'offline'
                              })
 
@@ -58,6 +55,7 @@ class TestLecturerCalendarGet(APITestCase):
         response = self.client.get(
             reverse('lecturer_calendar'), {'year': datetime.datetime.now().year,
                                            'month': datetime.datetime.now().month})
+        # Если уже конец месяца, то события могут отображаться некорректно
         self.assertEqual(
             'data' in response.data and type(response.data['data']) == list, True,
             msg='В ответе нет списка data'

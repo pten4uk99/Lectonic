@@ -26,27 +26,26 @@ class LecturerCalendarSerializer(serializers.ModelSerializer):
         if not (year and month):
             raise serializers.ValidationError({'detail': "В запросе не передана дата"})
 
-        events = obj.calendar.events.order_by('datetime').filter(
-            Q(datetime__year=year) & Q(datetime__month=month))
+        events = obj.calendar.events.order_by('datetime_start').filter(
+            Q(datetime_start__year=year) & Q(datetime_start__month=month))
 
         data = []
 
         for event in events:
-            year = event.datetime.year
-            month = event.datetime.month
-            day = event.datetime.day
+            year = event.datetime_start.year
+            month = event.datetime_start.month
+            day = event.datetime_start.day
 
             person = event.lecture_request.lecturer_lecture_request.lecturer.person
             lecture = event.lecture_request.lecture
 
-            time_end = event.datetime + datetime.timedelta(minutes=lecture.duration)
             new_event = {
                 'lecturer': f'{person.last_name} {person.first_name} {person.middle_name or ""}',
                 'photo': build_photo_path(request, event.lecture_request.lecturer_lecture_request.photo.url),
                 'name': lecture.name,
                 'status': lecture.status,
-                'start': event.datetime.strftime('%H:%M'),
-                'end': time_end.strftime('%H:%M')
+                'start': event.datetime_start.strftime('%H:%M'),
+                'end': event.datetime_end.strftime('%H:%M')
             }
 
             if not data:

@@ -33,9 +33,8 @@ CUSTOMER = {
 
 LECTURE = {
     'name': 'Лекция супер хорошая лекция',
-    'time_start': '15:30',
-    'time_end': '16:00',
-    'date': datetime.date.today() + datetime.timedelta(days=2),
+    'datetime': [str(datetime.datetime.now() + datetime.timedelta(days=2)) + ',' +
+                 str(datetime.datetime.now() + datetime.timedelta(days=2, hours=1))],
     'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
     'hall_address': 'Москва, ул. Не московская, д. Домашний',
     'type': 'offline',
@@ -43,3 +42,6 @@ LECTURE = {
     'cost': '1000',
     'description': 'Отличное описание блин'
 }
+
+LECTURE_AS_CUSTOMER = LECTURE.copy()
+LECTURE_AS_CUSTOMER['listeners'] = 200

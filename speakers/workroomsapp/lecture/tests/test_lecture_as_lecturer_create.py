@@ -1,3 +1,4 @@
+import datetime
 import os
 
 from django.urls import reverse
@@ -100,8 +101,8 @@ class TestLectureAsLecturerCreate(APITestCase):
         )
 
         temp_data['photo'] = test_image.create_image()
-        temp_data['time_start'] = '15:40'
-        temp_data['time_end'] = '16:40'
+        temp_data['datetime'] = [str(datetime.datetime.now() + datetime.timedelta(days=2, minutes=30)) + ',' +
+                                 str(datetime.datetime.now() + datetime.timedelta(days=2, hours=2))]
         response3 = self.client.post(reverse('lecture_as_lecturer'), temp_data)
         self.assertEqual(
             response3.status_code,
@@ -111,8 +112,8 @@ class TestLectureAsLecturerCreate(APITestCase):
         )
 
         temp_data['photo'] = test_image.create_image()
-        temp_data['time_start'] = '16:00'
-        temp_data['time_end'] = '17:00'
+        temp_data['datetime'] = [str(datetime.datetime.now() + datetime.timedelta(days=2, hours=1)) + ',' +
+                                 str(datetime.datetime.now() + datetime.timedelta(days=2, hours=2))]
         response4 = self.client.post(reverse('lecture_as_lecturer'), temp_data)
         self.assertEqual(
             response4.status_code,
@@ -122,8 +123,8 @@ class TestLectureAsLecturerCreate(APITestCase):
         )
 
         temp_data['photo'] = test_image.create_image()
-        temp_data['time_start'] = '15:15'
-        temp_data['time_end'] = '15:30'
+        temp_data['datetime'] = [str(datetime.datetime.now() + datetime.timedelta(days=2, minutes=-15)) + ',' +
+                                 str(datetime.datetime.now() + datetime.timedelta(days=2))]
         response5 = self.client.post(reverse('lecture_as_lecturer'), temp_data)
         self.assertEqual(
             response5.status_code,
@@ -133,13 +134,12 @@ class TestLectureAsLecturerCreate(APITestCase):
         )
 
         temp_data['photo'] = test_image.create_image()
-        temp_data['time_start'] = '15:15'
-        temp_data['time_end'] = '15:45'
-        response5 = self.client.post(reverse('lecture_as_lecturer'), temp_data)
+        temp_data['datetime'] = [str(datetime.datetime.now() + datetime.timedelta(days=2, minutes=-15)) + ',' +
+                                 str(datetime.datetime.now() + datetime.timedelta(days=2, minutes=15))]
+        response6 = self.client.post(reverse('lecture_as_lecturer'), temp_data)
         self.assertEqual(
-            response5.status_code,
+            response6.status_code,
             400,
             msg='Неверный статус ответа при создании события на существующую дату\n'
-                f'Ответ: {response5.data}'
+                f'Ответ: {response6.data}'
         )
-
