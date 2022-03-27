@@ -1,3 +1,4 @@
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
 from workroomsapp.models import LecturerCalendar
@@ -9,6 +10,7 @@ from workroomsapp.utils import workroomsapp_permissions
 class LecturerCalendarAPIView(APIView):
     permission_classes = [workroomsapp_permissions.IsLecturer]
 
+    @swagger_auto_schema(deprecated=True)
     def get(self, request):
         lecturer_calendar = LecturerCalendar.objects.filter(lecturer=request.user.person.lecturer).first()
 

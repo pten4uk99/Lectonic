@@ -220,7 +220,7 @@ class Optional(models.Model):
 
 class Respondent(models.Model):
     """Откликнувшийся на заявку на лекцию"""
-    person = models.OneToOneField('Person', on_delete=models.CASCADE)
+    person = models.ForeignKey('Person', on_delete=models.CASCADE)
     confirmed = models.BooleanField(default=False)
 
 
@@ -240,7 +240,7 @@ class LecturerLectureRequest(models.Model):
     lecturer = models.ForeignKey(
         'Lecturer',
         on_delete=models.CASCADE,
-        related_name='lecturer_lecture_request'
+        related_name='lecturer_lecture_requests'
     )
     photo = models.ImageField(upload_to=lecturer_lecture_image, null=True)
 
@@ -253,7 +253,7 @@ class CustomerLectureRequest(models.Model):
     customer = models.ForeignKey(
         'Customer',
         on_delete=models.CASCADE,
-        related_name='customer_lecture_request'
+        related_name='customer_lecture_requests'
     )
     listeners = models.IntegerField()
     photo = models.ImageField(upload_to=customer_lecture_image, null=True)
@@ -265,10 +265,10 @@ class CompanyLectureRequest(models.Model):
         on_delete=models.CASCADE,
         related_name='company_lecture_request'
     )
-    company = models.OneToOneField(
+    company = models.ForeignKey(
         'Company',
         on_delete=models.CASCADE,
-        related_name='company_lecture_request'
+        related_name='company_lecture_requests'
     )
     listeners = models.IntegerField()
 

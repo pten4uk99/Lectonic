@@ -41,9 +41,6 @@ class TestCustomerCalendarGet(APITestCase):
                                  'listeners': '30',
                                  'type': 'offline'
                              })
-            print(str(datetime.datetime.now() + datetime.timedelta(days=2 + i)) + ',' +
-                                              str(datetime.datetime.now() + datetime.timedelta(days=2 + i, hours=1)))
-
         for i in range(4, 7):
             self.client.post(reverse('lecture_as_customer'),
                              {
@@ -55,8 +52,6 @@ class TestCustomerCalendarGet(APITestCase):
                                  'listeners': '30',
                                  'type': 'offline'
                              })
-            print(str(datetime.datetime.now() + datetime.timedelta(days=2 + i)) + ',' +
-                                              str(datetime.datetime.now() + datetime.timedelta(days=2 + i, hours=1)))
 
     def test_get_calendar(self):
         response = self.client.get(

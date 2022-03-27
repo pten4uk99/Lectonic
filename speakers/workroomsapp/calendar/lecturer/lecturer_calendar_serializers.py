@@ -39,14 +39,33 @@ class LecturerCalendarSerializer(serializers.ModelSerializer):
             person = event.lecture_request.lecturer_lecture_request.lecturer.person
             lecture = event.lecture_request.lecture
 
+            respondents = event.lecture_request.respondents.all()
+            confirmed_respondent = respondents.filter(confirmed=True).first()
+            respondent_list = []
+            for respondent in respondents:
+                respondent_list.append({
+                    'id': respondent.person.user.pk,
+                    'first_name': respondent.person.first_name,
+                    'last_name': respondent.person.last_name
+                })
+
             new_event = {
-                'lecturer': f'{person.last_name} {person.first_name} {person.middle_name or ""}',
+                'creator': (person.first_name, person.last_name),
+                'customer': '',
                 'photo': build_photo_path(request, event.lecture_request.lecturer_lecture_request.photo.url),
+                'respondents': respondent_list,
                 'name': lecture.name,
+                'hall_address': lecture.optional.hall_address,
                 'status': lecture.status,
                 'start': event.datetime_start.strftime('%H:%M'),
                 'end': event.datetime_end.strftime('%H:%M')
             }
+
+            if confirmed_respondent:
+                confirmed_person = confirmed_respondent.person
+                new_event['customer'] = (confirmed_person.last_name,
+                                         confirmed_person.first_name,
+                                         confirmed_person.middle_name or "")
 
             if not data:
                 data.append(

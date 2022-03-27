@@ -46,7 +46,7 @@ class CustomerCalendarSerializer(serializers.ModelSerializer):
                 })
 
             new_event = {
-                'creator': (person.first_name, person.last_name),
+                'creator': [person.first_name, person.last_name],
                 'lecturer': '',
                 'respondents': respondent_list,
                 'photo': build_photo_path(request, event.lecture_request.customer_lecture_request.photo.url),
