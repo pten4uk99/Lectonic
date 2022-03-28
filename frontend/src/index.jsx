@@ -13,6 +13,7 @@ import profile from "~@/Profile/redux/reducers/profile";
 import event from "~@/WorkRooms/CreateEvent/redux/reducers/event";
 import permissions from "~@/Authorization/redux/reducers/permissions";
 import addRole from "~@/RegistrationRole/redux/reducers/index"
+import dropdown from "~@/Utils/redux/reducers/dropdown" 
 
 console.clear()
 
@@ -24,6 +25,7 @@ let reducer = combineReducers({
   profile,
   calendar,
   dateDetail,
+  dropdown,
 })
 
 const store = createStore(
