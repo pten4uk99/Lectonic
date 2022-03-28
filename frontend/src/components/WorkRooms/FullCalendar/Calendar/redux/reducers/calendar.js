@@ -5,6 +5,7 @@ const initialState = {
   currentDate: date,
   checkedDate: undefined,
   hoverDate: undefined,
+  modalChooseDates: [],
   swap: false,
   swapSideClass: '',
 }
@@ -50,6 +51,11 @@ export default function calendar(state = initialState, action) {
       return {
         ...state,
         swapSideClass: '',
+      }
+      case 'SWAP_MODAL_CHOOSE_DATES':
+      return {
+        ...state,
+        modalChooseDates: action.payload.dates
       }
     default:
       return state

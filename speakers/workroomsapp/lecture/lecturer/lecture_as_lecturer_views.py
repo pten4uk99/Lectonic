@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.lecturer.lecture_as_lecturer_serializers import *
-from workroomsapp.models import Respondent
+from workroomsapp.models import Respondent, CustomerLectureRequest
 from workroomsapp.utils import workroomsapp_permissions
 
 
@@ -20,6 +20,16 @@ class LectureAsLecturerAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return lecture_responses.lecture_created()
+
+    @swagger_auto_schema(deprecated=True)
+    def get(self, request):
+        customer_lectures = CustomerLectureRequest.objects.order_by(
+            'lecture_request__events__datetime_start').all()
+
+        serializer = LectureAsLecturerGetSerializer(customer_lectures, many=True)
+        return lecture_responses.success_get_lectures(serializer.data)
+
+
 
 
 class LectureResponseAPIView(APIView):

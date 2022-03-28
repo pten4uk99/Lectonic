@@ -2,16 +2,8 @@ import datetime
 
 
 def convert_datetime(str_start, str_end):
-    str_list_start = str_start.split()[0].split('-') + str_start.split()[1].split(':')
-    str_list_start.pop()
-    int_list_start = list(map(int, str_list_start))
-    start = datetime.datetime(*int_list_start)
-
-    str_list_end = str_end.split()[0].split('-') + str_end.split()[1].split(':')
-    str_list_end.pop()
-    int_list_end = list(map(int, str_list_end))
-    end = datetime.datetime(*int_list_end)
-
+    start = datetime.datetime.strptime(str_start, '%Y-%m-%dT%H:%M')
+    end = datetime.datetime.strptime(str_end, '%Y-%m-%dT%H:%M')
     return start, end
 
 
@@ -36,7 +28,7 @@ def check_datetime_for_lecture_as_lecturer(lecturer, date, time_start, time_end)
     today_start = datetime.datetime(date.year, date.month, date.day, 0, 0)
     today_end = datetime.datetime(date.year, date.month, date.day, 23, 59)
 
-    for lecturer_lecture_request in lecturer.lecturer_lecture_request.all():
+    for lecturer_lecture_request in lecturer.lecturer_lecture_requests.all():
         events_today = lecturer_lecture_request.lecture_request.events.filter(
             datetime_start__range=(today_start, today_end))
 
@@ -74,7 +66,7 @@ def check_datetime_for_lecture_as_customer(customer, date, time_start, time_end)
     today_start = datetime.datetime(date.year, date.month, date.day, 0, 0)
     today_end = datetime.datetime(date.year, date.month, date.day, 23, 59)
 
-    for customer_lecture_request in customer.customer_lecture_request.all():
+    for customer_lecture_request in customer.customer_lecture_requests.all():
         events_today = customer_lecture_request.lecture_request.events.filter(
             datetime_start__range=(today_start, today_end))
 

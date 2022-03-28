@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react'
 import {connect} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 
 import calendarIcon from '~/assets/img/event/calendar-icon.svg'
 import photoIcon from '~/assets/img/photo-icon.svg'
@@ -20,6 +20,7 @@ import CalendarModal, {getMonth} from "./CalendarModal";
 
 function CreateEvent(props) {
   let navigate = useNavigate()
+  let [searchParams, setSearchParams] = useSearchParams()
   useEffect(() => {
     if (
       !props.store.permissions.is_lecturer && 
@@ -27,8 +28,9 @@ function CreateEvent(props) {
     ) navigate(reverse('add_role'))
   }, [props.store.permissions.is_lecturer, props.store.permissions.is_customer])
 
+  let role = searchParams.get('role')
   
-  let checkedDate = props.store.calendar.checkedDate
+  let chooseDates = props.store.calendar.modalChooseDates
   let selectedDomains = props.store.event.domain
   let eventType = props.store.event.type
   let place = props.store.event.place
@@ -37,14 +39,14 @@ function CreateEvent(props) {
   
   let [requiredFields, setRequiredFields] = useState({
     name: '',
-    date: checkedDate,
+    date: chooseDates,
     // timeStart: '',
     // timeEnd: ''
   })
   
   useEffect(() => {
-    setRequiredFields({...requiredFields, date: checkedDate})
-  }, [checkedDate])
+    setRequiredFields({...requiredFields, date: chooseDates})
+  }, [chooseDates])
   
   let [domainArray, setDomainArray] = useState(null)
   
@@ -68,14 +70,18 @@ function CreateEvent(props) {
     e.preventDefault()
     let formData = new FormData(e.target)
     selectedDomains.map((elem) => formData.append('domain',  elem))
-    formData.set(
-      'date', 
-      `${requiredFields.date.getFullYear()}-${requiredFields.date.getMonth() + 1}-${requiredFields.date.getDate()}`)
+    for (let date of chooseDates) formData.append(
+      'datetime',
+      (`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}T${formData.get('time_start')}` + 
+      ',' +
+      `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}T${formData.get('time_end')}`)
+    )
     formData.set('type', eventType)
-    createEvent(formData)
+    createEvent(formData, role)
       .then(response => response.json())
       .then(data => {
-        if (data.status === 'created') navigate(reverse('workroom'))})
+        if (data.status === 'created') navigate(reverse('workroom'))
+      })
       .catch(error => console.log('Ошибка в создании лекции: ', error))
   }
   
@@ -86,7 +92,7 @@ function CreateEvent(props) {
       </div>
 
       <form onSubmit={(e) => submitFormHandler(e)}>
-        <div className='create-event__wrapper'>
+        <div className={role === 'customer' ? 'create-event__wrapper customer' : 'create-event__wrapper'}>
           <div className='heading'>
             <h1 className='main-heading'>Создание мероприятия</h1>
           </div>
@@ -164,10 +170,11 @@ function CreateEvent(props) {
           <div className='date flex'>
             <div className='open-calendar' onClick={props.ActivateModal}>
               <img src={calendarIcon} alt=""/>
-              {checkedDate ? 
-                <div className="calendar-modal__date ml-8">
-                  {checkedDate.getDate()} {getMonth(checkedDate.getMonth())}
-                </div> : 
+              {chooseDates.length > 0 ? 
+                chooseDates.map((elem, index) => (
+              <div className="calendar-modal__date ml-8" key={index}>
+                {elem.getDate()} {getMonth(elem.getMonth())}
+              </div>)) : 
                 <div className='date-link'>Открыть календарь</div>}
               
             </div>
@@ -187,6 +194,23 @@ function CreateEvent(props) {
             <span>до</span>
             <input name='time_end' type="time"/>
           </div>
+
+          {role === 'customer' && 
+            <>
+              <div className='listeners-l label'>
+                Количество слушателей:
+                <span className="required-sign step-block__required-sign">*</span>
+              </div>
+              <div className='listeners flex'>
+                <input name='listeners' 
+                       type='number'
+                       min='0'
+                       step='10'
+                       className='text-input' 
+                       autoComplete='none'
+                       onChange={(e) => setRequiredFields({...requiredFields, name: e.target.value})}/>
+              </div>
+            </>}
           
           <div className='workspace-l label'>Помещение для лекции:</div>
           <div className='workspace flex'>

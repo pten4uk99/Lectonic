@@ -5,15 +5,20 @@ import {SwapToCustomer, SwapToLecturer, UpdateProfile} from "../../../Profile/re
 import {connect} from "react-redux";
 import {getProfileInfo} from "../ajax/workRooms";
 import {useNavigate} from "react-router-dom";
+import {reverse} from "../../../../ProjectConstants";
 
 
 function ProfileInfo(props){
   let navigate = useNavigate()
   const profile = props.store.profile
-  const utils = props.store.profile.utils
   let btnClassName = "profile-about__btn-role"
+  
+  let permissions = props.store.permissions
 
   useEffect(() => {
+    if (permissions.is_lecturer) props.SwapToLecturer()
+    else if (permissions.is_customer) props.SwapToCustomer()
+    
     getProfileInfo()
       .then(response => response.json())
       .then(data => {
@@ -39,13 +44,16 @@ function ProfileInfo(props){
         <span>{profile.middle_name}</span>
       </div>
       <div className="profile-about__btn-box">
-        <button className="profile-about__btn-add-role">
+        <button className="profile-about__btn-add-role" 
+                onClick={() => navigate(reverse('add_role'))}>
           <img src={iconPlus} alt="icon-plus"/>
         </button>
-        <button className={utils.lecturer ? btnClassName + " active" : btnClassName} 
-                onClick={props.SwapToLecturer}>Лектор</button>
-        <button className={utils.customer ? btnClassName + " active" : btnClassName} 
-                onClick={props.SwapToCustomer}>Заказчик</button>
+        {permissions.is_lecturer && 
+          <button className={profile.is_lecturer ? btnClassName + " active" : btnClassName} 
+                onClick={props.SwapToLecturer}>Лектор</button>}
+        {permissions.is_customer && 
+          <button className={profile.is_customer ? btnClassName + " active" : btnClassName} 
+                onClick={props.SwapToCustomer}>Заказчик</button>}
       </div> 
     </div>
     )

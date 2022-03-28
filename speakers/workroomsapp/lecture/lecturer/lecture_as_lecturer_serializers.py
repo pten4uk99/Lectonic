@@ -6,7 +6,7 @@ from workroomsapp.lecture.utils import (
     convert_datetime,
     check_datetime_for_lecture_as_lecturer
 )
-from workroomsapp.models import Lecture
+from workroomsapp.models import Lecture, CustomerLectureRequest, Person
 
 
 class LectureCreateAsLecturerSerializer(serializers.Serializer):
@@ -75,3 +75,17 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
             description=validated_data.get('description'),
         )
 
+
+class LectureAsLecturerGetSerializer(serializers.ModelSerializer):
+    lecture_id = serializers.PrimaryKeyRelatedField(queryset=Lecture.objects.all())
+    customer_first_name = serializers.StringRelatedField(source='first_name')
+    customer_last_name = serializers.StringRelatedField(source='last_name')
+
+    class Meta:
+        model = CustomerLectureRequest
+        fields = [
+            'lecture_id',
+            'photo',
+            'customer_first_name',
+            'customer_last_name',
+        ]

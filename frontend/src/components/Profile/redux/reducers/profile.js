@@ -9,10 +9,6 @@ const initialState = {
   middle_name: "",
   is_lecturer: true,
   is_customer: false,
-  utils: {
-    lecturer: true,
-    customer: false
-  },
   birth_date: {
     year: today.year,
     month: today.month,
@@ -23,25 +19,18 @@ const initialState = {
 export default function profile(state=initialState, action) {
   switch (action.type) {
     case "UPDATE_PROFILE":
-      return {
-        ...action.payload, 
-        utils: {...state.utils}
-      }
+      return {...state, ...action.payload}
     case "SWAP_TO_LECTURER":
       return {
         ...state,
-        utils: {
-          lecturer: true, 
-          customer: false
-        }
+        is_lecturer: true,
+        is_customer: false
       }
     case "SWAP_TO_CUSTOMER":
       return {
         ...state,
-        utils: {
-          lecturer: false, 
-          customer: true
-        }
+        is_lecturer: false,
+        is_customer: true
       }
     case "UPDATE_BIRTH_DATE":
       return {

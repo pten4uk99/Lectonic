@@ -10,6 +10,13 @@ import {SetCheckedDate} from "../../Calendar/redux/actions/calendar";
 function DateDetail(props) {
   let navigate = useNavigate()
   
+  function getRole() {
+    let isLecturer = props.store.profile.is_lecturer
+    let isCustomer = props.store.profile.is_customer
+    if (isLecturer) return 'lecturer'
+    else if (isCustomer) return 'customer'
+  }
+  
   let date = props.store.calendar.checkedDate
   let year = date?.getFullYear()
   let month = getMonth(date?.getMonth())
@@ -65,7 +72,7 @@ function DateDetail(props) {
             потенциальные слушатели могли откликнуться
           </p>
           <button className='create-event' 
-                  onClick={() => navigate(reverse('create_event'))}>Создать мероприятие</button>
+                  onClick={() => navigate(reverse('create_event', {role: getRole()}))}>Создать мероприятие</button>
         </div>
       )}
     </div>

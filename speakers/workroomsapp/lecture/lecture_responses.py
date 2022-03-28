@@ -107,3 +107,11 @@ def success_denied():
         status_code=200
     )
 
+
+def success_get_lectures(data):
+    return response.get_response(
+        status=response.SUCCESS,
+        data=data,
+        status_code=200
+    )
+

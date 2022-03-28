@@ -23,14 +23,14 @@ export function getDomainArray() {
   )
 }
 
-export function createEvent(formData) {
+export function createEvent(formData, role) {
   const options = {
     method: 'POST',
     body: formData,
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/lecture/as_lecturer/`,
+    `${baseURL}/api/workrooms/lecture/${role === 'lecturer' ? 'as_lecturer' : role === 'customer' && 'as_customer'}/`,
     options
   )
 }

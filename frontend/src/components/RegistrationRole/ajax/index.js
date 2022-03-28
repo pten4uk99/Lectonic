@@ -39,3 +39,15 @@ export function createLecturer(formData) {
     options
   )
 }
+
+export function createCustomer(formData) {
+  const options = {
+    method: 'POST',
+    body: formData,
+    credentials: 'include',
+  }
+  return fetch(
+    `${baseURL}/api/workrooms/customer/`,
+    options
+  )
+}

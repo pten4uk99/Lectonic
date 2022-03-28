@@ -7,7 +7,7 @@ import {DeactivateModal} from "../../../Layout/redux/actions/header";
 
 
 function CalendarModal(props) {
-  let checkedDate = props.store.calendar.checkedDate
+  let chooseDates = props.store.calendar.modalChooseDates
   
   return (
     <div className="calendar-modal__wrapper">
@@ -20,16 +20,15 @@ function CalendarModal(props) {
         <div className="calendar-modal__dates-block">
           <span>Вы выбрали:</span>
           <div className="calendar-modal__dates-list">
-            {checkedDate && 
-              <div className="calendar-modal__date">
-                {checkedDate.getDate()} {getMonth(checkedDate.getMonth())}
-              </div>}
-            
+            {chooseDates.map((elem, index) => (
+              <div className="calendar-modal__date" key={index}>
+                {elem.getDate()} {getMonth(elem.getMonth())}
+              </div>))}
           </div>
         </div>
         <button className="btn calendar-modal__button" 
              onClick={props.DeactivateModal} 
-                disabled={!Boolean(checkedDate)}>Подтвердить</button>
+                disabled={!Boolean(chooseDates.length > 0)}>Подтвердить</button>
       </div>
     </div>
   )

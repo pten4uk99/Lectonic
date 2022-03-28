@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
-
 import {connect} from "react-redux";
+
 import LecturerStep1 from "./LecturerStep1";
 import LecturerStep2 from "./LecturerStep2";
 import LecturerStep3 from "./LecturerStep3";
@@ -18,6 +18,9 @@ function LecturerSteps(props) {
     if (props.store.permissions.is_lecturer) navigate(reverse('workroom'))
   }, [props.store.permissions.is_lecturer])
   
+  useEffect(() => {
+    props.SwapAddRoleStep(1)
+  }, [])
   
   let currentStep = props.store.addRole.main.step
   
@@ -90,6 +93,5 @@ export default connect(
   dispatch => ({
     SwapLecturer: (is_lecturer) => dispatch(SwapLecturer(is_lecturer)),
     SwapAddRoleStep: (step) => dispatch(SwapAddRoleStep(step)),
-    SwapChooseRoleVisible: (visible) => dispatch(SwapChooseRoleVisible(visible)),
   })
 )(LecturerSteps)

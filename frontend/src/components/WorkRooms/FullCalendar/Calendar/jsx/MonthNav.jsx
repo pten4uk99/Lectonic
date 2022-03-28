@@ -5,7 +5,7 @@ import {
   SwapMonthToPrev,
 } from '~@/WorkRooms/FullCalendar/Calendar/redux/actions/calendar'
 import { MONTHS } from '~@/WorkRooms/FullCalendar/Calendar/utils/calendar'
-import {getEventsForMonth} from "../ajax/dateDetail";
+import {getEventsForCustomerMonth, getEventsForLecturerMonth} from "../ajax/dateDetail";
 import {UpdateEvents} from "../../DateDetail/redux/actions/dateDetail";
 
 
@@ -15,16 +15,23 @@ function MonthNav(props) {
   
   function updateEvents(year, month) {
     if (!props.store.header.modalActive) {
-      getEventsForMonth(year, month + 1)
-        .then(response => response.json())
-        .then(data => props.UpdateEvents(data.data))
-        .catch(error => console.log('Ошибка при получении данных календаря (MonthNav: 21):', error))
+      if (props.store.profile.is_lecturer) {
+        getEventsForLecturerMonth(year, month + 1)
+          .then(response => response.json())
+          .then(data => props.UpdateEvents(data.data))
+          .catch(error => console.log('Ошибка при получении данных календаря:', error))
+      } else if (props.store.profile.is_customer) {
+        getEventsForCustomerMonth(year, month + 1)
+          .then(response => response.json())
+          .then(data => props.UpdateEvents(data.data))
+          .catch(error => console.log('Ошибка при получении данных календаря:', error))
+      }
     }
   }
   
   useEffect(() => {
     updateEvents(currentYear, currentMonth)
-  }, [props.store.header.modalActive, props.store.calendar.currentDate])
+  }, [props.store.header.modalActive, props.store.calendar.currentDate, props.store.profile])
 
   return (
     <nav className='month-nav'>

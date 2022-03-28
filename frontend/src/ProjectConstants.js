@@ -1,4 +1,4 @@
-export const baseURL = 'https://dev.lectonic.ru'; // случайно могу иногда забыть поменять на dev.lectonic.ru
+export const baseURL = 'http://127.0.0.1:8000'; // случайно могу иногда забыть поменять на dev.lectonic.ru
 
 const routes = {
   'index': '/',
@@ -18,8 +18,16 @@ const routes = {
   'change_password': '/change_password',
 } // сюда прописываем все роуты и их имена (имя: роут)
 
-export function reverse(name) {
-  return routes[name]
+export function reverse(name, params=null) {
+  let query = null
+  
+  if (params) {
+    query = '?'
+    for (let param in params) {
+      query += `${param}=${params[param]}&`
+    }
+  }
+  return query ? routes[name] + query : routes[name]
 }
 
 

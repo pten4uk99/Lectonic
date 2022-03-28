@@ -12,6 +12,7 @@ import {
   checkNeedSwapToPrevMonth,
 } from '~@/WorkRooms/FullCalendar/Calendar/utils/date'
 import Events from './Events/Events'
+import {SwapModalChooseDates} from "../../redux/actions/calendar";
 
 
 function Date(props) {
@@ -61,11 +62,20 @@ export default connect(
     SwapMonthToNext: () => dispatch(SwapMonthToNext()),
     SwapMonthToPrev: () => dispatch(SwapMonthToPrev()),
     SetHoverDate: date => dispatch(SetHoverDate(date)),
+    SwapModalChooseDates: dates => dispatch(SwapModalChooseDates(dates)),
+    
   })
 )(Date)
 
 
 function getClassName(props) {
+  if (props.store.header.modalActive) {
+    let choseDates = props.store.calendar.modalChooseDates
+    for (let date of choseDates) {
+      if (checkEqualDates(props.date, date)) return "calendar-date active"
+    }
+  } 
+  
   let className = 'calendar-date'
 
   if (props.store.calendar.currentDate.getMonth() !== props.date.getMonth())
@@ -86,6 +96,7 @@ function clickHandler(props) {
     props.SwapMonthToPrev()
   }
   props.SetCheckedDate(props.date)
+  SwapChooseDates(props)
 }
 
 function hoverHandler(props, enter) {
@@ -96,4 +107,20 @@ function hoverHandler(props, enter) {
   enter
     ? props.SetHoverDate(props.date)
     : props.SetHoverDate(props.store.calendar.checkedDate)
+}
+
+
+function SwapChooseDates(props) {
+  let choseDates = props.store.calendar.modalChooseDates
+  let newDates = []
+  let contains = false
+  
+  for (let date of choseDates) {
+    if (!checkEqualDates(props.date, date)) {
+      newDates.push(date)
+    } else contains = true
+  }
+  if (!contains) newDates.push(props.date)
+  
+  props.SwapModalChooseDates(newDates)
 }
