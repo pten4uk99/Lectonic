@@ -23,7 +23,7 @@ function Modal(props) {
           <img className='modal__close' 
              src={closeIcon} 
              alt='закрыть' 
-             onClick={() => {props.DeactivateModal(); props.SetCheckedDate('')}}/>
+             onClick={() => {props.DeactivateModal()}}/>
         </div>
         <div className="modal__body">
           {props.children}

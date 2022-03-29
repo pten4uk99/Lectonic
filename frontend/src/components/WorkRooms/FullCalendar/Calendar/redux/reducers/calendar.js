@@ -3,7 +3,7 @@ let date = new Date()
 const initialState = {
   today: date,
   currentDate: date,
-  checkedDate: undefined,
+  checkedDate: date,
   hoverDate: undefined,
   modalChooseDates: [],
   swap: false,

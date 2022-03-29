@@ -33,7 +33,7 @@ class Domain(models.Model):
 class CustomerDomain(models.Model):
     """Сфера деятельности заказчика: физлицо"""
     customer = models.ForeignKey('Customer', on_delete=models.CASCADE)  # заказчик
-    domain = models.OneToOneField('Domain', on_delete=models.CASCADE)  # сфера деятельности
+    domain = models.ForeignKey('Domain', on_delete=models.CASCADE)  # сфера деятельности
 
     def __str__(self):
         return f'Сфера деятельности: {self.domain.name}. Заказчик: {self.customer.person.name}'
