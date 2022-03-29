@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from speakers.utils.validators import EMAIL_VALIDATOR
 from workroomsapp.models import Person
 
 User = get_user_model()
@@ -49,7 +50,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         5. В строке не может быть пробелов
         '''
 
-        match = re.findall(r'^[A-Za-z0-9]+@[A-Za-z0-9]+\.[a-z]{2,4}$', email)
+        match = re.findall(EMAIL_VALIDATOR, email)
 
         if not match:
             raise ValidationError('Некорректный e-mail')

@@ -1,11 +1,13 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, override_settings
 
 from authapp.models import User
 from speakers.utils.tests import data
+from speakers.utils.tests.upload_image import test_image
 from workroomsapp.models import City, Person, Domain, Lecturer
 
 
+@override_settings(MEDIA_URL=test_image.MEDIA_URL, MEDIA_ROOT=test_image.MEDIA_ROOT)
 class TestLecturerCreate(APITestCase):
     signup_data = data.SIGNUP.copy()
     profile_data = data.PROFILE.copy()

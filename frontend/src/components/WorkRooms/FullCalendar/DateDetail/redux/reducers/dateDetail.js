@@ -7,7 +7,6 @@ export default function dateDetail(state = initialState, action) {
       for (let date of newEvents) {
         date.date = new Date(date.date)
       }
-      console.log(newEvents)
       return newEvents
     default:
       return state

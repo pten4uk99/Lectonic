@@ -1,11 +1,12 @@
 // Обертка для карточки + общие стили
 
 .workroom-card__box{
+    display: inline-block
     box-sizing: border-box;
-    font-family: 'Montserrat';
+    font-family: 'Montserrat', sans-serif;
     border-radius: 18px;
     text-align: center;
-    margin-right: 12px;
+    margin-left: 12px;
     width: 240px
     overflow: hidden;
 }
@@ -62,14 +63,15 @@
 // Карточка подтвержденные лекции -------------------
 
 .box-shadow{
-    box-shadow: 0 0 20px rgba(0, 6, 32, 0.1);
+    box-shadow: 0 0 15px rgba(0, 6, 32, 0.07);
 }
 
 .workroom-card__box-wrapper{
-    box-shadow: 0 0 20px rgba(0, 6, 32, 0.1);
+    box-shadow: 0 0 15px rgba(0, 6, 32, 0.1);
     border-radius: 18px;
     border: 1px solid #DBDBDB;
     height: 337px;
+    //width: 240px
     padding: 20px;
     box-sizing: border-box;
     position: relative;
@@ -123,6 +125,7 @@
     line-height: 17px;
     background-color: #fff;
     border: 1px solid black;
+    width: 80%
     position: absolute;
     bottom: 20px;
     left: 27px;

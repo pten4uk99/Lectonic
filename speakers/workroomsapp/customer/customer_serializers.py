@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from workroomsapp.models import Customer
+from workroomsapp.models import Customer, Domain
 
 
 class CustomerCreateSerializer(serializers.Serializer):
@@ -16,12 +16,10 @@ class CustomerCreateSerializer(serializers.Serializer):
         ]
 
     def validate_domain(self, domain):
-        try:
-            validated_domain = list(map(int, domain))
-        except ValueError:
-            raise serializers.ValidationError('Тематика должна быть числом')
-
-        return validated_domain
+        for name in domain:
+            if not Domain.objects.filter(name=name).exists():
+                raise serializers.ValidationError('Данной тематики не существует')
+        return domain
 
     def create(self, validated_data):
         return Customer.objects.create_customer(

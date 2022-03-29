@@ -12,6 +12,11 @@ LectureAsLecturerCreationSchema = Schema(
             type='string',
             enum=['Лекция Юрия Цезаря'],
         ),
+        "domain": Schema(
+            description='Тематика лекции',
+            type='array',
+            items=Schema(type='string', enum=['Генеалогия'])
+        ),
         "photo": Schema(
             description='Фотография лекции',
             type='bytes',
@@ -57,7 +62,7 @@ LectureAsLecturerCreateSchema201 = Schema(
     properties={
         **get_default_response(
             status=response.CREATE,
-            detail=lecture_responses.LECTURE_AS_LECTURER_CREATED
+            detail=lecture_responses.LECTURE_CREATED
         ),
         "data": Schema(
             type='string',

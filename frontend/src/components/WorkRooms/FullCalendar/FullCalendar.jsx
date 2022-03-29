@@ -4,9 +4,15 @@ import Calendar from './Calendar/jsx/Calendar'
 import DateDetail from './DateDetail/jsx/DateDetail'
 
 function FullCalendar(props) {
+  let isLecturer = props.store.profile.is_lecturer
+  let isCustomer = props.store.profile.is_customer
+  
   return (
     <div className="calendar__block">
-      <div className="workroom__block-header"><span>Календарь лектора</span></div>
+      <div className="workroom__block-header">
+        {isLecturer && <span>Календарь лектора</span>}
+        {isCustomer && <span>Календарь заказчика</span>}
+      </div>
       <div className='calendar__wrapper'>
         <Calendar/>
         <DateDetail/>

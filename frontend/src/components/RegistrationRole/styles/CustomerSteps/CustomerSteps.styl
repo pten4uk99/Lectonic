@@ -1,38 +1,39 @@
-.customer-steps__wrapper {
+.customer-steps__radio {
   display: flex
-  align-items: center
-  flex-direction: column
-  width: 100%
-  .customer-steps__radio {
+  .customer-steps__choose-subrole {
     display: flex
-    justify-content: center
-    .customer-steps__choose-subrole {
+    .customer, .company {
       display: flex
-      transform: translateX(-20px)
-      .customer, .company {
+      align-items: center
+      cursor: pointer
+      .customer-steps__radio-button {
         display: flex
+        justify-content: center;
         align-items: center
-        cursor: pointer
-        .customer-steps__radio-button {
-          display: flex
-          justify-content: center;
-          align-items: center
-          width: 16px
-          height: 16px
+        width: 16px
+        height: 16px
+        border-radius: 50%
+        box-shadow: inset 0 0 10px rgba(0, 6, 32, 0.3);
+        .active {
+          width: 6px
+          height: 6px
+          background-color: black
           border-radius: 50%
-          box-shadow: inset 0 0 10px rgba(0, 6, 32, 0.3);
-          .active {
-            width: 6px
-            height: 6px
-            background-color: black
-            border-radius: 50%
-          }
         }
-        span {
-          margin-left: 8px
-          margin-right: 20px
-        }
+      }
+      span {
+        margin-left: 8px
+        margin-right: 20px
       }
     }
   }
 }
+  
+.customer-steps__steps-block {
+  margin-top: 36px
+  
+  .step-block.mt-24 {
+    margin-top: 24px
+  }
+}
+

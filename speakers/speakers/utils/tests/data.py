@@ -1,3 +1,5 @@
+import datetime
+
 SIGNUP = {'email': 'admin@admin.ru', 'password': '12345678'}
 
 PROFILE = {
@@ -23,11 +25,16 @@ LECTURER = {
     'equipment': 'Руки, ноги, доска, полет.'
 }
 
+CUSTOMER = {
+    'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
+    'hall_address': 'Москва, ул. Не московская, д. Домашний',
+    'equipment': 'Руки, ноги, доска, полет.'
+}
+
 LECTURE = {
     'name': 'Лекция супер хорошая лекция',
-    'time_start': '15:30',
-    'time_end': '16:00',
-    'date': '2020-3-15',
+    'datetime': [str(datetime.datetime.now() + datetime.timedelta(days=2)) + ',' +
+                 str(datetime.datetime.now() + datetime.timedelta(days=2, hours=1))],
     'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
     'hall_address': 'Москва, ул. Не московская, д. Домашний',
     'type': 'offline',
@@ -35,3 +42,6 @@ LECTURE = {
     'cost': '1000',
     'description': 'Отличное описание блин'
 }
+
+LECTURE_AS_CUSTOMER = LECTURE.copy()
+LECTURE_AS_CUSTOMER['listeners'] = 200

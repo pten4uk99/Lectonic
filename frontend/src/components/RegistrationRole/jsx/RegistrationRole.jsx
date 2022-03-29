@@ -13,9 +13,16 @@ import {SwapAddRoleStep, SwapChooseRoleVisible} from "../redux/actions/main";
 function RegistrationRole(props) {
   let navigate = useNavigate()
   useEffect(() => {
-    if (!props.store.permissions.is_person) navigate(reverse('create_profile'))
+    let perms = props.store.permissions
+    if (!perms.is_person) navigate(reverse('create_profile'))
+    else if (perms.is_lecturer && !perms.is_customer) navigate(reverse('create_customer'))
+    else if (perms.is_customer && !perms.is_lecturer) navigate(reverse('create_lecturer'))
+    else if (perms.is_lecturer && perms.is_customer) navigate(reverse('workroom'))
   }, [props.store.permissions.is_person])
   
+  useEffect(() => {
+    props.SwapAddRoleStep(1)
+  }, [])
   
   let location = useLocation()
   let currentStep = props.store.addRole.main.step
@@ -27,8 +34,11 @@ function RegistrationRole(props) {
       else if (currentStep === 2) {
         return !(props.store.addRole.lecturer.passport_photo && 
           props.store.addRole.lecturer.selfie_photo)
-      } else return false // для удобства верстки заказчика кнопка всегда будет кликабельна
-    }
+      } 
+    } else if (location.pathname === reverse('create_customer')) {
+      if (currentStep === 1) return props.store.addRole.customer.isCompany === undefined
+      else if (currentStep === 2) return !(props.store.event.domain.length > 0)
+    } else return true
   }
   
   useEffect(() => {
@@ -72,11 +82,8 @@ function RegistrationRole(props) {
               "btn-role-selected" : "btn-role"} margin-right-12`} 
                     onClick={() => navigate(reverse('create_lecturer'))}>Лектор</button>
             <button className={`${location.pathname === reverse('create_customer') ? 
-              "btn-role-selected" : "btn-role"}`} 
-                    style={{cursor: 'not-allowed'}} 
-                    onClick={() => {
-                      // navigate(reverse('create_customer'))
-                    }}>Заказчик</button>
+              "btn-role-selected" : "btn-role"}`}
+                    onClick={() => {navigate(reverse('create_customer'))}}>Заказчик</button>
           </div>
         </div>
         <Routes>

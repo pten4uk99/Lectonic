@@ -3,6 +3,7 @@ import datetime
 from django.db.models import Q
 from rest_framework import serializers
 
+from workroomsapp.calendar.utils import build_photo_path
 from workroomsapp.models import LecturerCalendar
 
 
@@ -18,33 +19,53 @@ class LecturerCalendarSerializer(serializers.ModelSerializer):
         ]
 
     def get_date_events(self, obj):
-        year = self.context['request'].GET.get('year')
-        month = self.context['request'].GET.get('month')
+        request = self.context['request']
+        year = request.GET.get('year')
+        month = request.GET.get('month')
 
         if not (year and month):
             raise serializers.ValidationError({'detail': "В запросе не передана дата"})
 
-        events = obj.calendar.events.filter(
-            Q(datetime__year=year) & Q(datetime__month=month))
+        events = obj.calendar.events.order_by('datetime_start').filter(
+            Q(datetime_start__year=year) & Q(datetime_start__month=month))
 
         data = []
 
         for event in events:
-            year = event.datetime.year
-            month = event.datetime.month
-            day = event.datetime.day
+            year = event.datetime_start.year
+            month = event.datetime_start.month
+            day = event.datetime_start.day
 
             person = event.lecture_request.lecturer_lecture_request.lecturer.person
             lecture = event.lecture_request.lecture
 
-            time_end = event.datetime + datetime.timedelta(minutes=lecture.duration)
+            respondents = event.lecture_request.respondents.all()
+            confirmed_respondent = respondents.filter(confirmed=True).first()
+            respondent_list = []
+            for respondent in respondents:
+                respondent_list.append({
+                    'id': respondent.person.user.pk,
+                    'first_name': respondent.person.first_name,
+                    'last_name': respondent.person.last_name
+                })
+
             new_event = {
-                'lecturer': f'{person.last_name} {person.first_name} {person.middle_name or ""}',
+                'creator': (person.first_name, person.last_name),
+                'customer': '',
+                'photo': build_photo_path(request, event.lecture_request.lecturer_lecture_request.photo.url),
+                'respondents': respondent_list,
                 'name': lecture.name,
+                'hall_address': lecture.optional.hall_address,
                 'status': lecture.status,
-                'start': event.datetime.strftime('%H:%M'),
-                'end': time_end.strftime('%H:%M')
+                'start': event.datetime_start.strftime('%H:%M'),
+                'end': event.datetime_end.strftime('%H:%M')
             }
+
+            if confirmed_respondent:
+                confirmed_person = confirmed_respondent.person
+                new_event['customer'] = (confirmed_person.last_name,
+                                         confirmed_person.first_name,
+                                         confirmed_person.middle_name or "")
 
             if not data:
                 data.append(

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from workroomsapp.models import Lecturer, Link, Person, DiplomaImage, Domain
+from workroomsapp.models import Lecturer, DiplomaImage, Domain
 
 
 class DiplomaImageCreateSerializer(serializers.Serializer):
@@ -10,18 +10,17 @@ class DiplomaImageCreateSerializer(serializers.Serializer):
         fields = ['diploma']
 
     def validate_diploma(self, diploma):
-        image_format = diploma.name.split('.')[-1]
+        lecturer = self.context['request'].user.person.lecturer
 
-        if image_format not in ['jpg', 'jpeg', 'png', 'JPG']:
-            msg = 'Диплом может быть только в формате "jpg", "jpeg" или "png"'
+        if lecturer.diploma_images.all().count() >= 5:
+            msg = 'Превышено максимальное количество дипломов (5)'
             raise serializers.ValidationError(msg)
 
+        image_format = diploma.name.split('.')[-1]
         diploma.name = 'diploma.' + image_format
-
         return diploma
 
     def create(self, validated_data):
-        DiplomaImage.objects.all().delete()  # ТОЛЬКО В РЕЖИМЕ РАЗРАБОТКИ!!!
         return DiplomaImage.objects.create(
             lecturer=self.context['request'].user.person.lecturer,
             diploma=validated_data['diploma']

@@ -10,6 +10,7 @@ import Authorization from "../../Authorization/jsx/Authorization";
 import {ActivateModal, ActiveProfileDropdown, DeactivateModal} from "../redux/actions/header";
 import {connect} from "react-redux";
 import ProfileDropDown from "./ProfileDropDown";
+import ErrorMessage from "../../Utils/jsx/ErrorMessage";
 
 
 function Header(props) {
@@ -52,6 +53,7 @@ function Header(props) {
         <Authorization />
       </Modal>
       <ProfileDropDown/>
+      {props.store.header.errorMessage && <ErrorMessage/>}
     </>
   );
 }

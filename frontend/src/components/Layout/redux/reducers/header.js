@@ -1,6 +1,7 @@
 const initialState = {
   modalActive: false,
-  profileDropDownActive: false
+  profileDropDownActive: false,
+  errorMessage: '',
 }
 
 export default function header(state=initialState, action) {
@@ -10,7 +11,9 @@ export default function header(state=initialState, action) {
     case "DEACTIVATE_MODAL":
       return {...state, modalActive: false}    
     case "SET_PROFILE_DROPDOWN":
-      return {...state, profileDropDownActive: action.payload.active}
+      return {...state, profileDropDownActive: action.payload.active}    
+    case "SET_ERROR_MESSAGE":
+      return {...state, errorMessage: action.payload.message}
     default:
       return state
   }

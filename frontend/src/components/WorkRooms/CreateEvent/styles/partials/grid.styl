@@ -9,6 +9,9 @@
   gap 1.5em 2em
 
   margin-top: 100px
+  &.customer
+    grid-template-areas '. heading' '. subheading' 'cover-l cover' 'domain-l domains' 'topic-l topic' 'type-l type' 'date-l date' 'time-l time' 'listeners-l listeners' 'workspace-l workspace' 'address-l address' 'equip-l equip' 'desc-l desc' 'fee-l fee' '. submit' '. .' '. .'
+    grid-template-rows repeat(2, 0.1fr) 0.2fr repeat(7, 0.1fr) repeat(2, 0.3fr) 1fr repeat(4, 0.1fr)
 
   &>*
     align-self center
@@ -60,6 +63,12 @@
 
 .time
   grid-area time
+
+.listeners-l
+  grid-area listeners-l
+
+.listeners
+  grid-area listeners
 
 .workspace-l
   grid-area workspace-l

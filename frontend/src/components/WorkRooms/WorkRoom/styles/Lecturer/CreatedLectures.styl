@@ -12,16 +12,36 @@
   
   .cards-block {
     display: flex
+    align-items: center
+    
+    &.mt-20 {
+      margin-top: 20px
+    }
     
     .new-lecture {
       margin-right: 51px
     }
     
-    .created-lectures {
-      display: flex
+    .created-lectures__wrapper {
+      padding-top: 28px
+      padding-right: 20px
+      padding-bottom: 20px
       overflow-x: scroll
       &::-webkit-scrollbar {
-        display: none
+        height: 8px
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(180, 180, 180, 1);
+        border-radius: 18px;
+      }
+      &::-webkit-scrollbar-track {
+        width: 8px;
+        background-color: rgba(219, 219, 219, 1);
+        border-radius: 18px;
+      }
+      .created-lectures {
+        display: block
+        width: max-content
       }
     }
   }

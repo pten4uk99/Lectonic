@@ -20,10 +20,10 @@ class CustomerManager(models.Manager):
             person=person, optional=optional)
 
         if domain is not None:
-            for domain_id in domain:
+            for name in domain:
                 workrooms_models.CustomerDomain.objects.create(
                     customer=customer,
-                    domain=workrooms_models.Domain.objects.get(pk=int(domain_id))
+                    domain=workrooms_models.Domain.objects.get(name=name)
                 )
 
         calendar = workrooms_models.Calendar.objects.create()

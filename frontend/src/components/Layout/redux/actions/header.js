@@ -7,3 +7,6 @@ export function DeactivateModal() {
 export function ActiveProfileDropdown(active) {
   return {type: "SET_PROFILE_DROPDOWN", payload: {active: active}}
 }
+export function SetErrorMessage(message) {
+  return {type: "SET_ERROR_MESSAGE", payload: {message: message}}
+}

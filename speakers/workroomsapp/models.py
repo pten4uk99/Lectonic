@@ -1,11 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from speakers.utils.validators import PhotoValidator
 from workroomsapp.company.company_manager import CompanyManager
 from workroomsapp.customer.customer_manager import CustomerManager
 from workroomsapp.lecture.lecture_manager import LectureManager
 from workroomsapp.lecturer.lecturer_manager import LecturerManager
-from workroomsapp.utils.paths_for_media import document_image, diploma_image, lecturer_lecture_image, person_image
+from workroomsapp.utils.paths_for_media import document_image, diploma_image, lecturer_lecture_image, person_image, \
+    customer_lecture_image
 
 BaseUser = get_user_model()
 
@@ -70,11 +72,22 @@ class DocumentImage(models.Model):
     passport = models.ImageField(upload_to=document_image)  # фото паспорта
     selfie = models.ImageField(upload_to=document_image)  # селфи с паспортом
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.passport and self.selfie:
+            PhotoValidator(self.passport.path).save()
+            PhotoValidator(self.selfie.path).save()
+
 
 class DiplomaImage(models.Model):
     """Фотографии дипломов лектора"""
     lecturer = models.ForeignKey('Lecturer', on_delete=models.CASCADE, related_name='diploma_images')
     diploma = models.ImageField(upload_to=diploma_image)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.diploma:
+            PhotoValidator(self.diploma.path).save()
 
 
 class Person(models.Model):
@@ -109,6 +122,11 @@ class Person(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.photo:
+            PhotoValidator(self.photo.path).save()
 
 
 class Lecturer(models.Model):
@@ -202,7 +220,7 @@ class Optional(models.Model):
 
 class Respondent(models.Model):
     """Откликнувшийся на заявку на лекцию"""
-    person = models.OneToOneField('Person', on_delete=models.CASCADE)
+    person = models.ForeignKey('Person', on_delete=models.CASCADE)
     confirmed = models.BooleanField(default=False)
 
 
@@ -222,7 +240,7 @@ class LecturerLectureRequest(models.Model):
     lecturer = models.ForeignKey(
         'Lecturer',
         on_delete=models.CASCADE,
-        related_name='lecturer_lecture_request'
+        related_name='lecturer_lecture_requests'
     )
     photo = models.ImageField(upload_to=lecturer_lecture_image, null=True)
 
@@ -232,12 +250,13 @@ class CustomerLectureRequest(models.Model):
         'LectureRequest',
         on_delete=models.CASCADE,
         related_name='customer_lecture_request')
-    customer = models.OneToOneField(
+    customer = models.ForeignKey(
         'Customer',
         on_delete=models.CASCADE,
-        related_name='customer_lecture_request'
+        related_name='customer_lecture_requests'
     )
     listeners = models.IntegerField()
+    photo = models.ImageField(upload_to=customer_lecture_image, null=True)
 
 
 class CompanyLectureRequest(models.Model):
@@ -246,10 +265,10 @@ class CompanyLectureRequest(models.Model):
         on_delete=models.CASCADE,
         related_name='company_lecture_request'
     )
-    company = models.OneToOneField(
+    company = models.ForeignKey(
         'Company',
         on_delete=models.CASCADE,
-        related_name='company_lecture_request'
+        related_name='company_lecture_requests'
     )
     listeners = models.IntegerField()
 
@@ -272,7 +291,6 @@ class Lecture(models.Model):
     )
     type = models.CharField(max_length=20, choices=TYPES)
     status = models.BooleanField(default=False)  # подтверждена/не просмотрена
-    duration = models.IntegerField(null=True, blank=True)  # Длительность лекции в минутах (нет необходимости использовать DateTimeRangeField)
     cost = models.IntegerField(default=0)  # стоимость лекции
     description = models.TextField(null=True, blank=True)
 
@@ -288,7 +306,8 @@ class Calendar(models.Model):
 
 
 class Event(models.Model):
-    datetime = models.DateTimeField()
+    datetime_start = models.DateTimeField()
+    datetime_end = models.DateTimeField()
     lecture_request = models.ForeignKey('LectureRequest', on_delete=models.CASCADE, related_name='events')
 
 

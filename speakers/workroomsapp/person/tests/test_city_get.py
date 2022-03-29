@@ -26,7 +26,7 @@ class TestCityGet(APITestCase):
     def test_filter_city(self):
         response1 = self.client.get(reverse('city'), {'name': 'О'})
         self.assertEqual(
-            len(response1.data['data'][0]), 4,
+            len(response1.data['data']), 4,
             msg='Неверно отфильтрованы города'
         )
 

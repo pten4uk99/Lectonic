@@ -6,6 +6,7 @@ import {baseURL} from "~/ProjectConstants";
 import {SwapCustomer, SwapLecturer, SwapLogin, SwapPerson} from "../redux/actions/permissions";
 import {permissions, reverse, withoutPermissionsList} from "../../../ProjectConstants";
 import {getProfileInfo} from "../../WorkRooms/WorkRoom/ajax/workRooms";
+import {SetErrorMessage} from "../../Layout/redux/actions/header";
 
 
 function Permissions(props) {
@@ -37,23 +38,24 @@ function Permissions(props) {
   }
   
   useEffect(() => {
-      fetch(`${baseURL}/api/auth/check_authentication/`, options)
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') {
-            let permissions = data.data[0]
-            
-            props.SwapLogin(true)
-            props.SwapPerson(permissions?.is_person || false)
-            props.SwapLecturer(permissions?.is_lecturer || false)
-            props.SwapCustomer(permissions?.is_customer || false)
-            
-          } else if (data.status === 'error') {
-            props.SwapLogin(false)
-            if (!notNeedPermissions()) navigate(reverse('index'))
-          }
-        })
-        .catch(error => console.log(error))
+    props.SetErrorMessage('')
+    fetch(`${baseURL}/api/auth/check_authentication/`, options)
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          let permissions = data.data[0]
+          
+          props.SwapLogin(true)
+          props.SwapPerson(permissions?.is_person || false)
+          props.SwapLecturer(permissions?.is_lecturer || false)
+          props.SwapCustomer(permissions?.is_customer || false)
+          
+        } else if (data.status === 'error') {
+          props.SwapLogin(false)
+          if (!notNeedPermissions()) navigate(reverse('index'))
+        }
+      })
+      .catch(error => props.SetErrorMessage('permissions'))
 
   }, [loggedIn])
   
@@ -67,6 +69,7 @@ function Permissions(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
+    SetErrorMessage: (message) => dispatch(SetErrorMessage(message)),
     SwapLogin: (logged) => dispatch(SwapLogin(logged)),
     SwapPerson: (is_person) => dispatch(SwapPerson(is_person)),
     SwapLecturer: (is_lecturer) => dispatch(SwapLecturer(is_lecturer)),

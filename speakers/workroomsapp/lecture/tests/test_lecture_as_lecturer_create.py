@@ -1,3 +1,4 @@
+import datetime
 import os
 
 from django.urls import reverse
@@ -85,15 +86,60 @@ class TestLectureAsLecturerCreate(APITestCase):
             msg='Неверный путь изображения лекции'
         )
 
-    def test_wrong_date(self):
+    def test_with_existing_datetime(self):
         temp_data = self.lecture_data.copy()
         temp_data['photo'] = test_image.create_image()
-        temp_data['datetime'] = '2020-03-15'
-        response = self.client.post(reverse('lecture_as_lecturer'), self.lecture_data)
+        self.client.post(reverse('lecture_as_lecturer'), temp_data)
+
+        temp_data['photo'] = test_image.create_image()
+        response2 = self.client.post(reverse('lecture_as_lecturer'), temp_data)
         self.assertEqual(
-            response.status_code,
+            response2.status_code,
             400,
-            msg='Неверный статус ответа при неверно переданной дате\n'
-                f'Ответ: {response.data}'
+            msg='Неверный статус ответа при создании события на существующую дату\n'
+                f'Ответ: {response2.data}'
         )
 
+        temp_data['photo'] = test_image.create_image()
+        temp_data['datetime'] = [str(datetime.datetime.now() + datetime.timedelta(days=2, minutes=30)) + ',' +
+                                 str(datetime.datetime.now() + datetime.timedelta(days=2, hours=2))]
+        response3 = self.client.post(reverse('lecture_as_lecturer'), temp_data)
+        self.assertEqual(
+            response3.status_code,
+            400,
+            msg='Неверный статус ответа при создании события на существующую дату\n'
+                f'Ответ: {response3.data}'
+        )
+
+        temp_data['photo'] = test_image.create_image()
+        temp_data['datetime'] = [str(datetime.datetime.now() + datetime.timedelta(days=2, hours=1)) + ',' +
+                                 str(datetime.datetime.now() + datetime.timedelta(days=2, hours=2))]
+        response4 = self.client.post(reverse('lecture_as_lecturer'), temp_data)
+        self.assertEqual(
+            response4.status_code,
+            201,
+            msg='Неверный статус ответа при создании события на не существующую дату\n'
+                f'Ответ: {response4.data}'
+        )
+
+        temp_data['photo'] = test_image.create_image()
+        temp_data['datetime'] = [str(datetime.datetime.now() + datetime.timedelta(days=2, minutes=-15)) + ',' +
+                                 str(datetime.datetime.now() + datetime.timedelta(days=2))]
+        response5 = self.client.post(reverse('lecture_as_lecturer'), temp_data)
+        self.assertEqual(
+            response5.status_code,
+            201,
+            msg='Неверный статус ответа при создании события на не существующую дату\n'
+                f'Ответ: {response5.data}'
+        )
+
+        temp_data['photo'] = test_image.create_image()
+        temp_data['datetime'] = [str(datetime.datetime.now() + datetime.timedelta(days=2, minutes=-15)) + ',' +
+                                 str(datetime.datetime.now() + datetime.timedelta(days=2, minutes=15))]
+        response6 = self.client.post(reverse('lecture_as_lecturer'), temp_data)
+        self.assertEqual(
+            response6.status_code,
+            400,
+            msg='Неверный статус ответа при создании события на существующую дату\n'
+                f'Ответ: {response6.data}'
+        )
