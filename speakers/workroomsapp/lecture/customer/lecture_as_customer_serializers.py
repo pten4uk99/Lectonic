@@ -2,12 +2,13 @@ import datetime
 
 from rest_framework import serializers
 
+from workroomsapp.calendar.utils import build_photo_path
 from workroomsapp.lecture.utils import (
     convert_datetime,
     check_datetime_for_lecture_as_customer,
     check_datetime_for_lecture_as_lecturer
 )
-from workroomsapp.models import Lecture
+from workroomsapp.models import Lecture, LecturerLectureRequest
 
 
 class LectureCreateAsCustomerSerializer(serializers.Serializer):
@@ -77,3 +78,60 @@ class LectureCreateAsCustomerSerializer(serializers.Serializer):
             cost=validated_data.get('cost', 0),
             description=validated_data.get('description'),
         )
+
+
+class LectureAsCustomerGetSerializer(serializers.ModelSerializer):
+    lecture_id = serializers.SerializerMethodField()
+    lecture_name = serializers.SerializerMethodField()
+    dates = serializers.SerializerMethodField()
+    hall_address = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+    creator_first_name = serializers.SerializerMethodField()
+    creator_last_name = serializers.SerializerMethodField()
+    in_respondents = serializers.SerializerMethodField()
+    photo = serializers.SerializerMethodField()
+
+    class Meta:
+        model = LecturerLectureRequest
+        fields = [
+            'lecture_id',
+            'lecture_name',
+            'dates',
+            'hall_address',
+            'description',
+            'photo',
+            'in_respondents',
+            'creator_first_name',
+            'creator_last_name',
+        ]
+
+    def get_lecture_id(self, obj):
+        return obj.lecture_request.lecture.pk
+
+    def get_lecture_name(self, obj):
+        return obj.lecture_request.lecture.name
+
+    def get_dates(self, obj):
+        events = obj.lecture_request.events.all()
+        dates = []
+        for event in events:
+            dates.append(event.datetime_start)
+        return dates
+
+    def get_description(self, obj):
+        return obj.lecture_request.lecture.description
+
+    def get_in_respondents(self, obj):
+        return bool(obj.lecture_request.respondents.filter(person=self.context['request'].user.person).first())
+
+    def get_hall_address(self, obj):
+        return obj.lecture_request.lecture.optional.hall_address
+
+    def get_photo(self, obj):
+        return build_photo_path(self.context['request'], obj.photo.url)
+
+    def get_creator_first_name(self, obj):
+        return obj.lecturer.person.first_name
+
+    def get_creator_last_name(self, obj):
+        return obj.lecturer.person.last_name

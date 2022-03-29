@@ -24,22 +24,29 @@ function CreatedLectures(props){
             <img src={tooltip} alt="Подсказка"/>
           </div>
           
-          <div className="cards-block">
+          <div className="cards-block mt-20">
             <div className="new-lecture" onClick={handleCreateLectureCard}>
               <WorkroomCard data={{
-                  name: 'Создать лекцию',
+                  name: props.role === 'lecturer' ? 'Создать лекцию' : 'Создать запрос на лекцию',
                   createLecture: true,
               }}/>
             </div>
             {/*<DropDown request={getDomainArray} width={true} placeholder='10:00'/>*/}
-            <div className="created-lectures">
-            {/*  <WorkroomCard data={{*/}
-            {/*    name: 'Лидеры-доноры',*/}
-            {/*    description: 'Лекции от создателей проекта о донорстве',*/}
-            {/*    textBtn: 'Статус мероприятия',*/}
-            {/*    img: '',*/}
-            {/*}}/>*/}
-            </div>
+            {props.data.length > 0 && 
+              <div className="created-lectures__wrapper">
+                <div className="created-lectures">
+                  {props.data.map((lecture, index) => {
+                    return <WorkroomCard key={index} data={{
+                      img: lecture.photo,
+                      client: 'Заказчик:',
+                      clientName: `${lecture.creator_first_name} ${lecture.creator_last_name}`,
+                      name: lecture.name,
+                      description: lecture.description,
+                      textBtn: 'Статус мероприятия',
+                    }}/>
+                  })}
+              </div>
+            </div>}
           </div>
           
           <div className="workroom__block-underline"/>

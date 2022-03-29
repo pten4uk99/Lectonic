@@ -6,7 +6,7 @@ import eyeClose from '~/assets/img/eye-close.svg'
 import 'regenerator-runtime/runtime'
 import { baseURL } from '~/ProjectConstants'
 import {connect} from "react-redux";
-import {DeactivateModal} from "../../Layout/redux/actions/header";
+import {DeactivateModal, SetErrorMessage} from "../../Layout/redux/actions/header";
 import {emailConfirmation, login} from "../ajax";
 import {SwapLogin} from "../redux/actions/permissions";
 import {reverse} from "../../../ProjectConstants";
@@ -64,7 +64,7 @@ function Authorization(props) {
           props.DeactivateModal()
         }
       })
-      .catch(error => console.log('ERROR SignIn: ', error))
+      .catch(error => props.SetErrorMessage('login'))
   }
 
   //Checkbox не выходить из системы
@@ -113,7 +113,7 @@ function Authorization(props) {
           props.DeactivateModal()
         }
       })
-      .catch(error => console.log('ERROR SignIn: ', error))
+      .catch(error => props.SetErrorMessage('signup'))
   }
 
   //Checkbox согласие на обработку персональных данных
@@ -318,5 +318,6 @@ export default connect(
   dispatch => ({
     SwapLogin: (logged) => dispatch(SwapLogin(logged)),
     DeactivateModal: () => dispatch(DeactivateModal()),
+    SetErrorMessage: (message) => dispatch(SetErrorMessage(message)),
   })
 )(Authorization)

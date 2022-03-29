@@ -9,6 +9,7 @@ import {createLecturer, uploadDiplomaPhotos, uploadDocumentPhoto} from "../../aj
 import {reverse} from "../../../../ProjectConstants";
 import {SwapLecturer} from "../../../Authorization/redux/actions/permissions";
 import {SwapAddRoleStep, SwapChooseRoleVisible} from "../../redux/actions/main";
+import {SetErrorMessage} from "../../../Layout/redux/actions/header";
 
 
 function LecturerSteps(props) {
@@ -18,9 +19,6 @@ function LecturerSteps(props) {
     if (props.store.permissions.is_lecturer) navigate(reverse('workroom'))
   }, [props.store.permissions.is_lecturer])
   
-  useEffect(() => {
-    props.SwapAddRoleStep(1)
-  }, [])
   
   let currentStep = props.store.addRole.main.step
   
@@ -57,10 +55,10 @@ function LecturerSteps(props) {
               props.SwapLecturer(true)
               navigate(reverse('workroom'))
             })
-            .catch(error => console.log(error))
+            .catch(error => props.SetErrorMessage('upload_diploma'))
         }
       })
-      .catch(error => console.log(error))
+      .catch(error => props.SetErrorMessage('create_lecturer'))
     
     let passport = new File([role.passport_photo], 'passport.png')
     let selfie = new File([role.selfie_photo], 'selfie.png')
@@ -70,7 +68,7 @@ function LecturerSteps(props) {
     uploadDocumentPhoto(documentForm)
       .then(response => response.json())
       .then(data => console.log(data))
-      .catch(error => console.log(error))
+      .catch(error => props.SetErrorMessage('create_document'))
   }
   
   return (
@@ -91,6 +89,7 @@ function LecturerSteps(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
+    SetErrorMessage: (message) => dispatch(SetErrorMessage(message)),
     SwapLecturer: (is_lecturer) => dispatch(SwapLecturer(is_lecturer)),
     SwapAddRoleStep: (step) => dispatch(SwapAddRoleStep(step)),
   })

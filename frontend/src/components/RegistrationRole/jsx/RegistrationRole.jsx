@@ -13,7 +13,11 @@ import {SwapAddRoleStep, SwapChooseRoleVisible} from "../redux/actions/main";
 function RegistrationRole(props) {
   let navigate = useNavigate()
   useEffect(() => {
-    if (!props.store.permissions.is_person) navigate(reverse('create_profile'))
+    let perms = props.store.permissions
+    if (!perms.is_person) navigate(reverse('create_profile'))
+    else if (perms.is_lecturer && !perms.is_customer) navigate(reverse('create_customer'))
+    else if (perms.is_customer && !perms.is_lecturer) navigate(reverse('create_lecturer'))
+    else if (perms.is_lecturer && perms.is_customer) navigate(reverse('workroom'))
   }, [props.store.permissions.is_person])
   
   useEffect(() => {

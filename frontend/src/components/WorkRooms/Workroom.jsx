@@ -4,10 +4,11 @@ import {useNavigate} from "react-router-dom";
 
 import ProfileInfo from "./WorkRoom/jsx/ProfileInfo";
 import background from '~/assets/img/workrooms/user-account_bg.svg';
-import Lecturer from "./WorkRoom/jsx/Lecturer/Lecturer";
+import Lecturer from "./WorkRoom/jsx/Lecturer";
 import FullCalendar from "~@/WorkRooms/FullCalendar/FullCalendar";
 import {reverse} from "../../ProjectConstants";
-import CreatedLectures from "./WorkRoom/jsx/Lecturer/CreatedLectures";
+import CreatedLectures from "./WorkRoom/jsx/Elements/CreatedLectures";
+import Customer from "./WorkRoom/jsx/Customer";
 
 
 function Workroom(props){
@@ -30,8 +31,8 @@ function Workroom(props){
           </div>
           <div className="user-account__wrapper">
             <div className="user-account__content">
-              <CreatedLectures role={isLecturer ? 'lecturer' : isCustomer && 'customer'}/>
-              <Lecturer/>
+              {isLecturer && <Lecturer/>}
+              {isCustomer && <Customer/>}
               <FullCalendar/>
             </div>
           </div>

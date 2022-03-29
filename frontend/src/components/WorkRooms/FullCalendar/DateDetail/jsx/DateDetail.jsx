@@ -18,12 +18,18 @@ function DateDetail(props) {
   }
   
   let date = props.store.calendar.checkedDate
-  let year = date?.getFullYear()
-  let month = getMonth(date?.getMonth())
-  let day = getDay(date?.getDate())
+  let year;
+  let month;
+  let day;
   let [events, setEvents] = useState(null)
 
   useEffect(() => {
+    if (date) {
+      year = date.getFullYear()
+      month = getMonth(date.getMonth())
+      day = getDay(date.getDate())
+    }
+    
     if (props.store.calendar.currentDate.getMonth() === date?.getMonth()) {
       let currentEvents = props.store.dateDetail.filter(value => {
         return checkEqualDates(value.date, date)

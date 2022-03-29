@@ -7,6 +7,7 @@ import {
 import { MONTHS } from '~@/WorkRooms/FullCalendar/Calendar/utils/calendar'
 import {getEventsForCustomerMonth, getEventsForLecturerMonth} from "../ajax/dateDetail";
 import {UpdateEvents} from "../../DateDetail/redux/actions/dateDetail";
+import {SetErrorMessage} from "../../../../Layout/redux/actions/header";
 
 
 function MonthNav(props) {
@@ -15,16 +16,16 @@ function MonthNav(props) {
   
   function updateEvents(year, month) {
     if (!props.store.header.modalActive) {
-      if (props.store.profile.is_lecturer) {
+      if (props.store.profile.is_lecturer && props.store.permissions.is_lecturer) {
         getEventsForLecturerMonth(year, month + 1)
           .then(response => response.json())
           .then(data => props.UpdateEvents(data.data))
-          .catch(error => console.log('Ошибка при получении данных календаря:', error))
-      } else if (props.store.profile.is_customer) {
+          .catch(error => props.SetErrorMessage('lecturer_calendar'))
+      } else if (props.store.profile.is_customer && props.store.permissions.is_customer) {
         getEventsForCustomerMonth(year, month + 1)
           .then(response => response.json())
           .then(data => props.UpdateEvents(data.data))
-          .catch(error => console.log('Ошибка при получении данных календаря:', error))
+          .catch(error => props.SetErrorMessage('customer_calendar'))
       }
     }
   }
@@ -51,6 +52,7 @@ function MonthNav(props) {
 export default connect(
   state => ({ store: state }),
   dispatch => ({
+    SetErrorMessage: (message) => dispatch(SetErrorMessage(message)),
     SwapMonthToNext: () => dispatch(SwapMonthToNext()),
     SwapMonthToPrev: () => dispatch(SwapMonthToPrev()),
     UpdateEvents: (events) => dispatch(UpdateEvents(events))

@@ -43,7 +43,8 @@ function WoorkroomCard(props){
                     <h3 className="workroom-card__client">{props.data.client}</h3>
                     <p className="workroom-card__client-name">{props.data.clientName}</p>
                 </div>
-                <button className="workroom-card__box-btn">{props.data.textBtn}</button>
+                <button className="workroom-card__box-btn" 
+                        onClick={props.onClick}>{props.data.textBtn}</button>
             </div>
         </div>
         )

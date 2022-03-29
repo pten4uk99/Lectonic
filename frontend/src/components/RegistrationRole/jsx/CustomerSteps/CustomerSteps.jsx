@@ -10,6 +10,8 @@ import CompanyStep3 from "./CompanyStep3";
 import {createCustomer, uploadDiplomaPhotos} from "../../ajax";
 import {reverse} from "../../../../ProjectConstants";
 import {useNavigate} from "react-router-dom";
+import {SwapCustomer} from "../../../Authorization/redux/actions/permissions";
+import {SetErrorMessage} from "../../../Layout/redux/actions/header";
 
 
 function CustomerSteps(props) {
@@ -59,8 +61,12 @@ function CustomerSteps(props) {
     createCustomer(formData)
       .then(response => response.json())
       .then(data => {
-        if (data.status === 'created') navigate(reverse('workroom'))
+        if (data.status === 'created') {
+          props.SwapCustomer(true)
+          navigate(reverse('workroom'))
+        }
       })
+      .catch(() => props.SetErrorMessage('create_customer'))
   }
   
   return (
@@ -114,6 +120,8 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     SwapAddRoleStep: (step) => dispatch(SwapAddRoleStep(step)),
+    SwapCustomer: (is_customer) => dispatch(SwapCustomer(is_customer)),
+    SetErrorMessage: (message) => dispatch(SetErrorMessage(message)),
     SwapChooseRoleVisible: (visible) => dispatch(SwapChooseRoleVisible(visible)),
     SwapIsCompany: (is_company) => dispatch(SwapIsCompany(is_company)),
   })

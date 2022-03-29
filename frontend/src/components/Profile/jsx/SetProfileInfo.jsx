@@ -11,6 +11,7 @@ import {UpdateBirthDate} from "../redux/actions/profile";
 import {createProfile, getCities} from "../ajax/profile";
 import {reverse} from "../../../ProjectConstants";
 import {SwapPerson} from "../../Authorization/redux/actions/permissions";
+import {SetErrorMessage} from "../../Layout/redux/actions/header";
 
 
 function SetProfileInfo(props) {
@@ -46,7 +47,7 @@ function SetProfileInfo(props) {
     getCities(e.target.value)
       .then(response => response.json())
       .then(data => setCities(data.data))
-      .catch(error => console.log('ERROR: ', error))
+      .catch(error => props.SetErrorMessage('get_cities_list'))
     setRequiredFields({...requiredFields, city: e.target.value})
   }
   
@@ -84,7 +85,7 @@ function SetProfileInfo(props) {
           })
         }
       })
-      .catch(error => console.log('Ошибка в создании профиля: ', error))
+      .catch(error => props.SetErrorMessage('create_profile'))
   }
 
   return (
@@ -212,6 +213,7 @@ function SetProfileInfo(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
+    SetErrorMessage: (message) => dispatch(SetErrorMessage(message)),
     SwapPerson: (is_person) => dispatch(SwapPerson(is_person)),
     UpdateBirthDate: (data) => dispatch(UpdateBirthDate(data)),
   })

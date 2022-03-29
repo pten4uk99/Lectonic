@@ -14,16 +14,18 @@ function ProfileInfo(props){
   let btnClassName = "profile-about__btn-role"
   
   let permissions = props.store.permissions
-
   useEffect(() => {
     if (permissions.is_lecturer) props.SwapToLecturer()
     else if (permissions.is_customer) props.SwapToCustomer()
-    
+  }, [permissions.is_lecturer, permissions.is_customer])
+  
+  
+  useEffect(() => {
     getProfileInfo()
       .then(response => response.json())
       .then(data => {
         if (data.status === 'success') props.UpdateProfile(data.data[0])
-        else if (data.status === 'error') navigate('/create_profile')
+        else if (data.status === 'error') navigate(reverse('create_profile'))
       })
       .catch(error => console.log(error))
   }, [])

@@ -23,13 +23,12 @@ class LectureAsLecturerAPIView(APIView):
 
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        customer_lectures = CustomerLectureRequest.objects.order_by(
-            'lecture_request__events__datetime_start').all()
+        customer_lectures = CustomerLectureRequest.objects.all()
 
-        serializer = LectureAsLecturerGetSerializer(customer_lectures, many=True)
+        serializer = LectureAsLecturerGetSerializer(
+            customer_lectures, many=True, context={'request': request})
+
         return lecture_responses.success_get_lectures(serializer.data)
-
-
 
 
 class LectureResponseAPIView(APIView):
@@ -56,16 +55,16 @@ class LectureResponseAPIView(APIView):
             if not hasattr(request.user.person, 'lecturer'):
                 return lecture_responses.customer_forbidden()
 
-        respondent = Respondent.objects.create(person=request.user.person)
+
         lecture_request = lecture.lecture_request
 
         if not lecture_request.respondents.filter(person=request.user.person).first():
+            respondent = Respondent.objects.create(person=request.user.person)
             lecture_request.respondents.add(respondent)
             lecture_request.save()
             return lecture_responses.success_response()
         else:
-            lecture_request.respondents.remove(respondent)
-            lecture_request.save()
+            Respondent.objects.get(person=request.user.person).delete()
             return lecture_responses.success_cancel()
 
 
