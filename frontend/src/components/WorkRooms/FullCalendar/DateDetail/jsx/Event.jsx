@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { connect } from 'react-redux'
 
-import lecturePhoto from '~/assets/img/TEST_PHOTO_LECTURE.svg'
 import lecturerPhoto from '~/assets/img/TEST_PHOTO_LECTURER.svg'
+import Respondents from "./Respondents";
 
 
 function Event(props) {
@@ -15,6 +15,10 @@ function Event(props) {
   useEffect(() => {
     if (!props.status) setClass('left-block grey')
   }, [])
+  
+  useEffect(() => {
+    setEventDetail(false)
+  }, [props.store.calendar.checkedDate])
 
   useEffect(() => {
     if (!eventDetail) {
@@ -38,7 +42,7 @@ function Event(props) {
           <img src={lecturerPhoto} alt="инициалы создателя"/>
         </div>
         <div className="event-photo">
-          <img src={lecturePhoto} alt="обложка"/>
+          <img src={props.photo} alt="обложка"/>
         </div>
       </div>
       
@@ -51,15 +55,19 @@ function Event(props) {
         <div className='theme'>
           Тема: <span>{props.name}</span>
         </div>
-        <div className='lecturer'>
-          Лектор: <span>{props.lecturer}</span>
-        </div>
-        <div className='listener'>
-          Слушатель: <span>{props.listener}</span>
-        </div>
-        <div className='address'>
-          Место: <span>{props.address}</span>
-        </div>
+        {props.lecturer &&
+          <div className='lecturer'>
+            Лектор: <span>{props.lecturer}</span>
+          </div>}
+        {props.customer && 
+          <div className='lecturer'>
+            Заказчик: <span>{props.customer}</span>
+          </div>}
+        {props.address && 
+          <div className='address'>
+            Место: <span>{props.address}</span>
+          </div>}
+        <Respondents data={props.respondents}/>
       </div>
       
       <div className='time-range'>
@@ -71,6 +79,6 @@ function Event(props) {
 }
 
 export default connect(
-  state => ({ store: state.dateDetail }),
+  state => ({ store: state }),
   dispatch => ({})
 )(Event)

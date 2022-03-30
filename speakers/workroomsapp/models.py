@@ -244,6 +244,11 @@ class LecturerLectureRequest(models.Model):
     )
     photo = models.ImageField(upload_to=lecturer_lecture_image, null=True)
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.photo:
+            PhotoValidator(self.photo.path).save()
+
 
 class CustomerLectureRequest(models.Model):
     lecture_request = models.OneToOneField(
@@ -258,6 +263,11 @@ class CustomerLectureRequest(models.Model):
     listeners = models.IntegerField()
     photo = models.ImageField(upload_to=customer_lecture_image, null=True)
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.photo:
+            PhotoValidator(self.photo.path).save()
+
 
 class CompanyLectureRequest(models.Model):
     lecture_request = models.OneToOneField(
@@ -271,6 +281,11 @@ class CompanyLectureRequest(models.Model):
         related_name='company_lecture_requests'
     )
     listeners = models.IntegerField()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.photo:
+            PhotoValidator(self.photo.path).save()
 
 
 class Lecture(models.Model):
