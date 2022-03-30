@@ -16,6 +16,8 @@ const routes = {
   
   'create_event': '/create_event',
   'change_password': '/change_password',
+
+  'role_page': '/role_page',
 } // сюда прописываем все роуты и их имена (имя: роут)
 
 export function reverse(name) {
