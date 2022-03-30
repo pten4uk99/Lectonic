@@ -14,9 +14,9 @@ function RolePage(props) {
         <div className='container'>
             <div className='rolepage__title'>
                 <div className='rolepage__title-box'>
-                    <span>Homer</span>
-                    <span>Jay</span>
-                    <span>Simpson</span>
+                    <span>Иван</span>
+                    <span>Иван</span>
+                    <span>Иванович</span>
                 </div>
                 <div className='rolepage__title-box'>
                     <button className='btn-first'>Пообщаться</button>
@@ -26,7 +26,7 @@ function RolePage(props) {
             <div className='rolepage__section'>
                 <span>Лектор</span>
                 <div className='rolepage__img-wrapper'>
-                    <img src="https://www.sostav.ru/app/public/images/news/2015/12/18/Screenshot_2.jpg?rand=0.2807936074677855" alt="photo"/>
+                    <img src="" alt="photo"/>
                 </div>
             </div>
             <div className='rolepage__about'>
