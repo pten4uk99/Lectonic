@@ -22,7 +22,6 @@ function MonthNav(props) {
     currentMonth === props.store.calendar.today.getMonth())
   let canNotPrevSwap = (currentYear === props.store.calendar.today.getFullYear() && 
       currentMonth === props.store.calendar.today.getMonth())
-  console.log(canNotPrevSwap, canNotNextSwap)
   
   function updateEvents(year, month) {
     if (!props.store.header.modalActive) {

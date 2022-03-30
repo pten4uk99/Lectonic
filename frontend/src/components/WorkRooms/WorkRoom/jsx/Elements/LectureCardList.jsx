@@ -71,7 +71,7 @@ export default connect(
 function getDates(str_dates) {
   let dates = []
   for (let date of str_dates) {
-    dates.push(DateTime.fromISO(date).toFormat('dd.MM.yyyy'))
+    dates.push(DateTime.fromISO(date).toFormat('dd.MM'))
   }
   return dates.join(', ')
 }

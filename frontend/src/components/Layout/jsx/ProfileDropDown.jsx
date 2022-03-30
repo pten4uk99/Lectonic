@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {logout} from "../ajax";
 import {ActiveProfileDropdown} from "../redux/actions/header";
-import {SwapLogin} from "../../Authorization/redux/actions/permissions";
+import {SwapCustomer, SwapLecturer, SwapLogin, SwapPerson} from "../../Authorization/redux/actions/permissions";
 import {baseURL, reverse} from "../../../ProjectConstants";
 
 
@@ -32,6 +32,9 @@ export default connect(
   dispatch => ({
     ActiveProfileDropdown: (active) => dispatch(ActiveProfileDropdown(active)),
     SwapLogin: (logged) => dispatch(SwapLogin(logged)),
+    SwapPerson: (is_person) => dispatch(SwapPerson(is_person)),
+    SwapLecturer: (is_lecturer) => dispatch(SwapLecturer(is_lecturer)),
+    SwapCustomer: (is_customer) => dispatch(SwapCustomer(is_customer)),
   })
 )(ProfileDropDown)
 
@@ -42,6 +45,9 @@ function logoutHandler(navigate, props) {
     .then(() => {
       props.ActiveProfileDropdown(false)
       props.SwapLogin(false)
+      props.SwapPerson(false)
+      props.SwapLecturer(false)
+      props.SwapCustomer(false)
       navigate(reverse('index'))
     })
 }
@@ -61,6 +67,9 @@ function userDeleteHandler(navigate, props) {
       if (data.status === 'deleted') {
         props.ActiveProfileDropdown(false)
         props.SwapLogin(false)
+        props.SwapPerson(false)
+        props.SwapLecturer(false)
+        props.SwapCustomer(false)
         navigate(reverse('index'))
       }
     })
