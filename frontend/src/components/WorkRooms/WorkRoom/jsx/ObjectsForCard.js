@@ -9,6 +9,7 @@ let objectForCard =
         city: "г. Санкт-Петербург",
         client: "Заказчик:",
         clientName: "ОАО «Какое-то очень длинное название",
+        textBtn: "Откликнуться",
         createLecture: true, // флаг - создать лекцию
         lectorCard: true, // флаг - карточка лектора
         potentialLecture: false, // флаг - потенциальная лекция
