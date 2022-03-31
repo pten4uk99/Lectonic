@@ -3,8 +3,8 @@ import {connect} from "react-redux";
 import {useLocation, useNavigate} from "react-router-dom";
 
 import {baseURL} from "~/ProjectConstants";
-import {SwapCustomer, SwapLecturer, SwapLogin, SwapPerson} from "../redux/actions/permissions";
-import {permissions, reverse, withoutPermissionsList} from "../../../ProjectConstants";
+import {SwapCustomer, SwapLecturer, SwapLogin, SwapPerson, SwapUserId} from "../redux/actions/permissions";
+import {hostURL, permissions, reverse, withoutPermissionsList} from "../../../ProjectConstants";
 import {getProfileInfo} from "../../WorkRooms/WorkRoom/ajax/workRooms";
 import {SetErrorMessage} from "../../Layout/redux/actions/header";
 
@@ -45,6 +45,7 @@ function Permissions(props) {
         if (data.status === 'success') {
           let permissions = data.data[0]
           
+          props.SwapUserId(permissions?.user_id || null)
           props.SwapLogin(true)
           props.SwapPerson(permissions?.is_person || false)
           props.SwapLecturer(permissions?.is_lecturer || false)
@@ -70,6 +71,7 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     SetErrorMessage: (message) => dispatch(SetErrorMessage(message)),
+    SwapUserId: (user_id) => dispatch(SwapUserId(user_id)),
     SwapLogin: (logged) => dispatch(SwapLogin(logged)),
     SwapPerson: (is_person) => dispatch(SwapPerson(is_person)),
     SwapLecturer: (is_lecturer) => dispatch(SwapLecturer(is_lecturer)),

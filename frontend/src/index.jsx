@@ -14,12 +14,14 @@ import event from "~@/WorkRooms/CreateEvent/redux/reducers/event";
 import permissions from "~@/Authorization/redux/reducers/permissions";
 import addRole from "~@/RegistrationRole/redux/reducers/index"
 import dropdown from "~@/Utils/redux/reducers/dropdown" 
+import chatSocket from "~@/Authorization/redux/reducers/chatSocket"
 
 console.clear()
 
 let reducer = combineReducers({
   permissions,
   addRole: addRole,
+  chatSocket,
   header,
   event,
   profile,

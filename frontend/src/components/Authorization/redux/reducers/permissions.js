@@ -1,4 +1,5 @@
 const initialState = {
+  user_id: undefined,
   logged_in: undefined,
   is_person: undefined,
   is_lecturer: undefined,
@@ -8,7 +9,9 @@ const initialState = {
 export default function permissions(state=initialState, action) {
   switch (action.type) {
     case "SWAP_LOGIN":
-      return {...state, logged_in: action.payload.logged}
+      return {...state, logged_in: action.payload.logged}    
+    case "SWAP_USER_ID":
+      return {...state, user_id: action.payload.user_id}
     case "SWAP_PERSON":
       return {...state, is_person: action.payload.is_person}
     case "SWAP_LECTURER":

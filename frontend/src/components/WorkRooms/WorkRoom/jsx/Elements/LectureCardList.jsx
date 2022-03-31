@@ -43,7 +43,7 @@ function LectureCardList(props){
                     return <WorkroomCard key={index} 
                                          data={{
                                            src: lecture.photo, 
-                                           client: 'Заказчик:', 
+                                           client: !props.isLecturer ? 'Лектор:' : 'Заказчик:', 
                                            clientName: `${lecture.creator_first_name} ${lecture.creator_last_name}`, 
                                            name: lecture.lecture_name, 
                                            date: getDates(lecture.dates), 

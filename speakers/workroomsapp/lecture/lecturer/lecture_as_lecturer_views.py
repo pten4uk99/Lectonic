@@ -1,3 +1,5 @@
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
@@ -6,6 +8,8 @@ from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.lecturer.lecture_as_lecturer_serializers import *
 from workroomsapp.models import Respondent, CustomerLectureRequest
 from workroomsapp.utils import workroomsapp_permissions
+
+channel_layer = get_channel_layer()
 
 
 class LectureAsLecturerAPIView(APIView):
@@ -43,27 +47,50 @@ class LectureResponseAPIView(APIView):
             return lecture_responses.not_in_data()
 
         lecture = Lecture.objects.filter(pk=lecture_id).first()
+        creator = None
 
         if not lecture:
             return lecture_responses.lecture_does_not_exist()
 
-        if not hasattr(lecture.lecture_request, 'lecturer_lecture_request'):
+        if not hasattr(lecture.lecture_request, 'customer_lecture_request'):
             if not hasattr(request.user.person, 'customer'):
                 return lecture_responses.lecturer_forbidden()
+        else:
+            creator = lecture.lecture_request.customer_lecture_request.customer.person
 
-        if not hasattr(lecture.lecture_request, 'customer_lecture_request'):
+        if not hasattr(lecture.lecture_request, 'lecturer_lecture_request'):
             if not hasattr(request.user.person, 'lecturer'):
                 return lecture_responses.customer_forbidden()
-
+        else:
+            creator = lecture.lecture_request.lecturer_lecture_request.lecturer.person
 
         lecture_request = lecture.lecture_request
 
         if not lecture_request.respondents.filter(person=request.user.person).first():
             respondent = Respondent.objects.create(person=request.user.person)
             lecture_request.respondents.add(respondent)
+
+            async_to_sync(channel_layer.group_send)(
+                f'user_{creator.user.pk}',
+                {
+                    "type": "new_respondent",
+                    "lecture_request": lecture_request,
+                    "lecture_creator": creator.user,
+                    "lecture_respondent": request.user
+                }
+            )
+
             lecture_request.save()
             return lecture_responses.success_response()
         else:
+            async_to_sync(channel_layer.group_send)(
+                f'user_{creator.user.pk}',
+                {
+                    "type": "remove_respondent",
+                    "lecture_request": lecture_request,
+                    "lecture_respondent": request.user
+                }
+            )
             Respondent.objects.get(person=request.user.person).delete()
             return lecture_responses.success_cancel()
 

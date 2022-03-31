@@ -3,6 +3,7 @@ import datetime
 from django.db.models import Q
 from rest_framework import serializers
 
+from speakers.settings import DEFAULT_HOST
 from workroomsapp.calendar.utils import build_photo_path
 from workroomsapp.models import CustomerCalendar
 
@@ -49,7 +50,7 @@ class CustomerCalendarSerializer(serializers.ModelSerializer):
                 'creator': [person.first_name, person.last_name],
                 'lecturer': '',
                 'respondents': respondent_list,
-                'photo': build_photo_path(request, event.lecture_request.customer_lecture_request.photo.url),
+                'photo': DEFAULT_HOST + event.lecture_request.customer_lecture_request.photo.url,
                 'name': lecture.name,
                 'status': lecture.status,
                 'hall_address': lecture.optional.hall_address,

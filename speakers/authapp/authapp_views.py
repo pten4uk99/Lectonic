@@ -26,7 +26,8 @@ class CheckAuthenticationAPIView(APIView):
         serializer = CheckAuthenticationSerializer(request.user.person)
         return authapp_responses.success_check_auth([{
             **serializer.data,
-            'is_person': True
+            'is_person': True,
+            'user_id': request.user.pk
         }])
 
 
