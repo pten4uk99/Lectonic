@@ -1,17 +1,40 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {connect} from "react-redux";
 
 import backArrow from '~/assets/img/back-arrow.svg'
 import sendMessage from '~/assets/img/send-message-icon.svg'
+import {AddMessage} from "../../redux/actions/messages";
 
 
 function ChatMessages(props) {
-  let [inputMessage, setInputMessage] = useState('')
+  let messages = props.store.messages
+  let messagesBlock = useRef()
+  
+  useEffect(() => {
+    setTimeout(() => messagesBlock.current.scrollTop =  messagesBlock.current.scrollHeight)
+  }, [])
+  
+  useEffect(() => {
+    props.chatSocket?.addEventListener('message', (e) => {
+      let data = JSON.parse(e.data)
+      props.AddMessage(data)
+      messagesBlock.current.scrollTop =  messagesBlock.current.scrollHeight
+    })
+  }, [props.chatSocket])
+  
+  function handleArrowClick(chat_id) {
+    props.setArea(false)
+    props.chatSocket.close()
+  }
   
   function handleSendMessage(e) {
-    if (props.notificationsSocket) {
-      props.notificationsSocket.send(JSON.stringify({message: inputMessage}))
-      console.log('Отправлено')
+    if (e.keyCode === 13) {
+      props.chatSocket.send(JSON.stringify({
+        'type': 'chat_message',
+        'author': props.store.permissions.user_id,
+        'text': e.target.value,
+      }))
+      e.target.value = ''
     }
   }
   
@@ -19,7 +42,7 @@ function ChatMessages(props) {
     <div className="chat-messages__block">
       <div className="actions__block">
         <div className="lecture">
-          <div className="back-arrow" onClick={() => props.setArea(false)}>
+          <div className="back-arrow" onClick={handleArrowClick}>
             <img src={backArrow} alt="назад"/>
           </div>
           <div className="text">
@@ -33,23 +56,21 @@ function ChatMessages(props) {
         </div>
       </div>
       
-      <div className="messages__block">
-        <div className="block-message">
-          <div className="self-message">Привет андрей блин</div>
+      <div className="messages__block" ref={messagesBlock}>
+        {messages.length > 0 && messages.map((elem, index) => {
+          return <div key={index} className="block-message">
+          <div className={props.store.permissions.user_id === elem.author ? 
+            "self-message" : "other-message"}>{elem.text}</div>
         </div>
-        <div className="block-message">
-          <div className="other-message">Пока нафиг андрей блин</div>
-        </div>
-        
+        })}
       </div>
       
-      <div className="textarea__block">
-        <textarea name="" 
-                  placeholder='Введите текст' 
-                  onChange={(e) => setInputMessage(e.target.value)}/>
+      <div className="input__block">
+        <input name="" 
+               placeholder='Введите текст' 
+               onKeyUp={(e) => handleSendMessage(e)}/>
         <img src={sendMessage} 
-             alt="отправить" 
-             onClick={(e) => handleSendMessage(e)}/>
+             alt="отправить"/>
       </div>
     </div>
   )
@@ -58,5 +79,7 @@ function ChatMessages(props) {
 
 export default connect(
   state => ({store: state}),
-  dispatch => ({})
+  dispatch => ({
+    AddMessage: (message) => dispatch(AddMessage(message))
+  })
 )(ChatMessages);

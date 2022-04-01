@@ -9,6 +9,7 @@ import DropDown from "~@/Utils/jsx/DropDown";
 import {reverse} from "../../../../../ProjectConstants";
 import {DateTime} from "luxon";
 import {toggleResponseOnLecture} from "../../ajax/workRooms";
+import {AddNotifications, RemoveNotification} from "../../../../Layout/redux/actions/notifications";
 
 
 
@@ -24,6 +25,7 @@ function LectureCardList(props){
           text === 'Откликнуться' ? 
             e.target.innerText = 'Отменить отклик' : 
             e.target.innerText = 'Откликнуться'
+          if (data.data[0]?.type === 'remove_respondent') props.RemoveNotification(data.data[0].id)
         }
       })
   }
@@ -64,7 +66,9 @@ function LectureCardList(props){
 
 export default connect(
   state => ({store: state}),
-  dispatch => ({})
+  dispatch => ({
+    RemoveNotification: (data) => dispatch(RemoveNotification(data)),
+  })
 )(LectureCardList);
 
 

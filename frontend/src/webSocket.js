@@ -11,7 +11,17 @@ export function createNotificationsSocket(setSocket, userId) {
     setTimeout(() => createNotificationsSocket(setSocket, userId), 3000)
     console.log('Соединение разорвано')
   }
-  socket.onmessage = (e) => {
-    console.log(JSON.parse(e.data))
+}
+
+export function createChatSocket(setSocket, chatId) {
+  let socket = new WebSocket(`ws://${hostURL}/chat/${chatId}`)
+  
+  socket.onopen = (e) => {
+    setSocket(socket);
+    console.log('Соединение с чатом установлено')
+  }
+  socket.onclose = () => {
+    setTimeout(() => createChatSocket(setSocket, chatId), 3000)
+    console.log('Соединение с чатом разорвано')
   }
 }

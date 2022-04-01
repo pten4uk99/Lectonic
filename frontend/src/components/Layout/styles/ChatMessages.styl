@@ -1,6 +1,6 @@
 .chat-messages__block {
   .actions__block {
-    height: 111px
+    height: 100px
     background-color: white
     padding: 18px
     box-sizing border-box
@@ -51,8 +51,12 @@
     }
   }
   .messages__block {
-    height: 423px
+    height: 434px
     background-color: rgba(245, 245, 245, 1);
+    padding-top: 40px
+    padding-bottom: 10px
+    box-sizing: border-box
+    overflow: auto;
     
     .block-message {
       float: right;
@@ -84,20 +88,19 @@
       }  
     }
   }
-  .textarea__block {
+  .input__block {
     display flex
     justify-content: center;
     align-items: center
     height: 68px
     background-color: white
     
-    textarea {
+    input {
       width: 437px
       height: 32px
       border-radius 18px
       border 1px solid $main-grey
       outline none
-      resize none
       padding: 8px 16px
       box-sizing border-box
       font-family: 'Montserrat', sans-serif;

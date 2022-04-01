@@ -15,3 +15,10 @@ export function getNotificationsList() {
   })
 }
 
+export function getChatMessages(chat_id) {
+  return fetch(`${baseURL}/api/chat/message_list/?chat_id=${chat_id}`, {
+    method: 'GET',
+    credentials: 'include'
+  })
+}
+

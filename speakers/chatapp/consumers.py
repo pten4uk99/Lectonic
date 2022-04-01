@@ -4,6 +4,7 @@ from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 
+from speakers.local_settings import DEFAULT_HOST
 from .models import Message, Chat
 
 User = get_user_model()
@@ -32,77 +33,121 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
         print(text_data_json)
 
     async def new_respondent(self, event):
-        await self.create_new_chat(event)
-        await self.send(text_data=json.dumps({'message': 'чатик создан'}))
+        lecture_request = event['lecture_request']
+        respondent = event['lecture_respondent']
+        chat = await self.create_new_chat(event)
+        need_read_messages = await self.get_need_read({**event, 'chat': chat})
+
+        photo = None
+
+        if hasattr(lecture_request, 'lecturer_lecture_request'):
+            photo = lecture_request.lecturer_lecture_request.photo.url
+        elif hasattr(lecture_request, 'customer_lecture_request'):
+            photo = lecture_request.customer_lecture_request.photo.url
+
+        data = {
+            'type': 'new_respondent',
+            'id': chat.pk,
+            'need_read': need_read_messages,
+            'lecture_name': lecture_request.lecture.name,
+            'lecture_photo': DEFAULT_HOST + photo,
+            'respondent_id': respondent.pk,
+            'respondent_first_name': respondent.person.first_name,
+            'respondent_last_name': respondent.person.last_name
+        }
+        await self.send(text_data=json.dumps(data))
 
     async def remove_respondent(self, event):
-        await self.remove_chat(event)
-        await self.send(text_data=json.dumps({'message': 'чатик удален'}))
+        chat_id = await self.remove_chat(event)
+        await self.send(text_data=json.dumps(
+            {
+                'type': 'remove_respondent',
+                'id': chat_id,
+            }
+        ))
 
     @database_sync_to_async
     def create_new_chat(self, data):
-        chat = Chat.objects.create(lecture_request=data["lecture_request"])
-        chat.users.add(data["lecture_creator"], data["lecture_respondent"])
-        chat.save()
+        chat = Chat.objects.filter(
+            users__in=[data["lecture_creator"], data["lecture_respondent"]]).first()
+        if not chat:
+            chat = Chat.objects.create(lecture_request=data["lecture_request"])
+            chat.users.add(data["lecture_creator"], data["lecture_respondent"])
+            chat.save()
+
+        Message.objects.get_or_create(
+            author=data["lecture_respondent"],
+            chat=chat,
+            text='Добрый день! Мне подходит ваш запрос на проведение лекции!'
+        )
+        return chat
+
+    @database_sync_to_async
+    def get_need_read(self, data):
+        if self.scope["url_route"]["kwargs"]["pk"] == data['lecture_respondent'].pk:
+            return False
+        return Message.objects.filter(
+            chat=data['chat'], author=data['lecture_respondent'], need_read=True).exists()
 
     @database_sync_to_async
     def remove_chat(self, data):
-        Chat.objects.filter(
+        chat = Chat.objects.filter(
             lecture_request=data["lecture_request"],
             users=data["lecture_respondent"]
-        ).delete()
-
+        ).first()
+        chat_id = chat.pk
+        chat.delete()
+        return chat_id
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
 
         await self.channel_layer.group_add(
-            'users',
+            f'chat_{self.scope["url_route"]["kwargs"]["pk"]}',
             self.channel_name
         )
         await self.accept()
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(
-            'users',
+            f'chat_{self.scope["url_route"]["kwargs"]["pk"]}',
             self.channel_name
         )
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        current_user = text_data_json['current_user']
-        other_user = text_data_json['other_user']
-        chat_id = text_data_json['chat_id']
-        message = text_data_json['message']
+        author = text_data_json['author']
+        chat_id = self.scope["url_route"]["kwargs"]["pk"]
+        text = text_data_json['text']
 
         data = {
                 'type': 'chat_message',
-                'current_user': current_user,
-                'other_user': other_user,
+                'author': author,
                 'chat_id': chat_id,
-                'message': message
+                'text': text
             }
-        # await self.create_new_message(data)
-        await self.channel_layer.group_send('users', data)
+        await self.create_new_message(data)
+        await self.channel_layer.group_send(
+            f'chat_{self.scope["url_route"]["kwargs"]["pk"]}', data)
 
     async def chat_message(self, event):
-        current_user = event['current_user']
-        other_user = event['other_user']
-        chat_id = event['chat_id']
-        message = event['message']
+        author = event['author']
+        text = event['text']
 
         await self.send(text_data=json.dumps({
-            'current_user': current_user,
-            'other_user': other_user,
-            'chat_id': chat_id,
-            'message': message
+            'author': author,
+            'text': text
         }))
 
     @database_sync_to_async
     def create_new_message(self, data):
+        messages = Message.objects.filter(chat_id=data['chat_id'])
+        if messages.count() > 500:
+            messages.first().delete()
+
         Message.objects.create(
-            author=User.objects.get(pk=data['current_user']),
+            author=User.objects.get(pk=data['author']),
             chat=Chat.objects.get(pk=data['chat_id']),
-            text=data['message']
+            text=data['text']
         )

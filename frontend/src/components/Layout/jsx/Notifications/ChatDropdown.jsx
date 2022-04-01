@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import ChatMessages from "./ChatMessages";
 import NotificationsList from "./NotificationsList";
@@ -10,9 +10,10 @@ function ChatDropdown(props) {
   return (
     <div className="chat-dropdown__block">
       {!messagesArea ? 
-        <NotificationsList socket={props.notificationsSocket} 
-                           setArea={setMessagesArea}/> : 
-        <ChatMessages setArea={setMessagesArea}/>
+        <NotificationsList setArea={setMessagesArea} 
+                           setChatSocket={props.setChatSocket}/> : 
+        <ChatMessages setArea={setMessagesArea} 
+                      chatSocket={props.chatSocket}/>
       }
     </div>
   )

@@ -3,6 +3,7 @@ from channels.layers import get_channel_layer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
+from chatapp.models import Chat
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.lecturer.lecture_as_lecturer_serializers import *
@@ -27,7 +28,8 @@ class LectureAsLecturerAPIView(APIView):
 
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        customer_lectures = CustomerLectureRequest.objects.all()
+        customer_lectures = CustomerLectureRequest.objects.exclude(
+            customer__person__user=request.user)
 
         serializer = LectureAsLecturerGetSerializer(
             customer_lectures, many=True, context={'request': request})
@@ -80,6 +82,16 @@ class LectureResponseAPIView(APIView):
                 }
             )
 
+            async_to_sync(channel_layer.group_send)(
+                f'user_{request.user.pk}',
+                {
+                    "type": "new_respondent",
+                    "lecture_request": lecture_request,
+                    "lecture_creator": creator.user,
+                    "lecture_respondent": request.user
+                }
+            )
+
             lecture_request.save()
             return lecture_responses.success_response()
         else:
@@ -92,7 +104,12 @@ class LectureResponseAPIView(APIView):
                 }
             )
             Respondent.objects.get(person=request.user.person).delete()
-            return lecture_responses.success_cancel()
+            chat = Chat.objects.filter(
+                users__in=[creator.user, request.user]).first()
+            return lecture_responses.success_cancel([{
+                'type': 'remove_respondent',
+                'id': chat.pk
+            }])
 
 
 class LectureConfirmRespondentAPIView(APIView):

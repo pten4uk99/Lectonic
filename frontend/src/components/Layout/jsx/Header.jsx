@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import { Link } from 'react-router-dom'
 import {connect} from "react-redux";
 
@@ -13,6 +13,8 @@ import {ActivateModal, ActiveProfileDropdown, DeactivateModal} from "../redux/ac
 import ProfileDropDown from "./ProfileDropDown";
 import ErrorMessage from "../../Utils/jsx/ErrorMessage";
 import ChatDropdown from "./Notifications/ChatDropdown";
+import {getNotificationsList} from "../ajax";
+import {AddNotifications, RemoveNotification, UpdateNotifications} from "../redux/actions/notifications";
 
 
 function Header(props) {
@@ -20,6 +22,37 @@ function Header(props) {
   let loggedIn = props.store.permissions.logged_in
   
   let [chatActive, setChatActive] = useState(false)
+  let [chatUnread, setChatUnread] = useState(false)
+  let [chatSocket, setChatSocket] = useState(null)
+  
+  useEffect(() => {
+    getNotificationsList()
+      .then(r => r.json())
+      .then(data => props.UpdateNotifications(data.data))
+  }, [])
+  
+  useEffect(() => {
+    if (chatSocket && !chatActive) chatSocket.close()
+  }, [chatActive])
+  
+  useEffect(() => {
+    let need_read = false
+    for (let elem of props.store.notifications) {
+      if (elem?.need_read) {
+        need_read = true
+        break
+      }
+    }
+    setChatUnread(need_read)
+  }, [props.store.notifications])
+  
+  useEffect(() => {
+    props.notificationsSocket?.addEventListener('message', (e) => {
+      let data = JSON.parse(e.data)
+      if (data.type === 'new_respondent') props.AddNotifications(data)
+      if (data.type === 'remove_respondent') props.RemoveNotification(data.id)
+    })
+  }, [props.notificationsSocket])
   
   return (
     <>
@@ -33,6 +66,7 @@ function Header(props) {
                src={iconChat}
                alt="чат" 
                onClick={() => setChatActive(!chatActive)}/>
+          {chatUnread && <div className="need-read"/>}
 
           {loggedIn ?
             <div className="header__profile-photo-block" 
@@ -58,7 +92,9 @@ function Header(props) {
         <Authorization />
       </Modal>
       <ProfileDropDown/>
-      {chatActive && <ChatDropdown notificationsSocket={props.notificationsSocket}/>}
+      {chatActive && <ChatDropdown notificationsSocket={props.notificationsSocket} 
+                                   chatSocket={chatSocket} 
+                                   setChatSocket={setChatSocket}/>}
       {props.store.header.errorMessage && <ErrorMessage/>}
     </>
   );
@@ -68,6 +104,9 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     ActivateModal: () => dispatch(ActivateModal()),
+    UpdateNotifications: (data) => dispatch(UpdateNotifications(data)),
+    AddNotifications: (data) => dispatch(AddNotifications(data)),
+    RemoveNotification: (chat_id) => dispatch(RemoveNotification(chat_id)),
     DeactivateModal: () => dispatch(DeactivateModal()),
     ActiveProfileDropdown: 
       (active) => dispatch(ActiveProfileDropdown(active)),

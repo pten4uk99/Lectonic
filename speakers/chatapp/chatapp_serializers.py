@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from chatapp.models import Chat
+from chatapp.models import Chat, Message
 from speakers.settings import DEFAULT_HOST
 
 
@@ -17,7 +17,6 @@ class ChatSerializer(serializers.ModelSerializer):
             'id',
             'lecture_name',
             'lecture_photo',
-            'need_read',
             'respondent_id',
             'respondent_first_name',
             'respondent_last_name'
@@ -40,3 +39,11 @@ class ChatSerializer(serializers.ModelSerializer):
 
     def get_respondent_last_name(self, obj):
         return obj.users.exclude(pk=self.context['request'].user.pk).first().person.last_name
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    author = serializers.IntegerField(source='author.id')
+
+    class Meta:
+        model = Message
+        fields = ['author', 'text', 'chat', 'datetime']

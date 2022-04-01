@@ -68,10 +68,11 @@ def lecture_does_not_exist():
     )
 
 
-def success_cancel():
+def success_cancel(data):
     return response.get_response(
         status=response.SUCCESS,
         detail=SUCCESS_CANCEL,
+        data=data,
         status_code=200
     )
 

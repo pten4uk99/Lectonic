@@ -21,16 +21,15 @@ import {createNotificationsSocket} from "./webSocket";
 
 
 
-// let chatSocket = new WebSocket(`ws://${hostURL}/connect/`);
+
 
 
 function App(props) {
   let userId = props.store.permissions.user_id
   let [notificationsSocket, setNotificationsSocket] = useState(null)
-  let [chatsSocket, setChatSocket] = useState(null)
   
   useEffect(() => {
-    if (userId) createNotificationsSocket(setChatSocket, userId)
+    if (userId) createNotificationsSocket(setNotificationsSocket, userId)
   }, [userId])
   
   return (

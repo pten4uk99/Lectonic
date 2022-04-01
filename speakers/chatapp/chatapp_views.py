@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 
 from chatapp import chatapp_responses
 from chatapp.chatapp_serializers import *
-from chatapp.models import Chat
+from chatapp.models import Chat, Message
 from workroomsapp.utils import workroomsapp_permissions
 
 
@@ -18,4 +18,27 @@ class ChatListGetAPIView(APIView):
         serializer = ChatSerializer(
             chat, many=True, context={'request': request})
 
+        return chatapp_responses.success(serializer.data)
+
+
+class MessageListGetAPIView(APIView):
+    permission_classes = [workroomsapp_permissions.IsLecturer |
+                          workroomsapp_permissions.IsCustomer]
+
+    @swagger_auto_schema(deprecated=True)
+    def get(self, request):
+        chat_id = request.GET.get('chat_id')
+        if not chat_id:
+            chatapp_responses.chat_id_not_in_data()
+
+        chat = Chat.objects.filter(pk=chat_id).first()
+        if not chat:
+            chatapp_responses.chat_does_not_exist()
+
+        messages = Message.objects.order_by('datetime').filter(chat=chat)
+        for message in messages:
+            message.need_read = False
+            message.save()
+
+        serializer = MessageSerializer(messages, many=True)
         return chatapp_responses.success(serializer.data)
