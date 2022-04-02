@@ -5,7 +5,7 @@ import backArrow from '~/assets/img/back-arrow.svg'
 import sendMessage from '~/assets/img/send-message-icon.svg'
 import {AddMessage} from "../../redux/actions/messages";
 import {SetSelectedChat} from "../../redux/actions/header";
-import {toggleResponseOnLecture} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
+import {toggleConfirmResponseOnLecture, toggleResponseOnLecture} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
 import {RemoveNotification} from "../../redux/actions/notifications";
 
 
@@ -51,11 +51,18 @@ function ChatMessages(props) {
     input.current.value = ''
   }
   
-  function handleConfirm() {
-    
-  }
-  function handleDenied() {
-    
+  function handleToggleConfirm(reject) {
+    toggleConfirmResponseOnLecture(data.lecture_id, data.talker_respondent, reject)
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === 'success') {
+          props.setArea(false)
+          props.SetSelectedChat(null)
+          if (reject) {
+            props.RemoveNotification(props.store.header.selectedChatId)
+          }
+        }
+      })
   }
   function handleRejectResponse() {
     toggleResponseOnLecture(data.lecture_id)
@@ -83,8 +90,8 @@ function ChatMessages(props) {
         <div className="buttons">
           {data.is_creator ? 
             <>
-              <button className="confirm" onClick={handleConfirm}>Принять</button>
-              <button className="reject" onClick={handleDenied}>Отклонить</button>
+              <button className="confirm" onClick={() => handleToggleConfirm(false)}>Принять</button>
+              <button className="reject" onClick={() => handleToggleConfirm(true)}>Отклонить</button>
             </> :
             <button className="reject-response" onClick={handleRejectResponse}>Отменить отклик</button>
           }

@@ -42,6 +42,12 @@ class MessageListGetAPIView(APIView):
 
         lecture = chat.lecture_request.lecture
         talker_person = chat.users.exclude(pk=request.user.pk).first().person
+        respondent = talker_person.respondents.filter(lecture_requests=chat.lecture_request).first()
+        if not respondent:
+            respondent = False
+        else:
+            respondent = respondent.pk
+
         is_creator = False
 
         if hasattr(chat.lecture_request, 'lecturer_lecture_request'):
@@ -54,6 +60,7 @@ class MessageListGetAPIView(APIView):
             'lecture_id': lecture.pk,
             'lecture_name': lecture.name,
             'is_creator': is_creator,
+            'talker_respondent': respondent,
             'talker_first_name': talker_person.first_name,
             'talker_last_name': talker_person.last_name,
             'messages': serializer.data,

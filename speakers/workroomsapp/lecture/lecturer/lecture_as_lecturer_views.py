@@ -112,11 +112,12 @@ class LectureResponseAPIView(APIView):
             }])
 
 
-class LectureConfirmRespondentAPIView(APIView):
+class LectureToggleConfirmRespondentAPIView(APIView):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
         lecture_id = request.GET.get('lecture')
         respondent_id = request.GET.get('respondent')
+        reject = request.GET.get('reject')
 
         if not lecture_id or not respondent_id:
             return lecture_responses.not_in_data()
@@ -129,29 +130,36 @@ class LectureConfirmRespondentAPIView(APIView):
         lecturer_lecture = None
         customer_lecture = None
         if request.user.person.is_lecturer:
-            lecturer_lecture = request.user.lecturer.lecturer_lecture_requests.filter(
+            lecturer_lecture = request.user.person.lecturer.lecturer_lecture_requests.filter(
                 lecture_request__lecture=lecture).first()
         elif request.user.person.is_customer:
-            customer_lecture = request.user.customer.customer_lecture_requests.filter(
+            customer_lecture = request.user.person.customer.customer_lecture_requests.filter(
                 lecture_request__lecture=lecture).first()
 
         if not lecturer_lecture and not customer_lecture:
             return lecture_responses.not_a_creator()
 
-        respondent = lecture.lecture_request.respondents.filter(pk=respondent_id)
+        respondent = lecture.lecture_request.respondents.filter(pk=respondent_id).first()
 
         if not respondent:
             return lecture_responses.not_a_respondent()
 
-        if respondent.confirmed:
-            respondent.confirmed = False
+        if reject == 'true':
+            respondent.delete()
             lecture.status = False
             lecture.save()
-            respondent.save()
+            async_to_sync(channel_layer.group_send)(
+                f'user_{respondent.person.user.pk}',
+                {
+                    "type": "remove_respondent",
+                    "lecture_request": lecture.lecture_request,
+                    "lecture_respondent": respondent.person.user
+                }
+            )
             return lecture_responses.success_denied()
-        else:
-            respondent.confirmed = True
-            lecture.status = True
-            lecture.save()
-            respondent.save()
-            return lecture_responses.success_confirm()
+
+        respondent.confirmed = True
+        lecture.status = True
+        lecture.save()
+        respondent.save()
+        return lecture_responses.success_confirm()

@@ -53,3 +53,15 @@ export function toggleResponseOnLecture(lecture_id) {
     options
   )
 }
+
+export function toggleConfirmResponseOnLecture(lecture_id, respondent_id, reject) {
+  const options = {
+    method: 'GET',
+    headers: HEADERS,
+    credentials: 'include',
+  }
+  return fetch(
+    `${baseURL}/api/workrooms/lecture/response/confirm/?lecture=${lecture_id}&respondent=${respondent_id}&reject=${reject}`,
+    options
+  )
+}
