@@ -1,0 +1,120 @@
+.chat-messages__block {
+  .actions__block {
+    height: 100px
+    background-color: white
+    padding: 18px
+    box-sizing border-box
+    
+    .lecture {
+      display flex
+      
+      .back-arrow {
+        display flex
+        justify-content: center;
+        width: 30px
+        height: 30px
+        cursor pointer
+        img {
+          height: 11px
+          margin-top: 5px
+        }
+      }
+      .text {
+        margin-left: 13px
+        .lecture-name {
+          font-size: 16px
+          font-weight: 500
+        }
+        .respondent-name {
+          font-size: 14px
+        }
+      }
+    }
+    .buttons {
+      display flex
+      justify-content: center;
+      margin-top: 7px
+      
+      button {
+        width: 100px
+        height: 29px
+        border-radius 18px
+        border: 1px solid #C4C4C4;
+        background-color: white
+        font-family: 'Montserrat', sans-serif;
+        cursor pointer
+
+        &.confirm {
+          margin-right: 15px
+          background-color: rgba(196, 196, 196, 1);
+        }
+        &.reject-response {
+          width: 200px
+        }
+      }
+    }
+  }
+  .messages__block {
+    height: 434px
+    background-color: rgba(245, 245, 245, 1);
+    padding-top: 40px
+    padding-bottom: 10px
+    box-sizing: border-box
+    overflow: auto;
+    
+    .block-message {
+      float: right;
+      position: relative;
+      width: 100%;
+      padding: 5px 15px;
+  /*     border: 1px solid; */
+      .self-message, .other-message {
+        padding: 8px 16px;
+    
+        font-size: 11pt;
+    
+        max-width: 80%;
+        min-width: 30px;
+        min-height: 10pt;
+    
+        word-wrap: break-word;
+      }
+      .self-message {
+        background-color: white;
+        float: right;
+        border-radius: 14px 14px 0 14px;
+      }
+      .other-message {
+        float: left;
+        background-color: rgba(219, 219, 219, 1);
+        border-radius: 14px 14px 14px 0;
+        margin-left: 30px;
+      }  
+    }
+  }
+  .input__block {
+    display flex
+    justify-content: center;
+    align-items: center
+    height: 68px
+    background-color: white
+    
+    input {
+      width: 437px
+      height: 32px
+      border-radius 18px
+      border 1px solid $main-grey
+      outline none
+      padding: 8px 16px
+      box-sizing border-box
+      font-family: 'Montserrat', sans-serif;
+      &::-webkit-scrollbar {
+        display none
+      }
+    }
+    img {
+      position: absolute
+      right: 8px
+    }
+  }
+}

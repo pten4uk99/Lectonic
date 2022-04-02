@@ -20,12 +20,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'drf_yasg',
+    'channels',
 
     # Наши приложения
     'emailapp',
     'authapp',
     'workroomsapp',
-    'guestapp',
+    'chatapp',
 ]
 
 MIDDLEWARE = [
@@ -68,6 +69,7 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = "speakers.asgi.application"
 WSGI_APPLICATION = 'speakers.wsgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -106,7 +108,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'authapp.User'
 
-DEFAULT_HOST = 'https://dev.lectonic.ru'
 
 try:
     from .local_settings import *

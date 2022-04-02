@@ -12,12 +12,13 @@ import {createProfile, getCities} from "../ajax/profile";
 import {reverse} from "../../../ProjectConstants";
 import {SwapPerson} from "../../Authorization/redux/actions/permissions";
 import {SetErrorMessage} from "../../Layout/redux/actions/header";
+import DropDown from '~@/Utils/jsx/DropDown';
 
 
 function SetProfileInfo(props) {
   let birth_date = props.store.profile.birth_date
   let navigate = useNavigate()
-  
+
   useEffect(() => {
     if (props.store.permissions.is_person) navigate(reverse('workroom'))
   }, [props.store.permissions.is_person])
@@ -149,6 +150,7 @@ function SetProfileInfo(props) {
           <div className='userInfo__form__inputIcon-container'>
             <img className='location-icon' src={locationIcon} />
             <div className='dropDown-wrapper'>
+              {/*<DropDown request={getCities} width={true} input={true} placeholder='Ваш город'/>*/}
               <input type="text" 
                      list="cities" 
                      name="city"
@@ -167,6 +169,7 @@ function SetProfileInfo(props) {
           <div className='userInfo__form__inputIcon-container'>
             <img className='birthdate-icon' src={birthdateIcon} />
             <div className='dropDown-wrapper'>
+              {/*<DropDown request={getDaysArr(birth_date.year, birth_date.month)} placeholder='01'/>*/}
               <select name="day" 
                       onChange={(e) => props.UpdateBirthDate({day: e.target.selectedOptions[0].value})}>
                 <option value={birth_date.day}>{birth_date.day}</option>
@@ -178,14 +181,15 @@ function SetProfileInfo(props) {
             </div>
 
             <div className='dropDown-wrapper'>
+            {/*<DropDown request={getMonthsArr()} placeholder='Января'/>*/}
               <select name="month" 
                       onChange={(e) => props.UpdateBirthDate({month: e.target.selectedOptions[0].value})}>
                 <option value={birth_date.month}>{getMonthsArr()[birth_date.month - 1]}</option>
                 {getMonthsArr().map((elem, index) => <option key={index} value={index + 1}>{elem}</option>)}
               </select>
             </div>
-
             <div className='dropDown-wrapper'>
+            {/*<DropDown request={getYearsArr()} placeholder='1990'/>*/}
               <select name="year" 
                       onChange={(e) => props.UpdateBirthDate({year: e.target.selectedOptions[0].value})}>
                 <option value={birth_date.year}>{birth_date.year}</option>

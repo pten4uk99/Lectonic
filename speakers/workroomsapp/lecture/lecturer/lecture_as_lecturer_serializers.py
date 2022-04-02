@@ -2,6 +2,7 @@ import datetime
 
 from rest_framework import serializers
 
+from speakers.settings import DEFAULT_HOST
 from workroomsapp.calendar.utils import build_photo_path
 from workroomsapp.lecture.utils import (
     convert_datetime,
@@ -125,7 +126,7 @@ class LectureAsLecturerGetSerializer(serializers.ModelSerializer):
         return obj.lecture_request.lecture.optional.hall_address
 
     def get_photo(self, obj):
-        return build_photo_path(self.context['request'], obj.photo.url)
+        return DEFAULT_HOST + obj.photo.url
 
     def get_creator_first_name(self, obj):
         return obj.customer.person.first_name

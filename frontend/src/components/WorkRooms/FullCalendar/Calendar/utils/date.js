@@ -1,21 +1,18 @@
-export function checkNeedSwapToPrevMonth(touchedDate, currentDate) {
-  if (touchedDate.getFullYear() === currentDate.getFullYear()) {
-    return touchedDate.getMonth() < currentDate.getMonth()
-  } else if (touchedDate.getFullYear() < currentDate.getFullYear()) {
-    return true
-  }
-
-  return false
+export function checkNeedSwapToPrevMonth(touchedDate, currentDate, today) {
+  if (touchedDate - today <= - 1000 * 60 * 60 * 24) return false
+  return touchedDate - currentDate <= - 1000 * 60 * 60 * 24
 }
 
-export function checkNeedSwapToNextMonth(touchedDate, currentDate) {
-  if (touchedDate.getFullYear() === currentDate.getFullYear()) {
-    return touchedDate.getMonth() > currentDate.getMonth()
-  } else if (touchedDate.getFullYear() > currentDate.getFullYear()) {
-    return true
+export function checkNeedSwapToNextMonth(touchedDate, currentDate, today) {
+  if (touchedDate.getFullYear() >= currentDate.getFullYear() &&
+    touchedDate.getMonth() > currentDate.getMonth()) {
+    
+    if (touchedDate.getFullYear() === today.getFullYear() + 1) {
+      if (currentDate.getFullYear() === today.getFullYear()) return true
+      return touchedDate.getMonth() <= today.getMonth()
+    } else return true
   }
-
-  return false
+  return touchedDate.getFullYear() > currentDate.getFullYear();
 }
 
 export function checkEqualDates(date1, date2) {

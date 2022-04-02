@@ -22,6 +22,7 @@ function Customer(props) {
           <CreatedLectures role='customer' 
                            data={[]}/>
           <LectureCardList header='Новые лекции' 
+                           isLecturer={false}
                            data={potentialLectures}/>
         </article>
     )

@@ -1,4 +1,5 @@
 export const baseURL = 'https://dev.lectonic.ru'; // случайно могу иногда забыть поменять на dev.lectonic.ru
+export const hostURL = baseURL.split('//')[1]
 
 const routes = {
   'index': '/',
@@ -16,6 +17,8 @@ const routes = {
   
   'create_event': '/create_event',
   'change_password': '/change_password',
+
+  'role_page': '/role_page',
 } // сюда прописываем все роуты и их имена (имя: роут)
 
 export function reverse(name, params=null) {

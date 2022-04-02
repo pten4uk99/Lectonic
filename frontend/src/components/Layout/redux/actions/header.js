@@ -10,3 +10,6 @@ export function ActiveProfileDropdown(active) {
 export function SetErrorMessage(message) {
   return {type: "SET_ERROR_MESSAGE", payload: {message: message}}
 }
+export function SetSelectedChat(chat_id) {
+  return {type: "SET_SELECTED_CHAT_ID", payload: chat_id}
+}

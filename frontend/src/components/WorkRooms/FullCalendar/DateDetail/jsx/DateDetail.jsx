@@ -52,11 +52,14 @@ function DateDetail(props) {
                       ? 'Подтвержденная лекция'
                       : 'Неподтвержденная лекция'
                   }
+                  creator={event.creator}
                   status={event.status}
                   name={event.name}
+                  photo={event.photo}
+                  customer={event.customer}
                   lecturer={event.lecturer}
-                  listener={event.listener}
-                  address={event.address}
+                  respondents={event.respondents}
+                  address={event.hall_address}
                   timeStart={event.start}
                   timeEnd={event.end}
                 />

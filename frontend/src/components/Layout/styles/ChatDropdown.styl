@@ -1,0 +1,88 @@
+.chat-dropdown__block {
+  position: absolute
+  top: 50px
+  right: 144px
+  
+  width: 455px
+  height: 605px
+  
+  overflow: hidden;
+  
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 0 15px rgba(0, 6, 32, 0.1);
+  
+  z-index 9
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(180, 180, 180, 1);
+    border-radius: 18px;
+  }
+  
+  .notifications-list__block {
+    height: 585px
+    overflow-y: auto
+  }
+  .notification__header {
+    height: 40px
+    display flex
+    justify-content: center;
+    align-items: center
+    font-size: 14px
+    font-weight: 700
+    margin-top: 20px
+  }
+  .chat-dropdown__notification {
+    list-style: none
+    display flex
+    align-items: center
+    height: 76px
+    box-sizing border-box
+    padding: 0 20px
+    
+    &:hover {
+      background-color: $main-blue
+      cursor pointer
+      .lecture-name, 
+      .respondent-name {
+        color white
+      }
+    }
+    
+    .photo {
+      width: 56px
+      height: 56px
+      border-radius 50%
+      overflow: hidden;
+    }
+    .text {
+      margin-left: 12px
+      width: 294px
+      .lecture-name {
+        font-size: 16px
+        font-weight: 500
+      }
+      .respondent-name {
+        font-size: 14px
+      }
+    }
+    .need-read {
+      position: absolute
+      right: 28px
+      width: 8px
+      height: 8px
+      border-radius 50%
+      background-color: rgba(255, 0, 193, 1);
+    }
+  }
+  .empty-list {
+    box-sizing: border-box
+    padding: 0 30px
+    text-align: center
+    margin-top: 200px
+    color $main-grey
+  }
+}

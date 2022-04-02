@@ -6,3 +6,19 @@ export function logout() {
     credentials: 'include'
   })
 }
+
+
+export function getNotificationsList() {
+  return fetch(`${baseURL}/api/chat/chat_list/`, {
+    method: 'GET',
+    credentials: 'include'
+  })
+}
+
+export function getChatMessages(chat_id) {
+  return fetch(`${baseURL}/api/chat/message_list/?chat_id=${chat_id}`, {
+    method: 'GET',
+    credentials: 'include'
+  })
+}
+
