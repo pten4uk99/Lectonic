@@ -7,6 +7,7 @@ from speakers.settings import DEFAULT_HOST
 class ChatSerializer(serializers.ModelSerializer):
     lecture_name = serializers.SerializerMethodField()
     lecture_photo = serializers.SerializerMethodField()
+    need_read = serializers.SerializerMethodField()
     respondent_id = serializers.SerializerMethodField()
     respondent_first_name = serializers.SerializerMethodField()
     respondent_last_name = serializers.SerializerMethodField()
@@ -17,6 +18,7 @@ class ChatSerializer(serializers.ModelSerializer):
             'id',
             'lecture_name',
             'lecture_photo',
+            'need_read',
             'respondent_id',
             'respondent_first_name',
             'respondent_last_name'
@@ -24,6 +26,10 @@ class ChatSerializer(serializers.ModelSerializer):
 
     def get_lecture_name(self, obj):
         return obj.lecture_request.lecture.name
+
+    def get_need_read(self, obj):
+        return Message.objects.filter(chat=obj, need_read=True).exclude(
+            author=self.context['request'].user).exists()
 
     def get_lecture_photo(self, obj):
         if hasattr(obj.lecture_request, 'lecturer_lecture_request'):

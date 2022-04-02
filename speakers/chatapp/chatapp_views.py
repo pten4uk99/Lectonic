@@ -40,5 +40,21 @@ class MessageListGetAPIView(APIView):
             message.need_read = False
             message.save()
 
+        lecture = chat.lecture_request.lecture
+        talker_person = chat.users.exclude(pk=request.user.pk).first().person
+        is_creator = False
+
+        if hasattr(chat.lecture_request, 'lecturer_lecture_request'):
+            is_creator = chat.lecture_request.lecturer_lecture_request.lecturer.person.user == request.user
+        elif hasattr(chat.lecture_request, 'customer_lecture_request'):
+            is_creator = chat.lecture_request.customer_lecture_request.customer.person.user == request.user
+
         serializer = MessageSerializer(messages, many=True)
-        return chatapp_responses.success(serializer.data)
+        return chatapp_responses.success([{
+            'lecture_id': lecture.pk,
+            'lecture_name': lecture.name,
+            'is_creator': is_creator,
+            'talker_first_name': talker_person.first_name,
+            'talker_last_name': talker_person.last_name,
+            'messages': serializer.data,
+        }])

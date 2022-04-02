@@ -3,6 +3,8 @@ import {connect} from "react-redux";
 import {getChatMessages, getNotificationsList} from "../../ajax";
 import {createChatSocket} from "../../../../webSocket";
 import {UpdateMessages} from "../../redux/actions/messages";
+import {SetNeedRead} from "../../redux/actions/notifications";
+import {SetSelectedChat} from "../../redux/actions/header";
 
 
 function NotificationsList(props) {
@@ -14,7 +16,11 @@ function NotificationsList(props) {
     getChatMessages(chat_id)
       .then(r => r.json())
       .then(data => {
-        if (data.status === 'success') props.UpdateMessages(data.data)
+        if (data.status === 'success') {
+          props.UpdateMessages(data.data[0])
+          props.SetNeedRead(chat_id, false)
+          props.SetSelectedChat(chat_id)
+        }
       })
   }
 
@@ -38,6 +44,7 @@ function NotificationsList(props) {
           Здесь будут отображаться отклики на ваши неподтвержденные лекции
         </div>
       }
+      
     </div>
   )
 }
@@ -46,6 +53,8 @@ function NotificationsList(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
-    UpdateMessages: (data) => dispatch(UpdateMessages(data))
+    UpdateMessages: (data) => dispatch(UpdateMessages(data)),
+    SetSelectedChat: (chat_id) => dispatch(SetSelectedChat(chat_id)),
+    SetNeedRead: (chat_id, need_read) => dispatch(SetNeedRead(chat_id, need_read)),
   })
 )(NotificationsList);

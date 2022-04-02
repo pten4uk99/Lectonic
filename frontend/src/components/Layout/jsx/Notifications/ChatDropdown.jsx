@@ -11,7 +11,8 @@ function ChatDropdown(props) {
     <div className="chat-dropdown__block">
       {!messagesArea ? 
         <NotificationsList setArea={setMessagesArea} 
-                           setChatSocket={props.setChatSocket}/> : 
+                           setChatSocket={props.setChatSocket} 
+                           chatSocket={props.chatSocket}/> : 
         <ChatMessages setArea={setMessagesArea} 
                       chatSocket={props.chatSocket}/>
       }

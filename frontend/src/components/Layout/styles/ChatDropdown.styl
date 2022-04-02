@@ -13,7 +13,19 @@
   box-shadow: 0 0 15px rgba(0, 6, 32, 0.1);
   
   z-index 9
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
   
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(180, 180, 180, 1);
+    border-radius: 18px;
+  }
+  
+  .notifications-list__block {
+    height: 585px
+    overflow-y: auto
+  }
   .notification__header {
     height: 40px
     display flex

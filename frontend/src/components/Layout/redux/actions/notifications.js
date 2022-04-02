@@ -7,3 +7,6 @@ export function AddNotifications(data) {
 export function RemoveNotification(chat_id) {
   return {type: "REMOVE_NOTIFICATION", payload: {id: chat_id}}
 }
+export function SetNeedRead(chat_id, need_read) {
+  return {type: "SET_NEED_READ", payload: {id: chat_id, need_read: need_read}}
+}

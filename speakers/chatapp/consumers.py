@@ -2,6 +2,7 @@ import json
 
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model
 
 from speakers.local_settings import DEFAULT_HOST
@@ -66,6 +67,9 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
             }
         ))
 
+    async def new_message(self, event):
+        await self.send(text_data=json.dumps(event))
+
     @database_sync_to_async
     def create_new_chat(self, data):
         chat = Chat.objects.filter(
@@ -102,7 +106,6 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-
         await self.channel_layer.group_add(
             f'chat_{self.scope["url_route"]["kwargs"]["pk"]}',
             self.channel_name
@@ -115,7 +118,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-    async def receive(self, text_data):
+    async def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
         author = text_data_json['author']
         chat_id = self.scope["url_route"]["kwargs"]["pk"]
@@ -128,8 +131,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'text': text
             }
         await self.create_new_message(data)
+        recipient_pk = await self.get_recipient_id(author)
         await self.channel_layer.group_send(
             f'chat_{self.scope["url_route"]["kwargs"]["pk"]}', data)
+        await get_channel_layer().group_send(
+            f'user_{recipient_pk}', {
+                'type': 'new_message',
+                'chat_id': chat_id
+            })
 
     async def chat_message(self, event):
         author = event['author']
@@ -143,6 +152,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def create_new_message(self, data):
         messages = Message.objects.filter(chat_id=data['chat_id'])
+        other_messages = messages.exclude(author=User.objects.get(pk=data['author']))
+        for message in other_messages:
+            message.need_read = False
+            message.save()
         if messages.count() > 500:
             messages.first().delete()
 
@@ -151,3 +164,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             chat=Chat.objects.get(pk=data['chat_id']),
             text=data['text']
         )
+
+    @database_sync_to_async
+    def get_recipient_id(self, author):
+        return User.objects.filter(
+            chat_list__id=self.scope["url_route"]["kwargs"]["pk"]).exclude(
+            pk=author).first().pk
