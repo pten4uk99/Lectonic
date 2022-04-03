@@ -1,0 +1,321 @@
+
+.lecture__container {
+  border: 3px solid red;
+  height: auto;
+  width: 1440px;
+  padding-left: 50px;
+  
+  .header {
+    position: relative;
+    width: 1440px;
+    height: 677px;
+    border: 1px solid red;
+  
+    .header__picture {
+      position: absolute;
+      width: 1470px;
+      height: 275px;
+      left: -15px;
+  
+      border: 1px solid blue;
+  
+      .header__picture_label {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+  
+        position: absolute;
+        width: 158px;
+        height: 33px;
+        left: 14px;
+        top: 29px;
+  
+        color: #FFFFFF;
+        background: #0025FF;
+  
+        .header__picture_label__text {
+          position: static;
+          width: 88px;
+          height: 13px;
+          left: 60px;
+          top: 10px;
+          padding: 10px 10px 10px 60px;
+  
+          font-family: 'Montserrat';
+          font-style: normal;
+          font-weight: 700;
+          font-size: 11px;
+          line-height: 13px;
+          text-align: center;
+        }
+      }
+    }
+  }
+  
+  .header__company_name {
+    position: absolute;
+    display: grid;
+    width: 1320px;
+    height: 88px;
+    top: 291px;
+  
+  .header__company_name__text {
+    padding-left: 60px;
+    width: auto;
+  }
+  
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 72px;
+    line-height: 88px;
+  
+    border:1px solid #00D378;
+  }
+  
+  .button {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 44px;
+  
+    font-size: 14px;
+  
+    color: #FFFFFF;
+    font-family: 'Montserrat';
+    border-radius: 30px;
+  
+    &.header__company_name__button_chat{
+      position: absolute;
+      width: 148px;
+      top: 20px;
+      left: 812px;
+      line-height: 17px;
+    
+      background: #00D378;  
+    }
+  
+    &.header__company_name__button_response {
+      // padding: 13px 155px 14px;
+    
+      position: absolute;
+      width: 321px;
+      top: 20px;
+      left: 999px;
+      font-size: 14px;
+      line-height: 17px;
+    
+      background: #B924FF;
+    }
+  }
+  
+  // .header__company_name__button_chat {
+  //   display: flex;
+  //   flex-direction: row;
+  //   justify-content: center;
+  //   align-items: center;
+  
+  //   position: absolute;
+  //   width: 148px;
+  //   height: 44px;
+  //   top: 20px;
+  //   left: 812px;
+  //   font-size: 14px;
+  //   line-height: 17px;
+  
+  //   color: #FFFFFF;
+  //   background: #00D378;
+  //   border-radius: 30px;
+  // }
+    
+  // .header__company_name__button_response {
+  //   display: flex;
+  //   flex-direction: row;
+  //   justify-content: center;
+  //   align-items: center;
+  //   // padding: 13px 155px 14px;
+  
+  //   position: absolute;
+  //   width: 321px;
+  //   height: 44px;
+  //   top: 20px;
+  //   left: 999px;
+  //   font-size: 14px;
+  //   line-height: 17px;
+  
+  //   color: #FFFFFF;
+  //   background: #B924FF;
+  //   border-radius: 30px;
+  // }  
+    
+  .header__customer_text {
+    position: absolute;
+    width: 115px;
+    height: 29px;
+    left: 60px;
+    top: 415px;
+  
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 29px;
+  
+    color: #000000;  
+  }
+  
+  .header__customer_logo {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    left: 60px;
+    top: 466px;
+  
+    background: #3D78B1;
+  }
+  
+  .header__project_card {
+    position: absolute;
+    width: 333px;
+    height: 120px;
+    left: 195px;
+    top: 467px;
+  
+    border:1px solid #0025FF;
+  }
+  
+  .header__project_card__customer_photo {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    left: 7px;
+    top: 10px;
+    border-radius: 50%;  
+  
+    background: #00D378;
+  }
+  
+  .header__project_card__customer_info {
+    position: absolute;
+    width: 200px;
+    height: 40px;
+    left: 121px;
+    top: 27px;
+  
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+  
+    color: #000000;  
+  }
+  
+  .header__project_card__customer_info_name {
+    position: absolute;
+    width: 200px;
+    height: 30px;
+    left: 121px;
+    top: 71px;
+  
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 15px;
+    text-align: center;
+  
+    color: #B4B4B4;
+  }
+  
+  .body {
+    position: relative;
+    width: 1440px;
+    height: 621px;
+    left: 0px;
+  
+    border: 1px solid rebeccapurple;
+  }
+  
+  .body__about {
+    position: absolute;
+    width: 52px;
+    height: 17px;
+    left: 60px;
+    top: 1px;
+  
+    font-family: 'Montserrat';
+    font-style: italic;
+    font-weight: 250;
+    font-size: 14px;
+    line-height: 17px;
+  
+    color: #000000;
+  }
+  
+  .body__title {
+    position: absolute;
+    width: auto;
+    height: 34px;
+    left: 60px;
+    top: 37px;
+  
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 34px;
+  
+    border: 1px solid red;
+  }
+  
+  .body__article {
+    position: absolute;
+    width: 872px;
+    height: auto;
+    left: 62px;
+    top: 103px;
+  
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+  
+    color: #000000;
+  
+    border: 1px solid black;
+    }
+  
+  .body__button_order {
+    position: absolute;
+    width: 321px;
+    height: 44px;
+    left: 62px;
+    top: 553px;
+  
+    background: #B924FF;
+  }
+  
+  .body__button_chat {
+    position: absolute;
+    width: 321px;
+    left: 62px;
+    top: 553px;
+  
+    background: #B924FF;
+  }
+  
+  .body__button_chat {
+    position: absolute;
+    width: 148px;
+    left: 422px;
+    top: 553px;
+  
+    background: #00D378;
+  }
+
+}

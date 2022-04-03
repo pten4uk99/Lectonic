@@ -1,7 +1,8 @@
 import {DateTime} from "luxon";
 
+let today = new Date()
 
-export function getDaysArr(year, month) {
+export function getDaysArr(year=today.getFullYear(), month=today.getMonth() + 1) {
   let arr = []
   let date = DateTime.local(Number(year), Number(month)).daysInMonth
   

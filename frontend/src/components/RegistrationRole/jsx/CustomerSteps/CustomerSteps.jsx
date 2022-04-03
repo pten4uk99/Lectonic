@@ -1,9 +1,11 @@
 import React, {useEffect} from 'react'
 import {connect} from "react-redux";
+
 import {SwapAddRoleStep, SwapChooseRoleVisible, SwapIsCustomer} from "../../redux/actions/main";
 import {SwapIsCompany} from "../../redux/actions/customer";
 import CustomerStep1 from "./CustomerStep1";
 import CustomerStep2 from "./CustomerStep2";
+import CustomerStep3 from "./CustomerStep3";
 import CompanyStep1 from "./CompanyStep1";
 import CompanyStep2 from "./CompanyStep2";
 import CompanyStep3 from "./CompanyStep3";
@@ -25,27 +27,21 @@ function CustomerSteps(props) {
   let role = props.store.addRole.customer
   
   useEffect(() => {
-    props.SwapIsCompany(undefined)
+    props.SwapIsCompany(false)
     props.SwapAddRoleStep(1)
   }, [])
   
   useEffect(() => {
-    if (currentStep === 1) props.SwapIsCompany(undefined)
+    if (currentStep === 1) props.SwapIsCompany(false)
   }, [currentStep])
-  
-  function customerChangeHandler() {
-    props.SwapAddRoleStep(2)
-    props.SwapIsCompany(false)
-  }
-  
-  function companyChangeHandler() {
-    // props.SwapAddRoleStep(1)
-    // props.SwapIsCompany(true)
-  }
+
   
   let domainList = props.store.event.domain
   let equipment = role.equipment
   let hallAddress = role.hall_address
+  let companyName = role.company_name
+  let companyDescription = role.company_description
+  let companySite = role.company_site
   
   function companySubmitHandler(e) {
     e.preventDefault()
@@ -57,6 +53,9 @@ function CustomerSteps(props) {
     for (let domain of domainList) formData.append('domain', domain)
     formData.set('equipment', equipment)
     formData.set('hall_address', hallAddress)
+    formData.set('company_name', companyName)
+    formData.set('company_description', companyDescription)
+    formData.set('company_site', companySite)
 
     createCustomer(formData)
       .then(response => response.json())
@@ -71,30 +70,30 @@ function CustomerSteps(props) {
   
   return (
     <>      
-      <div className="step-block" style={!role.isCompany && role.isCompany !== undefined && currentStep === 3 || 
-        role.isCompany && currentStep > 1 ? {display: "none"} : {}}>
-        <div className="step-block__left-part"/>
-        <p className="step-block__right-comment lecturer">
-          <div className="customer-steps__radio">
-            <div className="customer-steps__choose-subrole">
-              <div className="customer" onClick={customerChangeHandler}>
-                <div className="customer-steps__radio-button">
-                  {!role.isCompany && role.isCompany !== undefined && <div className="active"/>}
-                </div>
-                <span>Физлицо</span>
-              </div>
-              <div className="company" 
-                   style={{cursor: 'not-allowed'}}
-                   onClick={companyChangeHandler}>
-                <div className="customer-steps__radio-button active">
-                  {/*{role.isCompany && <div className="active"/>}*/}
-                </div>
-                <span>Юрлицо</span>
-              </div>
-            </div>
-          </div>
-        </p>
-      </div>
+      {/*<div className="step-block" style={!role.isCompany && role.isCompany !== undefined && currentStep === 3 || */}
+      {/*  role.isCompany && currentStep > 1 ? {display: "none"} : {}}>*/}
+      {/*  <div className="step-block__left-part"/>*/}
+      {/*  <p className="step-block__right-comment lecturer">*/}
+      {/*    <div className="customer-steps__radio">*/}
+      {/*      <div className="customer-steps__choose-subrole">*/}
+      {/*        <div className="customer" onClick={customerChangeHandler}>*/}
+      {/*          <div className="customer-steps__radio-button">*/}
+      {/*            {!role.isCompany && role.isCompany !== undefined && <div className="active"/>}*/}
+      {/*          </div>*/}
+      {/*          <span>Физлицо</span>*/}
+      {/*        </div>*/}
+      {/*        <div className="company" */}
+      {/*             style={{cursor: 'not-allowed'}}*/}
+      {/*             onClick={companyChangeHandler}>*/}
+      {/*          <div className="customer-steps__radio-button active">*/}
+      {/*            /!*{role.isCompany && <div className="active"/>}*!/*/}
+      {/*          </div>*/}
+      {/*          <span>Юрлицо</span>*/}
+      {/*        </div>*/}
+      {/*      </div>*/}
+      {/*    </div>*/}
+      {/*  </p>*/}
+      {/*</div>*/}
 
 
       
@@ -107,8 +106,9 @@ function CustomerSteps(props) {
           </form>
         <form onSubmit={(e) => customerSubmitHandler(e)}>
           {role.isCompany !== undefined &&
-              currentStep === 2 ? <CustomerStep1/> :
-              currentStep === 3 ? <CustomerStep2/> : 
+              currentStep === 1 ? <CustomerStep1/> :
+              currentStep === 2 ? <CustomerStep2/> :
+              currentStep === 3 ? <CustomerStep3/> : 
                 <></>}
         </form>
       </div>

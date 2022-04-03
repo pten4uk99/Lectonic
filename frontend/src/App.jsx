@@ -18,6 +18,7 @@ import RolePage from "~@/Pages/RolePage/jsx/RolePage";
 import Permissions from "./components/Authorization/jsx/Permissions";
 import {hostURL, permissions, reverse} from "./ProjectConstants";
 import {createNotificationsSocket} from "./webSocket";
+import Lecture from "./components/WorkRooms/Lecture/jsx/Lecture";
 
 
 
@@ -48,6 +49,7 @@ function App(props) {
                 <Route path={reverse('create_event')} element={<CreateEvent/>}/>
                 <Route path={reverse('change_password')} element={<ChangePassword />} />
                 <Route path={reverse('role_page')} element={<RolePage />} />
+                <Route path={reverse('lecture')} element={<Lecture/>} />
                 <Route path='*' element={<NotFoundPage/>}/>
               </Routes>
             </Permissions>

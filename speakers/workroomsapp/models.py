@@ -154,6 +154,9 @@ class Link(models.Model):
 class Customer(models.Model):
     """Заказчик: физлицо"""
     person = models.OneToOneField('Person', on_delete=models.CASCADE, related_name='customer')
+    company_name = models.CharField(max_length=250, blank=True, null=True)
+    company_description = models.TextField(blank=True, null=True, default='')
+    company_site = models.CharField(max_length=200, blank=True, null=True)
     optional = models.OneToOneField(
         'Optional',
         blank=True,

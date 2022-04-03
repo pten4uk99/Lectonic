@@ -19,12 +19,22 @@ import {AddNotifications, RemoveNotification, SetNeedRead, UpdateNotifications} 
 
 function Header(props) {
   let profileDropDownActive = props.store.header.profileDropDownActive
-  let loggedIn = props.store.permissions.logged_in
+  let permissions = props.store.permissions
+  let loggedIn = permissions.logged_in
+  let isPerson = permissions.is_person
+  let isCustomer = permissions.is_customer
+  let isLecturer = permissions.is_lecturer
   
   let [chatActive, setChatActive] = useState(false)
   let [chatUnread, setChatUnread] = useState(false)
+  let [headerIconsVisible, setIconsVisible] = useState(false)
   let [chatSocket, setChatSocket] = useState(null)
   let selectedChatId = props.store.header.selectedChatId
+  
+  useEffect(() => {
+    if (isCustomer || isLecturer) setIconsVisible(true)
+    else setIconsVisible(false)
+  }, [permissions])
   
   useEffect(() => {
     getNotificationsList()
@@ -74,18 +84,28 @@ function Header(props) {
         <nav className="header__nav">
           {loggedIn ? 
             <>
-              <img className="header__nav-search is-desktop" 
-                   src={iconChat} 
-                   alt="чат" 
-                   onClick={() => setChatActive(!chatActive)}/>
-              {chatUnread && <div className="need-read"/>}
-              
-              <div className="header__profile-photo-block" 
-                   onClick={() => props.ActiveProfileDropdown(!profileDropDownActive)}>
-                <img className="header__nav-profile-photo is-desktop" 
-                     src={props.store.profile.photo} 
-                     alt="меню"/>
-              </div>
+              {headerIconsVisible &&
+                <>
+                  <img className="header__nav-search is-desktop" 
+                       src={iconChat} 
+                       alt="чат" 
+                       onClick={() => setChatActive(!chatActive)}/>
+                  {chatUnread && <div className="need-read"/>}
+                </>
+              }
+
+              {headerIconsVisible ? 
+                <div className="header__profile-photo-block"
+                     onClick={() => props.ActiveProfileDropdown(!profileDropDownActive)}>
+                  <img className="header__nav-profile-photo is-desktop"
+                       src={props.store.profile.photo}
+                       alt="меню"/>
+                </div> : 
+                <img className="header__nav-profile is-desktop"
+                     src={profileSelected} 
+                     alt="меню" 
+                     onClick={() => props.ActiveProfileDropdown(!profileDropDownActive)}/>
+              }
             </> : 
             <img className="header__nav-profile is-desktop" 
                  src={props.store.header.modalActive ? profileSelected : profile} 

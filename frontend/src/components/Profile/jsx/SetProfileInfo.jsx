@@ -42,15 +42,12 @@ function SetProfileInfo(props) {
     reader.readAsDataURL(e.target.files[0])
   }
   
-  let [cities, setCities] = useState(null)
+  let [dayArray, setDayArray] = useState(getDaysArr(birth_date.year, birth_date.month))
   
-  function handleCityChange(e) {
-    getCities(e.target.value)
-      .then(response => response.json())
-      .then(data => setCities(data.data))
-      .catch(error => props.SetErrorMessage('get_cities_list'))
-    setRequiredFields({...requiredFields, city: e.target.value})
-  }
+  useEffect(() => {
+    setDayArray(getDaysArr(birth_date.year, birth_date.month))
+  }, [birth_date.year, birth_date.month])
+
   
   let [errorMessages, setErrorMessages] = useState({
     firstName: '',
@@ -62,13 +59,11 @@ function SetProfileInfo(props) {
   function handleFormSubmit(e) {
     e.preventDefault()
     let formData = new FormData(e.target)
-    let year = formData.get('year')
-    let month = formData.get('month')
-    let day = formData.get('day')
+    formData.set('city', requiredFields.city)
     formData.delete('year')
     formData.delete('month')
     formData.delete('day')
-    formData.set('birth_date', `${year}-${month}-${day}`)
+    formData.set('birth_date', `${birth_date.year}-${birth_date.month}-${birth_date.day}`)
     
     createProfile(formData)
       .then(response => response.json())
@@ -150,18 +145,11 @@ function SetProfileInfo(props) {
           <div className='userInfo__form__inputIcon-container'>
             <img className='location-icon' src={locationIcon} />
             <div className='dropDown-wrapper'>
-              {/*<DropDown request={getCities} width={true} input={true} placeholder='Ваш город'/>*/}
-              <input type="text" 
-                     list="cities" 
-                     name="city"
-                     autoComplete='none'
-                     onChange={(e) => handleCityChange(e)}/>
-              <datalist id="cities">
-                {cities ? 
-                  cities.map((city) => <option key={city.id}
-                                               data-city-id={city.id}
-                                               value={city.id}>{city.name}</option>) : <></>}
-              </datalist>
+              <DropDown request={getCities}
+                        width={true} 
+                        input={true} 
+                        placeholder='Ваш город' 
+                        onSelect={(value) => setRequiredFields({...requiredFields, city: value})}/>
             </div>
             <div className='required-sign required-sign-location'>*</div>
           </div>
@@ -169,35 +157,27 @@ function SetProfileInfo(props) {
           <div className='userInfo__form__inputIcon-container'>
             <img className='birthdate-icon' src={birthdateIcon} />
             <div className='dropDown-wrapper'>
-              {/*<DropDown request={getDaysArr(birth_date.year, birth_date.month)} placeholder='01'/>*/}
-              <select name="day" 
-                      onChange={(e) => props.UpdateBirthDate({day: e.target.selectedOptions[0].value})}>
-                <option value={birth_date.day}>{birth_date.day}</option>
-                {getDaysArr(birth_date.year, birth_date.month).map((elem, index) => (
-                  <option key={index} value={elem}>{elem}</option>
-                ))}
-              </select>
-              {errorMessages.birthDate && (<div className='form__input-error'>{errorMessages.birthDate}</div>)}
+              <DropDown request={dayArray} 
+                        onSelect={(value) => props.UpdateBirthDate({day: value})} 
+                        defaultValue={birth_date.day}
+                        inputName="day"/>
             </div>
 
             <div className='dropDown-wrapper'>
-            {/*<DropDown request={getMonthsArr()} placeholder='Января'/>*/}
-              <select name="month" 
-                      onChange={(e) => props.UpdateBirthDate({month: e.target.selectedOptions[0].value})}>
-                <option value={birth_date.month}>{getMonthsArr()[birth_date.month - 1]}</option>
-                {getMonthsArr().map((elem, index) => <option key={index} value={index + 1}>{elem}</option>)}
-              </select>
+            <DropDown request={getMonthsArr()}
+                      onSelect={(value) => props.UpdateBirthDate({month: value})}
+                      defaultValue={getMonthsArr()[birth_date.month - 1]}
+                      inputName="month" monthArr={true}/>
             </div>
             <div className='dropDown-wrapper'>
-            {/*<DropDown request={getYearsArr()} placeholder='1990'/>*/}
-              <select name="year" 
-                      onChange={(e) => props.UpdateBirthDate({year: e.target.selectedOptions[0].value})}>
-                <option value={birth_date.year}>{birth_date.year}</option>
-                  {getYearsArr().map((elem, index) => <option key={index} value={elem}>{elem}</option>)}
-                </select>
+            <DropDown request={getYearsArr()}
+                      onSelect={(value) => props.UpdateBirthDate({year: value})} 
+                      defaultValue={birth_date.year}
+                      inputName="year"/>
             </div>
             <div className='required-sign required-sign-birthdate'>*</div>
           </div>
+          {errorMessages.birthDate && (<div className='form__input-error'>{errorMessages.birthDate}</div>)}
 
           <div className='userInfo__form__inputIcon-container'>
             <img className='info-icon' src={infoIcon}/>
