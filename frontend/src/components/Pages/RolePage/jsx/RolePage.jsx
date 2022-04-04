@@ -1,9 +1,13 @@
-import React from 'react'
+import React, {useState} from 'react'
 import background from '~/assets/img/rolepage/rolepage_header_bg.svg';
+import FuturedLectures from '~@/Pages/RolePage/jsx/FuturedLectures';
+import GiveLectures from '~@/Pages/RolePage/jsx/GiveLectures';
 import '../styles/RolePage.styl'
 
 
 function RolePage(props) {
+  const [lecture, setLecture] = useState('GiveLectures');
+
   return (
     <>
         <div className="rolepage__header" style={{backgroundImage: `url(${background})`}}>
@@ -29,14 +33,28 @@ function RolePage(props) {
                     <img src="" alt="photo"/>
                 </div>
             </div>
-            <div className='rolepage__about'>
+            {/* <div className='rolepage__about'>
                 <span>О лекторе</span>
                 <div className='rolepage__line'></div>
-            </div>
+            </div> */}
             <div className='rolepage__lecture'>
-                <span>Проведеные лекции</span>
-                <span className='no-active'>Будущие лекции</span>
+                <span 
+                    onClick={() => setLecture('GiveLectures')}
+                    className={lecture === 'GiveLectures' ? '' : 'no-active'}>
+                        Проведеные лекции
+                </span>
+                <span 
+                    onClick={() => setLecture('FuturedLectures')} 
+                    className={lecture === 'FuturedLectures' ? '' : 'no-active'}>
+                        Будущие лекции
+                </span>
                 <div className='rolepage__line'></div>
+                <div style={{display: lecture === 'GiveLectures' ? 'block' : 'none'}}>
+                    <GiveLectures/>
+                </div>
+                <div style={{display: lecture === 'FuturedLectures' ? 'block' : 'none'}}>
+                    <FuturedLectures/>
+                </div>
             </div>
         </div>
     </>

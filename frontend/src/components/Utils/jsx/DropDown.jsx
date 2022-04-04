@@ -41,6 +41,7 @@ function DropDown(props) {
     })
     .then((data) => {
       setData(data.data)
+      console.log(data.data)
     })
   }
 
@@ -97,8 +98,8 @@ function DropDown(props) {
                         <div 
                               className="dropdown-item" 
                               key={index}
-                              onClick={() => changeValue(elem.name == undefined ? elem : elem.name, index)}>
-                              {elem.name == undefined ? elem : elem.name}
+                              onClick={() => changeValue(elem.name == undefined ? elem : `${elem.name}, ${elem.region}`, index)}>
+                              {elem.name == undefined ? elem : `${elem.name}, ${elem.region}`}
                         </div>)
                     })
                   }
