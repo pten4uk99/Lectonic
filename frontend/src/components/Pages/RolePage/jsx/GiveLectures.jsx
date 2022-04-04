@@ -7,7 +7,7 @@ function GiveLectures(props) {
   return (
     <>
         <div className='rolepage__grid'>
-        <WoorkroomCard data={{
+        {/* <WoorkroomCard data={{
                 img: '',
                 client: "Заказчик:",
                 clientName: "ОАО «Какое-то очень длинное название",
@@ -28,7 +28,7 @@ function GiveLectures(props) {
                 date: "20.03.2022 – 25.03.20224444444",
                 city: "г. Санкт-Петербург",
                 potentialLecture: true,
-            }}/>
+            }}/> */}
         </div>
     </>
   )
