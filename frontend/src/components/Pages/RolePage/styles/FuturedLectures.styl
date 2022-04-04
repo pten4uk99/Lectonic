@@ -1,0 +1,14 @@
+@import '~/variables';
+
+.rolepage__grid{
+    display: grid;
+    justify-content: space-between;
+    grid-template-columns: repeat(5,290px);
+    grid-row-gap: 40px;
+}
+
+@media screen and (max-width: $middle-screen) {
+    .rolepage__grid{
+        grid-template-columns: repeat(4,290px);
+    }
+}
