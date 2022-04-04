@@ -26,12 +26,15 @@ import Lecture from "./components/WorkRooms/Lecture/jsx/Lecture";
 
 
 function App(props) {
-  let userId = props.store.permissions.user_id
+  let permissions = props.store.permissions
+  let userId = permissions.user_id
   let [notificationsSocket, setNotificationsSocket] = useState(null)
   
   useEffect(() => {
-    if (userId) createNotificationsSocket(setNotificationsSocket, userId)
-  }, [userId])
+    if (userId && (permissions.is_lecturer || permissions.is_customer)) {
+      createNotificationsSocket(setNotificationsSocket, userId)
+    }
+  }, [permissions])
   
   return (
     <>

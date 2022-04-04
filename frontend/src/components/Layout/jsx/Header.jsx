@@ -15,6 +15,7 @@ import ErrorMessage from "../../Utils/jsx/ErrorMessage";
 import ChatDropdown from "./Notifications/ChatDropdown";
 import {getNotificationsList} from "../ajax";
 import {AddNotifications, RemoveNotification, SetNeedRead, UpdateNotifications} from "../redux/actions/notifications";
+import PhotoName from "../../Utils/jsx/PhotoName";
 
 
 function Header(props) {
@@ -37,10 +38,12 @@ function Header(props) {
   }, [permissions])
   
   useEffect(() => {
-    getNotificationsList()
-      .then(r => r.json())
-      .then(data => props.UpdateNotifications(data.data))
-  }, [])
+    if (isLecturer || isCustomer) {
+      getNotificationsList()
+        .then(r => r.json())
+        .then(data => props.UpdateNotifications(data.data))
+    }
+  }, [isLecturer, isCustomer])
   
   useEffect(() => {
     if (chatSocket && !chatActive) {
@@ -97,9 +100,14 @@ function Header(props) {
               {headerIconsVisible ? 
                 <div className="header__profile-photo-block"
                      onClick={() => props.ActiveProfileDropdown(!profileDropDownActive)}>
-                  <img className="header__nav-profile-photo is-desktop"
-                       src={props.store.profile.photo}
-                       alt="меню"/>
+                  {props.store.profile.photo ?
+                    <img className="header__nav-profile-photo is-desktop"
+                         src={props.store.profile.photo}
+                         alt="меню"/> :
+                    <PhotoName firstName={props.store.profile.first_name} 
+                               lastName={props.store.profile.last_name} 
+                               size={32}/>
+                  }
                 </div> : 
                 <img className="header__nav-profile is-desktop"
                      src={profileSelected} 
@@ -124,9 +132,10 @@ function Header(props) {
         <Authorization />
       </Modal>
       <ProfileDropDown/>
-      {chatActive && <ChatDropdown notificationsSocket={props.notificationsSocket} 
-                                   chatSocket={chatSocket} 
-                                   setChatSocket={setChatSocket}/>}
+      {chatActive && (isLecturer || isCustomer) && 
+        <ChatDropdown notificationsSocket={props.notificationsSocket} 
+                      chatSocket={chatSocket} 
+                      setChatSocket={setChatSocket}/>}
       {props.store.header.errorMessage && <ErrorMessage/>}
     </>
   );

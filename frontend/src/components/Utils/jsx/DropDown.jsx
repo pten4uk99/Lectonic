@@ -2,7 +2,6 @@ import React, {useState, useEffect, useRef} from 'react'
 import {connect} from "react-redux";
 import downArrow from '~/assets/img/down-arrow.svg'
 import {SetIdDropDown} from '../redux/actions/dropdown'
-import '../styles/DropDown.styl'
 import {UpdateDomain} from "../../WorkRooms/CreateEvent/redux/actions/event";
 
 function DropDown(props) {
