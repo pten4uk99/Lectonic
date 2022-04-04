@@ -23,7 +23,8 @@ class LectureAsCustomerAPIView(APIView):
 
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        lecturer_lectures = LecturerLectureRequest.objects.all()
+        lecturer_lectures = LecturerLectureRequest.objects.exclude(
+            lecturer__person__user=request.user)
 
         serializer = LectureAsCustomerGetSerializer(
             lecturer_lectures, many=True, context={'request': request})

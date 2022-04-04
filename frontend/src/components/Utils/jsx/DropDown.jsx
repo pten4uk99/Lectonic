@@ -76,6 +76,7 @@ function DropDown(props) {
         style={{width: props.width ? '' : width + 30, zIndex: props.input ? '100' : ''}}>
               <input 
                 readOnly={props.input ? false : true}
+                autoComplete='nope'
                 className='dropdown__input'
                 placeholder={props.placeholder}
                 onClick={() => {props.input ? '' : setSelectOpen(!isSelectOpen)}}

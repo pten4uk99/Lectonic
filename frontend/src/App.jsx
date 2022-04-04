@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {connect} from "react-redux";
 import { Routes, Route } from 'react-router-dom'
 
@@ -16,13 +16,25 @@ import CreateEvent from "~@/WorkRooms/CreateEvent/jsx/CreateEvent"
 import Header from "~@/Layout/jsx/Header"
 import RolePage from "~@/Pages/RolePage/jsx/RolePage";
 import Permissions from "./components/Authorization/jsx/Permissions";
-import {permissions, reverse} from "./ProjectConstants";
+import {hostURL, permissions, reverse} from "./ProjectConstants";
+import {createNotificationsSocket} from "./webSocket";
+
+
+
+
 
 
 function App(props) {
+  let userId = props.store.permissions.user_id
+  let [notificationsSocket, setNotificationsSocket] = useState(null)
+  
+  useEffect(() => {
+    if (userId) createNotificationsSocket(setNotificationsSocket, userId)
+  }, [userId])
+  
   return (
     <>
-        <Header/>
+        <Header notificationsSocket={notificationsSocket}/>
           <main>
             <Permissions>
               <Routes>

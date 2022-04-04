@@ -16,7 +16,7 @@ urlpatterns = [
     path('domain/', DomainGetAPIView.as_view(), name='domain'),
 
     path('lecture/response/', LectureResponseAPIView.as_view(), name='lecture_response'),
-    path('lecture/response/confirm/', LectureConfirmRespondentAPIView.as_view(), name='lecture_confirm'),
+    path('lecture/response/confirm/', LectureToggleConfirmRespondentAPIView.as_view(), name='lecture_confirm'),
     path('lecture/as_lecturer/', LectureAsLecturerAPIView.as_view(), name='lecture_as_lecturer'),
     path('lecture/as_customer/', LectureAsCustomerAPIView.as_view(), name='lecture_as_customer'),
 

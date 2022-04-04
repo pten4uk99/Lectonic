@@ -23,7 +23,8 @@ function Lecturer(props){
       <CreatedLectures role='lecturer' 
                        data={[]}/>
       <LectureCardList header='Потенциальные заказы' 
-                         data={potentialLectures}/>
+                       isLecturer={true}
+                       data={potentialLectures}/>
     </article>
   )
 }

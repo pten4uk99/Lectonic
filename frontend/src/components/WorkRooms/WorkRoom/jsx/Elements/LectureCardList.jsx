@@ -9,6 +9,7 @@ import DropDown from "~@/Utils/jsx/DropDown";
 import {reverse} from "../../../../../ProjectConstants";
 import {DateTime} from "luxon";
 import {toggleResponseOnLecture} from "../../ajax/workRooms";
+import {AddNotifications, RemoveNotification} from "../../../../Layout/redux/actions/notifications";
 
 
 
@@ -24,6 +25,7 @@ function LectureCardList(props){
           text === 'Откликнуться' ? 
             e.target.innerText = 'Отменить отклик' : 
             e.target.innerText = 'Откликнуться'
+          if (data.data[0]?.type === 'remove_respondent') props.RemoveNotification(data.data[0].id)
         }
       })
   }
@@ -43,7 +45,7 @@ function LectureCardList(props){
                     return <WorkroomCard key={index} 
                                          data={{
                                            src: lecture.photo, 
-                                           client: 'Заказчик:', 
+                                           client: !props.isLecturer ? 'Лектор:' : 'Заказчик:', 
                                            clientName: `${lecture.creator_first_name} ${lecture.creator_last_name}`, 
                                            name: lecture.lecture_name, 
                                            date: getDates(lecture.dates), 
@@ -64,14 +66,16 @@ function LectureCardList(props){
 
 export default connect(
   state => ({store: state}),
-  dispatch => ({})
+  dispatch => ({
+    RemoveNotification: (data) => dispatch(RemoveNotification(data)),
+  })
 )(LectureCardList);
 
 
 function getDates(str_dates) {
   let dates = []
   for (let date of str_dates) {
-    dates.push(DateTime.fromISO(date).toFormat('dd.MM.yyyy'))
+    dates.push(DateTime.fromISO(date).toFormat('dd.MM'))
   }
   return dates.join(', ')
 }

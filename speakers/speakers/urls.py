@@ -12,7 +12,7 @@ urlpatterns = [
     path('api/email/', include('emailapp.emailapp_urls')),
     path('api/auth/', include('authapp.authapp_urls')),
     path('api/workrooms/', include('workroomsapp.workroomsapp_urls')),
-    path('api/guest/', include('guestapp.guestapp_urls')),
+    path('api/chat/', include('chatapp.chatapp_urls')),
 ]
 
 if settings.DEBUG:

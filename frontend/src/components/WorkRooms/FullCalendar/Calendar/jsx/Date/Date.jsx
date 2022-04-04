@@ -78,8 +78,10 @@ function getClassName(props) {
   
   let className = 'calendar-date'
 
-  if (props.store.calendar.currentDate.getMonth() !== props.date.getMonth())
-    return 'calendar-date inactive'
+  if (props.store.calendar.currentDate.getMonth() !== props.date.getMonth() || 
+    props.date - props.store.calendar.today <= - 1000 * 60 * 60 * 24 ||
+    props.date - props.store.calendar.today >= 1000 * 60 * 60 * 24 * 365
+  ) return 'calendar-date inactive'
 
   if (checkEqualDates(props.date, props.store.calendar.today))
     className += ' today'
@@ -90,13 +92,22 @@ function getClassName(props) {
 }
 
 function clickHandler(props) {
-  if (checkNeedSwapToNextMonth(props.date, props.store.calendar.currentDate)) {
+  let modal = props.store.header.modalActive
+  
+  if (checkNeedSwapToNextMonth(
+    props.date, props.store.calendar.currentDate, props.store.calendar.today)) {
     props.SwapMonthToNext()
-  } else if (checkNeedSwapToPrevMonth(props.date, props.store.calendar.currentDate)) {
+    modal && SwapChooseDates(props)
+  } else if (checkNeedSwapToPrevMonth(
+    props.date, props.store.calendar.currentDate, props.store.calendar.today)) {
     props.SwapMonthToPrev()
+    modal && SwapChooseDates(props)
+  } else if (!(props.date - props.store.calendar.today <= - 1000 * 60 * 60 * 24) &&
+    !(props.date - props.store.calendar.today >= 1000 * 60 * 60 * 24 * 365)
+  ) {
+    !modal && props.SetCheckedDate(props.date)
+    modal && SwapChooseDates(props)
   }
-  props.SetCheckedDate(props.date)
-  SwapChooseDates(props)
 }
 
 function hoverHandler(props, enter) {

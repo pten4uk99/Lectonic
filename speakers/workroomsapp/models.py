@@ -220,7 +220,7 @@ class Optional(models.Model):
 
 class Respondent(models.Model):
     """Откликнувшийся на заявку на лекцию"""
-    person = models.ForeignKey('Person', on_delete=models.CASCADE)
+    person = models.ForeignKey('Person', on_delete=models.CASCADE, related_name='respondents')
     confirmed = models.BooleanField(default=False)
 
 

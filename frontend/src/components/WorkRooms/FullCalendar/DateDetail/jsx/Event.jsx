@@ -14,7 +14,7 @@ function Event(props) {
 
   useEffect(() => {
     if (!props.status) setClass('left-block grey')
-  }, [])
+  }, [props.status])
   
   useEffect(() => {
     setEventDetail(false)
