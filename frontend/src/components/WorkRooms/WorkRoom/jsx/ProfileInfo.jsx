@@ -6,6 +6,7 @@ import {connect} from "react-redux";
 import {getProfileInfo} from "../ajax/workRooms";
 import {useNavigate} from "react-router-dom";
 import {reverse} from "../../../../ProjectConstants";
+import PhotoName from "../../../Utils/jsx/PhotoName";
 
 
 function ProfileInfo(props){
@@ -34,7 +35,11 @@ function ProfileInfo(props){
     <div className="profile-about">
       <div className="profile-about__photo-box">
         <div className="profile-about__photo">
-          <img src={profile.photo} alt="Фотография"/>
+          {profile.photo ? <img src={profile.photo} alt="Фотография"/> :
+          <PhotoName firstName={profile.first_name}
+                     lastName={profile.last_name}
+                     size={110}/>
+          }
         </div>
         <button className="profile-about__btn-download">
           <img src={download} alt="download"/>

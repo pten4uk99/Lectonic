@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from 'react'
 import {connect} from "react-redux";
 import downArrow from '~/assets/img/down-arrow.svg'
 import {SetIdDropDown} from '../redux/actions/dropdown'
-import '../styles/DropDown.styl'
+import {UpdateDomain} from "../../WorkRooms/CreateEvent/redux/actions/event";
 
 function DropDown(props) {
 
@@ -18,7 +18,7 @@ function DropDown(props) {
   let [data, setData] = useState([]);
   let dropdown = 'dropdownbox';
   let dropDownBox = useRef(0)
-
+  
   if (typeof(props.request) === 'function')
   {
     useEffect(() =>{
@@ -27,12 +27,16 @@ function DropDown(props) {
   } else {
     useEffect(() => {
       setData(props.request)
-    }, []);
+    }, [props.request]);
   }
   
   useEffect(() => {
     setWidth(dropDownBox.current.offsetWidth)
   });
+  
+  useEffect(() => {
+    setChosenValue(props.defaultValue)
+  }, [])
 
   function getRequest(name) {
     props.request(name)
@@ -41,19 +45,20 @@ function DropDown(props) {
     })
     .then((data) => {
       setData(data.data)
-      console.log(data.data)
     })
   }
 
-  function changeValue(value,index){
+  function changeValue(value, index) {
     setChosenValue(value);
     setSelectOpen(false);
-    if (typeof(props.request) === 'function')
-    {
+    if (typeof(props.request) === 'function') {
       props.SetIdDropDown(data[0].id);
-    } 
-    else {
-      props.SetIdDropDown(data[index]);
+      if (props.onSelect) return props.onSelect(data[0].id)
+    }
+    if (props.onSelect) {
+      if (props.monthArr) return props.onSelect(index + 1)
+      if (props.domainArr) return props.onSelect(value, setChosenValue)
+      props.onSelect(value)
     }
   }
 
@@ -74,20 +79,18 @@ function DropDown(props) {
       <div className='dropdown'>
         <div className="dropdown-top"
         style={{width: props.width ? '' : width + 30, zIndex: props.input ? '100' : ''}}>
-              <input 
-                readOnly={props.input ? false : true}
-                autoComplete='nope'
-                className='dropdown__input'
-                placeholder={props.placeholder}
-                onClick={() => {props.input ? '' : setSelectOpen(!isSelectOpen)}}
-                onChange={(e) => handleSelectInputChange(e)}
-                onBlur={() => {setSelectOpen(false)}}
-                value={chosenValue}/>
-              <img
-                className='dropdown__arrow'
-                src={downArrow}
-                style={{transform: isSelectOpen ? 'rotate(180deg)' : '', display: props.input ? 'none' : 'block'}}
-                onClick={openSelectBottom}/>
+              <input readOnly={!props.input} 
+                     autoComplete='nope' 
+                     name={props?.inputName}
+                     className='dropdown__input' 
+                     placeholder={props.placeholder} 
+                     onClick={() => !props.input && openSelectBottom()} 
+                     onChange={(e) => handleSelectInputChange(e)}
+                     value={chosenValue}/>
+              <img className='dropdown__arrow' 
+                   src={downArrow} 
+                   style={{transform: isSelectOpen ? 'rotate(180deg)' : '', display: props.input ? 'none' : 'block'}} 
+                   onClick={openSelectBottom}/>
           </div>
           <div className={isSelectOpen ? dropdown + " show" : dropdown}
                style={{width: props.width ? '100%' : '', zIndex: props.input ? '99' : ''}}>
@@ -112,5 +115,8 @@ function DropDown(props) {
 
 export default connect(
   state => ({store: state}),
-  dispatch => ({SetIdDropDown: (id) => dispatch(SetIdDropDown(id))})
+  dispatch => ({
+    SetIdDropDown: (id) => dispatch(SetIdDropDown(id)),
+    UpdateDomain: (domain) => dispatch(UpdateDomain(domain)),
+  })
 )(DropDown);

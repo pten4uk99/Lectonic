@@ -19,6 +19,9 @@ function LecturerSteps(props) {
     if (props.store.permissions.is_lecturer) navigate(reverse('workroom'))
   }, [props.store.permissions.is_lecturer])
   
+  useEffect(() => {
+    props.SwapAddRoleStep(1)
+  }, [])
   
   let currentStep = props.store.addRole.main.step
   
@@ -59,16 +62,6 @@ function LecturerSteps(props) {
         }
       })
       .catch(error => props.SetErrorMessage('create_lecturer'))
-    
-    let passport = new File([role.passport_photo], 'passport.png')
-    let selfie = new File([role.selfie_photo], 'selfie.png')
-    let documentForm = new FormData()
-    documentForm.set('passport', passport)
-    documentForm.set('selfie', selfie)
-    uploadDocumentPhoto(documentForm)
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch(error => props.SetErrorMessage('create_document'))
   }
   
   return (

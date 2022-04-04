@@ -1,16 +1,22 @@
 import {hostURL} from "./ProjectConstants";
 
+let notificationsWs;
+
+
 export function createNotificationsSocket(setSocket, userId) {
-  let socket = new WebSocket(`ws://${hostURL}/connect/${userId}`)
+  if (notificationsWs) return
+  notificationsWs = new WebSocket(`ws://${hostURL}/connect/${userId}`)
   
-  socket.onopen = (e) => {
-    setSocket(socket);
+  notificationsWs.onopen = (e) => {
+    setSocket(notificationsWs);
     console.log('Соединение установлено')
   }
-  socket.onclose = (e) => {
+  notificationsWs.onclose = (e) => {
     if (e.wasClean) {
+      notificationsWs = null
       console.log('Соединение завершено')
     } else {
+      notificationsWs = null
       setTimeout(() => createNotificationsSocket(setSocket, userId), 3000)
       console.log('Соединение разорвано')
     }

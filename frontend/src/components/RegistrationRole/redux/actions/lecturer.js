@@ -1,8 +1,8 @@
-export function UpdatePerfLinks(link ,index) {
-  return {type: "UPDATE_PERF_LINKS", payload: {link: link, index: index}}
+export function AddPerfLink(link) {
+  return {type: "ADD_PERF_LINK", payload: link}
 }
-export function UpdatePubLinks(link, index) {
-  return {type: "UPDATE_PUB_LINKS", payload: {link: link, index: index}}
+export function AddPubLink(link) {
+  return {type: "ADD_PUB_LINK", payload: link}
 }
 export function UpdateDiplomaPhotos(photo) {
   return {type: "UPDATE_DIPLOMA_PHOTOS", payload: {photo: photo}}

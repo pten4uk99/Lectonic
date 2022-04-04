@@ -16,6 +16,7 @@ import {reverse} from "../../../../ProjectConstants";
 import Modal from "../../../Layout/jsx/Modal";
 import {ActivateModal} from "../../../Layout/redux/actions/header";
 import CalendarModal, {getMonth} from "./CalendarModal";
+import DropDown from "../../../Utils/jsx/DropDown";
 
 
 function CreateEvent(props) {
@@ -65,6 +66,12 @@ function CreateEvent(props) {
       setDomainArray(newDomainArray)
     }
   }, [selectedDomains])
+  
+  function domainSelectHandler(value, setValue) {
+    if (props.store.event.domain.length >= 10) return setValue('')
+    props.UpdateDomain(value)
+    setValue('')
+  }
   
   function submitFormHandler(e) {
     e.preventDefault()
@@ -127,18 +134,19 @@ function CreateEvent(props) {
           </div>
           <div className='domains'>
             <div className='domain-list flex'>
-              <select className='selector'
-                      style={{ backgroundImage: `url(${downArrow})` }} 
-                      onChange={e => domainSelectHandler(e, props)}>
-                <option value='' disabled selected>Выберите тематику</option>
-                {domainArray ? domainArray.map((elem) => {
-                  return <option key={elem.id} value={elem.id}>{elem.name}</option>
-                }): <></>}
-              </select>
-              {selectedDomains.map((domain, index) => {
-                return <div key={index} className='pill pill-grey'>{domain}</div>
-              })}
+              <DropDown request={domainArray} 
+                    width={true} 
+                    placeholder='Выберите тематику' 
+                    onSelect={(value, setValue) => domainSelectHandler(value, setValue)} 
+                    domainArr={true}/>
             </div>
+            <div className="step-block mt-12">
+              <div className='domain-list flex'>
+                {selectedDomains.map((domain, index) => {
+                  return <div key={index} className='pill pill-grey'>{domain}</div>
+                })}
+        </div>
+      </div>
           </div>
           
           <div className='topic-l label'>
@@ -292,14 +300,6 @@ export function addPhotoHandler(inputEvent, UpdatePhoto) {
   reader.onload = () => {
     UpdatePhoto(reader.result)
   }
-}
-
-export function domainSelectHandler(e, props) {
-  if (props.store.event.domain.length >= 10) return e.target.value = '';
-  let selectedDomain = e.target.selectedOptions[0].innerHTML;
-  
-  props.UpdateDomain(selectedDomain);
-  e.target.value = '';
 }
 
 function checkRequiredFields(obj, props) {

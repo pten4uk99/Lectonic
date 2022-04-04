@@ -18,19 +18,19 @@ import RolePage from "~@/Pages/RolePage/jsx/RolePage";
 import Permissions from "./components/Authorization/jsx/Permissions";
 import {hostURL, permissions, reverse} from "./ProjectConstants";
 import {createNotificationsSocket} from "./webSocket";
-
-
-
-
+import Lecture from "./components/WorkRooms/Lecture/jsx/Lecture";
 
 
 function App(props) {
-  let userId = props.store.permissions.user_id
+  let permissions = props.store.permissions
+  let userId = permissions.user_id
   let [notificationsSocket, setNotificationsSocket] = useState(null)
   
   useEffect(() => {
-    if (userId) createNotificationsSocket(setNotificationsSocket, userId)
-  }, [userId])
+    if (userId && (permissions.is_lecturer || permissions.is_customer)) {
+      createNotificationsSocket(setNotificationsSocket, userId)
+    }
+  }, [permissions])
   
   return (
     <>
@@ -48,6 +48,7 @@ function App(props) {
                 <Route path={reverse('create_event')} element={<CreateEvent/>}/>
                 <Route path={reverse('change_password')} element={<ChangePassword />} />
                 <Route path={reverse('role_page')} element={<RolePage />} />
+                <Route path={reverse('lecture')} element={<Lecture/>} />
                 <Route path='*' element={<NotFoundPage/>}/>
               </Routes>
             </Permissions>

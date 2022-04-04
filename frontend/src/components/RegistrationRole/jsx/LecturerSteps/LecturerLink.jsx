@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {connect} from "react-redux";
 
 import addLinkIcon from '~/assets/img/addLink-icon.svg'
@@ -6,34 +6,40 @@ import addHoveredIcon from '~/assets/img/add-icon-hover.svg'
 
 
 function LecturerLink(props) {
-  let [numberLinks, setNumberLinks] = useState(props.links.length || 1)
+  let [value, setValue] = useState('')
+  let perf_links = props.store.addRole.lecturer.performances_links
+  let pub_links = props.store.addRole.lecturer.publication_links
+  let [correctInput, setCorrectInput] = useState(true)
   
-  function getLinksArr() {
-    let arr = []
-    for (let i = 1; i <= numberLinks; i++) arr.push(i)
-    return arr
-  }
-  
-  function handleBlur(e) {
-    props.blur(e.target.value, e.target.dataset.id)
+  useEffect(() => {
+    if (pub_links.length >= 5 || perf_links.length >= 5) setCorrectInput(false)
+    else setCorrectInput(true)
+  }, [perf_links, pub_links])
+    
+  function handleClick() {
+    if (correctInput) {
+      if (value) props.blur(value)
+      setValue('')
+    }
   }
   
   return (
     <div className="lecturer-link__block">
       <p className="step-block__left-part">{props.label}</p>
       <div className="lecturer-link__input-list">
-        {getLinksArr().map((elem, index) => (
-          <div key={elem} className="lecturer-link__input">
-            <input className='input__add-link' 
-                   placeholder="https://" 
-                   type="text"
-                   data-id={index}
-                   defaultValue={props.links[index]} 
-                   onBlur={(e) => handleBlur(e)}/>
-            <img src={addLinkIcon} 
-                 alt="добавить ссылку" 
-                 onClick={() => setNumberLinks(numberLinks + 1)}/>
-          </div>))}
+        <div className="lecturer-link__input">
+          <input className='input__add-link' 
+                 placeholder="https://" 
+                 type="text"
+                 value={value}
+                 onChange={(e) => setValue(e.target.value)}/>
+          <img src={value && correctInput ? addHoveredIcon : addLinkIcon} 
+               alt="добавить ссылку" 
+               onClick={handleClick}/>
+        </div>
+        {props.links.map((elem, index) => (
+          <div key={index} className="link-block">{elem}</div>
+        ))}
       </div>
     </div>
   )
