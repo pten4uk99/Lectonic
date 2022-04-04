@@ -21,10 +21,6 @@ import {createNotificationsSocket} from "./webSocket";
 import Lecture from "./components/WorkRooms/Lecture/jsx/Lecture";
 
 
-
-
-
-
 function App(props) {
   let permissions = props.store.permissions
   let userId = permissions.user_id
