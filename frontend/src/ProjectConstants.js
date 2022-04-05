@@ -1,5 +1,6 @@
 export const baseURL = 'https://dev.lectonic.ru'; // случайно могу иногда забыть поменять на dev.lectonic.ru
 export const hostURL = baseURL.split('//')[1]
+export const baseWS = 'wss://' + hostURL; // случайно могу иногда забыть поменять на dev.lectonic.ru
 
 const routes = {
   'index': '/',
