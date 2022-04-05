@@ -20,6 +20,7 @@ const routes = {
   'change_password': '/change_password',
 
   'role_page': '/role_page',
+  'lecture': '/lecture',
 } // сюда прописываем все роуты и их имена (имя: роут)
 
 export function reverse(name, params=null) {

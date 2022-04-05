@@ -2,10 +2,10 @@ import React, {useEffect, useState} from 'react'
 import {connect} from "react-redux";
 
 import {getDomainArray} from "../../../WorkRooms/CreateEvent/ajax/event";
-import {domainSelectHandler} from "~@/WorkRooms/CreateEvent/jsx/CreateEvent";
 import {UpdateDomain} from "~@/WorkRooms/CreateEvent/redux/actions/event";
-import {UpdatePerfLinks, UpdatePubLinks} from "../../redux/actions/lecturer";
+import {AddPerfLink, AddPubLink} from "../../redux/actions/lecturer";
 import LecturerLink from "./LecturerLink";
+import DropDown from "../../../Utils/jsx/DropDown";
 
 
 function LecturerStep1(props) {
@@ -31,33 +31,40 @@ function LecturerStep1(props) {
     }
   }, [selectedDomains])
   
+  function domainSelectHandler(value, setValue) {
+    if (props.store.event.domain.length >= 10) return setValue('')
+    props.UpdateDomain(value)
+    setValue('')
+  }
+  
   return (
     <>
-      <div className="step-block margin-bottom-24">
-        <p className="step-block__left-part">
+      <div className="step-block mt-24">
+        <p className="step-block__left-part pt-0">
           Тематика лекций:
           <span className="required-sign step-block__required-sign">*</span>
         </p>
+        <DropDown request={domainArray}
+                  width={true}
+                  placeholder='Выберите тематику' 
+                  onSelect={(value, setValue) => domainSelectHandler(value, setValue)} 
+                  domainArr={true}/>
+      </div>
+      <div className="step-block mt-12 margin-bottom-24">
+        <p className="step-block__left-part pt-0"/>
         <div className='domain-list flex'>
-            <select className='selector'
-                    onChange={e => domainSelectHandler(e, props)}>
-              <option value='' disabled selected>Выберите тематику</option>
-              {domainArray ? domainArray.map((elem) => {
-                return <option key={elem.id} value={elem.id}>{elem.name}</option>
-              }): <></>}
-            </select>
-            {selectedDomains.map((domain, index) => {
-              return <div key={index} className='pill pill-grey'>{domain}</div>
-            })}
-          </div>
+          {selectedDomains.map((domain, index) => {
+            return <div key={index} className='pill pill-grey'>{domain}</div>
+          })}
+        </div>
       </div>
       
       <LecturerLink label="Ссылки на видео Ваших выступлений:" 
                     links={performancesLinks}
-                    blur={props.UpdatePerfLinks}/>
+                    blur={props.AddPerfLink}/>
       <LecturerLink label="Ссылки на видео Ваших публикаций:" 
                     links={publicationLinks}
-                    blur={props.UpdatePubLinks}/>
+                    blur={props.AddPubLink}/>
     </>
   )
 }
@@ -66,7 +73,7 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     UpdateDomain: (domain) => dispatch(UpdateDomain(domain)),
-    UpdatePerfLinks: (link, index) => dispatch(UpdatePerfLinks(link, index)),
-    UpdatePubLinks: (link, index) => dispatch(UpdatePubLinks(link, index)),
+    AddPerfLink: (link) => dispatch(AddPerfLink(link)),
+    AddPubLink: (link) => dispatch(AddPubLink(link)),
   })
 )(LecturerStep1)

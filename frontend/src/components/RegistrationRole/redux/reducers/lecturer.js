@@ -2,8 +2,6 @@ const initialState = {
   performances_links: [],
   publication_links: [],
   diploma_photos: [],
-  passport_photo: '',
-  selfie_photo: '',
   education: '',
   hall_address: '',
   equipment: ''
@@ -11,14 +9,23 @@ const initialState = {
 
 export default function lecturer(state=initialState, action) {
   switch (action.type) {
-    case "UPDATE_PERF_LINKS":
-      let newPerfObj = {...state}
-      newPerfObj.performances_links[action.payload.index] = action.payload.link
-      return newPerfObj
-    case "UPDATE_PUB_LINKS":
-      let newPubObj = {...state}
-      newPubObj.publication_links[action.payload.index] = action.payload.link
-      return newPubObj
+    case "ADD_PERF_LINK":
+      console.log(action.payload)
+      return {
+        ...state, 
+        performances_links: [
+          ...state.performances_links, 
+          action.payload
+        ]
+      }
+    case "ADD_PUB_LINK":
+      return {
+        ...state, 
+        publication_links: [
+          ...state.publication_links, 
+          action.payload
+        ]
+      }
     case "UPDATE_DIPLOMA_PHOTOS":
       return {
         ...state, 

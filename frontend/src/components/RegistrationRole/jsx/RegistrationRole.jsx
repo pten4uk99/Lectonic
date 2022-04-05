@@ -31,12 +31,9 @@ function RegistrationRole(props) {
   function handleDisabledButton() {
     if (location.pathname === reverse('create_lecturer')) {
       if (currentStep === 1) return !(props.store.event.domain.length > 0) 
-      else if (currentStep === 2) {
-        return !(props.store.addRole.lecturer.passport_photo && 
-          props.store.addRole.lecturer.selfie_photo)
-      } 
+      else if (currentStep === 2) return false
     } else if (location.pathname === reverse('create_customer')) {
-      if (currentStep === 1) return props.store.addRole.customer.isCompany === undefined
+      if (currentStep === 1) return !(props.store.event.domain.length > 0) 
       else if (currentStep === 2) return !(props.store.event.domain.length > 0)
     } else return true
   }
@@ -46,14 +43,9 @@ function RegistrationRole(props) {
       if (currentStep > 1) props.SwapChooseRoleVisible(false)
       else props.SwapChooseRoleVisible(true)
     } else if (location.pathname === reverse('create_customer')) {
-      if (props.store.addRole.customer.isCompany) {
-        if (currentStep > 1) props.SwapChooseRoleVisible(false)
-        else props.SwapChooseRoleVisible(true)
-      } else {
-        if (currentStep > 2) props.SwapChooseRoleVisible(false)
-        else props.SwapChooseRoleVisible(true)
-      }
-    }
+      if (currentStep > 1) props.SwapChooseRoleVisible(false)
+      else props.SwapChooseRoleVisible(true)
+    } else if (currentStep === 1) props.SwapChooseRoleVisible(true)
   }, [currentStep])
   
   return (
@@ -65,19 +57,16 @@ function RegistrationRole(props) {
              style={!roleVisible ? {display: "none"} : {}}>
           <div className='step-block margin-bottom-36 step-block__head-text'>
             <h2 className='step-block__left-part'>
-              Выбор роли
+              Кто вы?
+              <span className="required-sign step-block__required-sign">*</span>
             </h2>
             <p className="lecturer-right__header">
-              Выберите Вашу основную роль на платформе:<br/>
-              лектор или заказчик лекции.
+              Выберите Вашу основную роль на платформе.<br/>
             </p>
           </div>
   
           <div className="step-block margin-bottom-36">
-            <div className="step-block__left-part step-block-required">
-              <p>Кто вы?</p>
-              <span className="required-sign step-block__required-sign">*</span>
-            </div>
+            <div className="step-block__left-part step-block-required"/>
             <button className={`${location.pathname === reverse('create_lecturer') ? 
               "btn-role-selected" : "btn-role"} margin-right-12`} 
                     onClick={() => navigate(reverse('create_lecturer'))}>Лектор</button>

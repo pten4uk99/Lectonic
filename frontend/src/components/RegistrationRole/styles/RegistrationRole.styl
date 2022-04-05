@@ -14,7 +14,7 @@
 }
 
 .lecturer-right__header {
-  padding-top: 25px
+  padding-top: 10px
 }
 
 .btn-role {
@@ -61,19 +61,42 @@
   display: flex;
   align-items: center;
   height: auto;
+  
+  &.mt-12 {
+    margin-top: 12px
+  }
 }
   
 .lecturer-link__block {
   display: flex
+  margin-bottom: 24px
   .lecturer-link__input-list {
     display: flex
     flex-direction: column
     .lecturer-link__input {
       display flex
-      margin-bottom: 24px
+      input {
+        font-family: 'Montserrat', sans-serif
+        font-size: 12px
+        &::placeholder {
+          color: rgba(180, 180, 180, 1);
+        }
+      }
       img {
+        cursor: pointer
         transform: translateX(-45px)
       }
+    }
+    .link-block {
+      box-sizing border-box
+      height: 32px
+      margin-top: 12px
+      padding: 8px 20px
+      max-width: 384px
+      background-color: $add-grey
+      border-radius: 18px
+      overflow: hidden
+      text-overflow: ellipsis
     }
   }
 }
@@ -83,7 +106,7 @@
   align-items: flex-start;
 }
 
-.step-block__left-part{
+.step-block__left-part {
   width: 41%;
   box-sizing border-box
   padding-top: 9px
@@ -91,6 +114,10 @@
   justify-content: flex-end;
   text-align: right;
   margin-right: 20px;
+  
+  &.pt-0 {
+    padding-top: 0
+  }
 }
   
 .left-part-with-textarea {

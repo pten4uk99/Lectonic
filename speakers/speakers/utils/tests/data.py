@@ -28,7 +28,10 @@ LECTURER = {
 CUSTOMER = {
     'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
     'hall_address': 'Москва, ул. Не московская, д. Домашний',
-    'equipment': 'Руки, ноги, доска, полет.'
+    'equipment': 'Руки, ноги, доска, полет.',
+    'company_name': 'Парвим',
+    'company_description': 'kdmcsld',
+    'company_site': 'dlcksmdl'
 }
 
 LECTURE = {
