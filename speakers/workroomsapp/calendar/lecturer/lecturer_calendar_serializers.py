@@ -28,7 +28,10 @@ class LecturerCalendarSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'detail': "В запросе не передана дата"})
 
         events = obj.calendar.events.order_by('datetime_start').filter(
-            Q(datetime_start__year=year) & Q(datetime_start__month=month))
+            Q(datetime_start__year=year) &
+            Q(datetime_start__month=month) &
+            Q(datetime_start__day__gte=datetime.datetime.now().day)
+        )
 
         data = []
 
@@ -64,9 +67,9 @@ class LecturerCalendarSerializer(serializers.ModelSerializer):
 
             if confirmed_respondent:
                 confirmed_person = confirmed_respondent.person
-                new_event['customer'] = (confirmed_person.last_name,
+                new_event['customer'] = [confirmed_person.last_name,
                                          confirmed_person.first_name,
-                                         confirmed_person.middle_name or "")
+                                         confirmed_person.middle_name or ""]
 
             if not data:
                 data.append(

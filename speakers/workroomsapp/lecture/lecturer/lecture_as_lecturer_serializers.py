@@ -8,7 +8,7 @@ from workroomsapp.lecture.utils import (
     convert_datetime,
     check_datetime_for_lecture_as_lecturer
 )
-from workroomsapp.models import Lecture, CustomerLectureRequest, Person
+from workroomsapp.models import Lecture, CustomerLectureRequest, Person, LecturerLectureRequest
 
 
 class LectureCreateAsLecturerSerializer(serializers.Serializer):
@@ -78,7 +78,7 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
         )
 
 
-class LectureAsLecturerGetSerializer(serializers.ModelSerializer):
+class LecturesGetSerializer(serializers.Serializer):
     lecture_id = serializers.SerializerMethodField()
     lecture_name = serializers.SerializerMethodField()
     dates = serializers.SerializerMethodField()
@@ -90,7 +90,6 @@ class LectureAsLecturerGetSerializer(serializers.ModelSerializer):
     photo = serializers.SerializerMethodField()
 
     class Meta:
-        model = CustomerLectureRequest
         fields = [
             'lecture_id',
             'lecture_name',
@@ -110,11 +109,7 @@ class LectureAsLecturerGetSerializer(serializers.ModelSerializer):
         return obj.lecture_request.lecture.name
 
     def get_dates(self, obj):
-        events = obj.lecture_request.events.all()
-        dates = []
-        for event in events:
-            dates.append(event.datetime_start)
-        return dates
+        return obj.lecture_request.event.datetime_start
 
     def get_description(self, obj):
         return obj.lecture_request.lecture.description
@@ -129,7 +124,11 @@ class LectureAsLecturerGetSerializer(serializers.ModelSerializer):
         return DEFAULT_HOST + obj.photo.url
 
     def get_creator_first_name(self, obj):
-        return obj.customer.person.first_name
+        if hasattr(obj, 'customer'):
+            return obj.customer.person.first_name
+        return obj.lecturer.person.first_name
 
     def get_creator_last_name(self, obj):
-        return obj.customer.person.last_name
+        if hasattr(obj, 'customer'):
+            return obj.customer.person.last_name
+        return obj.lecturer.person.last_name

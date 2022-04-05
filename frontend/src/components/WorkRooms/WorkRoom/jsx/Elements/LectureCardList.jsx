@@ -2,15 +2,9 @@ import React, {useState} from "react";
 import {connect} from "react-redux";
 import tooltip from "~/assets/img/workrooms/workroom/tooltip.svg";
 import WorkroomCard from "../WorkroomCard";
-import {useNavigate} from "react-router-dom";
-import {getCities} from "~@/Profile/ajax/profile";
-import {getDomainArray} from "~@/WorkRooms/CreateEvent/ajax/event"
-import DropDown from "~@/Utils/jsx/DropDown";
-import {reverse} from "../../../../../ProjectConstants";
 import {DateTime} from "luxon";
 import {toggleResponseOnLecture} from "../../ajax/workRooms";
-import {AddNotifications, RemoveNotification} from "../../../../Layout/redux/actions/notifications";
-
+import {RemoveNotification} from "../../../../Layout/redux/actions/notifications";
 
 
 function LectureCardList(props){
@@ -72,7 +66,7 @@ export default connect(
 )(LectureCardList);
 
 
-function getDates(str_dates) {
+export function getDates(str_dates) {
   let dates = []
   for (let date of str_dates) {
     dates.push(DateTime.fromISO(date).toFormat('dd.MM'))

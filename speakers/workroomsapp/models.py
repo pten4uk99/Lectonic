@@ -229,17 +229,26 @@ class Respondent(models.Model):
 
 class LectureRequest(models.Model):
     respondents = models.ManyToManyField('Respondent', related_name='lecture_requests')
-    lecture = models.OneToOneField('Lecture', on_delete=models.CASCADE, related_name='lecture_request')
+    lecture = models.ForeignKey('Lecture', on_delete=models.CASCADE, related_name='lecture_requests')
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    customer_lecture_request = models.ForeignKey(
+        'CustomerLectureRequest',
+        on_delete=models.CASCADE,
+        related_name='lecture_requests',
+        null=True,
+        blank=True
+    )
+    lecturer_lecture_request = models.ForeignKey(
+        'LecturerLectureRequest',
+        on_delete=models.CASCADE,
+        related_name='lecture_requests',
+        null=True,
+        blank=True
+    )
 
 
 class LecturerLectureRequest(models.Model):
-    lecture_request = models.OneToOneField(
-        'LectureRequest',
-        on_delete=models.CASCADE,
-        related_name='lecturer_lecture_request'
-    )
     lecturer = models.ForeignKey(
         'Lecturer',
         on_delete=models.CASCADE,
@@ -254,10 +263,6 @@ class LecturerLectureRequest(models.Model):
 
 
 class CustomerLectureRequest(models.Model):
-    lecture_request = models.OneToOneField(
-        'LectureRequest',
-        on_delete=models.CASCADE,
-        related_name='customer_lecture_request')
     customer = models.ForeignKey(
         'Customer',
         on_delete=models.CASCADE,
@@ -326,7 +331,7 @@ class Calendar(models.Model):
 class Event(models.Model):
     datetime_start = models.DateTimeField()
     datetime_end = models.DateTimeField()
-    lecture_request = models.ForeignKey('LectureRequest', on_delete=models.CASCADE, related_name='events')
+    lecture_request = models.OneToOneField('LectureRequest', on_delete=models.CASCADE, related_name='event')
 
 
 class LecturerCalendar(models.Model):

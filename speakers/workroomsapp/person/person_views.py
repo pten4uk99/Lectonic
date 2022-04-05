@@ -28,7 +28,11 @@ class PersonAPIView(APIView):
         if 'photo' in serializer.validated_data:
             serializer.validated_data.pop('photo')
 
-        return person_responses.created([{**serializer.validated_data, 'city': city.name}])
+        return person_responses.created([{
+            **serializer.validated_data,
+            'city': city.name,
+            'user_id': request.user.pk
+        }])
 
     @swagger_auto_schema(**person_docs.PersonGetDoc)
     def get(self, request):

@@ -60,9 +60,9 @@ class CustomerCalendarSerializer(serializers.ModelSerializer):
 
             if confirmed_respondent:
                 confirmed_person = confirmed_respondent.person
-                new_event['lecturer'] = (confirmed_person.last_name,
+                new_event['lecturer'] = [confirmed_person.last_name,
                                          confirmed_person.first_name,
-                                         confirmed_person.middle_name or "")
+                                         confirmed_person.middle_name or ""]
 
             if not data:
                 data.append(

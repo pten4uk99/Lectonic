@@ -101,8 +101,8 @@ function DropDown(props) {
                         <div 
                               className="dropdown-item" 
                               key={index}
-                              onClick={() => changeValue(elem.name == undefined ? elem : `${elem.name}, ${elem.region}`, index)}>
-                              {elem.name == undefined ? elem : `${elem.name}, ${elem.region}`}
+                              onClick={() => changeValue(elem.name === undefined ? elem : `${elem.name}`, index)}>
+                              {elem.name === undefined ? elem : `${elem.name}`}
                         </div>)
                     })
                   }

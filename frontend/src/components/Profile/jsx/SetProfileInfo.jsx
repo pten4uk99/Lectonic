@@ -10,7 +10,7 @@ import {getDaysArr, getMonthsArr, getYearsArr} from "./utils/date";
 import {UpdateBirthDate} from "../redux/actions/profile";
 import {createProfile, getCities} from "../ajax/profile";
 import {reverse} from "../../../ProjectConstants";
-import {SwapPerson} from "../../Authorization/redux/actions/permissions";
+import {SwapPerson, SwapUserId} from "../../Authorization/redux/actions/permissions";
 import {SetErrorMessage} from "../../Layout/redux/actions/header";
 import DropDown from '~@/Utils/jsx/DropDown';
 
@@ -69,6 +69,7 @@ function SetProfileInfo(props) {
       .then(response => response.json())
       .then(data => {
         if (data.status === 'created') {
+          props.SwapUserId(data.data[0].user_id)
           props.SwapPerson(true)
           navigate(reverse('add_role'))
         }
@@ -198,6 +199,7 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     SetErrorMessage: (message) => dispatch(SetErrorMessage(message)),
+    SwapUserId: (user_id) => dispatch(SwapUserId(user_id)),
     SwapPerson: (is_person) => dispatch(SwapPerson(is_person)),
     UpdateBirthDate: (data) => dispatch(UpdateBirthDate(data)),
   })

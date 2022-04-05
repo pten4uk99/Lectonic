@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.customer.lecture_as_customer_serializers import *
 from workroomsapp.lecture.docs import lecture_docs
+from workroomsapp.lecture.lecturer.lecture_as_lecturer_serializers import LecturesGetSerializer
 from workroomsapp.models import LecturerLectureRequest
 from workroomsapp.utils import workroomsapp_permissions
 
@@ -23,10 +24,24 @@ class LectureAsCustomerAPIView(APIView):
 
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        lecturer_lectures = LecturerLectureRequest.objects.exclude(
+        created_lectures = None
+
+        if hasattr(request.user.person, 'customer'):
+            created_lectures = request.user.person.customer.customer_lecture_requests.all()
+
+        serializer = LecturesGetSerializer(
+            created_lectures, many=True, context={'request': request})
+
+        return lecture_responses.success_get_lectures(serializer.data)
+
+
+class PotentialCustomerLecturesGetAPIView(APIView):
+    @swagger_auto_schema(deprecated=True)
+    def get(self, request):
+        customer_lectures = LecturerLectureRequest.objects.exclude(
             lecturer__person__user=request.user)
 
-        serializer = LectureAsCustomerGetSerializer(
-            lecturer_lectures, many=True, context={'request': request})
+        serializer = LecturesGetSerializer(
+            customer_lectures, many=True, context={'request': request})
 
         return lecture_responses.success_get_lectures(serializer.data)

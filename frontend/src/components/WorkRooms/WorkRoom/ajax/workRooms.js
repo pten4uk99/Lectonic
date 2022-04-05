@@ -17,7 +17,7 @@ export function getProfileInfo() {
 }
 
 
-export function getAllLecturesForLecturer() {
+export function getCreatedLecturesForLecturer() {
   const options = {
     method: 'GET',
     headers: HEADERS,
@@ -25,6 +25,29 @@ export function getAllLecturesForLecturer() {
   }
   return fetch(
     `${baseURL}/api/workrooms/lecture/as_lecturer/`,
+    options
+  )
+}
+export function getCreatedLecturesForCustomer() {
+  const options = {
+    method: 'GET',
+    headers: HEADERS,
+    credentials: 'include',
+  }
+  return fetch(
+    `${baseURL}/api/workrooms/lecture/as_customer/`,
+    options
+  )
+}
+
+export function getAllLecturesForLecturer() {
+  const options = {
+    method: 'GET',
+    headers: HEADERS,
+    credentials: 'include',
+  }
+  return fetch(
+    `${baseURL}/api/workrooms/lecturer/potential_lectures/`,
     options
   )
 }
@@ -36,7 +59,7 @@ export function getAllLecturesForCustomer() {
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/lecture/as_customer/`,
+    `${baseURL}/api/workrooms/customer/potential_lectures/`,
     options
   )
 }

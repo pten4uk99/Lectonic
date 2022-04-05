@@ -36,8 +36,12 @@ class TestCustomerCalendarGet(APITestCase):
                                  'name': f'Моя лектушка {i}',
                                  'photo': test_image.create_image(),
                                  'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
-                                 'datetime': [str(datetime.datetime.now() + datetime.timedelta(days=2 + i)) + ',' +
-                                              str(datetime.datetime.now() + datetime.timedelta(days=2 + i, hours=1))],
+                                 'datetime': [
+                                     (datetime.datetime.now() +
+                                      datetime.timedelta(days=2 + i)).strftime('%Y-%m-%dT%H:%M') +
+                                     ',' +
+                                     (datetime.datetime.now() +
+                                      datetime.timedelta(days=2 + i, hours=1)).strftime('%Y-%m-%dT%H:%M')],
                                  'listeners': '30',
                                  'type': 'offline'
                              })
@@ -47,8 +51,12 @@ class TestCustomerCalendarGet(APITestCase):
                                  'name': f'Моя лектушка {i}',
                                  'photo': test_image.create_image(),
                                  'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
-                                 'datetime': [str(datetime.datetime.now() + datetime.timedelta(days=2 + i)) + ',' +
-                                              str(datetime.datetime.now() + datetime.timedelta(days=2 + i, hours=1))],
+                                 'datetime': [
+                                     (datetime.datetime.now() +
+                                      datetime.timedelta(days=2 + i)).strftime('%Y-%m-%dT%H:%M') +
+                                     ',' +
+                                     (datetime.datetime.now() +
+                                      datetime.timedelta(days=2 + i, hours=1)).strftime('%Y-%m-%dT%H:%M')],
                                  'listeners': '30',
                                  'type': 'offline'
                              })

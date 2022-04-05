@@ -3,7 +3,7 @@ from channels.layers import get_channel_layer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
-from chatapp.models import Chat
+from chatapp.models import Chat, Message
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.lecturer.lecture_as_lecturer_serializers import *
@@ -28,10 +28,24 @@ class LectureAsLecturerAPIView(APIView):
 
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
+        created_lectures = None
+
+        if hasattr(request.user.person, 'lecturer'):
+            created_lectures = request.user.person.lecturer.lecturer_lecture_requests.all()
+
+        serializer = LecturesGetSerializer(
+            created_lectures, many=True, context={'request': request})
+
+        return lecture_responses.success_get_lectures(serializer.data)
+
+
+class PotentialLecturerLecturesGetAPIView(APIView):
+    @swagger_auto_schema(deprecated=True)
+    def get(self, request):
         customer_lectures = CustomerLectureRequest.objects.exclude(
             customer__person__user=request.user)
 
-        serializer = LectureAsLecturerGetSerializer(
+        serializer = LecturesGetSerializer(
             customer_lectures, many=True, context={'request': request})
 
         return lecture_responses.success_get_lectures(serializer.data)
@@ -44,8 +58,9 @@ class LectureResponseAPIView(APIView):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
         lecture_id = request.GET.get('lecture')
+        date = request.GET.get('date')
 
-        if not lecture_id:
+        if not lecture_id or not date:
             return lecture_responses.not_in_data()
 
         lecture = Lecture.objects.filter(pk=lecture_id).first()
@@ -54,23 +69,39 @@ class LectureResponseAPIView(APIView):
         if not lecture:
             return lecture_responses.lecture_does_not_exist()
 
-        if not hasattr(lecture.lecture_request, 'customer_lecture_request'):
+        if not hasattr(lecture.lecture_requests.first(), 'customer_lecture_request'):
             if not hasattr(request.user.person, 'customer'):
                 return lecture_responses.lecturer_forbidden()
         else:
-            creator = lecture.lecture_request.customer_lecture_request.customer.person
+            creator = lecture.lecture_requests.first().customer_lecture_request.customer.person
 
-        if not hasattr(lecture.lecture_request, 'lecturer_lecture_request'):
+        if not hasattr(lecture.lecture_requests.first(), 'lecturer_lecture_request'):
             if not hasattr(request.user.person, 'lecturer'):
                 return lecture_responses.customer_forbidden()
         else:
-            creator = lecture.lecture_request.lecturer_lecture_request.lecturer.person
+            creator = lecture.lecture_requests.first().lecturer_lecture_request.lecturer.person
 
-        lecture_request = lecture.lecture_request
+        lecture_request = lecture.lecture_requests.filter(
+            event__datetime_start=datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M')).first()
+
+        if not lecture_request:
+            return lecture_responses.does_not_exist()
 
         if not lecture_request.respondents.filter(person=request.user.person).first():
             respondent = Respondent.objects.create(person=request.user.person)
             lecture_request.respondents.add(respondent)
+
+            chat = Chat.objects.filter(users__in=[creator.user, request.user]).first()
+            if not chat:
+                chat = Chat.objects.create(lecture_request=lecture_request)
+                chat.users.add(creator.user, request.user)
+                chat.save()
+
+            Message.objects.get_or_create(
+                author=request.user,
+                chat=chat,
+                text='Добрый день! Мне подходит ваш запрос на проведение лекции!'
+            )
 
             async_to_sync(channel_layer.group_send)(
                 f'user_{creator.user.pk}',
@@ -95,6 +126,10 @@ class LectureResponseAPIView(APIView):
             lecture_request.save()
             return lecture_responses.success_response()
         else:
+            Respondent.objects.get(person=request.user.person, lecture_requests=lecture_request).delete()
+            chat = Chat.objects.filter(
+                users__in=[creator.user, request.user]).first()
+
             async_to_sync(channel_layer.group_send)(
                 f'user_{creator.user.pk}',
                 {
@@ -103,9 +138,13 @@ class LectureResponseAPIView(APIView):
                     "lecture_respondent": request.user
                 }
             )
-            Respondent.objects.get(person=request.user.person).delete()
-            chat = Chat.objects.filter(
-                users__in=[creator.user, request.user]).first()
+
+            if not chat:
+                chat_list = Chat.objects.filter(lecture_request=lecture_request)
+                for elem in chat_list:
+                    if elem.users.all().count() < 2:
+                        elem.delete()
+                return lecture_responses.success_cancel([{'type': 'chat_does_not_exist'}])
             return lecture_responses.success_cancel([{
                 'type': 'remove_respondent',
                 'id': chat.pk

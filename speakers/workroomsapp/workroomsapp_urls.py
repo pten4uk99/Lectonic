@@ -24,7 +24,13 @@ urlpatterns = [
     path('calendar/customer/', CustomerCalendarAPIView.as_view(), name='customer_calendar'),
 
     path('lecturer/', LecturerCreateAPIView.as_view(), name='lecturer'),
+    path('lecturer/potential_lectures/',
+         PotentialLecturerLecturesGetAPIView.as_view(),
+         name='potential_lecturer_lectures'),
     path('lecturer/diploma_photos/', DiplomaImageAPIView.as_view(), name='diploma_images'),
 
     path('customer/', CustomerAPIView.as_view(), name='customer'),
+    path('customer/potential_lectures/',
+         PotentialCustomerLecturesGetAPIView.as_view(),
+         name='potential_customer_lectures'),
 ]

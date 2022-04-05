@@ -1,12 +1,11 @@
 import React from "react";
 import {connect} from "react-redux";
+
 import tooltip from "~/assets/img/workrooms/workroom/tooltip.svg";
 import WorkroomCard from "../WorkroomCard";
 import {useNavigate} from "react-router-dom";
-import {getCities} from "~@/Profile/ajax/profile";
-import {getDomainArray} from "~@/WorkRooms/CreateEvent/ajax/event"
-import DropDown from "~@/Utils/jsx/DropDown";
 import {reverse} from "../../../../../ProjectConstants";
+import {getDates} from "./LectureCardList";
 
 
 
@@ -31,20 +30,22 @@ function CreatedLectures(props){
                   createLecture: true,
               }}/>
             </div>
-            {/*<DropDown request={getDomainArray} width={true} placeholder='10:00'/>*/}
             {props.data.length > 0 && 
               <div className="created-lectures__wrapper">
                 <div className="created-lectures">
                   {props.data.map((lecture, index) => {
-                    return <WorkroomCard key={index} data={{
-                      img: lecture.photo,
-                      client: 'Заказчик:',
-                      clientName: `${lecture.creator_first_name} ${lecture.creator_last_name}`,
-                      name: lecture.name,
-                      description: lecture.description,
-                      textBtn: 'Статус мероприятия',
-                    }}/>
-                  })}
+                    return <WorkroomCard key={index} 
+                                         data={{
+                                           src: lecture.photo,
+                                           client: !props.isLecturer ? 'Лектор:' : 'Заказчик:',
+                                           clientName: `${lecture.creator_first_name} ${lecture.creator_last_name}`,
+                                           name: lecture.lecture_name,
+                                           date: getDates(lecture.dates),
+                                           description: lecture.description,
+                                           city: lecture.hall_address,
+                                           textBtn: 'Статус мероприятия',
+                                           createdLecture: true,
+                                         }}/>})}
               </div>
             </div>}
           </div>

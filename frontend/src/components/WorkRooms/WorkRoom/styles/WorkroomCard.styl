@@ -1,14 +1,19 @@
 // Обертка для карточки + общие стили
 
 .workroom-card__box{
-    display: inline-block
-    box-sizing: border-box;
-    font-family: 'Montserrat', sans-serif;
-    border-radius: 18px;
-    text-align: center;
-    margin-left: 12px;
-    width: 240px
-    overflow: hidden;
+  display: inline-block
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+  border-radius: 18px;
+  text-align: center;
+  margin-left: 12px;
+  width: 240px
+  overflow: hidden;
+  transition: transform .1s
+  
+  &:hover {
+    transform: translateY(-10px)
+  }
 }
 
 .workroom-card__box-name{

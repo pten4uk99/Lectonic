@@ -1,18 +1,17 @@
 import datetime
-import os
 
 from django.urls import reverse
-
 from rest_framework.test import APITestCase, override_settings
 
 from authapp.models import User
+from chatapp.models import Chat, Message
 from speakers.utils.tests import data
 from speakers.utils.tests.upload_image import test_image
-from workroomsapp.models import *
+from workroomsapp.models import City, Person, Domain, Lecturer, Customer, Lecture
 
 
 @override_settings(MEDIA_URL=test_image.MEDIA_URL, MEDIA_ROOT=test_image.MEDIA_ROOT)
-class TestLectureAsLecturerCreate(APITestCase):
+class TestChatCreate(APITestCase):
     signup_data = data.SIGNUP.copy()
     signup_data2 = data.SIGNUP2.copy()
     profile_data = data.PROFILE.copy()
@@ -48,22 +47,12 @@ class TestLectureAsLecturerCreate(APITestCase):
         )
         self.client.post(reverse('customer'), self.customer_data)
 
-    def test_success_response(self):
+    def test_chat_create(self):
         lecture = Lecture.objects.first()
-        response = self.client.get(reverse('lecture_response'), {
+        r = self.client.get(reverse('lecture_response'), {
             'lecture': lecture.pk,
             'date': (datetime.datetime.now() + datetime.timedelta(days=2)).strftime('%Y-%m-%dT%H:%M')
         })
-
-        self.assertEqual(
-            response.status_code,
-            200,
-            msg='Неверный статус ответа при отклике на лекцию \n'
-                f'Ответ: {response.data}'
-        )
-        self.assertEqual(
-            LectureRequest.objects.get(lecture=lecture).respondents.all().exists(),
-            True,
-            msg='Пользователь не добавился в откликнувшиеся на лекцию'
-        )
+        self.assertEqual(Chat.objects.all().exists(), True, msg='Чат не был создан')
+        self.assertEqual(Message.objects.all().exists(), True, msg='Сообщение не было создано')
 

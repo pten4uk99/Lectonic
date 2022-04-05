@@ -1,6 +1,7 @@
 import datetime
 
 SIGNUP = {'email': 'admin@admin.ru', 'password': '12345678'}
+SIGNUP2 = {'email': 'admin2@admin.ru', 'password': '12345678'}
 
 PROFILE = {
     'first_name': 'Пётр-Петр',
@@ -36,8 +37,9 @@ CUSTOMER = {
 
 LECTURE = {
     'name': 'Лекция супер хорошая лекция',
-    'datetime': [str(datetime.datetime.now() + datetime.timedelta(days=2)) + ',' +
-                 str(datetime.datetime.now() + datetime.timedelta(days=2, hours=1))],
+    'datetime': [(datetime.datetime.now() + datetime.timedelta(days=2)).strftime('%Y-%m-%dT%H:%M') +
+                 ',' +
+                 (datetime.datetime.now() + datetime.timedelta(days=2, hours=1)).strftime('%Y-%m-%dT%H:%M')],
     'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
     'hall_address': 'Москва, ул. Не московская, д. Домашний',
     'type': 'offline',

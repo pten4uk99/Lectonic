@@ -9,7 +9,7 @@ import {login, signUp} from "../ajax";
 import {DeactivateModal} from "../../Layout/redux/actions/header";
 import {connect} from "react-redux";
 import {reverse} from "../../../ProjectConstants";
-import {SwapLogin} from "../redux/actions/permissions";
+import {SwapLogin, SwapUserId} from "../redux/actions/permissions";
 
 
 function AuthSignUpPassword(props) {
@@ -57,6 +57,7 @@ function AuthSignUpPassword(props) {
           setErrorMessagePassword(data.password[0])
         }
         if (data.status === ('logged_in' || 'signed_in')) {
+          props.SwapUserId()
           props.SwapLogin(true)
           navigate(reverse('workroom'))
           props.DeactivateModal()
@@ -393,6 +394,7 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     SwapLogin: (logged) => dispatch(SwapLogin(logged)),
+    SwapUserId: (user_id) => dispatch(SwapUserId(user_id)),
     DeactivateModal: () => dispatch(DeactivateModal()),
   })
 )(AuthSignUpPassword)

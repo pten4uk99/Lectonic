@@ -41,7 +41,15 @@ class LectureManager(models.Manager):
                     domain=workrooms_models.Domain.objects.get(name=name)
                 )
 
-        lecture_request = workrooms_models.LectureRequest.objects.create(lecture=lecture)
+        lecturer_lecture_request = workrooms_models.LecturerLectureRequest.objects.create(
+            lecturer=lecturer
+        )
+
+        lecture_request = workrooms_models.LectureRequest.objects.create(
+            lecture=lecture, lecturer_lecture_request=lecturer_lecture_request)
+
+        lecturer_lecture_request.photo = photo
+        lecturer_lecture_request.save()
 
         calendar = lecturer.lecturer_calendar.calendar
         for event in datetime:
@@ -52,11 +60,7 @@ class LectureManager(models.Manager):
 
         calendar.save()
 
-        return workrooms_models.LecturerLectureRequest.objects.create(
-            lecturer=lecturer,
-            lecture_request=lecture_request,
-            photo=photo
-        )
+        return lecturer_lecture_request
 
     @transaction.atomic
     def create_as_customer(self, name: str, photo: object = None,
@@ -93,7 +97,18 @@ class LectureManager(models.Manager):
                     domain=workrooms_models.Domain.objects.get(name=name)
                 )
 
-        lecture_request = workrooms_models.LectureRequest.objects.create(lecture=lecture)
+        customer_lecture_request = workrooms_models.CustomerLectureRequest.objects.create(
+            customer=customer,
+            listeners=listeners
+        )
+
+        lecture_request = workrooms_models.LectureRequest.objects.create(
+            lecture=lecture,
+            customer_lecture_request=customer_lecture_request
+        )
+
+        customer_lecture_request.photo = photo
+        customer_lecture_request.save()
 
         calendar = customer.customer_calendar.calendar
         for event in datetime:
@@ -104,9 +119,4 @@ class LectureManager(models.Manager):
 
         calendar.save()
 
-        return workrooms_models.CustomerLectureRequest.objects.create(
-            customer=customer,
-            lecture_request=lecture_request,
-            photo=photo,
-            listeners=listeners
-        )
+        return customer_lecture_request
