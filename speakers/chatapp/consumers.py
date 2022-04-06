@@ -5,7 +5,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model
 
-from speakers.local_settings import DEFAULT_HOST
+from speakers.settings import DEFAULT_HOST
 from .models import Message, Chat
 
 User = get_user_model()
