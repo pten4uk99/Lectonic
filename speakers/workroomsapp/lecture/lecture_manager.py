@@ -7,11 +7,10 @@ from workroomsapp import models as workrooms_models
 
 class LectureManager(models.Manager):
     @transaction.atomic
-    def create_as_lecturer(self, name: str, photo: object = None,
+    def create_as_lecturer(self, name: str, cost: int = 0,
                            lecturer: object = None, datetime: list = None,
                            hall_address: str = None, equipment: str = None,
                            lecture_type: str = None, status: bool = None,
-                           cost: int = 0,
                            description: str = "", domain: list = None):
 
         if not lecturer:
@@ -29,6 +28,7 @@ class LectureManager(models.Manager):
             name=name,
             optional=optional,
             type=lecture_type,
+            lecturer=lecturer,
             status=status,
             cost=cost,
             description=description
@@ -41,15 +41,7 @@ class LectureManager(models.Manager):
                     domain=workrooms_models.Domain.objects.get(name=name)
                 )
 
-        lecturer_lecture_request = workrooms_models.LecturerLectureRequest.objects.create(
-            lecturer=lecturer
-        )
-
-        lecture_request = workrooms_models.LectureRequest.objects.create(
-            lecture=lecture, lecturer_lecture_request=lecturer_lecture_request)
-
-        lecturer_lecture_request.photo = photo
-        lecturer_lecture_request.save()
+        lecture_request = workrooms_models.LectureRequest.objects.create(lecture=lecture)
 
         calendar = lecturer.lecturer_calendar.calendar
         for event in datetime:
@@ -60,10 +52,10 @@ class LectureManager(models.Manager):
 
         calendar.save()
 
-        return lecturer_lecture_request
+        return lecture_request
 
     @transaction.atomic
-    def create_as_customer(self, name: str, photo: object = None,
+    def create_as_customer(self, name: str,
                            customer: object = None, datetime: list = None,
                            hall_address: str = None, equipment: str = None,
                            lecture_type: str = None, status: bool = None,
@@ -85,7 +77,9 @@ class LectureManager(models.Manager):
             name=name,
             optional=optional,
             type=lecture_type,
+            customer=customer,
             status=status,
+            listeners=listeners,
             cost=cost,
             description=description
         )
@@ -97,18 +91,7 @@ class LectureManager(models.Manager):
                     domain=workrooms_models.Domain.objects.get(name=name)
                 )
 
-        customer_lecture_request = workrooms_models.CustomerLectureRequest.objects.create(
-            customer=customer,
-            listeners=listeners
-        )
-
-        lecture_request = workrooms_models.LectureRequest.objects.create(
-            lecture=lecture,
-            customer_lecture_request=customer_lecture_request
-        )
-
-        customer_lecture_request.photo = photo
-        customer_lecture_request.save()
+        lecture_request = workrooms_models.LectureRequest.objects.create(lecture=lecture)
 
         calendar = customer.customer_calendar.calendar
         for event in datetime:
@@ -119,4 +102,4 @@ class LectureManager(models.Manager):
 
         calendar.save()
 
-        return customer_lecture_request
+        return lecture_request

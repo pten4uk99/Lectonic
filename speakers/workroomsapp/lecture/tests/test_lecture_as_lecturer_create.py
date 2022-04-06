@@ -73,17 +73,8 @@ class TestLectureAsLecturerCreate(APITestCase):
             msg='В базе не создан LectureDomain'
         )
         self.assertEqual(
-            LecturerLectureRequest.objects.all().exists(), True,
-            msg='В базе не создан LecturerLectureRequest'
-        )
-        self.assertEqual(
             hasattr(Lecture.objects.first(), 'lecture_requests'), True,
             msg='У созданной лекции нет аттрибута lecture_request'
-        )
-        self.assertEqual(
-            os.path.exists(Lecture.objects.first().lecture_requests.first().lecturer_lecture_request.photo.path),
-            True,
-            msg='Неверный путь изображения лекции'
         )
 
     def test_with_existing_datetime(self):

@@ -33,8 +33,8 @@ class CustomerCalendarSerializer(serializers.ModelSerializer):
             month = event.datetime_start.month
             day = event.datetime_start.day
 
-            person = event.lecture_request.customer_lecture_request.customer.person
             lecture = event.lecture_request.lecture
+            person = lecture.customer.person
 
             respondents = event.lecture_request.respondents.all()
             confirmed_respondent = respondents.filter(confirmed=True).first()
@@ -50,7 +50,6 @@ class CustomerCalendarSerializer(serializers.ModelSerializer):
                 'creator': [person.first_name, person.last_name],
                 'lecturer': '',
                 'respondents': respondent_list,
-                'photo': DEFAULT_HOST + event.lecture_request.customer_lecture_request.photo.url,
                 'name': lecture.name,
                 'status': lecture.status,
                 'hall_address': lecture.optional.hall_address,

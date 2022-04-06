@@ -9,12 +9,11 @@ from workroomsapp.lecture.utils import (
     check_datetime_for_lecture_as_customer,
     check_datetime_for_lecture_as_lecturer
 )
-from workroomsapp.models import Lecture, LecturerLectureRequest
+from workroomsapp.models import Lecture
 
 
 class LectureCreateAsCustomerSerializer(serializers.Serializer):
     name = serializers.CharField()
-    photo = serializers.FileField()
     domain = serializers.ListField()
     datetime = serializers.ListField()
     hall_address = serializers.CharField(required=False)
@@ -27,7 +26,6 @@ class LectureCreateAsCustomerSerializer(serializers.Serializer):
     class Meta:
         fields = [
             'name',
-            'photo',
             'domain',
             'hall_address',
             'equipment',
@@ -40,11 +38,6 @@ class LectureCreateAsCustomerSerializer(serializers.Serializer):
         image_format = lecture.name.split('.')[-1]
         lecture.name = 'lecture.' + image_format
         return lecture
-
-    def validate_photo(self, photo):
-        image_format = photo.name.split('.')[-1]
-        photo.name = 'photo.' + image_format
-        return photo
 
     def validate_datetime(self, datetime_list):
         dates = []
@@ -68,7 +61,6 @@ class LectureCreateAsCustomerSerializer(serializers.Serializer):
         return Lecture.objects.create_as_customer(
             customer=self.context['request'].user.person.customer,
             name=validated_data.get('name'),
-            photo=validated_data.get('photo'),
             domain=validated_data.get('domain'),
             datetime=validated_data.get('datetime'),
             hall_address=validated_data.get('hall_address'),

@@ -49,10 +49,11 @@ class TestChatCreate(APITestCase):
 
     def test_chat_create(self):
         lecture = Lecture.objects.first()
-        r = self.client.get(reverse('lecture_response'), {
+        response = self.client.get(reverse('lecture_response'), {
             'lecture': lecture.pk,
             'date': (datetime.datetime.now() + datetime.timedelta(days=2)).strftime('%Y-%m-%dT%H:%M')
         })
-        self.assertEqual(Chat.objects.all().exists(), True, msg='Чат не был создан')
+        self.assertEqual(Chat.objects.all().exists(), True, msg='Чат не был создан \n'
+                                                                f'Ответ: {response.data}')
         self.assertEqual(Message.objects.all().exists(), True, msg='Сообщение не было создано')
 

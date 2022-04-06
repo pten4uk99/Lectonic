@@ -3,17 +3,15 @@ import datetime
 from rest_framework import serializers
 
 from speakers.settings import DEFAULT_HOST
-from workroomsapp.calendar.utils import build_photo_path
 from workroomsapp.lecture.utils import (
     convert_datetime,
     check_datetime_for_lecture_as_lecturer
 )
-from workroomsapp.models import Lecture, CustomerLectureRequest, Person, LecturerLectureRequest
+from workroomsapp.models import Lecture, Person
 
 
 class LectureCreateAsLecturerSerializer(serializers.Serializer):
     name = serializers.CharField()
-    photo = serializers.FileField()
     domain = serializers.ListField()
     datetime = serializers.ListField()
     hall_address = serializers.CharField(required=False)
@@ -25,7 +23,6 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
     class Meta:
         fields = [
             'name',
-            'photo',
             'domain',
             'hall_address',
             'equipment',
@@ -38,11 +35,6 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
         image_format = lecture.name.split('.')[-1]
         lecture.name = 'lecture.' + image_format
         return lecture
-
-    def validate_photo(self, photo):
-        image_format = photo.name.split('.')[-1]
-        photo.name = 'photo.' + image_format
-        return photo
 
     def validate_datetime(self, datetime_list):
         dates = []
@@ -66,7 +58,6 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
         return Lecture.objects.create_as_lecturer(
             lecturer=self.context['request'].user.person.lecturer,
             name=validated_data.get('name'),
-            photo=validated_data.get('photo'),
             domain=validated_data.get('domain'),
             datetime=validated_data.get('datetime'),
             hall_address=validated_data.get('hall_address'),
@@ -87,7 +78,6 @@ class LecturesGetSerializer(serializers.Serializer):
     creator_first_name = serializers.SerializerMethodField()
     creator_last_name = serializers.SerializerMethodField()
     in_respondents = serializers.SerializerMethodField()
-    photo = serializers.SerializerMethodField()
 
     class Meta:
         fields = [
@@ -96,7 +86,6 @@ class LecturesGetSerializer(serializers.Serializer):
             'dates',
             'hall_address',
             'description',
-            'photo',
             'in_respondents',
             'creator_first_name',
             'creator_last_name',
@@ -119,9 +108,6 @@ class LecturesGetSerializer(serializers.Serializer):
 
     def get_hall_address(self, obj):
         return obj.lecture_request.lecture.optional.hall_address
-
-    def get_photo(self, obj):
-        return DEFAULT_HOST + obj.photo.url
 
     def get_creator_first_name(self, obj):
         if hasattr(obj, 'customer'):

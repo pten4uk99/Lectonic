@@ -7,7 +7,7 @@ from chatapp.models import Chat, Message
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.lecturer.lecture_as_lecturer_serializers import *
-from workroomsapp.models import Respondent, CustomerLectureRequest
+from workroomsapp.models import Respondent, LectureRequest
 from workroomsapp.utils import workroomsapp_permissions
 
 channel_layer = get_channel_layer()
@@ -31,7 +31,7 @@ class LectureAsLecturerAPIView(APIView):
         created_lectures = None
 
         if hasattr(request.user.person, 'lecturer'):
-            created_lectures = request.user.person.lecturer.lecturer_lecture_requests.all()
+            created_lectures = request.user.person.lecturer.lectures.all()
 
         serializer = LecturesGetSerializer(
             created_lectures, many=True, context={'request': request})
@@ -42,8 +42,8 @@ class LectureAsLecturerAPIView(APIView):
 class PotentialLecturerLecturesGetAPIView(APIView):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        customer_lectures = CustomerLectureRequest.objects.exclude(
-            customer__person__user=request.user)
+        customer_lectures = Lecture.objects.exclude(
+            customer__person__user=request.user, customer=None)
 
         serializer = LecturesGetSerializer(
             customer_lectures, many=True, context={'request': request})
@@ -69,17 +69,17 @@ class LectureResponseAPIView(APIView):
         if not lecture:
             return lecture_responses.lecture_does_not_exist()
 
-        if not hasattr(lecture.lecture_requests.first(), 'customer_lecture_request'):
+        if not lecture.customer:
             if not hasattr(request.user.person, 'customer'):
                 return lecture_responses.lecturer_forbidden()
         else:
-            creator = lecture.lecture_requests.first().customer_lecture_request.customer.person
+            creator = lecture.customer.person
 
-        if not hasattr(lecture.lecture_requests.first(), 'lecturer_lecture_request'):
+        if not lecture.lecturer:
             if not hasattr(request.user.person, 'lecturer'):
                 return lecture_responses.customer_forbidden()
         else:
-            creator = lecture.lecture_requests.first().lecturer_lecture_request.lecturer.person
+            creator = lecture.lecturer.person
 
         lecture_request = lecture.lecture_requests.filter(
             event__datetime_start=datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M')).first()

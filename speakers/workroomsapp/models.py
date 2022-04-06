@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from speakers.utils.validators import PhotoValidator
-from workroomsapp.company.company_manager import CompanyManager
 from workroomsapp.customer.customer_manager import CustomerManager
 from workroomsapp.lecture.lecture_manager import LectureManager
 from workroomsapp.lecturer.lecturer_manager import LecturerManager
@@ -39,15 +38,6 @@ class CustomerDomain(models.Model):
         return f'Сфера деятельности: {self.domain.name}. Заказчик: {self.customer.person.name}'
 
 
-class CompanyDomain(models.Model):
-    """Сфера деятельности заказчика: юрлицо"""
-    company = models.ForeignKey('Company', on_delete=models.CASCADE)  # компания
-    domain = models.ForeignKey('Domain', on_delete=models.CASCADE)  # сфера деятельности
-
-    def __str__(self):
-        return f'Сфера деятельности: {self.domain.name}. Заказчик: {self.company.person.name}'
-
-
 class LecturerDomain(models.Model):
     """Сфера деятельности лектора"""
     lecturer = models.ForeignKey('Lecturer', on_delete=models.CASCADE, related_name='lecturer_domains')  # лектор
@@ -64,19 +54,6 @@ class LectureDomain(models.Model):
 
     def __str__(self):
         return f'Сфера деятельности: {self.domain.name}. Лекция: {self.company.person.name}'
-
-
-class DocumentImage(models.Model):
-    """Фотографии для подтверждения личности: фото паспорта и селфи с паспортом"""
-    person = models.OneToOneField('Person', on_delete=models.CASCADE, related_name='document_image')  # связь к Person, потому что и у заказчика и у лектора документы одинаковые
-    passport = models.ImageField(upload_to=document_image)  # фото паспорта
-    selfie = models.ImageField(upload_to=document_image)  # селфи с паспортом
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if self.passport and self.selfie:
-            PhotoValidator(self.passport.path).save()
-            PhotoValidator(self.selfie.path).save()
 
 
 class DiplomaImage(models.Model):
@@ -168,51 +145,9 @@ class Customer(models.Model):
     # остальные поля исходят из других моделей к этой, так как ForeignKey
 
 
-class Company(models.Model):
-    """Заказчик: юрлицо"""
-    person = models.OneToOneField('Person', on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)  # название организации
-    company_form = models.ForeignKey('CompanyForm', on_delete=models.CASCADE, null=True, blank=True)  # ЗАО, ООО, ОАО
-    specialization = models.TextField(null=True, blank=True)  # описание специализации компании
-    document = models.ImageField()
-    representative_person = models.OneToOneField(
-        'RepresentativePerson',
-        on_delete=models.CASCADE,
-        related_name='company'
-    )  # представитель организации
-    legal_address = models.CharField(max_length=200)  # юридический адрес
-    actual_address = models.CharField(max_length=200)  # фактический адрес
-    optional = models.OneToOneField(
-        'Optional',
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-        related_name='company'
-    )
-    is_verified = models.BooleanField(default=False)
-
-    objects = CompanyManager()
-
-    def __str__(self):
-        return f'{self.name}'
-
-
 class CompanyForm(models.Model):
     """Форма юрлица: ОАО, ЗАО, ООО..."""
     name = models.CharField(max_length=100)
-
-
-class RepresentativePerson(models.Model):
-    """Умолномоченный представитель юрлица"""
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    middle_name = models.CharField(max_length=100, null=True, blank=True)
-
-
-class OptionalImage(models.Model):
-    """Фотография помещения"""
-    optional = models.ForeignKey('Optional', on_delete=models.CASCADE, related_name='optional_images')
-    photo = models.ImageField()
 
 
 class Optional(models.Model):
@@ -232,68 +167,6 @@ class LectureRequest(models.Model):
     lecture = models.ForeignKey('Lecture', on_delete=models.CASCADE, related_name='lecture_requests')
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    customer_lecture_request = models.ForeignKey(
-        'CustomerLectureRequest',
-        on_delete=models.CASCADE,
-        related_name='lecture_requests',
-        null=True,
-        blank=True
-    )
-    lecturer_lecture_request = models.ForeignKey(
-        'LecturerLectureRequest',
-        on_delete=models.CASCADE,
-        related_name='lecture_requests',
-        null=True,
-        blank=True
-    )
-
-
-class LecturerLectureRequest(models.Model):
-    lecturer = models.ForeignKey(
-        'Lecturer',
-        on_delete=models.CASCADE,
-        related_name='lecturer_lecture_requests'
-    )
-    photo = models.ImageField(upload_to=lecturer_lecture_image, null=True)
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if self.photo:
-            PhotoValidator(self.photo.path).save()
-
-
-class CustomerLectureRequest(models.Model):
-    customer = models.ForeignKey(
-        'Customer',
-        on_delete=models.CASCADE,
-        related_name='customer_lecture_requests'
-    )
-    listeners = models.IntegerField()
-    photo = models.ImageField(upload_to=customer_lecture_image, null=True)
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if self.photo:
-            PhotoValidator(self.photo.path).save()
-
-
-class CompanyLectureRequest(models.Model):
-    lecture_request = models.OneToOneField(
-        'LectureRequest',
-        on_delete=models.CASCADE,
-        related_name='company_lecture_request'
-    )
-    company = models.ForeignKey(
-        'Company',
-        on_delete=models.CASCADE,
-        related_name='company_lecture_requests'
-    )
-    listeners = models.IntegerField()
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if self.photo:
-            PhotoValidator(self.photo.path).save()
 
 
 class Lecture(models.Model):
@@ -314,8 +187,23 @@ class Lecture(models.Model):
     )
     type = models.CharField(max_length=20, choices=TYPES)
     status = models.BooleanField(default=False)  # подтверждена/не просмотрена
+    listeners = models.IntegerField(blank=True, null=True)
     cost = models.IntegerField(default=0)  # стоимость лекции
     description = models.TextField(null=True, blank=True)
+    customer = models.ForeignKey(
+        'Customer',
+        on_delete=models.CASCADE,
+        related_name='lectures',
+        null=True,
+        blank=True
+    )
+    lecturer = models.ForeignKey(
+        'Lecturer',
+        on_delete=models.CASCADE,
+        related_name='lectures',
+        null=True,
+        blank=True
+    )
 
     objects = LectureManager()
 
@@ -346,8 +234,15 @@ class CustomerCalendar(models.Model):
     calendar = models.OneToOneField('Calendar', on_delete=models.CASCADE, related_name='customer_calendar')
 
 
-class CompanyCalendar(models.Model):
-    """Календарь заказчика: юрлицо"""
-    company = models.OneToOneField('Company', on_delete=models.CASCADE, related_name='company_calendar')
-    calendar = models.OneToOneField('Calendar', on_delete=models.CASCADE, related_name='company_calendar')
+# class DocumentImage(models.Model):
+#     """Фотографии для подтверждения личности: фото паспорта и селфи с паспортом"""
+#     person = models.OneToOneField('Person', on_delete=models.CASCADE, related_name='document_image')  # связь к Person, потому что и у заказчика и у лектора документы одинаковые
+#     passport = models.ImageField(upload_to=document_image)  # фото паспорта
+#     selfie = models.ImageField(upload_to=document_image)  # селфи с паспортом
+#
+#     def save(self, *args, **kwargs):
+#         super().save(*args, **kwargs)
+#         if self.passport and self.selfie:
+#             PhotoValidator(self.passport.path).save()
+#             PhotoValidator(self.selfie.path).save()
 

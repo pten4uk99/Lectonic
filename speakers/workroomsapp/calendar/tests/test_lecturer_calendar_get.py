@@ -34,7 +34,6 @@ class TestLecturerCalendarGet(APITestCase):
             self.client.post(reverse('lecture_as_lecturer'),
                              {
                                  'name': f'Моя лектушка {i}',
-                                 'photo': test_image.create_image(),
                                  'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
                                  'datetime': [
                                      (datetime.datetime.now() +
@@ -48,7 +47,6 @@ class TestLecturerCalendarGet(APITestCase):
             self.client.post(reverse('lecture_as_lecturer'),
                              {
                                  'name': f'Моя лектушка {i}',
-                                 'photo': test_image.create_image(),
                                  'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
                                  'datetime': [
                                      (datetime.datetime.now() +
