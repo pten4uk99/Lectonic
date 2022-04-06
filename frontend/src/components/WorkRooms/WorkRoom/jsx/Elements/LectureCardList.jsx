@@ -9,10 +9,10 @@ import {RemoveNotification} from "../../../../Layout/redux/actions/notifications
 
 function LectureCardList(props){
 
-  function handleResponse(e, lecture_id) {
+  function handleResponse(e, lecture_id, dates) {
     let text = e.target.innerText
       
-    toggleResponseOnLecture(lecture_id)
+    toggleResponseOnLecture(lecture_id, dates[0])
       .then(response => response.json())
       .then(data => {
         if (data.status === 'success') {
@@ -48,7 +48,7 @@ function LectureCardList(props){
                                            textBtn: lecture.in_respondents ? 'Отменить отклик' : 'Откликнуться', 
                                            potentialLecture: true,
                                          }} 
-                                         onClick={(e) => handleResponse(e, lecture.lecture_id)}/>})}
+                                         onClick={(e) => handleResponse(e, lecture.lecture_id, lecture.dates)}/>})}
                 </div>
             </div>}
           </div>

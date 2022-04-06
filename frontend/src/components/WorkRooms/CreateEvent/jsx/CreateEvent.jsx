@@ -303,7 +303,7 @@ export function addPhotoHandler(inputEvent, UpdatePhoto) {
 }
 
 function checkRequiredFields(obj, props) {
-  if ((props.store.event.domain.length < 1) || !props.store.event.photo) return true
+  if ((props.store.event.domain.length < 1)) return true
   
   for (let field in obj) {
     if (!obj[field]) return true

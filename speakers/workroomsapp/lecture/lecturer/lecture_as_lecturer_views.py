@@ -7,7 +7,7 @@ from chatapp.models import Chat, Message
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.lecturer.lecture_as_lecturer_serializers import *
-from workroomsapp.models import Respondent, LectureRequest
+from workroomsapp.models import Respondent, LectureRequest, Lecturer, Customer
 from workroomsapp.utils import workroomsapp_permissions
 
 channel_layer = get_channel_layer()
@@ -42,11 +42,14 @@ class LectureAsLecturerAPIView(APIView):
 class PotentialLecturerLecturesGetAPIView(APIView):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        customer_lectures = Lecture.objects.exclude(
-            customer__person__user=request.user, customer=None)
+        customers = Customer.objects.exclude(person__user=request.user)
+        lecture_list = []
+        for customer in customers:
+            for lecture in customer.lectures.all():
+                lecture_list.append(lecture)
 
         serializer = LecturesGetSerializer(
-            customer_lectures, many=True, context={'request': request})
+            lecture_list, many=True, context={'request': request})
 
         return lecture_responses.success_get_lectures(serializer.data)
 
@@ -82,7 +85,7 @@ class LectureResponseAPIView(APIView):
             creator = lecture.lecturer.person
 
         lecture_request = lecture.lecture_requests.filter(
-            event__datetime_start=datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M')).first()
+            event__datetime_start=datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ')).first()
 
         if not lecture_request:
             return lecture_responses.does_not_exist()

@@ -65,14 +65,14 @@ export function getAllLecturesForCustomer() {
 }
 
 
-export function toggleResponseOnLecture(lecture_id) {
+export function toggleResponseOnLecture(lecture_id, date) {
   const options = {
     method: 'GET',
     headers: HEADERS,
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/lecture/response/?lecture=${lecture_id}`,
+    `${baseURL}/api/workrooms/lecture/response/?lecture=${lecture_id}&date=${date}`,
     options
   )
 }

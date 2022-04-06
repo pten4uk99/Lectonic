@@ -5,7 +5,7 @@ from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.customer.lecture_as_customer_serializers import *
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.lecturer.lecture_as_lecturer_serializers import LecturesGetSerializer
-from workroomsapp.models import LectureRequest
+from workroomsapp.models import LectureRequest, Customer, Lecturer
 from workroomsapp.utils import workroomsapp_permissions
 
 
@@ -38,10 +38,13 @@ class LectureAsCustomerAPIView(APIView):
 class PotentialCustomerLecturesGetAPIView(APIView):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        lecturer_lectures = Lecture.objects.exclude(
-            lecturer__person__user=request.user, lecturer=None)
+        lecturers = Lecturer.objects.exclude(person__user=request.user)
+        lecture_list = []
+        for lecturer in lecturers:
+            for lecture in lecturer.lectures.all():
+                lecture_list.append(lecture)
 
         serializer = LecturesGetSerializer(
-            lecturer_lectures, many=True, context={'request': request})
+            lecture_list, many=True, context={'request': request})
 
         return lecture_responses.success_get_lectures(serializer.data)

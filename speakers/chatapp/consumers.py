@@ -51,7 +51,7 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
             'id': chat.pk,
             'need_read': need_read_messages,
             'lecture_name': lecture_request.lecture.name,
-            'lecture_photo': DEFAULT_HOST + photo,
+            # 'lecture_photo': DEFAULT_HOST + photo,
             'respondent_id': respondent.pk,
             'respondent_first_name': respondent.person.first_name,
             'respondent_last_name': respondent.person.last_name
