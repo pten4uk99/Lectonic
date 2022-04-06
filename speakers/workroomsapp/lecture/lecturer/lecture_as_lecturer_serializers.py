@@ -2,7 +2,6 @@ import datetime
 
 from rest_framework import serializers
 
-from speakers.settings import DEFAULT_HOST
 from workroomsapp.lecture.utils import (
     convert_datetime,
     check_datetime_for_lecture_as_lecturer
@@ -92,29 +91,33 @@ class LecturesGetSerializer(serializers.Serializer):
         ]
 
     def get_lecture_id(self, obj):
-        return obj.lecture_request.lecture.pk
+        return obj.pk
 
     def get_lecture_name(self, obj):
-        return obj.lecture_request.lecture.name
+        return obj.name
 
     def get_dates(self, obj):
-        return obj.lecture_request.event.datetime_start
+        dates = []
+        lecture_requests = obj.lecture_requests.all()
+        for lecture_request in lecture_requests:
+            dates.append(lecture_request.event.datetime_start)
+        return dates
 
     def get_description(self, obj):
-        return obj.lecture_request.lecture.description
+        return obj.description
 
     def get_in_respondents(self, obj):
-        return bool(obj.lecture_request.respondents.filter(person=self.context['request'].user.person).first())
+        return bool(obj.lecture_requests.filter(respondents__person=self.context['request'].user.person).first())
 
     def get_hall_address(self, obj):
-        return obj.lecture_request.lecture.optional.hall_address
+        return obj.optional.hall_address
 
     def get_creator_first_name(self, obj):
-        if hasattr(obj, 'customer'):
+        if obj.customer:
             return obj.customer.person.first_name
         return obj.lecturer.person.first_name
 
     def get_creator_last_name(self, obj):
-        if hasattr(obj, 'customer'):
+        if obj.customer:
             return obj.customer.person.last_name
         return obj.lecturer.person.last_name
