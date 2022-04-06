@@ -1,12 +1,11 @@
-import {baseWS, hostURL} from "./ProjectConstants";
+import {baseWS} from "./ProjectConstants";
 
 let notificationsWs;
 
 
 export function createNotificationsSocket(setSocket, userId) {
   if (notificationsWs) return
-  notificationsWs = new WebSocket(`${baseWS}/connect/${userId}`)
-
+  notificationsWs = new WebSocket(`${baseWS}/ws/connect/${userId}`)
   
   notificationsWs.onopen = (e) => {
     setSocket(notificationsWs);
@@ -25,7 +24,7 @@ export function createNotificationsSocket(setSocket, userId) {
 }
 
 export function createChatSocket(setSocket, chatId) {
-  let socket = new WebSocket(`${baseWS}/chat/${chatId}`)
+  let socket = new WebSocket(`${baseWS}/ws/chat/${chatId}`)
   
   socket.onopen = (e) => {
     setSocket(socket);
