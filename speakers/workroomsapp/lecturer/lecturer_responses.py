@@ -41,3 +41,11 @@ def success(data):
         data=data,
         status_code=200
     )
+
+
+def success_get_lecturers(data):
+    return response.get_response(
+        status=response.SUCCESS,
+        data=data,
+        status_code=200
+    )

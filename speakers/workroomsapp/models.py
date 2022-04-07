@@ -178,6 +178,7 @@ class Lecture(models.Model):
     ]
 
     name = models.CharField(max_length=500)
+    svg = models.IntegerField()  # id svg фотографии на фронтенде
     optional = models.OneToOneField(
         'Optional',
         on_delete=models.CASCADE,

@@ -30,6 +30,7 @@ urlpatterns = [
     path('lecturer/diploma_photos/', DiplomaImageAPIView.as_view(), name='diploma_images'),
 
     path('customer/', CustomerAPIView.as_view(), name='customer'),
+    path('customer/lecturers_list/', LecturersListGetAPIView.as_view(), name='lecturers_list'),
     path('customer/potential_lectures/',
          PotentialCustomerLecturesGetAPIView.as_view(),
          name='potential_customer_lectures'),

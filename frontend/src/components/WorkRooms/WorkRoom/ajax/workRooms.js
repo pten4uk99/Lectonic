@@ -64,6 +64,18 @@ export function getAllLecturesForCustomer() {
   )
 }
 
+export function getAllLecturersForCustomer() {
+  const options = {
+    method: 'GET',
+    headers: HEADERS,
+    credentials: 'include',
+  }
+  return fetch(
+    `${baseURL}/api/workrooms/customer/lecturers_list/`,
+    options
+  )
+}
+
 
 export function toggleResponseOnLecture(lecture_id, date) {
   const options = {

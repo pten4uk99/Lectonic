@@ -9,11 +9,12 @@ from workroomsapp.lecture.utils import (
     check_datetime_for_lecture_as_customer,
     check_datetime_for_lecture_as_lecturer
 )
-from workroomsapp.models import Lecture
+from workroomsapp.models import Lecture, Lecturer
 
 
 class LectureCreateAsCustomerSerializer(serializers.Serializer):
     name = serializers.CharField()
+    svg = serializers.IntegerField(min_value=1)
     domain = serializers.ListField()
     datetime = serializers.ListField()
     hall_address = serializers.CharField(required=False)
@@ -26,6 +27,7 @@ class LectureCreateAsCustomerSerializer(serializers.Serializer):
     class Meta:
         fields = [
             'name',
+            'svg',
             'domain',
             'hall_address',
             'equipment',
@@ -49,8 +51,8 @@ class LectureCreateAsCustomerSerializer(serializers.Serializer):
                     self.context['request'].user.person.customer, start.date(), start.time(), end.time()):
                 raise serializers.ValidationError(f'Событие на выбранное время уже существует {start} - {end}')
 
-            if start < datetime.datetime.now() + datetime.timedelta(days=1):
-                msg = 'Между созданием и проведением лекции должно быть не менее 24 часов'
+            if start < datetime.datetime.now() + datetime.timedelta(hours=1):
+                msg = 'Невозможно создать событие на прошедшую дату'
                 raise serializers.ValidationError(msg)
 
             dates.append([start, end])
@@ -61,6 +63,7 @@ class LectureCreateAsCustomerSerializer(serializers.Serializer):
         return Lecture.objects.create_as_customer(
             customer=self.context['request'].user.person.customer,
             name=validated_data.get('name'),
+            svg=validated_data.get('svg'),
             domain=validated_data.get('domain'),
             datetime=validated_data.get('datetime'),
             hall_address=validated_data.get('hall_address'),

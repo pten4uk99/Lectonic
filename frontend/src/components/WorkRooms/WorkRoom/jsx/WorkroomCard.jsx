@@ -1,5 +1,6 @@
 import React from "react";
 import plus from "~/assets/img/icon-create-lection.svg"
+import PhotoName from "../../../Utils/jsx/PhotoName";
 
 function WoorkroomCard(props){
     let potentialLecture = "workroom-card__img-potential-lecture";
@@ -20,7 +21,11 @@ function WoorkroomCard(props){
         return(
             <div className="workroom-card__box">
                 <div className= "workroom-card__img-lector">
-                    <img src={props.data.src} alt="photo"/>
+                  {props.data.src ? 
+                    <img src={props.data.src} alt="photo"/> :
+                    <PhotoName firstName={props.data.firstName} 
+                               lastName={props.data.lastName} 
+                               size={110}/>}
                 </div>
                 <h2 className="workroom-card__box-name">{props.data.name}</h2>
                 <p className="workroom-card__box-lecture-name">{props.data.description}</p>

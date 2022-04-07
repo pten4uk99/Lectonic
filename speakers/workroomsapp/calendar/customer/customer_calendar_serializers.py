@@ -49,6 +49,7 @@ class CustomerCalendarSerializer(serializers.ModelSerializer):
             new_event = {
                 'creator': [person.first_name, person.last_name],
                 'lecturer': '',
+                'svg': lecture.svg,
                 'respondents': respondent_list,
                 'name': lecture.name,
                 'status': lecture.status,

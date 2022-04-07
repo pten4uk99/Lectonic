@@ -11,6 +11,7 @@ from workroomsapp.models import Lecture, Person
 
 class LectureCreateAsLecturerSerializer(serializers.Serializer):
     name = serializers.CharField()
+    svg = serializers.IntegerField(min_value=1)
     domain = serializers.ListField()
     datetime = serializers.ListField()
     hall_address = serializers.CharField(required=False)
@@ -22,6 +23,7 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
     class Meta:
         fields = [
             'name',
+            'svg',
             'domain',
             'hall_address',
             'equipment',
@@ -45,8 +47,8 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
                     self.context['request'].user.person.lecturer, start.date(), start.time(), end.time()):
                 raise serializers.ValidationError(f'Событие на выбранное время уже существует {start} - {end}')
 
-            if start < datetime.datetime.now() + datetime.timedelta(days=1):
-                msg = 'Между созданием и проведением лекции должно быть не менее 24 часов'
+            if start < datetime.datetime.now() + datetime.timedelta(hours=1):
+                msg = 'Невозможно создать событие на прошедшую дату'
                 raise serializers.ValidationError(msg)
 
             dates.append([start, end])
@@ -57,6 +59,7 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
         return Lecture.objects.create_as_lecturer(
             lecturer=self.context['request'].user.person.lecturer,
             name=validated_data.get('name'),
+            svg=validated_data.get('svg'),
             domain=validated_data.get('domain'),
             datetime=validated_data.get('datetime'),
             hall_address=validated_data.get('hall_address'),
@@ -70,6 +73,7 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
 
 class LecturesGetSerializer(serializers.Serializer):
     lecture_id = serializers.SerializerMethodField()
+    svg = serializers.SerializerMethodField()
     lecture_name = serializers.SerializerMethodField()
     dates = serializers.SerializerMethodField()
     hall_address = serializers.SerializerMethodField()
@@ -81,6 +85,7 @@ class LecturesGetSerializer(serializers.Serializer):
     class Meta:
         fields = [
             'lecture_id',
+            'svg',
             'lecture_name',
             'dates',
             'hall_address',
@@ -92,6 +97,9 @@ class LecturesGetSerializer(serializers.Serializer):
 
     def get_lecture_id(self, obj):
         return obj.pk
+
+    def get_svg(self, obj):
+        return obj.svg
 
     def get_lecture_name(self, obj):
         return obj.name

@@ -84,6 +84,7 @@ function CreateEvent(props) {
       `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}T${formData.get('time_end')}`)
     )
     formData.set('type', eventType)
+    formData.set('svg', String(1 + Math.floor(Math.random() * 5)))
     createEvent(formData, role)
       .then(response => response.json())
       .then(data => {
@@ -110,23 +111,23 @@ function CreateEvent(props) {
             </h2>
           </div>
           
-          <div className='cover-l label'>
-            Обложка:
-            <span className="required-sign step-block__required-sign">*</span>
-          </div>
-          <label className={titlePhotoSrc ? 'cover' : 'cover no-photo'}>
-            <img className='icon' 
-                 src={photoIcon} 
-                 alt='photo-icon'/>
-              <span className='add-photo'>Добавить фото</span>
-              <input name='photo'
-                     className='add-photo__input'
-                     type='file'
-                     onChange={e => addPhotoHandler(e, props.UpdatePhoto)}/>
-            <img className='title-img'
-                 src={titlePhotoSrc}
-                 alt='Обложка'/>
-          </label>
+          {/*<div className='cover-l label'>*/}
+          {/*  Обложка:*/}
+          {/*  <span className="required-sign step-block__required-sign">*</span>*/}
+          {/*</div>*/}
+          {/*<label className={titlePhotoSrc ? 'cover' : 'cover no-photo'}>*/}
+          {/*  <img className='icon' */}
+          {/*       src={photoIcon} */}
+          {/*       alt='photo-icon'/>*/}
+          {/*    <span className='add-photo'>Добавить фото</span>*/}
+          {/*    <input name='photo'*/}
+          {/*           className='add-photo__input'*/}
+          {/*           type='file'*/}
+          {/*           onChange={e => addPhotoHandler(e, props.UpdatePhoto)}/>*/}
+          {/*  <img className='title-img'*/}
+          {/*       src={titlePhotoSrc}*/}
+          {/*       alt='Обложка'/>*/}
+          {/*</label>*/}
           
           <div className='domain-l label'>
             Тематика:

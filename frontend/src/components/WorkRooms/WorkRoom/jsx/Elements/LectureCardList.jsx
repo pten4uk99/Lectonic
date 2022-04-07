@@ -5,6 +5,7 @@ import WorkroomCard from "../WorkroomCard";
 import {DateTime} from "luxon";
 import {toggleResponseOnLecture} from "../../ajax/workRooms";
 import {RemoveNotification} from "../../../../Layout/redux/actions/notifications";
+import {getLecturePhoto} from "../../../../../ProjectConstants";
 
 
 function LectureCardList(props){
@@ -38,7 +39,7 @@ function LectureCardList(props){
                   {props.data.map((lecture, index) => {
                     return <WorkroomCard key={index} 
                                          data={{
-                                           src: lecture.photo, 
+                                           src: getLecturePhoto(lecture.svg), 
                                            client: !props.isLecturer ? 'Лектор:' : 'Заказчик:', 
                                            clientName: `${lecture.creator_first_name} ${lecture.creator_last_name}`, 
                                            name: lecture.lecture_name, 

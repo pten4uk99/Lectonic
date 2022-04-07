@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import lecturerPhoto from '~/assets/img/TEST_PHOTO_LECTURER.svg'
 import Respondents from "./Respondents";
 import PhotoName from "../../../../Utils/jsx/PhotoName";
+import {getLecturePhoto} from "../../../../../ProjectConstants";
 
 
 function Event(props) {
@@ -46,7 +47,7 @@ function Event(props) {
                      size={32}/>
         </div>
         <div className="event-photo">
-          <img src={props.photo} alt="обложка"/>
+          <img src={getLecturePhoto(props.photo)} alt="обложка"/>
         </div>
       </div>
       

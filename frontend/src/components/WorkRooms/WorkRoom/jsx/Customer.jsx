@@ -3,21 +3,20 @@ import {connect} from "react-redux";
 import WorkroomCard from "./WorkroomCard";
 import CreatedLectures from "~@/WorkRooms/WorkRoom/jsx/Elements/CreatedLectures";
 import LectureCardList from "./Elements/LectureCardList";
-import {getAllLecturesForCustomer, getCreatedLecturesForCustomer} from "../ajax/workRooms";
+import {getAllLecturersForCustomer, getAllLecturesForCustomer, getCreatedLecturesForCustomer} from "../ajax/workRooms";
+import LecturersList from "./Elements/LecturersList";
 
 
 function Customer(props) {
   let [createdLectures, setCreatedLectures] = useState([])
   let [potentialLectures, setPotentialLectures] = useState([])
+  let [lecturersList, setLecturersList] = useState([])
   
   useEffect(() => {
     getCreatedLecturesForCustomer()
       .then(response => response.json())
       .then(data => {
-        if (data.status === 'success') {
-          console.log(data)
-          setCreatedLectures(data.data)
-        }
+        if (data.status === 'success') setCreatedLectures(data.data)
       })
       .catch((error) => console.log(error))
     
@@ -27,6 +26,14 @@ function Customer(props) {
         if (data.status === 'success') setPotentialLectures(data.data)
       })
       .catch((error) => console.log(error))
+    
+    getAllLecturersForCustomer()
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') setLecturersList(data.data)
+      })
+      .catch((error) => console.log(error))
+    
   }, [])
     return (
         <article className="customer__content">
@@ -35,6 +42,7 @@ function Customer(props) {
           <LectureCardList header='Новые лекции' 
                            isLecturer={false}
                            data={potentialLectures}/>
+          <LecturersList data={lecturersList}/>
         </article>
     )
 }

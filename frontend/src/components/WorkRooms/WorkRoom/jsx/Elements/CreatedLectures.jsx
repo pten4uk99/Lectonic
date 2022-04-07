@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import tooltip from "~/assets/img/workrooms/workroom/tooltip.svg";
 import WorkroomCard from "../WorkroomCard";
 import {useNavigate} from "react-router-dom";
-import {reverse} from "../../../../../ProjectConstants";
+import {getLecturePhoto, reverse} from "../../../../../ProjectConstants";
 import {getDates} from "./LectureCardList";
 
 
@@ -36,7 +36,7 @@ function CreatedLectures(props){
                   {props.data.map((lecture, index) => {
                     return <WorkroomCard key={index} 
                                          data={{
-                                           src: lecture.photo,
+                                           src: getLecturePhoto(lecture.svg),
                                            client: !props.isLecturer ? 'Лектор:' : 'Заказчик:',
                                            clientName: `${lecture.creator_first_name} ${lecture.creator_last_name}`,
                                            name: lecture.lecture_name,

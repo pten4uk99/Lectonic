@@ -56,6 +56,7 @@ class LecturerCalendarSerializer(serializers.ModelSerializer):
             new_event = {
                 'creator': [person.first_name, person.last_name],
                 'customer': '',
+                'svg': lecture.svg,
                 'respondents': respondent_list,
                 'name': lecture.name,
                 'hall_address': lecture.optional.hall_address,

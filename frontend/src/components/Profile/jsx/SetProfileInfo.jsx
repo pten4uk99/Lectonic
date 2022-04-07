@@ -116,7 +116,7 @@ function SetProfileInfo(props) {
           </div>
           
           <div className='userInfo__form__input-container'>
-            <input name='first_name' 
+            <input name='last_name' 
                    className='form__input'
                    type='text' 
                    placeholder='Фамилия' 
@@ -126,7 +126,7 @@ function SetProfileInfo(props) {
           </div>
 
           <div className='userInfo__form__input-container'>
-            <input name='last_name' 
+            <input name='first_name' 
                    className='form__input'
                    type='text' 
                    placeholder='Имя' 

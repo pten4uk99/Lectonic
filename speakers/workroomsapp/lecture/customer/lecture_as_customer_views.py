@@ -48,3 +48,4 @@ class PotentialCustomerLecturesGetAPIView(APIView):
             lecture_list, many=True, context={'request': request})
 
         return lecture_responses.success_get_lectures(serializer.data)
+
