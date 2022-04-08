@@ -5,26 +5,56 @@ import Calendar from "~@/WorkRooms/FullCalendar/Calendar/jsx/Calendar";
 import {MONTHS} from "~@/WorkRooms/FullCalendar/Calendar/utils/calendar";
 import {DeactivateModal} from "../../../Layout/redux/actions/header";
 import DropDown from "../../../Utils/jsx/DropDown";
-import {SwapModalChooseDates} from "../../FullCalendar/Calendar/redux/actions/calendar";
+import {SwapChosenDuration, SwapModalChooseDates} from "../../FullCalendar/Calendar/redux/actions/calendar";
 import {checkEqualDates} from "../../FullCalendar/Calendar/utils/date";
+import {SetDropDownTimeStart} from "../../../Utils/redux/actions/dropdown";
 
 
 function CalendarModal(props) {
   let chooseDates = props.store.calendar.modalChooseDates
+  let duration = props.store.calendar.chosenDuration
   let [chosenDate, setChosenDate] = useState(null)
-  
+
   function handleChosenStartValue(value) {
     let [hours, minutes] = value.split(':')
-    let oldDates = chooseDates
-    oldDates.map((elem) => {
+    let newDates = chooseDates.map((elem) => {
       if (checkEqualDates(chosenDate, elem)) {
-        return new Date(elem.getFullYear(), elem.getMonth(), elem.getDate(), Number(hours), Number(minutes))
+        return new Date(
+          elem.getFullYear(), elem.getMonth(), elem.getDate(), 
+          Number(hours), Number(minutes)
+        )
       }
+      return elem
     })
-    props.SwapModalChooseDates(oldDates)
+    props.SwapModalChooseDates(newDates)
   }
   
-  function activeDate(date) {
+  useEffect(() => {
+    if (chooseDates.length === 0) setChosenDate(null)
+    if (chooseDates.length === 1) setChosenDate(chooseDates[0])
+    else if (chooseDates.length > 1) {
+      let exist = false
+      for (let date of chooseDates) if (checkEqualDates(date, chosenDate)) exist = true
+      if (!exist) setChosenDate(null)
+    }
+  }, [chooseDates])
+
+  useEffect(() => {
+    if (chooseDates.length >= 1) setChosenDate(chooseDates[0])
+  }, [props.store.header.modalActive])
+  
+  useEffect(() => {
+    if (chosenDate) {
+      let hour = chosenDate.getHours()
+      let minute = chosenDate.getMinutes()
+      if (String(hour).length < 2) hour = '0' + hour
+      if (String(minute).length < 2) minute = '0' + minute
+      
+      props.SetDropDownTimeStart(`${hour}:${minute}`)
+    }
+  }, [chosenDate])
+
+  function activeDateClassName(date) {
     let className = 'calendar-modal__date'
     if (checkEqualDates(date, chosenDate)) return className + ' active'
     return className
@@ -40,23 +70,35 @@ function CalendarModal(props) {
           Отметьте одну или несколько дат на календаре<br/>
           и укажите продолжительность лекции.
         </p>
-        <div className="calendar-modal__dates-block">
-          <span>Дата:</span>
-          <div className="calendar-modal__dates-list">
-            {chooseDates.map((elem, index) => (
-              <div className={activeDate(elem)} key={index} onClick={() => setChosenDate(elem)}>
-                {elem.getDate()} {getMonth(elem.getMonth())}
-              </div>))}
-          </div>
+        <div className="calendar-modal__duration">
+          <span className="end">Длительность: </span> 
+          <DropDown request={getDurationArr()}
+                    onSelect={(value) => {
+                      props.SwapChosenDuration(parseDuration(value)); 
+                      props.SwapModalChooseDates([])
+                    }} 
+                    defaultValue='01:00'/>
         </div>
-        <div className="calendar-modal__time">
-          <span>Время:</span>
-          <div className="time-dropdown">
-            <span>c <DropDown request={getTimeArr()} 
-                              onSelect={(value) => handleChosenStartValue(value)}/></span>
-            <span>до <DropDown request={getTimeArr()}/></span>
-          </div>
-        </div>
+        {chooseDates.length > 0 && 
+          <div className="calendar-modal__dates-block">
+            <span>Дата:</span>
+            <div className="calendar-modal__dates-list">
+              {chooseDates.map((elem, index) => (
+                <div className={activeDateClassName(elem)} key={index} onClick={() => setChosenDate(elem)}>
+                  {elem.getDate()} {getMonth(elem.getMonth())}
+                </div>))}
+            </div>
+          </div>}
+          {chosenDate && <div className="calendar-modal__time">
+            <span>Время:</span>
+            <div className="time-dropdown">
+              <span className="start">Начало: </span> 
+              <DropDown request={getTimeArr(chosenDate, duration)} 
+                        onSelect={(value) => handleChosenStartValue(value)} 
+                        defaultValue='00:00' 
+                        timeStart={true}/>
+            </div>
+          </div>}
         <button className="btn calendar-modal__button" 
              onClick={props.DeactivateModal} 
                 disabled={!Boolean(chooseDates.length > 0)}>Подтвердить</button>
@@ -69,6 +111,8 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     DeactivateModal: () => dispatch(DeactivateModal()),
+    SetDropDownTimeStart: (time) => dispatch(SetDropDownTimeStart(time)),
+    SwapChosenDuration: (duration) => dispatch(SwapChosenDuration(duration)),
     SwapModalChooseDates: (dates) => dispatch(SwapModalChooseDates(dates)),
   })
 )(CalendarModal)
@@ -78,12 +122,36 @@ export function getMonth(monthId) {
   return MONTHS[monthId].substring(0, 3).toLowerCase()
 }
 
-function getTimeArr() {
+function getTimeArr(date, duration) {
+  let start = 0
+  let now = new Date()
+  if (checkEqualDates(date, now)) start = now.getHours() + 2
+  
   let arr = []
-  for (let i = 0; i < 24; i++) {
+  for (let i = start; i < 24; i++) {
+    if (i * 60 + duration >= 24 * 60) break
     let hour = String(i)
     if (hour.length < 2) hour = '0' + hour
     arr.push(`${hour}:00`, `${hour}:30`)
   }
   return arr
+}
+
+function getDurationArr() {
+  let arr = []
+  for (let i = 0; i < 6; i++) {
+    let hour = String(i)
+    if (hour.length < 2) hour = '0' + hour
+    if (i === 0) {
+      arr.push(`${hour}:30`)
+      continue
+    }
+    arr.push(`${hour}:00`, `${hour}:30`)
+  }
+  return arr
+}
+
+function parseDuration(time) {
+  let [hourStr, minuteStr] = time.split(':')
+  return Number(hourStr) * 60 + Number(minuteStr)
 }

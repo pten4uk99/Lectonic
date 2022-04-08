@@ -19,4 +19,7 @@ export function SetHoverDate(date) {
 export function SwapModalChooseDates(dates) {
   return { type: 'SWAP_MODAL_CHOOSE_DATES', payload: {dates: dates}}
 }
+export function SwapChosenDuration(duration) {
+  return { type: 'SWAP_CHOSEN_DURATION', payload: duration}
+}
 

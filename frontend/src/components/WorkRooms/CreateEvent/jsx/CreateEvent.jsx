@@ -32,11 +32,11 @@ function CreateEvent(props) {
   let role = searchParams.get('role')
   
   let chooseDates = props.store.calendar.modalChooseDates
+  let duration = props.store.calendar.chosenDuration
   let selectedDomains = props.store.event.domain
   let eventType = props.store.event.type
   let place = props.store.event.place
   let payment = props.store.event.payment
-  let titlePhotoSrc = props.store.event.photo
   
   let [requiredFields, setRequiredFields] = useState({
     name: '',
@@ -79,9 +79,9 @@ function CreateEvent(props) {
     selectedDomains.map((elem) => formData.append('domain',  elem))
     for (let date of chooseDates) formData.append(
       'datetime',
-      (`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}T${formData.get('time_start')}` + 
+      (`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}T${date.getHours()}:${date.getMinutes()}` + 
       ',' +
-      `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}T${formData.get('time_end')}`)
+      `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}T${getStrTime(date.getHours(), date.getMinutes(), duration)}`)
     )
     formData.set('type', eventType)
     formData.set('svg', String(1 + Math.floor(Math.random() * 5)))
@@ -136,7 +136,7 @@ function CreateEvent(props) {
           <div className='domains'>
             <div className='domain-list flex'>
               <DropDown request={domainArray} 
-                    width={true} 
+                    width={true}
                     placeholder='Выберите тематику' 
                     onSelect={(value, setValue) => domainSelectHandler(value, setValue)} 
                     domainArr={true}/>
@@ -193,16 +193,16 @@ function CreateEvent(props) {
             </Modal>
           </div>
           
-          <div className='time-l label'>
-            Время:
-            <span className="required-sign step-block__required-sign">*</span>
-          </div>
-          <div className='time flex'>
-            <span>c</span>
-            <input name='time_start' type="time"/>
-            <span>до</span>
-            <input name='time_end' type="time"/>
-          </div>
+          {/*<div className='time-l label'>*/}
+          {/*  Время:*/}
+          {/*  <span className="required-sign step-block__required-sign">*</span>*/}
+          {/*</div>*/}
+          {/*<div className='time flex'>*/}
+          {/*  <span>c</span>*/}
+          {/*  <input name='time_start' type="time"/>*/}
+          {/*  <span>до</span>*/}
+          {/*  <input name='time_end' type="time"/>*/}
+          {/*</div>*/}
 
           {role === 'customer' && 
             <>
@@ -310,4 +310,14 @@ function checkRequiredFields(obj, props) {
     if (!obj[field]) return true
   }
   return false
+}
+
+function getStrTime(hour, minute, duration) {
+  let oldMinutes = hour * 60 + minute
+  let newMinutes = oldMinutes + duration
+  let newHour = newMinutes / 60
+  let newMinute = newMinutes % 60
+  
+  if (newHour < 1) return `00:${newMinute}`
+  else return `${Math.floor(newHour)}:${newMinute}`
 }

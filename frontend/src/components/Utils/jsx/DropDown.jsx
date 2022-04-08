@@ -37,6 +37,10 @@ function DropDown(props) {
   useEffect(() => {
     setChosenValue(props.defaultValue)
   }, [])
+  
+  useEffect(() => {
+    if (props.timeStart) setChosenValue(props.store.dropdown.timeStart)
+  }, [props.store.dropdown.timeStart])
 
   function getRequest(name) {
     props.request(name)

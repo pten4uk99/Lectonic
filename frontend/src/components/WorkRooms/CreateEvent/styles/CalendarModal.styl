@@ -18,6 +18,10 @@
       margin-top: 32px
     }
     
+    .calendar-modal__duration {
+      z-index: 10
+    }
+    
     .calendar-modal__dates-block {
       display: flex
       flex-direction: column
@@ -47,10 +51,15 @@
       flex-direction column
       align-items: center
       margin-top: 24px
-      span {
+      &>span {
         font-weight: 700
         font-size: 12px
         margin-bottom: 12px
+      }
+      .time-dropdown {
+        .end {
+          margin-left: 5px
+        }
       }
     }
   }
@@ -72,7 +81,8 @@
   
   border: 1px solid #000000
   border-radius: 45px
-  
+  cursor: pointer
+
   &.active {
     background-color: $main-blue
     color: white
