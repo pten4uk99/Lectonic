@@ -24,7 +24,10 @@ class CustomerCalendarSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'detail': "В запросе не передана дата"})
 
         events = obj.calendar.events.order_by('datetime_start').filter(
-            Q(datetime_start__year=year) & Q(datetime_start__month=month))
+            Q(datetime_start__year=year) &
+            Q(datetime_start__month=month) &
+            Q(datetime_start__gte=datetime.datetime.now())
+        )
 
         data = []
 

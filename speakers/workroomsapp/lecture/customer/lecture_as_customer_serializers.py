@@ -2,12 +2,10 @@ import datetime
 
 from rest_framework import serializers
 
-from speakers.settings import DEFAULT_HOST
-from workroomsapp.calendar.utils import build_photo_path
+
 from workroomsapp.lecture.utils import (
     convert_datetime,
     check_datetime_for_lecture_as_customer,
-    check_datetime_for_lecture_as_lecturer
 )
 from workroomsapp.models import Lecture, Lecturer
 

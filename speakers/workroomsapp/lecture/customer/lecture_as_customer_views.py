@@ -1,3 +1,4 @@
+from django.db.models import Min
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
@@ -24,13 +25,19 @@ class LectureAsCustomerAPIView(APIView):
 
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        created_lectures = None
+        lectures_list = None
 
         if hasattr(request.user.person, 'customer'):
             created_lectures = request.user.person.customer.lectures.all()
+            lectures_list = []
+            for lecture in created_lectures:
+                lowest = lecture.lecture_requests.aggregate(minimum=Min('event__datetime_start'))
+                lowest = lowest.get('minimum')
+                if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
+                    lectures_list.append(lecture)
 
         serializer = LecturesGetSerializer(
-            created_lectures, many=True, context={'request': request})
+            lectures_list, many=True, context={'request': request})
 
         return lecture_responses.success_get_lectures(serializer.data)
 
