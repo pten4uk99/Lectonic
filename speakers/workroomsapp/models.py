@@ -31,8 +31,8 @@ class Domain(models.Model):
 
 class CustomerDomain(models.Model):
     """Сфера деятельности заказчика: физлицо"""
-    customer = models.ForeignKey('Customer', on_delete=models.CASCADE)  # заказчик
-    domain = models.ForeignKey('Domain', on_delete=models.CASCADE)  # сфера деятельности
+    customer = models.ForeignKey('Customer', on_delete=models.CASCADE, related_name='customer_domains')  # заказчик
+    domain = models.ForeignKey('Domain', on_delete=models.CASCADE, related_name='customer_domains')  # сфера деятельности
 
     def __str__(self):
         return f'Сфера деятельности: {self.domain.name}. Заказчик: {self.customer.person.name}'
@@ -49,8 +49,8 @@ class LecturerDomain(models.Model):
 
 class LectureDomain(models.Model):
     """Сфера деятельности лекции"""
-    lecture = models.ForeignKey('Lecture', on_delete=models.CASCADE)  # лекция
-    domain = models.ForeignKey('Domain', on_delete=models.CASCADE)  # сфера деятельности
+    lecture = models.ForeignKey('Lecture', on_delete=models.CASCADE, related_name='lecture_domains')
+    domain = models.ForeignKey('Domain', on_delete=models.CASCADE, related_name='lecture_domains')
 
     def __str__(self):
         return f'Сфера деятельности: {self.domain.name}. Лекция: {self.company.person.name}'
@@ -173,7 +173,7 @@ class Lecture(models.Model):
     """Лекция"""
     TYPES = [
         ('online', 'Онлайн'),
-        ('offline', 'Оффлайн'),
+        ('offline', 'Офлайн'),
         ('hybrid', 'Гибрид')
     ]
 

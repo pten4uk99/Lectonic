@@ -2,6 +2,7 @@ import datetime
 
 from rest_framework import serializers
 
+from speakers.settings import DEFAULT_HOST
 from workroomsapp.lecture.utils import (
     convert_datetime,
     check_datetime_for_lecture_as_lecturer
@@ -74,12 +75,18 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
 class LecturesGetSerializer(serializers.Serializer):
     lecture_id = serializers.SerializerMethodField()
     svg = serializers.SerializerMethodField()
+    lecture_type = serializers.SerializerMethodField()
     lecture_name = serializers.SerializerMethodField()
+    domain = serializers.SerializerMethodField()
     dates = serializers.SerializerMethodField()
     hall_address = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
+    equipment = serializers.SerializerMethodField()
+    cost = serializers.SerializerMethodField()
     creator_first_name = serializers.SerializerMethodField()
+    creator_photo = serializers.SerializerMethodField()
     creator_last_name = serializers.SerializerMethodField()
+    creator_middle_name = serializers.SerializerMethodField()
     in_respondents = serializers.SerializerMethodField()
 
     class Meta:
@@ -87,12 +94,14 @@ class LecturesGetSerializer(serializers.Serializer):
             'lecture_id',
             'svg',
             'lecture_name',
+            'lecture_type',
             'dates',
             'hall_address',
             'description',
             'in_respondents',
             'creator_first_name',
             'creator_last_name',
+            'creator_middle_name',
         ]
 
     def get_lecture_id(self, obj):
@@ -101,18 +110,33 @@ class LecturesGetSerializer(serializers.Serializer):
     def get_svg(self, obj):
         return obj.svg
 
+    def get_lecture_type(self, obj):
+        return obj.get_type_display()
+
     def get_lecture_name(self, obj):
         return obj.name
+
+    def get_domain(self, obj):
+        return obj.lecture_domains.all().values_list('domain__name', flat=True)
 
     def get_dates(self, obj):
         dates = []
         lecture_requests = obj.lecture_requests.all()
         for lecture_request in lecture_requests:
-            dates.append(lecture_request.event.datetime_start)
+            dates.append({
+                'start': lecture_request.event.datetime_start,
+                'end': lecture_request.event.datetime_end
+            })
         return dates
 
     def get_description(self, obj):
         return obj.description
+
+    def get_equipment(self, obj):
+        return obj.optional.equipment
+
+    def get_cost(self, obj):
+        return obj.cost
 
     def get_in_respondents(self, obj):
         return bool(obj.lecture_requests.filter(respondents__person=self.context['request'].user.person).first())
@@ -125,7 +149,21 @@ class LecturesGetSerializer(serializers.Serializer):
             return obj.customer.person.first_name
         return obj.lecturer.person.first_name
 
+    def get_creator_photo(self, obj):
+        if obj.customer:
+            if obj.customer.person.photo:
+                return DEFAULT_HOST + obj.customer.person.photo.url
+            return ''
+        if obj.lecturer.person.photo:
+            return DEFAULT_HOST + obj.lecturer.person.photo.url
+        return ''
+
     def get_creator_last_name(self, obj):
         if obj.customer:
             return obj.customer.person.last_name
         return obj.lecturer.person.last_name
+
+    def get_creator_middle_name(self, obj):
+        if obj.customer:
+            return obj.customer.person.middle_name
+        return obj.lecturer.person.middle_name

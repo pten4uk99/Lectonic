@@ -43,9 +43,10 @@ function CreatedLectures(props){
                                            date: getDates(lecture.dates),
                                            description: lecture.description,
                                            city: lecture.hall_address,
-                                           textBtn: 'Статус мероприятия',
+                                           textBtn: 'Подробнее',
                                            createdLecture: true,
-                                         }}/>})}
+                                         }} 
+                                         onClick={(e) => navigate(reverse('lecture', {id: lecture.lecture_id}))}/>})}
               </div>
             </div>}
           </div>

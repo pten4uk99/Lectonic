@@ -21,6 +21,8 @@ const routes = {
 
   'role_page': '/role_page',
   'lecture': '/lecture',
+  
+  '404': '/404',
 } // сюда прописываем все роуты и их имена (имя: роут)
 
 export function reverse(name, params=null) {

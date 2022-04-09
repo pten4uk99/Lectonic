@@ -15,6 +15,7 @@ urlpatterns = [
     path('city/', CityGetAPIView.as_view(), name='city'),
     path('domain/', DomainGetAPIView.as_view(), name='domain'),
 
+    path('lecture/<int:pk>/', LectureDetailAPIView.as_view(), name='lecture_detail'),
     path('lecture/response/', LectureResponseAPIView.as_view(), name='lecture_response'),
     path('lecture/response/confirm/', LectureToggleConfirmRespondentAPIView.as_view(), name='lecture_confirm'),
     path('lecture/as_lecturer/', LectureAsLecturerAPIView.as_view(), name='lecture_as_lecturer'),

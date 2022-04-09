@@ -5,26 +5,12 @@ import WorkroomCard from "../WorkroomCard";
 import {DateTime} from "luxon";
 import {toggleResponseOnLecture} from "../../ajax/workRooms";
 import {RemoveNotification} from "../../../../Layout/redux/actions/notifications";
-import {getLecturePhoto} from "../../../../../ProjectConstants";
+import {getLecturePhoto, reverse} from "../../../../../ProjectConstants";
+import {useNavigate} from "react-router-dom";
 
 
 function LectureCardList(props){
-
-  function handleResponse(e, lecture_id, dates) {
-    let text = e.target.innerText
-      
-    toggleResponseOnLecture(lecture_id, dates[0])
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'success') {
-          text === 'Откликнуться' ? 
-            e.target.innerText = 'Отменить отклик' : 
-            e.target.innerText = 'Откликнуться'
-          if (data.data[0]?.type === 'remove_respondent') props.RemoveNotification(data.data[0].id)
-        }
-      })
-  }
-  
+  let navigate = useNavigate()
     return (
         <section className="block__created-lectures">
           <div className="workroom__block-header">
@@ -46,10 +32,10 @@ function LectureCardList(props){
                                            date: getDates(lecture.dates), 
                                            description: lecture.description, 
                                            city: lecture.hall_address, 
-                                           textBtn: lecture.in_respondents ? 'Отменить отклик' : 'Откликнуться', 
+                                           textBtn: 'Подробнее', 
                                            potentialLecture: true,
                                          }} 
-                                         onClick={(e) => handleResponse(e, lecture.lecture_id, lecture.dates)}/>})}
+                                         onClick={(e) => navigate(reverse('lecture', {id: lecture.lecture_id}))}/>})}
                 </div>
             </div>}
           </div>
@@ -70,7 +56,7 @@ export default connect(
 export function getDates(str_dates) {
   let dates = []
   for (let date of str_dates) {
-    dates.push(DateTime.fromISO(date).toFormat('dd.MM'))
+    dates.push(DateTime.fromISO(date.start).toFormat('dd.MM'))
   }
   return dates.join(', ')
 }

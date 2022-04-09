@@ -3,8 +3,6 @@ import {connect} from "react-redux";
 import {useNavigate, useSearchParams} from "react-router-dom";
 
 import calendarIcon from '~/assets/img/event/calendar-icon.svg'
-import photoIcon from '~/assets/img/photo-icon.svg'
-import downArrow from '~/assets/img/down-arrow.svg'
 import backArrow from '~/assets/img/back-arrow.svg'
 import {
   SwapEventType, SwapPayment, SwapPlace,
@@ -41,7 +39,6 @@ function CreateEvent(props) {
   let [requiredFields, setRequiredFields] = useState({
     name: '',
     date: chooseDates,
-    listeners: ''
   })
   
   let [errorMessages, setErrorMessages] = useState({
@@ -56,6 +53,7 @@ function CreateEvent(props) {
   let [domainArray, setDomainArray] = useState(null)
   
   useEffect(() => {
+    if (role === 'customer') setRequiredFields({...requiredFields, listeners: ''})
     props.UpdatePhoto('')
     getDomainArray()
       .then(response => response.json())

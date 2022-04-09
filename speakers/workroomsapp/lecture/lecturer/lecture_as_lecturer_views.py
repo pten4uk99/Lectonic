@@ -39,6 +39,23 @@ class LectureAsLecturerAPIView(APIView):
         return lecture_responses.success_get_lectures(serializer.data)
 
 
+class LectureDetailAPIView(APIView):
+    @swagger_auto_schema(deprecated=True)
+    def get(self, request, pk):
+        if not pk:
+            return lecture_responses.not_in_data()
+
+        lecture = Lecture.objects.filter(pk=pk)
+
+        if not lecture.first():
+            return lecture_responses.does_not_exist()
+
+        serializer = LecturesGetSerializer(
+            lecture, many=True, context={'request': request})
+
+        return lecture_responses.success_get_lectures(serializer.data)
+
+
 class PotentialLecturerLecturesGetAPIView(APIView):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
