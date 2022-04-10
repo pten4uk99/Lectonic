@@ -31,8 +31,9 @@ class TestLecturerCalendarGet(APITestCase):
         self.client.post(reverse('lecturer'), temp_lecturer_data)
 
         for i in range(3):
-            self.client.post(reverse('lecture_as_lecturer'),
+            r = self.client.post(reverse('lecture_as_lecturer'),
                              {
+                                 'svg': 1,
                                  'name': f'Моя лектушка {i}',
                                  'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
                                  'datetime': [
@@ -44,8 +45,9 @@ class TestLecturerCalendarGet(APITestCase):
                                  'type': 'offline'
                              })
         for i in range(4, 7):
-            self.client.post(reverse('lecture_as_lecturer'),
+            r2 = self.client.post(reverse('lecture_as_lecturer'),
                              {
+                                 'svg': 1,
                                  'name': f'Моя лектушка {i}',
                                  'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
                                  'datetime': [

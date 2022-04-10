@@ -33,6 +33,7 @@ class TestCustomerCalendarGet(APITestCase):
         for i in range(3):
             self.client.post(reverse('lecture_as_customer'),
                              {
+                                 'svg': 1,
                                  'name': f'Моя лектушка {i}',
                                  'photo': test_image.create_image(),
                                  'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
@@ -48,6 +49,7 @@ class TestCustomerCalendarGet(APITestCase):
         for i in range(4, 7):
             self.client.post(reverse('lecture_as_customer'),
                              {
+                                 'svg': 1,
                                  'name': f'Моя лектушка {i}',
                                  'photo': test_image.create_image(),
                                  'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
@@ -66,7 +68,6 @@ class TestCustomerCalendarGet(APITestCase):
             reverse('customer_calendar'), {'year': datetime.datetime.now().year,
                                            'month': datetime.datetime.now().month})
         # Если уже конец месяца, то события могут отображаться некорректно
-        print(response.data)
         self.assertEqual(
             'data' in response.data and type(response.data['data']) == list, True,
             msg='В ответе нет списка data'

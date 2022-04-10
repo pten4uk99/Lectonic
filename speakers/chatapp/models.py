@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from workroomsapp.models import LectureRequest
+from workroomsapp.models import Lecture
 
 BaseUser = get_user_model()
 
@@ -23,7 +23,7 @@ class Message(models.Model):
 
 class Chat(models.Model):
     users = models.ManyToManyField(BaseUser, related_name='chat_list')
-    lecture_request = models.ForeignKey(LectureRequest, on_delete=models.CASCADE, related_name='chat_list')
+    lecture = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name='chat_list')
 
     def __str__(self):
         return f'{self.pk} {self.users.all()}'

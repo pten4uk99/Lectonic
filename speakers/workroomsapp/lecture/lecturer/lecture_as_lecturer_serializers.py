@@ -83,11 +83,13 @@ class LecturesGetSerializer(serializers.Serializer):
     description = serializers.SerializerMethodField()
     equipment = serializers.SerializerMethodField()
     cost = serializers.SerializerMethodField()
+    creator_user_id = serializers.SerializerMethodField()
     creator_first_name = serializers.SerializerMethodField()
     creator_photo = serializers.SerializerMethodField()
     creator_last_name = serializers.SerializerMethodField()
     creator_middle_name = serializers.SerializerMethodField()
     in_respondents = serializers.SerializerMethodField()
+    response_dates = serializers.SerializerMethodField()
 
     class Meta:
         fields = [
@@ -99,6 +101,7 @@ class LecturesGetSerializer(serializers.Serializer):
             'hall_address',
             'description',
             'in_respondents',
+            'creator_user_id',
             'creator_first_name',
             'creator_last_name',
             'creator_middle_name',
@@ -138,9 +141,6 @@ class LecturesGetSerializer(serializers.Serializer):
     def get_cost(self, obj):
         return obj.cost
 
-    def get_in_respondents(self, obj):
-        return bool(obj.lecture_requests.filter(respondents__person=self.context['request'].user.person).first())
-
     def get_hall_address(self, obj):
         return obj.optional.hall_address
 
@@ -148,6 +148,11 @@ class LecturesGetSerializer(serializers.Serializer):
         if obj.customer:
             return obj.customer.person.first_name
         return obj.lecturer.person.first_name
+
+    def get_creator_user_id(self, obj):
+        if obj.customer:
+            return obj.customer.person.user.pk
+        return obj.lecturer.person.user.pk
 
     def get_creator_photo(self, obj):
         if obj.customer:
@@ -167,3 +172,11 @@ class LecturesGetSerializer(serializers.Serializer):
         if obj.customer:
             return obj.customer.person.middle_name
         return obj.lecturer.person.middle_name
+
+    def get_in_respondents(self, obj):
+        return bool(obj.lecture_requests.filter(
+            respondents=self.context['request'].user.person).first())
+
+    def get_response_dates(self, obj):
+        return obj.lecture_requests.filter(
+            respondents=self.context['request'].user.person).values_list('event__datetime_start', flat=True)

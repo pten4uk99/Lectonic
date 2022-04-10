@@ -156,14 +156,8 @@ class Optional(models.Model):
     equipment = models.CharField(max_length=500, blank=True, null=True)  # перечисление имеющегося оборудования
 
 
-class Respondent(models.Model):
-    """Откликнувшийся на заявку на лекцию"""
-    person = models.ForeignKey('Person', on_delete=models.CASCADE, related_name='respondents')
-    confirmed = models.BooleanField(default=False)
-
-
 class LectureRequest(models.Model):
-    respondents = models.ManyToManyField('Respondent', related_name='lecture_requests')
+    respondents = models.ManyToManyField('Person', related_name='responses')
     lecture = models.ForeignKey('Lecture', on_delete=models.CASCADE, related_name='lecture_requests')
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -191,6 +185,7 @@ class Lecture(models.Model):
     listeners = models.IntegerField(blank=True, null=True)
     cost = models.IntegerField(default=0)  # стоимость лекции
     description = models.TextField(null=True, blank=True)
+    confirmed_person = models.ForeignKey('Person', blank=True, null=True, on_delete=models.CASCADE)
     customer = models.ForeignKey(
         'Customer',
         on_delete=models.CASCADE,

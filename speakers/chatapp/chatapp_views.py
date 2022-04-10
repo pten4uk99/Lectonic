@@ -50,10 +50,10 @@ class MessageListGetAPIView(APIView):
 
         is_creator = False
 
-        if chat.lecture_request.lecture.lecturer:
-            is_creator = chat.lecture_request.lecture.lecturer.person.user == request.user
-        elif chat.lecture_request.lecture.customer:
-            is_creator = chat.lecture_request.lecture.customer.person.user == request.user
+        if chat.lecture.lecturer:
+            is_creator = chat.lecture.lecturer.person.user == request.user
+        elif chat.lecture.customer:
+            is_creator = chat.lecture.customer.person.user == request.user
 
         serializer = MessageSerializer(messages, many=True)
         return chatapp_responses.success([{

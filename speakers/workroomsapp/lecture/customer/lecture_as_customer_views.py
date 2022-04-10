@@ -1,4 +1,4 @@
-from django.db.models import Min
+from django.db.models import Max
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
@@ -31,8 +31,8 @@ class LectureAsCustomerAPIView(APIView):
             created_lectures = request.user.person.customer.lectures.all()
             lectures_list = []
             for lecture in created_lectures:
-                lowest = lecture.lecture_requests.aggregate(minimum=Min('event__datetime_start'))
-                lowest = lowest.get('minimum')
+                lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
+                lowest = lowest.get('maximum')
                 if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
                     lectures_list.append(lecture)
 
@@ -49,7 +49,10 @@ class PotentialCustomerLecturesGetAPIView(APIView):
         lecture_list = []
         for lecturer in lecturers:
             for lecture in lecturer.lectures.all():
-                lecture_list.append(lecture)
+                lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
+                lowest = lowest.get('maximum')
+                if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
+                    lecture_list.append(lecture)
 
         serializer = LecturesGetSerializer(
             lecture_list, many=True, context={'request': request})

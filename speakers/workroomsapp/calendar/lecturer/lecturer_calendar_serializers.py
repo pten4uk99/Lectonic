@@ -44,7 +44,6 @@ class LecturerCalendarSerializer(serializers.ModelSerializer):
             person = lecture.lecturer.person
 
             respondents = event.lecture_request.respondents.all()
-            confirmed_respondent = respondents.filter(confirmed=True).first()
             respondent_list = []
             for respondent in respondents:
                 respondent_list.append({
@@ -65,8 +64,8 @@ class LecturerCalendarSerializer(serializers.ModelSerializer):
                 'end': event.datetime_end.strftime('%H:%M')
             }
 
-            if confirmed_respondent:
-                confirmed_person = confirmed_respondent.person
+            if lecture.confirmed_person:
+                confirmed_person = lecture.confirmed_person
                 new_event['customer'] = [confirmed_person.last_name,
                                          confirmed_person.first_name,
                                          confirmed_person.middle_name or ""]

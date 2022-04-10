@@ -37,6 +37,10 @@ export function reverse(name, params=null) {
   return query ? routes[name] + query : routes[name]
 }
 
+export function reverseEqual(name, pathname) {
+  return pathname === reverse(name) || pathname === reverse(name) + '/'
+}
+
 
 export const withoutPermissionsList = [
   reverse('index'),

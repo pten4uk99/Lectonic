@@ -15,11 +15,13 @@ import {UpdateLectureDetailChosenDates} from "../redux/actions/lectureDetail";
 
 
 function Lecture(props) {
+  let userId = props.store.permissions.user_id
   let [searchParams, setSearchParams] = useSearchParams()
   let navigate = useNavigate()
   let lectureId = searchParams.get('id')
   
   let [lectureData, setLectureData] = useState(null)
+  let [isCreator, setIsCreator] = useState(null)
   
   useEffect(() => {
     props.UpdateLectureDetailChosenDates([])
@@ -27,23 +29,31 @@ function Lecture(props) {
     getLectureDetail(lectureId)
       .then(response => response.json())
       .then(data => {
-        if (data.status === 'success') setLectureData(data.data[0])
+        if (data.status === 'success') {
+          setLectureData(data.data[0])
+          setIsCreator(data.data[0].creator_user_id === userId)
+        }
         else if (data.status === 'error') navigate(reverse('404'))
       })
       .catch(e => console.log(e))
   }, [])
   
-  function handleResponse(e, lecture_id, dates) {
+  function handleResponse(e) {
     let text = e.target.innerText
-      
-    toggleResponseOnLecture(lecture_id, dates[0])
+    let dates = props.store.lectureDetail.chosenDates.map(
+      elem => `${elem.getUTCFullYear()}-${elem.getUTCMonth() + 1}-${elem.getUTCDate()}T${elem.getUTCHours()}:${elem.getUTCMinutes()}`)
+    
+    toggleResponseOnLecture(lectureId, dates)
       .then(response => response.json())
       .then(data => {
         if (data.status === 'success') {
           text === 'Откликнуться' ? 
             e.target.innerText = 'Отменить отклик' : 
             e.target.innerText = 'Откликнуться'
-          if (data.data[0]?.type === 'remove_respondent') props.RemoveNotification(data.data[0].id)
+          if (data.data[0]?.type === 'remove_respondent') {
+            props.UpdateLectureDetailChosenDates([])
+            props.RemoveNotification(data.data[0].id)
+          }
         }
       })
   }
@@ -106,7 +116,7 @@ function Lecture(props) {
             </div>
             <div className="block__dates">
               <div className="header">Лектор готов провести лекцию:</div>
-              <LectureDates data={lectureData?.dates}/>
+              <LectureDates data={lectureData?.dates} responseDates={lectureData?.response_dates}/>
             </div>
             <div className="block__address">
               <div className="header">Место проведения:</div>
@@ -116,7 +126,12 @@ function Lecture(props) {
               <div className="header">Описание:</div>
               <span>{lectureData?.description || "Нет"}</span>
             </div>
-            <button className="btn btn-response" disabled={checkDisabledButton()}>Откликнуться</button>
+            {!isCreator && 
+              <button className="btn btn-response" 
+                      disabled={checkDisabledButton()} 
+                      onClick={(e) => handleResponse(e)}>
+                {lectureData?.in_respondents ? "Отменить отклик" : "Откликнуться"}
+              </button>}
           </div>
           
         </div>

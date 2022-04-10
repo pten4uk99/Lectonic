@@ -3,26 +3,32 @@ import {connect} from "react-redux";
 import {getMonth} from "../../CreateEvent/jsx/CalendarModal";
 import {DateTime} from "luxon";
 import {UpdateLectureDetailChosenDates} from "../redux/actions/lectureDetail";
+import {checkEqualDates} from "../../FullCalendar/Calendar/utils/date";
 
 
 function LectureDates(props) {
   let [data, setData] = useState([])
+  let [responseDates, setResponseDates] = useState([])
   let chosenDates = props.store.lectureDetail.chosenDates
   
   useEffect(() => {
     if (props.data) setData(getDates(props.data))
-  }, [props.data])
+    if (props.responseDates) setResponseDates(props.responseDates)
+  }, [props.data, props.responseDates])
   
   useEffect(() => {
     if (data.length === 1) {
       props.UpdateLectureDetailChosenDates([data[0].start])
     }
-  }, [data])
-  
-  
+    if (responseDates.length > 0) {
+      let dates = []
+      for (let date of responseDates) dates.push(new Date(date))
+      props.UpdateLectureDetailChosenDates(dates)
+    }
+  }, [data, responseDates])
   
   function handleClickDate(dateStart) {
-    if (data.length === 1) return
+    if (data.length === 1 || responseDates.length > 0) return
     let newDates;
     if (checkDateInArr(dateStart, chosenDates)) newDates = chosenDates.filter(elem => elem !== dateStart)
     else newDates = [...chosenDates, dateStart]
@@ -33,11 +39,16 @@ function LectureDates(props) {
     <div className="lecture-dates__wrapper">
       <div className="dates__block">
         {data.map((elem, index) => {
-          return <div className="date__wrapper" key={index} onClick={() => handleClickDate(elem.start)}>
-            <div className={checkDateInArr(elem.start, chosenDates) ? 
+          return <div className="date__wrapper" key={index} onClick={() => handleClickDate(elem.startDate)}>
+            <div className={checkDateInArr(elem.startDate, chosenDates) ? 
               "date__block active" : "date__block"}>
-              <span className="date">{elem.start.day} {getMonth(elem.start.month - 1)}</span>
-              <span className="time">{elem.start.toFormat('hh:mm')}-{elem.end.toFormat('hh:mm')}</span>
+              <span className="date">
+                {elem.startDate.getDate()} {getMonth(elem.startDate.getUTCMonth())}</span>
+              <span className="time">
+                {elem.startDate.getUTCHours().toString().padStart(2, '0')}:
+                {elem.startDate.getUTCMinutes().toString().padStart(2, '0')}-
+                {elem.endDate.getUTCHours().toString().padStart(2, '0')}:
+                {elem.endDate.getUTCMinutes().toString().padStart(2, '0')}</span>
             </div>
           </div>
         })}
@@ -61,12 +72,18 @@ export default connect(
 
 function getDates(str_dates) {
   let dates = []
+  
   for (let date of str_dates) {
+    let start = DateTime.fromISO(date.start, {zone: 'utc'})
+    let end = DateTime.fromISO(date.end, {zone: 'utc'})
     dates.push({
-      start: DateTime.fromISO(date.start), 
-      end: DateTime.fromISO(date.end)
+      start: start,
+      end: end,
+      startDate: new Date(date.start),
+      endDate: new Date(date.end)
     })
   }
+  
   return dates
 }
 
@@ -77,7 +94,7 @@ function getDuration(start, end) {
 
 function checkDateInArr(checkDate, arr) {
   for (let date of arr) {
-    if (date === checkDate) return true
+    if (checkEqualDates(checkDate, date)) return true
   }
   return false
 }

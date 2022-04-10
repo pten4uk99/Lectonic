@@ -1,6 +1,6 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from django.db.models import Min
+from django.db.models import Max
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
@@ -8,7 +8,7 @@ from chatapp.models import Chat, Message
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.lecturer.lecture_as_lecturer_serializers import *
-from workroomsapp.models import Respondent, LectureRequest, Lecturer, Customer
+from workroomsapp.models import LectureRequest, Lecturer, Customer
 from workroomsapp.utils import workroomsapp_permissions
 
 channel_layer = get_channel_layer()
@@ -35,8 +35,8 @@ class LectureAsLecturerAPIView(APIView):
             created_lectures = request.user.person.lecturer.lectures.all()
             lectures_list = []
             for lecture in created_lectures:
-                lowest = lecture.lecture_requests.aggregate(minimum=Min('event__datetime_start'))
-                lowest = lowest.get('minimum')
+                lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
+                lowest = lowest.get('maximum')
                 if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
                     lectures_list.append(lecture)
 
@@ -71,7 +71,28 @@ class PotentialLecturerLecturesGetAPIView(APIView):
         lecture_list = []
         for customer in customers:
             for lecture in customer.lectures.all():
-                lecture_list.append(lecture)
+                lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
+                lowest = lowest.get('maximum')
+                if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
+                    lecture_list.append(lecture)
+
+        serializer = LecturesGetSerializer(
+            lecture_list, many=True, context={'request': request})
+
+        return lecture_responses.success_get_lectures(serializer.data)
+
+
+class PotentialLecturerLecturesGetAPIView(APIView):
+    @swagger_auto_schema(deprecated=True)
+    def get(self, request):
+        customers = Customer.objects.exclude(person__user=request.user)
+        lecture_list = []
+        for customer in customers:
+            for lecture in customer.lectures.all():
+                lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
+                lowest = lowest.get('maximum')
+                if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
+                    lecture_list.append(lecture)
 
         serializer = LecturesGetSerializer(
             lecture_list, many=True, context={'request': request})
@@ -86,9 +107,9 @@ class LectureResponseAPIView(APIView):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
         lecture_id = request.GET.get('lecture')
-        date = request.GET.get('date')
+        dates = request.GET.getlist('date')
 
-        if not lecture_id or not date:
+        if not lecture_id or not dates:
             return lecture_responses.not_in_data()
 
         lecture = Lecture.objects.filter(pk=lecture_id).first()
@@ -109,19 +130,28 @@ class LectureResponseAPIView(APIView):
         else:
             creator = lecture.lecturer.person
 
-        lecture_request = lecture.lecture_requests.filter(
-            event__datetime_start=datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ')).first()
+        format_dates = []
+        for date in dates:
+            format_dates.append(datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M'))
 
-        if not lecture_request:
+        lecture_requests = lecture.lecture_requests.all()
+
+        if not lecture_requests:
             return lecture_responses.does_not_exist()
 
-        if not lecture_request.respondents.filter(person=request.user.person).first():
-            respondent = Respondent.objects.create(person=request.user.person)
-            lecture_request.respondents.add(respondent)
+        if not lecture_requests.filter(respondents=request.user.person).first():
+            response_lecture_requests = lecture_requests.filter(event__datetime_start__in=format_dates)
+
+            if not response_lecture_requests:
+                return lecture_responses.does_not_exist()
+
+            for response_request in response_lecture_requests:
+                response_request.respondents.add(request.user.person)
+                response_request.save()
 
             chat = Chat.objects.filter(users__in=[creator.user, request.user]).first()
             if not chat:
-                chat = Chat.objects.create(lecture_request=lecture_request)
+                chat = Chat.objects.create(lecture=lecture)
                 chat.users.add(creator.user, request.user)
                 chat.save()
 
@@ -135,7 +165,7 @@ class LectureResponseAPIView(APIView):
                 f'user_{creator.user.pk}',
                 {
                     "type": "new_respondent",
-                    "lecture_request": lecture_request,
+                    "lecture": lecture,
                     "lecture_creator": creator.user,
                     "lecture_respondent": request.user
                 }
@@ -145,30 +175,31 @@ class LectureResponseAPIView(APIView):
                 f'user_{request.user.pk}',
                 {
                     "type": "new_respondent",
-                    "lecture_request": lecture_request,
+                    "lecture": lecture,
                     "lecture_creator": creator.user,
                     "lecture_respondent": request.user
                 }
             )
 
-            lecture_request.save()
+            lecture.save()
             return lecture_responses.success_response()
         else:
-            Respondent.objects.get(person=request.user.person, lecture_requests=lecture_request).delete()
-            chat = Chat.objects.filter(
-                users__in=[creator.user, request.user]).first()
+            for lecture_request in lecture_requests:
+                lecture_request.respondents.remove(request.user.person)
+                lecture_request.save()
+            chat = Chat.objects.filter(users__in=[creator.user, request.user]).first()
 
             async_to_sync(channel_layer.group_send)(
                 f'user_{creator.user.pk}',
                 {
                     "type": "remove_respondent",
-                    "lecture_request": lecture_request,
+                    "lecture": lecture,
                     "lecture_respondent": request.user
                 }
             )
 
             if not chat:
-                chat_list = Chat.objects.filter(lecture_request=lecture_request)
+                chat_list = Chat.objects.filter(lecture=lecture)
                 for elem in chat_list:
                     if elem.users.all().count() < 2:
                         elem.delete()

@@ -36,6 +36,7 @@ CUSTOMER = {
 }
 
 LECTURE = {
+    'svg': 1,
     'name': 'Лекция супер хорошая лекция',
     'datetime': [(datetime.datetime.now() + datetime.timedelta(days=2)).strftime('%Y-%m-%dT%H:%M') +
                  ',' +

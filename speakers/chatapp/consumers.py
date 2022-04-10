@@ -34,24 +34,17 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
         print(text_data_json)
 
     async def new_respondent(self, event):
-        lecture_request = event['lecture_request']
+        lecture = event['lecture']
         respondent = event['lecture_respondent']
         chat = await self.create_new_chat(event)
         need_read_messages = await self.get_need_read({**event, 'chat': chat})
-
-        photo = None
-
-        if hasattr(lecture_request, 'lecturer_lecture_request'):
-            photo = lecture_request.lecturer_lecture_request.photo.url
-        elif hasattr(lecture_request, 'customer_lecture_request'):
-            photo = lecture_request.customer_lecture_request.photo.url
 
         data = {
             'type': 'new_respondent',
             'id': chat.pk,
             'need_read': need_read_messages,
-            'lecture_name': lecture_request.lecture.name,
-            # 'lecture_photo': DEFAULT_HOST + photo,
+            'lecture_name': lecture.name,
+            'lecture_svg': lecture.svg,
             'respondent_id': respondent.pk,
             'respondent_first_name': respondent.person.first_name,
             'respondent_last_name': respondent.person.last_name
@@ -75,7 +68,7 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
         chat = Chat.objects.filter(
             users__in=[data["lecture_creator"], data["lecture_respondent"]]).first()
         if not chat:
-            chat = Chat.objects.create(lecture_request=data["lecture_request"])
+            chat = Chat.objects.create(lecture=data["lecture"])
             chat.users.add(data["lecture_creator"], data["lecture_respondent"])
             chat.save()
 
@@ -96,7 +89,7 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def remove_chat(self, data):
         chat = Chat.objects.filter(
-            lecture_request=data["lecture_request"],
+            lecture=data["lecture"],
             users=data["lecture_respondent"]
         ).first()
         chat_id = chat.pk

@@ -16,6 +16,7 @@ import ChatDropdown from "./Notifications/ChatDropdown";
 import {getNotificationsList} from "../ajax";
 import {AddNotifications, RemoveNotification, SetNeedRead, UpdateNotifications} from "../redux/actions/notifications";
 import PhotoName from "../../Utils/jsx/PhotoName";
+import AuthModal from "../../Authorization/jsx/AuthModal";
 
 
 function Header(props) {
@@ -126,11 +127,8 @@ function Header(props) {
                alt="меню"/>
         </nav>
       </header>
-      <Modal isOpened={props.store.header.modalActive} 
-             onModalClose={() => props.DeactivateModal()} 
-             styleBody={{ width: '400px' }}>
-        <Authorization />
-      </Modal>
+      
+      <AuthModal/>
       <ProfileDropDown/>
       {chatActive && (isLecturer || isCustomer) && 
         <ChatDropdown notificationsSocket={props.notificationsSocket} 
