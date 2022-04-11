@@ -7,14 +7,6 @@ import {SetCheckedDate} from "../../WorkRooms/FullCalendar/Calendar/redux/action
 
 
 function Modal(props) {
-  
-  useEffect(() => {
-    if (props.store.header.modalActive) {
-      document.body.style.overflowY = 'hidden'
-    }
-    else document.body.style.overflowY = 'inherit'
-  }, [props.store.header.modalActive])
-  
   return props.store.header.modalActive && (
     <div className='modal__background'
          style={props.styleWrapper}>

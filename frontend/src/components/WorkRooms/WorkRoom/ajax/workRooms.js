@@ -79,9 +79,12 @@ export function getAllLecturersForCustomer() {
 
 export function toggleResponseOnLecture(lecture_id, dates) {
   let datesParam = ''
-  for (let date of dates) {
-    datesParam += `&date=${date}`
+  if (dates) {
+    for (let date of dates) {
+      datesParam += `&date=${date}`
+    }
   }
+  
   const options = {
     method: 'GET',
     headers: HEADERS,

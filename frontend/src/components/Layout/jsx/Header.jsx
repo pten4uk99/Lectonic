@@ -134,7 +134,7 @@ function Header(props) {
         <ChatDropdown notificationsSocket={props.notificationsSocket} 
                       chatSocket={chatSocket} 
                       setChatSocket={setChatSocket}/>}
-      {props.store.header.errorMessage && <ErrorMessage/>}
+      {/*{props.store.header.errorMessage && <ErrorMessage/>}*/}
     </>
   );
 }

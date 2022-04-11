@@ -1,20 +1,21 @@
 import React, {useEffect, useState} from "react";
 
 import lectureBg from '~/assets/img/lecture-bg.svg'
-import lecturePhoto from '~/assets/img/default_lecture_photo/1.svg'
 import backArrow from '~/assets/img/back-arrow.svg'
 import LectureDates from "./LectureDates";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {getLectureDetail} from "../ajax/lecture";
-import {reverse} from "../../../../ProjectConstants";
-import {toggleResponseOnLecture} from "../../WorkRoom/ajax/workRooms";
+import {getLecturePhoto, reverse} from "../../../../ProjectConstants";
+import {toggleResponseOnLecture} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
 import {connect} from "react-redux";
 import {RemoveNotification} from "../../../Layout/redux/actions/notifications";
 import PhotoName from "../../../Utils/jsx/PhotoName";
 import {UpdateLectureDetailChosenDates} from "../redux/actions/lectureDetail";
+import Loader from "../../../Utils/jsx/Loader";
 
 
 function Lecture(props) {
+  let [isLoaded, setIsLoaded] = useState(false)
   let userId = props.store.permissions.user_id
   let [searchParams, setSearchParams] = useSearchParams()
   let navigate = useNavigate()
@@ -30,6 +31,7 @@ function Lecture(props) {
       .then(response => response.json())
       .then(data => {
         if (data.status === 'success') {
+          setIsLoaded(true)
           setLectureData(data.data[0])
           setIsCreator(data.data[0].creator_user_id === userId)
         }
@@ -54,6 +56,7 @@ function Lecture(props) {
             props.UpdateLectureDetailChosenDates([])
             props.RemoveNotification(data.data[0].id)
           }
+          navigate(reverse('workroom'))
         }
       })
   }
@@ -62,6 +65,7 @@ function Lecture(props) {
     if (props.store.lectureDetail.chosenDates.length < 1) return true
   }
   
+  if (!isLoaded) return <Loader main={true}/>
   return (
     <>
       <div className="navigate-back__block" style={{top: 220}}
@@ -77,7 +81,7 @@ function Lecture(props) {
         <div className="lecture__wrapper">
           
           <div className="left-block">
-            <div className="lecture-photo"><img src={lecturePhoto} alt=""/></div>
+            <div className="lecture-photo"><img src={getLecturePhoto(lectureData?.svg)} alt=""/></div>
             <div className="type">{lectureData?.lecture_type}</div>
             <div className="block__person">
               <div className="header">Лектор:</div>

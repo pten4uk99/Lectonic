@@ -17,7 +17,7 @@ import RolePage from "~@/Pages/RolePage/jsx/RolePage";
 import Permissions from "./components/Authorization/jsx/Permissions";
 import {reverse} from "./ProjectConstants";
 import {createNotificationsSocket} from "./webSocket";
-import Lecture from "./components/WorkRooms/Lecture/jsx/Lecture";
+import Lecture from "./components/Pages/Lecture/jsx/Lecture";
 
 
 function App(props) {
@@ -30,6 +30,13 @@ function App(props) {
       createNotificationsSocket(setNotificationsSocket, userId)
     }
   }, [permissions])
+  
+  useEffect(() => {
+    if (props.store.header.modalActive) {
+      document.body.style.overflowY = 'hidden'
+    }
+    else document.body.style.overflowY = 'inherit'
+  }, [props.store.header.modalActive])
   
   return (
     <>

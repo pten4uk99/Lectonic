@@ -17,7 +17,7 @@ function Calendar(props) {
   return (
     <div className='calendar__container'>
       <div className='inside__container'>
-        <MonthNav />
+        <MonthNav isMyLectures={props.isMyLectures}/>
         <DaysOfWeek />
         <DatesListSwappable />
       </div>

@@ -16,7 +16,7 @@ import event from "~@/WorkRooms/CreateEvent/redux/reducers/event";
 import permissions from "~@/Authorization/redux/reducers/permissions";
 import addRole from "~@/RegistrationRole/redux/reducers/index"
 import dropdown from "~@/Utils/redux/reducers/dropdown"
-import lectureDetail from "~@/WorkRooms/Lecture/redux/reducers/lectureDetail";
+import lectureDetail from "~@/Pages/Lecture/redux/reducers/lectureDetail";
 
 
 console.clear()

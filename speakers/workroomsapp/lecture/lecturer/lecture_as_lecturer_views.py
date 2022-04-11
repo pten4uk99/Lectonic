@@ -64,20 +64,22 @@ class LectureDetailAPIView(APIView):
         return lecture_responses.success_get_lectures(serializer.data)
 
 
-class PotentialLecturerLecturesGetAPIView(APIView):
+class LecturerLecturesHistoryGetAPIView(APIView):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        customers = Customer.objects.exclude(person__user=request.user)
-        lecture_list = []
-        for customer in customers:
-            for lecture in customer.lectures.all():
-                lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
-                lowest = lowest.get('maximum')
-                if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
-                    lecture_list.append(lecture)
+        lectures_list = None
+
+        if hasattr(request.user.person, 'lecturer'):
+            created_lectures = request.user.person.lecturer.lectures.all()
+            lectures_list = []
+            for lecture in created_lectures:
+                biggest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
+                biggest = biggest.get('maximum')
+                if biggest < datetime.datetime.now(tz=datetime.timezone.utc) and lecture.confirmed_person:
+                    lectures_list.append(lecture)
 
         serializer = LecturesGetSerializer(
-            lecture_list, many=True, context={'request': request})
+            lectures_list, many=True, context={'request': request})
 
         return lecture_responses.success_get_lectures(serializer.data)
 
@@ -109,7 +111,7 @@ class LectureResponseAPIView(APIView):
         lecture_id = request.GET.get('lecture')
         dates = request.GET.getlist('date')
 
-        if not lecture_id or not dates:
+        if not lecture_id:
             return lecture_responses.not_in_data()
 
         lecture = Lecture.objects.filter(pk=lecture_id).first()
@@ -130,16 +132,19 @@ class LectureResponseAPIView(APIView):
         else:
             creator = lecture.lecturer.person
 
-        format_dates = []
-        for date in dates:
-            format_dates.append(datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M'))
-
         lecture_requests = lecture.lecture_requests.all()
 
         if not lecture_requests:
             return lecture_responses.does_not_exist()
 
         if not lecture_requests.filter(respondents=request.user.person).first():
+            if not dates:
+                return lecture_responses.not_in_data()
+
+            format_dates = []
+            for date in dates:
+                format_dates.append(datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M'))
+
             response_lecture_requests = lecture_requests.filter(event__datetime_start__in=format_dates)
 
             if not response_lecture_requests:
@@ -155,16 +160,11 @@ class LectureResponseAPIView(APIView):
                 chat.users.add(creator.user, request.user)
                 chat.save()
 
-            Message.objects.get_or_create(
-                author=request.user,
-                chat=chat,
-                text='Добрый день! Мне подходит ваш запрос на проведение лекции!'
-            )
-
             async_to_sync(channel_layer.group_send)(
                 f'user_{creator.user.pk}',
                 {
                     "type": "new_respondent",
+                    "dates": format_dates,
                     "lecture": lecture,
                     "lecture_creator": creator.user,
                     "lecture_respondent": request.user
@@ -175,6 +175,7 @@ class LectureResponseAPIView(APIView):
                 f'user_{request.user.pk}',
                 {
                     "type": "new_respondent",
+                    "dates": format_dates,
                     "lecture": lecture,
                     "lecture_creator": creator.user,
                     "lecture_respondent": request.user
@@ -221,42 +222,46 @@ class LectureToggleConfirmRespondentAPIView(APIView):
             return lecture_responses.not_in_data()
 
         lecture = Lecture.objects.filter(pk=lecture_id).first()
+        respondent = Person.objects.get(pk=respondent_id)
 
         if not lecture:
             return lecture_responses.lecture_does_not_exist()
 
-        lecturer_lecture = None
-        customer_lecture = None
-        if request.user.person.is_lecturer:
-            lecturer_lecture = request.user.person.lecturer.lecturer_lecture_requests.filter(
-                lecture_request__lecture=lecture).first()
-        elif request.user.person.is_customer:
-            customer_lecture = request.user.person.customer.customer_lecture_requests.filter(
-                lecture_request__lecture=lecture).first()
+        is_lecturer = False
+        is_customer = False
 
-        if not lecturer_lecture and not customer_lecture:
+        if lecture.lecturer:
+            is_lecturer = lecture.lecturer.person.user == request.user
+        elif lecture.customer:
+            is_customer = lecture.customer.person.user == request.user
+
+        if not is_lecturer and not is_customer:
             return lecture_responses.not_a_creator()
 
-        respondent = lecture.lecture_request.respondents.filter(pk=respondent_id).first()
+        lecture_requests = lecture.lecture_requests.filter(respondents=respondent)
 
-        if not respondent:
+        if not lecture_requests:
             return lecture_responses.not_a_respondent()
 
+
         if reject == 'true':
-            respondent.delete()
+            for lecture_request in lecture_requests:
+                lecture_request.respondents.remove(respondent)
+                lecture_request.save()
+            lecture.confirmed_person = None
             lecture.status = False
             lecture.save()
             async_to_sync(channel_layer.group_send)(
-                f'user_{respondent.person.user.pk}',
+                f'user_{respondent.user.pk}',
                 {
                     "type": "remove_respondent",
-                    "lecture_request": lecture.lecture_request,
-                    "lecture_respondent": respondent.person.user
+                    "lecture": lecture,
+                    "lecture_respondent": respondent.user
                 }
             )
             return lecture_responses.success_denied()
 
-        respondent.confirmed = True
+        lecture.confirmed_person = respondent
         lecture.status = True
         lecture.save()
         respondent.save()

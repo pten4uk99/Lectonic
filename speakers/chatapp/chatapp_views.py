@@ -40,13 +40,12 @@ class MessageListGetAPIView(APIView):
             message.need_read = False
             message.save()
 
-        lecture = chat.lecture_request.lecture
+        lecture = chat.lecture
         talker_person = chat.users.exclude(pk=request.user.pk).first().person
-        respondent = talker_person.respondents.filter(lecture_requests=chat.lecture_request).first()
-        if not respondent:
+        if not talker_person:
             respondent = False
         else:
-            respondent = respondent.pk
+            respondent = talker_person.pk
 
         is_creator = False
 

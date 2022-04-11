@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import tooltip from "~/assets/img/workrooms/workroom/tooltip.svg";
 import WorkroomCard from "../WorkroomCard";
@@ -7,15 +7,23 @@ import {toggleResponseOnLecture} from "../../ajax/workRooms";
 import {RemoveNotification} from "../../../../Layout/redux/actions/notifications";
 import {getLecturePhoto, reverse} from "../../../../../ProjectConstants";
 import {useNavigate} from "react-router-dom";
+import Loader from "../../../../Utils/jsx/Loader";
 
 
 function LectureCardList(props){
+  let [isLoaded, setIsLoaded] = useState(false)
   let navigate = useNavigate()
+  
+  useEffect(() => {
+    if (props.data) setIsLoaded(true)
+  }, [props.data])
+  
     return (
         <section className="block__created-lectures">
           <div className="workroom__block-header">
             <span>{props.header}</span>
             <img src={tooltip} alt="Подсказка"/>
+            {!isLoaded && <Loader size={15} left={12}/>}
           </div>
           
           <div className="cards-block minus-ml-20">

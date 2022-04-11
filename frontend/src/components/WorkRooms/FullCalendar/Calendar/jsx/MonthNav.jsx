@@ -6,7 +6,11 @@ import {
   SwapMonthToPrev,
 } from '~@/WorkRooms/FullCalendar/Calendar/redux/actions/calendar'
 import { MONTHS } from '~@/WorkRooms/FullCalendar/Calendar/utils/calendar'
-import {getEventsForCustomerMonth, getEventsForLecturerMonth} from "../ajax/dateDetail";
+import {
+  getEventsForCustomerMonth,
+  getEventsForCustomerResponsesMonth,
+  getEventsForLecturerMonth, getEventsForLecturerResponsesMonth
+} from "../ajax/dateDetail";
 import {UpdateEvents} from "../../DateDetail/redux/actions/dateDetail";
 import {SetErrorMessage} from "../../../../Layout/redux/actions/header";
 import leftArrow from '~/assets/img/left-arrow.svg'
@@ -26,22 +30,41 @@ function MonthNav(props) {
   function updateEvents(year, month) {
     if (!props.store.header.modalActive) {
       if (props.store.profile.is_lecturer && props.store.permissions.is_lecturer) {
-        getEventsForLecturerMonth(year, month + 1)
-          .then(response => response.json())
-          .then(data => props.UpdateEvents(data.data))
-          .catch(error => props.SetErrorMessage('lecturer_calendar'))
+        if (!props.isMyLectures) {
+          getEventsForLecturerResponsesMonth(year, month + 1)
+            .then(response => response.json())
+            .then(data => props.UpdateEvents(data.data))
+            .catch(error => console.log(error))
+        } else {
+          getEventsForLecturerMonth(year, month + 1)
+            .then(response => response.json())
+            .then(data => props.UpdateEvents(data.data))
+            .catch(error => console.log(error))
+        }
       } else if (props.store.profile.is_customer && props.store.permissions.is_customer) {
-        getEventsForCustomerMonth(year, month + 1)
-          .then(response => response.json())
-          .then(data => props.UpdateEvents(data.data))
-          .catch(error => props.SetErrorMessage('customer_calendar'))
+        if (!props.isMyLectures) {
+          getEventsForCustomerResponsesMonth(year, month + 1)
+            .then(response => response.json())
+            .then(data => props.UpdateEvents(data.data))
+            .catch(error => console.log(error))
+        } else {
+          getEventsForCustomerMonth(year, month + 1)
+            .then(response => response.json())
+            .then(data => props.UpdateEvents(data.data))
+            .catch(error => console.log(error))
+        }
       }
     }
   }
   
   useEffect(() => {
     updateEvents(currentYear, currentMonth)
-  }, [props.store.header.modalActive, props.store.calendar.currentDate, props.store.profile])
+  }, [
+    props.store.header.modalActive, 
+    props.store.calendar.currentDate, 
+    props.store.profile,
+    props.isMyLectures
+  ])
 
   return (
     <nav className='month-nav'>

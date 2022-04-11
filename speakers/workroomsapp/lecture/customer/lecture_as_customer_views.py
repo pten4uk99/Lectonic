@@ -42,6 +42,26 @@ class LectureAsCustomerAPIView(APIView):
         return lecture_responses.success_get_lectures(serializer.data)
 
 
+class CustomerLecturesHistoryGetAPIView(APIView):
+    @swagger_auto_schema(deprecated=True)
+    def get(self, request):
+        lectures_list = None
+
+        if hasattr(request.user.person, 'customer'):
+            created_lectures = request.user.person.customer.lectures.all()
+            lectures_list = []
+            for lecture in created_lectures:
+                biggest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
+                biggest = biggest.get('maximum')
+                if biggest < datetime.datetime.now(tz=datetime.timezone.utc) and lecture.confirmed_person:
+                    lectures_list.append(lecture)
+
+        serializer = LecturesGetSerializer(
+            lectures_list, many=True, context={'request': request})
+
+        return lecture_responses.success_get_lectures(serializer.data)
+
+
 class PotentialCustomerLecturesGetAPIView(APIView):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):

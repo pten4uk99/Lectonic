@@ -29,18 +29,19 @@ function LecturerStep2(props) {
           </p>
         </div>
 
-        <div className="upload-photo__block">
-          <div className="upload-photo__label">
-            <p>
-              Диплом о высшем образовании, диплом<br/>
-              о переквалификации и/или иные сертификаты,<br/>
-              подтверждающие Ваш профессиональный уровень:
-            </p>
-          </div>
-          <PhotoPreview set={props.UpdateDiplomaPhotos} 
-                        image={diplomaImage} 
-                        list={true}/>
-        </div>
+        {/*<div className="upload-photo__block">*/}
+        {/*  <div className="upload-photo__label">*/}
+        {/*    <p>*/}
+        {/*      Диплом о высшем образовании, диплом<br/>*/}
+        {/*      о переквалификации и/или иные сертификаты,<br/>*/}
+        {/*      подтверждающие Ваш профессиональный уровень:*/}
+        {/*    </p>*/}
+        {/*  </div>*/}
+        {/*  <PhotoPreview set={props.UpdateDiplomaPhotos} */}
+        {/*                image={diplomaImage} */}
+        {/*                role={props.store.addRole.lecturer}*/}
+        {/*                list={true}/>*/}
+        {/*</div>*/}
         
         <div className="step-block-with-textarea margin-bottom-24">
           <p className="step-block__left-part left-part-with-textarea">

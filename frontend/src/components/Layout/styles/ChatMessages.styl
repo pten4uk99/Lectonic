@@ -1,6 +1,9 @@
 .chat-messages__block {
+  display: grid
+  grid-auto-flow: row
+  grid-template-rows: min-content 1fr .2fr
+  height: 100%
   .actions__block {
-    height: 100px
     background-color: white
     padding: 18px
     box-sizing border-box
@@ -55,7 +58,7 @@
     }
   }
   .messages__block {
-    height: 434px
+    //height: 434px
     background-color: rgba(245, 245, 245, 1);
     padding-top: 40px
     padding-bottom: 10px
@@ -96,7 +99,7 @@
     display flex
     justify-content: center;
     align-items: center
-    height: 68px
+    //height: 68px
     background-color: white
     
     input {

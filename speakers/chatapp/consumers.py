@@ -26,16 +26,9 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-    async def receive(self, text_data=None, bytes_data=None):
-        text_data_json = json.loads(text_data)
-        await self.channel_layer.group_send(f'user_{self.scope["url_route"]["kwargs"]["pk"]}',
-                                            {'type': 'notification',
-                                                'message': 'рпривет'})
-        print(text_data_json)
-
     async def new_respondent(self, event):
         lecture = event['lecture']
-        respondent = event['lecture_respondent']
+        respondent = event['lecture_respondent'].person
         chat = await self.create_new_chat(event)
         need_read_messages = await self.get_need_read({**event, 'chat': chat})
 
@@ -46,8 +39,8 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
             'lecture_name': lecture.name,
             'lecture_svg': lecture.svg,
             'respondent_id': respondent.pk,
-            'respondent_first_name': respondent.person.first_name,
-            'respondent_last_name': respondent.person.last_name
+            'respondent_first_name': respondent.first_name,
+            'respondent_last_name': respondent.last_name
         }
         await self.send(text_data=json.dumps(data))
 
@@ -72,10 +65,15 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
             chat.users.add(data["lecture_creator"], data["lecture_respondent"])
             chat.save()
 
+        dates = []
+        for date in data["dates"]:
+            dates.append(date.strftime('%d.%m'))
+
         Message.objects.get_or_create(
             author=data["lecture_respondent"],
             chat=chat,
-            text='Добрый день! Мне подходит ваш запрос на проведение лекции!'
+            text=f'Добрый день! Мне подходит ваш запрос на проведение лекции! '
+                 f'Мне удобно: {", ".join(dates)}.'
         )
         return chat
 

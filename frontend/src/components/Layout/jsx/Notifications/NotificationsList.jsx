@@ -5,6 +5,7 @@ import {createChatSocket} from "../../../../webSocket";
 import {UpdateMessages} from "../../redux/actions/messages";
 import {SetNeedRead} from "../../redux/actions/notifications";
 import {SetSelectedChat} from "../../redux/actions/header";
+import {getLecturePhoto} from "../../../../ProjectConstants";
 
 
 function NotificationsList(props) {
@@ -32,10 +33,10 @@ function NotificationsList(props) {
         return <li key={elem.id} 
                    className="chat-dropdown__notification" 
                    onClick={() => handleNotificationClick(elem.id)}>
-          <div className="photo"><img src={elem.lecture_photo} alt="обложка"/></div>
+          <div className="photo"><img src={getLecturePhoto(elem.lecture_svg)} alt="обложка"/></div>
           <div className="text">
             <p className='lecture-name'>{elem.lecture_name}</p>
-            <p className='respondent-name'>Отклик: {elem.respondent_first_name} {elem.respondent_last_name}</p>
+            <p className='respondent-name'>{elem.respondent_first_name} {elem.respondent_last_name}</p>
           </div>
           {elem.need_read && <div className="need-read"/>}
         </li>

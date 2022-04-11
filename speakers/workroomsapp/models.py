@@ -171,7 +171,7 @@ class Lecture(models.Model):
         ('hybrid', 'Гибрид')
     ]
 
-    name = models.CharField(max_length=500)
+    name = models.CharField(max_length=100)
     svg = models.IntegerField()  # id svg фотографии на фронтенде
     optional = models.OneToOneField(
         'Optional',

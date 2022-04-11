@@ -82,7 +82,7 @@ function SetProfileInfo(props) {
           })
         }
       })
-      .catch(error => props.SetErrorMessage('create_profile'))
+      .catch(error => console.log(error))
   }
 
   return (

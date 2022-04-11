@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
-import WorkroomCard from "./WorkroomCard";
+
 import CreatedLectures from "~@/WorkRooms/WorkRoom/jsx/Elements/CreatedLectures";
 import LectureCardList from "./Elements/LectureCardList";
 import {getAllLecturersForCustomer, getAllLecturesForCustomer, getCreatedLecturesForCustomer} from "../ajax/workRooms";

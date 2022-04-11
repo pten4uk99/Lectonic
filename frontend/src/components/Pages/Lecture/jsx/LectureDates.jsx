@@ -1,15 +1,16 @@
 import React, {useEffect, useState} from 'react'
 import {connect} from "react-redux";
-import {getMonth} from "../../CreateEvent/jsx/CalendarModal";
+import {getMonth} from "../../../WorkRooms/CreateEvent/jsx/CalendarModal";
 import {DateTime} from "luxon";
 import {UpdateLectureDetailChosenDates} from "../redux/actions/lectureDetail";
-import {checkEqualDates} from "../../FullCalendar/Calendar/utils/date";
+import {checkEqualDates} from "../../../WorkRooms/FullCalendar/Calendar/utils/date";
 
 
 function LectureDates(props) {
   let [data, setData] = useState([])
   let [responseDates, setResponseDates] = useState([])
   let chosenDates = props.store.lectureDetail.chosenDates
+  let today = props.store.calendar.today
   
   useEffect(() => {
     if (props.data) setData(getDates(props.data))
@@ -31,6 +32,7 @@ function LectureDates(props) {
     if (data.length === 1 || responseDates.length > 0) return
     let newDates;
     if (checkDateInArr(dateStart, chosenDates)) newDates = chosenDates.filter(elem => elem !== dateStart)
+    else if (dateStart < today) return
     else newDates = [...chosenDates, dateStart]
     props.UpdateLectureDetailChosenDates(newDates)
   }
@@ -41,7 +43,7 @@ function LectureDates(props) {
         {data.map((elem, index) => {
           return <div className="date__wrapper" key={index} onClick={() => handleClickDate(elem.startDate)}>
             <div className={checkDateInArr(elem.startDate, chosenDates) ? 
-              "date__block active" : "date__block"}>
+              "date__block active" : elem.startDate < today ? "date__block inactive" : "date__block"}>
               <span className="date">
                 {elem.startDate.getDate()} {getMonth(elem.startDate.getUTCMonth())}</span>
               <span className="time">

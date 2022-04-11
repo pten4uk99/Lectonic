@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 
 import tooltip from "~/assets/img/workrooms/workroom/tooltip.svg";
@@ -6,11 +6,17 @@ import WorkroomCard from "../WorkroomCard";
 import {useNavigate} from "react-router-dom";
 import {getLecturePhoto, reverse} from "../../../../../ProjectConstants";
 import {getDates} from "./LectureCardList";
+import Loader from "../../../../Utils/jsx/Loader";
 
 
 
 function CreatedLectures(props){
+  let [isLoaded, setIsLoaded] = useState(false)
   let navigate = useNavigate()
+  
+  useEffect(() => {
+    if (props.data) setIsLoaded(true)
+  }, [props.data])
   
   function handleCreateLectureCard() {
     navigate(reverse('create_event', {role: props.role}))
@@ -21,6 +27,7 @@ function CreatedLectures(props){
             {props.role === 'lecturer' && <span>Созданные лекции</span>}
             {props.role === 'customer' && <span>Мои запросы на лекции</span>}
             <img src={tooltip} alt="Подсказка"/>
+            {!isLoaded && <Loader size={15} left={12}/>}
           </div>
           
           <div className="cards-block mt-20">
