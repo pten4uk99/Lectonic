@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {connect} from "react-redux";
+
 import {getMonth} from "../../../WorkRooms/CreateEvent/jsx/CalendarModal";
 import {DateTime} from "luxon";
 import {UpdateLectureDetailChosenDates} from "../redux/actions/lectureDetail";
@@ -19,7 +20,7 @@ function LectureDates(props) {
   
   useEffect(() => {
     if (data.length === 1) {
-      props.UpdateLectureDetailChosenDates([data[0].start])
+      props.UpdateLectureDetailChosenDates([data[0].startDate])
     }
     if (responseDates.length > 0) {
       let dates = []
