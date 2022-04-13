@@ -49,4 +49,4 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['author', 'text', 'chat', 'datetime']
+        fields = ['author', 'text', 'chat', 'datetime', 'confirm']

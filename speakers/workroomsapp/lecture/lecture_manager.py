@@ -10,7 +10,7 @@ class LectureManager(models.Manager):
     def create_as_lecturer(self, name: str, cost: int = 0, svg: int = None,
                            lecturer: object = None, datetime: list = None,
                            hall_address: str = None, equipment: str = None,
-                           lecture_type: str = None, status: bool = None,
+                           lecture_type: str = None,
                            description: str = "", domain: list = None):
 
         if not lecturer:
@@ -30,7 +30,6 @@ class LectureManager(models.Manager):
             optional=optional,
             type=lecture_type,
             lecturer=lecturer,
-            status=status,
             cost=cost,
             description=description
         )
@@ -58,7 +57,7 @@ class LectureManager(models.Manager):
     def create_as_customer(self, name: str, svg: int = None,
                            customer: object = None, datetime: list = None,
                            hall_address: str = None, equipment: str = None,
-                           lecture_type: str = None, status: bool = None,
+                           lecture_type: str = None,
                            listeners: int = None, cost: int = 0,
                            description: str = "", domain: list = None):
 
@@ -79,7 +78,6 @@ class LectureManager(models.Manager):
             optional=optional,
             type=lecture_type,
             customer=customer,
-            status=status,
             listeners=listeners,
             cost=cost,
             description=description

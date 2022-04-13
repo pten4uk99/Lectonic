@@ -56,8 +56,9 @@ function ChatMessages(props) {
       .then(r => r.json())
       .then(data => {
         if (data.status === 'success') {
-          props.setArea(false)
-          props.SetSelectedChat(null)
+          // props.setArea(false)
+          // props.chatSocket.close()
+          // props.SetSelectedChat(null)
           if (reject) {
             props.RemoveNotification(props.store.header.selectedChatId)
           }
@@ -88,12 +89,16 @@ function ChatMessages(props) {
           </div>
         </div>
         <div className="buttons">
-          {data.is_creator ? 
-            <>
-              <button className="confirm" onClick={() => handleToggleConfirm(false)}>Принять</button>
-              <button className="reject" onClick={() => handleToggleConfirm(true)}>Отклонить</button>
-            </> :
-            <button className="reject-response" onClick={handleRejectResponse}>Отменить отклик</button>
+          {data.confirmed === null ? 
+            data.is_creator ? 
+              <>
+                <button className="confirm" onClick={() => handleToggleConfirm(false)}>Принять</button>
+                <button className="reject" onClick={() => handleToggleConfirm(true)}>Отклонить</button>
+              </> : 
+              <button className="reject-response" onClick={handleRejectResponse}>Отменить отклик</button> :
+            data.confirmed ? 
+              <div className="lecture-confirmed">Лекция подтверждена</div> : 
+              <div className="lecture-rejected">Лекция отклонена</div>
           }
 
         </div>
@@ -101,10 +106,16 @@ function ChatMessages(props) {
       
       <div className="messages__block" ref={messagesBlock}>
         {messages && messages.length > 0 && messages.map((elem, index) => {
-          return <div key={index} className="block-message">
-          <div className={props.store.permissions.user_id === elem.author ? 
-            "self-message" : "other-message"}>{elem.text}</div>
-        </div>
+          if (elem.confirm) return <div key={index} className="block-message">
+            <div className="confirm-message">Лекция подтверждена!</div>
+          </div>
+          else if (elem.confirm === null) return <div key={index} className="block-message">
+            <div className={props.store.permissions.user_id === elem.author ? 
+              "self-message" : "other-message"}>{elem.text}</div>
+          </div>
+          else if (!elem.confirm) return <div key={index} className="block-message">
+            <div className="reject-message">Лекция отклонена!</div>
+          </div>
         })}
       </div>
       

@@ -68,7 +68,6 @@ class LectureCreateAsCustomerSerializer(serializers.Serializer):
             equipment=validated_data.get('equipment'),
             listeners=validated_data.get('listeners'),
             lecture_type=validated_data.get('type'),
-            status=False,
             cost=validated_data.get('cost', 0),
             description=validated_data.get('description'),
         )

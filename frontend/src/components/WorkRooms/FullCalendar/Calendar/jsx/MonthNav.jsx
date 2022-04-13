@@ -31,27 +31,43 @@ function MonthNav(props) {
     if (!props.store.header.modalActive) {
       if (props.store.profile.is_lecturer && props.store.permissions.is_lecturer) {
         if (!props.isMyLectures) {
-          getEventsForLecturerResponsesMonth(year, month + 1)
+          getEventsForLecturerResponsesMonth()
             .then(response => response.json())
-            .then(data => props.UpdateEvents(data.data))
+            .then(data => {
+              props.setIsLoaded(true)
+              props.UpdateEvents(data.data)
+            })
             .catch(error => console.log(error))
+          props.setIsLoaded(false)
         } else {
           getEventsForLecturerMonth(year, month + 1)
             .then(response => response.json())
-            .then(data => props.UpdateEvents(data.data))
+            .then(data => {
+              props.setIsLoaded(true)
+              props.UpdateEvents(data.data)
+            })
             .catch(error => console.log(error))
+          props.setIsLoaded(false)
         }
       } else if (props.store.profile.is_customer && props.store.permissions.is_customer) {
         if (!props.isMyLectures) {
-          getEventsForCustomerResponsesMonth(year, month + 1)
+          getEventsForCustomerResponsesMonth()
             .then(response => response.json())
-            .then(data => props.UpdateEvents(data.data))
+            .then(data => {
+              props.setIsLoaded(true)
+              props.UpdateEvents(data.data)
+            })
             .catch(error => console.log(error))
+          props.setIsLoaded(false)
         } else {
-          getEventsForCustomerMonth(year, month + 1)
+          getEventsForCustomerMonth()
             .then(response => response.json())
-            .then(data => props.UpdateEvents(data.data))
+            .then(data => {
+              props.setIsLoaded(true)
+              props.UpdateEvents(data.data)
+            })
             .catch(error => console.log(error))
+          props.setIsLoaded(false)
         }
       }
     }
@@ -60,10 +76,10 @@ function MonthNav(props) {
   useEffect(() => {
     updateEvents(currentYear, currentMonth)
   }, [
-    props.store.header.modalActive, 
-    props.store.calendar.currentDate, 
+    props.store.header.modalActive,
     props.store.profile,
-    props.isMyLectures
+    props.isMyLectures,
+    props.store.notifications
   ])
 
   return (

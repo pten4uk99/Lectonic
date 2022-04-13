@@ -32,7 +32,7 @@ function Date(props) {
         setActive(true)
       else setActive(false)      
     } else setActive(false)
-  }, [props.store.dateDetail])
+  }, [props.store.dateDetail, props.store.calendar.currentDate])
 
   useEffect(() => {
     if (!props.store.header.modalActive) {

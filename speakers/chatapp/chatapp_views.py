@@ -35,10 +35,18 @@ class MessageListGetAPIView(APIView):
         if not chat:
             chatapp_responses.chat_does_not_exist()
 
+        lecture_confirmed = None
+
         messages = Message.objects.order_by('datetime').filter(chat=chat)
         for message in messages:
-            message.need_read = False
-            message.save()
+            if message.confirm is None:
+                message.need_read = False
+                message.save()
+            elif message.confirm:
+                lecture_confirmed = True
+            elif not message.confirm:
+                lecture_confirmed = False
+
 
         lecture = chat.lecture
         talker_person = chat.users.exclude(pk=request.user.pk).first().person
@@ -59,6 +67,7 @@ class MessageListGetAPIView(APIView):
             'lecture_id': lecture.pk,
             'lecture_name': lecture.name,
             'is_creator': is_creator,
+            'confirmed': lecture_confirmed,
             'talker_respondent': respondent,
             'talker_first_name': talker_person.first_name,
             'talker_last_name': talker_person.last_name,

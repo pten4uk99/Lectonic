@@ -8,7 +8,7 @@ from chatapp.models import Chat, Message
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.lecturer.lecture_as_lecturer_serializers import *
-from workroomsapp.models import LectureRequest, Lecturer, Customer
+from workroomsapp.models import LectureRequest, Lecturer, Customer, Respondent
 from workroomsapp.utils import workroomsapp_permissions
 
 channel_layer = get_channel_layer()
@@ -39,7 +39,6 @@ class LectureAsLecturerAPIView(APIView):
                 lowest = lowest.get('maximum')
                 if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
                     lectures_list.append(lecture)
-
 
         serializer = LecturesGetSerializer(
             lectures_list, many=True, context={'request': request})
@@ -160,27 +159,15 @@ class LectureResponseAPIView(APIView):
                 chat.users.add(creator.user, request.user)
                 chat.save()
 
-            async_to_sync(channel_layer.group_send)(
-                f'user_{creator.user.pk}',
-                {
-                    "type": "new_respondent",
-                    "dates": format_dates,
-                    "lecture": lecture,
-                    "lecture_creator": creator.user,
-                    "lecture_respondent": request.user
-                }
-            )
-
-            async_to_sync(channel_layer.group_send)(
-                f'user_{request.user.pk}',
-                {
-                    "type": "new_respondent",
-                    "dates": format_dates,
-                    "lecture": lecture,
-                    "lecture_creator": creator.user,
-                    "lecture_respondent": request.user
-                }
-            )
+            user_consumer_data = {
+                "type": "new_respondent",
+                "dates": format_dates,
+                "lecture": lecture,
+                "lecture_creator": creator.user,
+                "lecture_respondent": request.user
+            }
+            async_to_sync(channel_layer.group_send)(f'user_{creator.user.pk}', user_consumer_data)
+            async_to_sync(channel_layer.group_send)(f'user_{request.user.pk}', user_consumer_data)
 
             lecture.save()
             return lecture_responses.success_response()
@@ -243,26 +230,44 @@ class LectureToggleConfirmRespondentAPIView(APIView):
         if not lecture_requests:
             return lecture_responses.not_a_respondent()
 
+        chat = Chat.objects.filter(users__in=[request.user, respondent.user]).first()
+        chat_consumer_data = {
+            "type": "chat_message",
+            'author': request.user.pk,
+            'text': '',
+            'confirm': True
+        }
 
         if reject == 'true':
             for lecture_request in lecture_requests:
                 lecture_request.respondents.remove(respondent)
                 lecture_request.save()
-            lecture.confirmed_person = None
-            lecture.status = False
             lecture.save()
-            async_to_sync(channel_layer.group_send)(
-                f'user_{respondent.user.pk}',
-                {
-                    "type": "remove_respondent",
-                    "lecture": lecture,
-                    "lecture_respondent": respondent.user
-                }
+            # Закомментировал удаление чата при отклонении отклика
+            # async_to_sync(channel_layer.group_send)(
+            #     f'user_{respondent.user.pk}',
+            #     {
+            #         "type": "remove_respondent",
+            #         "lecture": lecture,
+            #         "lecture_respondent": respondent.user
+            #     }
+            # )
+
+            chat_consumer_data['confirm'] = False
+            async_to_sync(channel_layer.group_send)(f'chat_{chat.pk}', chat_consumer_data)
+            Message.objects.create(
+                author=request.user,
+                chat=chat,
+                text=chat_consumer_data['text'],
+                confirm=chat_consumer_data.get('confirm')
             )
             return lecture_responses.success_denied()
 
-        lecture.confirmed_person = respondent
-        lecture.status = True
+        for lecture_request in lecture_requests:
+            lecture_respondent = Respondent.objects.get(person=respondent, lecture_request=lecture_request)
+            lecture_respondent.confirmed = True
+            lecture_respondent.save()
         lecture.save()
-        respondent.save()
+
+        async_to_sync(channel_layer.group_send)(f'chat_{chat.pk}', chat_consumer_data)
         return lecture_responses.success_confirm()

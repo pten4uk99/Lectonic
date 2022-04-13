@@ -38,6 +38,17 @@
       justify-content: center;
       margin-top: 7px
       
+      .lecture-confirmed {
+        text-align: center
+        font-size: 12px
+        color: $main-blue;
+      }
+      .lecture-rejected {
+        text-align: center
+        font-size: 12px
+        color: $add-pink;
+      }
+      
       button {
         width: 100px
         height: 29px
@@ -70,7 +81,21 @@
       position: relative;
       width: 100%;
       padding: 5px 15px;
+      box-sizing border-box
   /*     border: 1px solid; */
+      
+      .confirm-message {
+        margin: 20px 0
+        text-align: center
+        font-size: 11pt
+        color: $main-blue
+      }      
+      .reject-message {
+        margin: 20px 0
+        text-align: center
+        font-size: 11pt
+        color: $add-pink
+      }
       .self-message, .other-message {
         padding: 8px 16px;
     
@@ -91,7 +116,7 @@
         float: left;
         background-color: rgba(219, 219, 219, 1);
         border-radius: 14px 14px 14px 0;
-        margin-left: 30px;
+        
       }  
     }
   }

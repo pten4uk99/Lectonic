@@ -66,7 +66,6 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
             hall_address=validated_data.get('hall_address'),
             equipment=validated_data.get('equipment'),
             lecture_type=validated_data.get('type'),
-            status=False,
             cost=validated_data.get('cost', 0),
             description=validated_data.get('description'),
         )
@@ -174,9 +173,9 @@ class LecturesGetSerializer(serializers.Serializer):
         return obj.lecturer.person.middle_name
 
     def get_in_respondents(self, obj):
-        return bool(obj.lecture_requests.filter(
-            respondents=self.context['request'].user.person).first())
+        person = self.context['request'].user.person
+        return bool(person.responses.filter(lecture=obj))
 
     def get_response_dates(self, obj):
-        return obj.lecture_requests.filter(
-            respondents=self.context['request'].user.person).values_list('event__datetime_start', flat=True)
+        person = self.context['request'].user.person
+        return person.responses.filter(lecture=obj).values_list('event__datetime_start', flat=True)

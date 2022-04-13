@@ -7,7 +7,6 @@ import background from '~/assets/img/workrooms/user-account_bg.svg';
 import Lecturer from "./WorkRoom/jsx/Lecturer";
 import FullCalendar from "~@/WorkRooms/FullCalendar/FullCalendar";
 import {reverse} from "../../ProjectConstants";
-import CreatedLectures from "./WorkRoom/jsx/Elements/CreatedLectures";
 import Customer from "./WorkRoom/jsx/Customer";
 
 
