@@ -10,6 +10,9 @@ import {checkEqualDates} from "../../../WorkRooms/FullCalendar/Calendar/utils/da
 function LectureDates(props) {
   let [data, setData] = useState([])
   let [responseDates, setResponseDates] = useState([])
+  let [rejectedDates, setRejectedDates] = useState([])
+  let [canChoseDate, setCanChoseDate] = useState(false)
+  
   let chosenDates = props.store.lectureDetail.chosenDates
   let today = props.store.calendar.today
   
@@ -24,16 +27,27 @@ function LectureDates(props) {
     }
     if (responseDates.length > 0) {
       let dates = []
-      for (let date of responseDates) dates.push(new Date(date))
+      let rejected = []
+      for (let elem of responseDates) {
+        let date = new Date(elem.date)
+        if (elem.rejected) rejected.push(date)
+        else {
+          dates.push(date)
+          setCanChoseDate(true)
+        }
+      }
+      setRejectedDates(rejected)
       props.UpdateLectureDetailChosenDates(dates)
     }
   }, [data, responseDates])
   
   function handleClickDate(dateStart) {
-    if (data.length === 1 || responseDates.length > 0) return
+    if (data.length === 1 || canChoseDate) return
     let newDates;
-    if (checkDateInArr(dateStart, chosenDates)) newDates = chosenDates.filter(elem => elem !== dateStart)
-    else if (dateStart < today) return
+    if (checkDateInArr(dateStart, chosenDates) && !checkDateInArr(dateStart, rejectedDates)) {
+      newDates = chosenDates.filter(elem => elem !== dateStart)
+    }
+    else if (dateStart < today || checkDateInArr(dateStart, rejectedDates)) return
     else newDates = [...chosenDates, dateStart]
     props.UpdateLectureDetailChosenDates(newDates)
   }
@@ -43,8 +57,9 @@ function LectureDates(props) {
       <div className="dates__block">
         {data.map((elem, index) => {
           return <div className="date__wrapper" key={index} onClick={() => handleClickDate(elem.startDate)}>
-            <div className={checkDateInArr(elem.startDate, chosenDates) ? 
-              "date__block active" : elem.startDate < today ? "date__block inactive" : "date__block"}>
+            <div className={elem.startDate < today || checkDateInArr(elem.startDate, rejectedDates) ? 
+                "date__block inactive" : checkDateInArr(elem.startDate, chosenDates) ? 
+              "date__block active" : "date__block"}>
               <span className="date">
                 {elem.startDate.getDate()} {getMonth(elem.startDate.getUTCMonth())}</span>
               <span className="time">
@@ -83,7 +98,7 @@ function getDates(str_dates) {
       start: start,
       end: end,
       startDate: new Date(date.start),
-      endDate: new Date(date.end)
+      endDate: new Date(date.end),
     })
   }
   

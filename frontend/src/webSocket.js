@@ -3,21 +3,24 @@ import {baseWS} from "./ProjectConstants";
 let notificationsWs;
 
 
-export function createNotificationsSocket(setSocket, userId) {
+export function createNotificationsSocket(setSocket, userId, setFailConnection) {
   if (notificationsWs) return
   notificationsWs = new WebSocket(`${baseWS}/ws/connect/${userId}`)
   
   notificationsWs.onopen = (e) => {
     setSocket(notificationsWs);
+    setFailConnection(false)
     console.log('Соединение установлено')
   }
   notificationsWs.onclose = (e) => {
     if (e.wasClean) {
       notificationsWs = null
+      setFailConnection(false)
       console.log('Соединение завершено')
     } else {
       notificationsWs = null
-      setTimeout(() => createNotificationsSocket(setSocket, userId), 3000)
+      setFailConnection(true)
+      setTimeout(() => createNotificationsSocket(setSocket, userId, setFailConnection), 3000)
       console.log('Соединение разорвано')
     }
   }

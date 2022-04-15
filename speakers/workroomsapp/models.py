@@ -160,6 +160,7 @@ class Respondent(models.Model):
     person = models.ForeignKey('Person', on_delete=models.CASCADE)
     lecture_request = models.ForeignKey('LectureRequest', on_delete=models.CASCADE)
     confirmed = models.BooleanField(default=False)
+    rejected = models.BooleanField(default=False)
 
 
 class LectureRequest(models.Model):

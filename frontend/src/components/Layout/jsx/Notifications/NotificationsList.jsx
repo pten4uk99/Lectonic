@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import {getChatMessages, getNotificationsList} from "../../ajax";
 import {createChatSocket} from "../../../../webSocket";
 import {UpdateMessages} from "../../redux/actions/messages";
-import {SetNeedRead} from "../../redux/actions/notifications";
+import {RemoveNotification, SetNeedRead} from "../../redux/actions/notifications";
 import {SetSelectedChat} from "../../redux/actions/header";
 import {getLecturePhoto} from "../../../../ProjectConstants";
 
@@ -21,6 +21,10 @@ function NotificationsList(props) {
           props.UpdateMessages(data.data[0])
           props.SetNeedRead(chat_id, false)
           props.SetSelectedChat(chat_id)
+          props.setIsLoaded(true)
+        } else {
+          props.RemoveNotification(chat_id)
+          props.setArea(false)
         }
       })
   }
@@ -42,7 +46,7 @@ function NotificationsList(props) {
         </li>
       }) :
         <div className="empty-list">
-          Здесь будут отображаться отклики на ваши неподтвержденные лекции
+          Здесь будут отображаться отклики на Ваши неподтвержденные лекции
         </div>
       }
       
@@ -55,6 +59,7 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     UpdateMessages: (data) => dispatch(UpdateMessages(data)),
+    RemoveNotification: (chat_id) => dispatch(RemoveNotification(chat_id)),
     SetSelectedChat: (chat_id) => dispatch(SetSelectedChat(chat_id)),
     SetNeedRead: (chat_id, need_read) => dispatch(SetNeedRead(chat_id, need_read)),
   })

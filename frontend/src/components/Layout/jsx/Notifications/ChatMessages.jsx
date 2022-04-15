@@ -3,10 +3,11 @@ import {connect} from "react-redux";
 
 import backArrow from '~/assets/img/back-arrow.svg'
 import sendMessage from '~/assets/img/send-message-icon.svg'
-import {AddMessage} from "../../redux/actions/messages";
+import {AddMessage, SetMessagesConfirmed} from "../../redux/actions/messages";
 import {SetSelectedChat} from "../../redux/actions/header";
 import {toggleConfirmResponseOnLecture, toggleResponseOnLecture} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
 import {RemoveNotification} from "../../redux/actions/notifications";
+import Loader from '~@/Utils/jsx/Loader'
 
 
 function ChatMessages(props) {
@@ -16,19 +17,26 @@ function ChatMessages(props) {
   let input = useRef()
   
   useEffect(() => {
-    if (messagesBlock) messagesBlock.current.scrollTop = messagesBlock.current.scrollHeight
+    if (messagesBlock && props.isLoaded) messagesBlock.current.scrollTop = messagesBlock.current.scrollHeight
   }, [messagesBlock?.current?.scrollHeight])
   
   useEffect(() => {
     props.chatSocket?.addEventListener('message', (e) => {
       let data = JSON.parse(e.data)
       props.AddMessage(data)
+      if (data.confirm !== null) props.SetMessagesConfirmed(data.confirm)
     })
   }, [props.chatSocket])
   
-  function handleArrowClick() {
+  function handleArrowClick(params) {
+    if ((data.confirmed !== null && !data.confirmed && !data.is_creator) || params.cancel_response) {
+      props.chatSocket.send(JSON.stringify({
+        'type': 'read_reject_chat',
+        'chat_id': props.store.header.selectedChatId
+      }))
+      props.RemoveNotification(props.store.header.selectedChatId)
+    } else props.chatSocket.close()
     props.setArea(false)
-    props.chatSocket.close()
     props.SetSelectedChat(null)
   }
   
@@ -56,11 +64,11 @@ function ChatMessages(props) {
       .then(r => r.json())
       .then(data => {
         if (data.status === 'success') {
-          // props.setArea(false)
-          // props.chatSocket.close()
-          // props.SetSelectedChat(null)
+          props.chatSocket.close()
+          
           if (reject) {
-            props.RemoveNotification(props.store.header.selectedChatId)
+            props.setArea(false)
+            props.SetSelectedChat(null)
           }
         }
       })
@@ -70,12 +78,13 @@ function ChatMessages(props) {
       .then(r => r.json())
       .then(data => {
         if (data.status === 'success') {
-          handleArrowClick()
+          handleArrowClick({cancel_response: true})
           props.RemoveNotification(props.store.header.selectedChatId)
         }
       })
   }
   
+  if (!props.isLoaded) return <Loader size={60} top="50%" left="50%" tX="-50%" tY="-50%"/>
   return (
     <div className="chat-messages__block">
       <div className="actions__block">
@@ -138,5 +147,6 @@ export default connect(
     AddMessage: (message) => dispatch(AddMessage(message)),
     RemoveNotification: (chat_id) => dispatch(RemoveNotification(chat_id)),
     SetSelectedChat: (chat_id) => dispatch(SetSelectedChat(chat_id)),
+    SetMessagesConfirmed: (confirmed) => dispatch(SetMessagesConfirmed(confirmed)),
   })
 )(ChatMessages);

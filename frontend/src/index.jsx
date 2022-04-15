@@ -9,6 +9,7 @@ import calendar from '~/components/WorkRooms/FullCalendar/Calendar/redux/reducer
 import dateDetail from '~/components/WorkRooms/FullCalendar/DateDetail/redux/reducers/dateDetail'
 import '~/index.styl'
 import header from "~@/Layout/redux/reducers/header";
+import ws from "~@/Layout/redux/reducers/ws";
 import messages from "~@/Layout/redux/reducers/messages";
 import notifications from "~@/Layout/redux/reducers/notifications";
 import profile from "~@/Profile/redux/reducers/profile";
@@ -23,6 +24,7 @@ console.clear()
 
 let reducer = combineReducers({
   permissions,
+  ws,
   addRole,
   lectureDetail,
   header,

@@ -36,7 +36,7 @@ function ProfileInfo(props){
       .catch(error => console.log(error))
   }, [])
   
-  if (!isLoaded) return <Loader size={40} top={100} left={'50%'} tX={'-50%'}/>
+  if (!isLoaded) return <Loader size={40} top={100} left="50%" tX="-50%"/>
   return (
     <div className="profile-about">
       <div className="profile-about__photo-box">

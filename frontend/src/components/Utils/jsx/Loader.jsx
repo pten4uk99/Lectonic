@@ -12,8 +12,8 @@ function Loader(props) {
   let top = props.top
   let left = props.left
   let right = props.right
-  let tX = props?.tX
-  let tY = props?.tY
+  let tX = props?.tX || 0
+  let tY = props?.tY || 0
   
   return (
     <div className={className} style={{
@@ -23,7 +23,7 @@ function Loader(props) {
       top: top,
       left: left,
       right: right,
-      transform: `translateX(${tX}) translateY(${tY})`,
+      transform: !props.main && `translateX(${tX}) translateY(${tY})`,
     }}>
       <img src={loadingIcon} alt="загрузка"/>
     </div>

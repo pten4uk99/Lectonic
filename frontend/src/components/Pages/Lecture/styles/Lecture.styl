@@ -46,19 +46,29 @@
           max-width 290px
         }
       }
-      .type {
-        width: 71px
-        height: 20px
-        background-color: rgba(95, 181, 255, 1);
-        border-radius: 45px
-
-        text-align: center
-        line-height: 20px
-        color: white
-        font-size: 11px
-        font-weight: 500
-        margin-top: 19px
+      .subheader {
+        display flex
+        .type {
+          height: 20px
+          background-color: rgba(95, 181, 255, 1);
+          border-radius: 45px
+  
+          text-align: center
+          line-height: 20px
+          color: white
+          font-size: 11px
+          font-weight: 500
+          
+          margin-top: 19px
+          margin-right: 9px
+          padding: 0 12px
+          
+          &.blue {
+            background-color: $main-blue
+          }
+        }
       }
+
       .block__person {
         margin-top: 37px
         .header {

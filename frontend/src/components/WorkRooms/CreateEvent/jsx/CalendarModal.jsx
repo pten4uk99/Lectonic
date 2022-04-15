@@ -14,16 +14,16 @@ function CalendarModal(props) {
   let chooseDates = props.store.calendar.modalChooseDates
   let duration = props.store.calendar.chosenDuration
   let [chosenDate, setChosenDate] = useState(null)
+  let [allTimeEqual, setAllTimeEqual] = useState(false)
 
   function handleChosenStartValue(value) {
     let [hours, minutes] = value.split(':')
     let newDates = chooseDates.map((elem) => {
-      if (checkEqualDates(chosenDate, elem)) {
-        return new Date(
+      let newDate = new Date(
           elem.getFullYear(), elem.getMonth(), elem.getDate(), 
           Number(hours), Number(minutes)
         )
-      }
+      if (checkEqualDates(chosenDate, elem) || allTimeEqual) return newDate
       return elem
     })
     props.SwapModalChooseDates(newDates)
@@ -52,6 +52,7 @@ function CalendarModal(props) {
       
       props.SetDropDownTimeStart(`${hour}:${minute}`)
     }
+    else if (chooseDates.length > 0) setChosenDate(chooseDates[0])
   }, [chosenDate])
 
   function activeDateClassName(date) {
@@ -60,6 +61,18 @@ function CalendarModal(props) {
     return className
   }
   
+  function handleDisabledButton() {
+    return chooseDates.length === 0
+  }
+  
+  function handleSwapNextDate() {
+    let currentDate;
+    for (let date of chooseDates) {
+      if (currentDate) return setChosenDate(date)
+      if (checkEqualDates(chosenDate, date)) currentDate = date
+    }
+  }
+
   return (
     <div className="calendar-modal__wrapper">
       <Calendar/>
@@ -71,7 +84,7 @@ function CalendarModal(props) {
           и укажите продолжительность лекции.
         </p>
         <div className="calendar-modal__duration">
-          <span className="end">Длительность: </span> 
+          <span>Длительность: </span> 
           <DropDown request={getDurationArr()}
                     onSelect={(value) => {
                       props.SwapChosenDuration(parseDuration(value)); 
@@ -84,24 +97,43 @@ function CalendarModal(props) {
             <span>Дата:</span>
             <div className="calendar-modal__dates-list">
               {chooseDates.map((elem, index) => (
-                <div className={activeDateClassName(elem)} key={index} onClick={() => setChosenDate(elem)}>
+                <div className={activeDateClassName(elem)} key={index}>
                   {elem.getDate()} {getMonth(elem.getMonth())}
                 </div>))}
             </div>
           </div>}
-          {chosenDate && <div className="calendar-modal__time">
-            <span>Время:</span>
-            <div className="time-dropdown">
-              <span className="start">Начало: </span> 
-              <DropDown request={getTimeArr(chosenDate, duration)} 
-                        onSelect={(value) => handleChosenStartValue(value)} 
-                        defaultValue='00:00' 
-                        timeStart={true}/>
-            </div>
-          </div>}
-        <button className="btn calendar-modal__button" 
-             onClick={props.DeactivateModal} 
-                disabled={!Boolean(chooseDates.length > 0)}>Подтвердить</button>
+          {chosenDate && 
+            <>
+              <div className="calendar-modal__time">
+                <span>Время начала:</span>
+                <div className="time-dropdown">
+                  <DropDown request={getTimeArr(chosenDate, duration)} 
+                            onSelect={(value) => handleChosenStartValue(value)} 
+                            defaultValue='00:00' 
+                            timeStart={true}/>
+                </div>
+              </div>
+              <div className="auth__form__checkbox-wrapper">
+                <input className="auth__form__checkbox-switch" 
+                       id="checkbox" 
+                       type="checkbox" 
+                       checked={allTimeEqual} 
+                       onChange={() => setAllTimeEqual(!allTimeEqual)}/>
+                <label htmlFor="checkbox">
+                  Время начала лекции одинаковое для всех дат
+                </label>
+              </div>
+            </>
+          }
+        {chooseDates.length <= 1 || allTimeEqual || checkEqualDates(chosenDate, chooseDates[chooseDates.length - 1]) ? 
+          <button className="btn calendar-modal__button" 
+                  type="button"        
+                  onClick={props.DeactivateModal} 
+                  disabled={handleDisabledButton()}>Подтвердить</button> :
+         <button className="btn calendar-modal__button" 
+                 type="button"
+                 onClick={handleSwapNextDate} 
+                 disabled={handleDisabledButton()}>Далее</button>}
       </div>
     </div>
   )

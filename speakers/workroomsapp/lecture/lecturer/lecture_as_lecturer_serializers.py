@@ -7,7 +7,7 @@ from workroomsapp.lecture.utils import (
     convert_datetime,
     check_datetime_for_lecture_as_lecturer
 )
-from workroomsapp.models import Lecture, Person
+from workroomsapp.models import Lecture, Person, Respondent
 
 
 class LectureCreateAsLecturerSerializer(serializers.Serializer):
@@ -82,12 +82,13 @@ class LecturesGetSerializer(serializers.Serializer):
     description = serializers.SerializerMethodField()
     equipment = serializers.SerializerMethodField()
     cost = serializers.SerializerMethodField()
+    creator_is_lecturer = serializers.SerializerMethodField()
     creator_user_id = serializers.SerializerMethodField()
     creator_first_name = serializers.SerializerMethodField()
     creator_photo = serializers.SerializerMethodField()
     creator_last_name = serializers.SerializerMethodField()
     creator_middle_name = serializers.SerializerMethodField()
-    in_respondents = serializers.SerializerMethodField()
+    can_response = serializers.SerializerMethodField()
     response_dates = serializers.SerializerMethodField()
 
     class Meta:
@@ -99,7 +100,7 @@ class LecturesGetSerializer(serializers.Serializer):
             'dates',
             'hall_address',
             'description',
-            'in_respondents',
+            'can_response',
             'creator_user_id',
             'creator_first_name',
             'creator_last_name',
@@ -127,7 +128,7 @@ class LecturesGetSerializer(serializers.Serializer):
         for lecture_request in lecture_requests:
             dates.append({
                 'start': lecture_request.event.datetime_start,
-                'end': lecture_request.event.datetime_end
+                'end': lecture_request.event.datetime_end,
             })
         return dates
 
@@ -142,6 +143,9 @@ class LecturesGetSerializer(serializers.Serializer):
 
     def get_hall_address(self, obj):
         return obj.optional.hall_address
+
+    def get_creator_is_lecturer(self, obj):
+        return bool(obj.lecturer)
 
     def get_creator_first_name(self, obj):
         if obj.customer:
@@ -172,10 +176,23 @@ class LecturesGetSerializer(serializers.Serializer):
             return obj.customer.person.middle_name
         return obj.lecturer.person.middle_name
 
-    def get_in_respondents(self, obj):
+    def get_can_response(self, obj):
         person = self.context['request'].user.person
-        return bool(person.responses.filter(lecture=obj))
+        for lecture_request in obj.lecture_requests.all():
+            respondent = Respondent.objects.filter(person=person, lecture_request=lecture_request).first()
+            if respondent and not respondent.rejected:
+                return False
+        return True
 
     def get_response_dates(self, obj):
         person = self.context['request'].user.person
-        return person.responses.filter(lecture=obj).values_list('event__datetime_start', flat=True)
+        data = []
+
+        for lecture_request in person.responses.filter(lecture=obj):
+            respondent = Respondent.objects.get(person=person, lecture_request=lecture_request)
+            data.append({
+                'date': lecture_request.event.datetime_start,
+                'rejected': respondent.rejected
+            })
+
+        return data

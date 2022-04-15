@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {connect} from "react-redux";
 
 import Modal from '~@/Layout/jsx/Modal'
-import AuthSignUpPassword from './Elements/CreatePassword'
+import CreatePassword from './Elements/CreatePassword'
 import {ActivateModal, DeactivateModal} from "../../Layout/redux/actions/header";
 import {useLocation, useNavigate} from "react-router-dom";
 import {reverse, reverseEqual} from "../../../ProjectConstants";
@@ -26,7 +26,7 @@ function AuthModal(props) {
         props.DeactivateModal()
       }
     }
-  }, [])
+  }, [emailConfirmed])
   
   return (
     <>
@@ -35,7 +35,7 @@ function AuthModal(props) {
                onModalClose={() => props.DeactivateModal()} 
                styleBody={{ width: '400px' }}>
           {emailConfirmed ?
-            <AuthSignUpPassword email={location.state}/> :
+            <CreatePassword email={location.state}/> :
             <Authorization/>
           }
         </Modal>

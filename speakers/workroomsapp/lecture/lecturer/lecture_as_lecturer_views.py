@@ -136,7 +136,14 @@ class LectureResponseAPIView(APIView):
         if not lecture_requests:
             return lecture_responses.does_not_exist()
 
-        if not lecture_requests.filter(respondents=request.user.person).first():
+        can_response = True
+        for lecture_request in lecture_requests.filter(respondents=request.user.person):
+            respondent = Respondent.objects.filter(
+                person=request.user.person, lecture_request=lecture_request).first()
+            if respondent and not respondent.rejected:
+                can_response = False
+
+        if can_response:
             if not dates:
                 return lecture_responses.not_in_data()
 
@@ -153,16 +160,28 @@ class LectureResponseAPIView(APIView):
                 response_request.respondents.add(request.user.person)
                 response_request.save()
 
-            chat = Chat.objects.filter(users__in=[creator.user, request.user]).first()
+            chat = Chat.objects.filter(users=request.user, lecture=lecture).first()
             if not chat:
                 chat = Chat.objects.create(lecture=lecture)
                 chat.users.add(creator.user, request.user)
                 chat.save()
 
+            dates = []
+            for date in format_dates:
+                dates.append(date.strftime('%d.%m'))
+
+            Message.objects.create(
+                author=request.user,
+                chat=chat,
+                text=f'Собеседник заинтересован в Вашем предложении. '
+                     f'Возможные даты проведения: {", ".join(dates)}.'
+            )
+
             user_consumer_data = {
                 "type": "new_respondent",
                 "dates": format_dates,
                 "lecture": lecture,
+                "chat": chat,
                 "lecture_creator": creator.user,
                 "lecture_respondent": request.user
             }
@@ -173,16 +192,20 @@ class LectureResponseAPIView(APIView):
             return lecture_responses.success_response()
         else:
             for lecture_request in lecture_requests:
-                lecture_request.respondents.remove(request.user.person)
-                lecture_request.save()
-            chat = Chat.objects.filter(users__in=[creator.user, request.user]).first()
+                respondent_obj = Respondent.objects.filter(
+                    lecture_request=lecture_request, person=request.user.person).first()
+                if respondent_obj and not respondent_obj.rejected:
+                    lecture_request.respondents.remove(request.user.person)
+                    lecture_request.save()
+            chat = Chat.objects.filter(users=request.user, lecture=lecture).first()
 
             async_to_sync(channel_layer.group_send)(
                 f'user_{creator.user.pk}',
                 {
                     "type": "remove_respondent",
                     "lecture": lecture,
-                    "lecture_respondent": request.user
+                    "lecture_respondent": request.user,
+                    "chat_id": chat.pk
                 }
             )
 
@@ -230,7 +253,7 @@ class LectureToggleConfirmRespondentAPIView(APIView):
         if not lecture_requests:
             return lecture_responses.not_a_respondent()
 
-        chat = Chat.objects.filter(users__in=[request.user, respondent.user]).first()
+        chat = Chat.objects.filter(users=respondent.user, lecture=lecture).first()
         chat_consumer_data = {
             "type": "chat_message",
             'author': request.user.pk,
@@ -240,21 +263,17 @@ class LectureToggleConfirmRespondentAPIView(APIView):
 
         if reject == 'true':
             for lecture_request in lecture_requests:
-                lecture_request.respondents.remove(respondent)
-                lecture_request.save()
+                respondent_obj = Respondent.objects.get(lecture_request=lecture_request, person=respondent)
+                respondent_obj.rejected = True
+                respondent_obj.save()
             lecture.save()
-            # Закомментировал удаление чата при отклонении отклика
-            # async_to_sync(channel_layer.group_send)(
-            #     f'user_{respondent.user.pk}',
-            #     {
-            #         "type": "remove_respondent",
-            #         "lecture": lecture,
-            #         "lecture_respondent": respondent.user
-            #     }
-            # )
 
             chat_consumer_data['confirm'] = False
             async_to_sync(channel_layer.group_send)(f'chat_{chat.pk}', chat_consumer_data)
+            async_to_sync(channel_layer.group_send)(
+                f'user_{respondent.user.pk}',
+                {'type': 'new_message', 'chat_id': chat.pk}
+            )
             Message.objects.create(
                 author=request.user,
                 chat=chat,
@@ -269,5 +288,16 @@ class LectureToggleConfirmRespondentAPIView(APIView):
             lecture_respondent.save()
         lecture.save()
 
+        Message.objects.create(
+            author=request.user,
+            chat=chat,
+            text=chat_consumer_data['text'],
+            confirm=chat_consumer_data.get('confirm')
+        )
+
         async_to_sync(channel_layer.group_send)(f'chat_{chat.pk}', chat_consumer_data)
+        async_to_sync(channel_layer.group_send)(
+            f'user_{respondent.user.pk}',
+            {'type': 'new_message', 'chat_id': chat.pk}
+        )
         return lecture_responses.success_confirm()

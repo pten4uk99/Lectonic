@@ -18,6 +18,7 @@ import Permissions from "./components/Authorization/jsx/Permissions";
 import {reverse} from "./ProjectConstants";
 import {createNotificationsSocket} from "./webSocket";
 import Lecture from "./components/Pages/Lecture/jsx/Lecture";
+import {SetNotifyConnFail} from "./components/Layout/redux/actions/ws";
 
 
 function App(props) {
@@ -27,7 +28,7 @@ function App(props) {
   
   useEffect(() => {
     if (userId && (permissions.is_lecturer || permissions.is_customer)) {
-      createNotificationsSocket(setNotificationsSocket, userId)
+      createNotificationsSocket(setNotificationsSocket, userId, props.SetNotifyConnFail)
     }
   }, [permissions])
   
@@ -66,5 +67,7 @@ function App(props) {
 
 export default connect(
   state => ({store: state}),
-  dispatch => ({})
+  dispatch => ({
+    SetNotifyConnFail: (failed) => dispatch(SetNotifyConnFail(failed))
+  })
 )(App)

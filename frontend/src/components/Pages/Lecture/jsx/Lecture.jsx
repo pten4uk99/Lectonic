@@ -16,6 +16,8 @@ import Loader from "../../../Utils/jsx/Loader";
 
 function Lecture(props) {
   let [isLoaded, setIsLoaded] = useState(false)
+  let [responseLoaded, setResponseLoaded] = useState(true)
+  
   let userId = props.store.permissions.user_id
   let [searchParams, setSearchParams] = useSearchParams()
   let navigate = useNavigate()
@@ -41,6 +43,7 @@ function Lecture(props) {
   }, [])
   
   function handleResponse(e) {
+    setResponseLoaded(false)
     let text = e.target.innerText
     let dates = props.store.lectureDetail.chosenDates.map(
       elem => `${elem.getUTCFullYear()}-${elem.getUTCMonth() + 1}-${elem.getUTCDate()}T${elem.getUTCHours()}:${elem.getUTCMinutes()}`)
@@ -49,6 +52,7 @@ function Lecture(props) {
       .then(response => response.json())
       .then(data => {
         if (data.status === 'success') {
+          setResponseLoaded(true)
           text === 'Откликнуться' ? 
             e.target.innerText = 'Отменить отклик' : 
             e.target.innerText = 'Откликнуться'
@@ -82,9 +86,12 @@ function Lecture(props) {
           
           <div className="left-block">
             <div className="lecture-photo"><img src={getLecturePhoto(lectureData?.svg)} alt=""/></div>
-            <div className="type">{lectureData?.lecture_type}</div>
+            <div className="subheader">
+              <div className="type blue">{lectureData?.creator_is_lecturer ? "Лекция" : "Запрос на лекцию"}</div>
+              <div className="type">{lectureData?.lecture_type}</div>
+            </div>
             <div className="block__person">
-              <div className="header">Лектор:</div>
+              <div className="header">{lectureData?.creator_is_lecturer ? "Лектор:" : "Заказчик:"}</div>
               <div className="block__data">
                 <div className="person-photo">
                   {lectureData?.creator_photo ?
@@ -119,7 +126,10 @@ function Lecture(props) {
               })}
             </div>
             <div className="block__dates">
-              <div className="header">Лектор готов провести лекцию:</div>
+              <div className="header">
+                {lectureData?.creator_is_lecturer ? 
+                  "Лектор готов провести лекцию:" : "Заказчик готов послушать лекцию:"}
+              </div>
               <LectureDates data={lectureData?.dates} responseDates={lectureData?.response_dates}/>
             </div>
             <div className="block__address">
@@ -134,7 +144,12 @@ function Lecture(props) {
               <button className="btn btn-response" 
                       disabled={checkDisabledButton()} 
                       onClick={(e) => handleResponse(e)}>
-                {lectureData?.in_respondents ? "Отменить отклик" : "Откликнуться"}
+                {!responseLoaded ? 
+                  <Loader size={20} 
+                          left="50%" 
+                          top="50%" 
+                          tX="-50%" tY="-50%"/> : 
+                  lectureData?.can_response ? "Откликнуться" : "Отменить отклик"}
               </button>}
           </div>
           
