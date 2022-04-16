@@ -53,7 +53,8 @@ class CalendarDataGripper:
         events = []
         lecture_requests = self.request.user.person.responses.order_by(
             'event__datetime_start').filter(
-            Q(event__datetime_start__gte=datetime.datetime.now())
+            event__datetime_start__gte=datetime.datetime.now(),
+            respondent__rejected=False
         )
 
         for lecture_request in lecture_requests:

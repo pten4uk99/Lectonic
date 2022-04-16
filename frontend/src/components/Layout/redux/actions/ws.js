@@ -7,3 +7,6 @@ export function SetNotifyConnFail(failed) {
 export function SetChatConn(connected) {
   return {type: "SET_CHAT_CONN", payload: connected}
 }
+export function SetChatConnFail(failed) {
+  return {type: "SET_CHAT_CONN_FAIL", payload: failed}
+}

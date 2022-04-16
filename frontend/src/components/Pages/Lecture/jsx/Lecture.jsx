@@ -43,6 +43,7 @@ function Lecture(props) {
   }, [])
   
   function handleResponse(e) {
+    if (!responseLoaded) return
     setResponseLoaded(false)
     let text = e.target.innerText
     let dates = props.store.lectureDetail.chosenDates.map(

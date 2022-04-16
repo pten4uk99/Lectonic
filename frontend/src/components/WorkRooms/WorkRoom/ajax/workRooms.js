@@ -40,6 +40,18 @@ export function getCreatedLecturesForCustomer() {
   )
 }
 
+export function deleteLecture(lecture_id) {
+  const options = {
+    method: 'DELETE',
+    headers: HEADERS,
+    credentials: 'include',
+  }
+  return fetch(
+    `${baseURL}/api/workrooms/lecture/as_lecturer/?lecture_id=${lecture_id}`,
+    options
+  )
+}
+
 export function getAllLecturesForLecturer() {
   const options = {
     method: 'GET',
@@ -96,14 +108,14 @@ export function toggleResponseOnLecture(lecture_id, dates) {
   )
 }
 
-export function toggleConfirmResponseOnLecture(lecture_id, respondent_id, reject) {
+export function toggleConfirmResponseOnLecture(lecture_id, respondent_id, chat_id, reject) {
   const options = {
     method: 'GET',
     headers: HEADERS,
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/lecture/response/confirm/?lecture=${lecture_id}&respondent=${respondent_id}&reject=${reject}`,
+    `${baseURL}/api/workrooms/lecture/response/confirm/?lecture=${lecture_id}&chat_id=${chat_id}&respondent=${respondent_id}&reject=${reject}`,
     options
   )
 }

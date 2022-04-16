@@ -8,10 +8,13 @@ import {SetSelectedChat} from "../../redux/actions/header";
 import {toggleConfirmResponseOnLecture, toggleResponseOnLecture} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
 import {RemoveNotification} from "../../redux/actions/notifications";
 import Loader from '~@/Utils/jsx/Loader'
+import {SetChatConn} from "../../redux/actions/ws";
+import ConfirmAction from "../../../Utils/jsx/ConfirmAction";
 
 
 function ChatMessages(props) {
   let data = props.store.messages
+  let selectedChatId = props.store.header.selectedChatId
   let messages = data.messages
   let messagesBlock = useRef()
   let input = useRef()
@@ -21,6 +24,7 @@ function ChatMessages(props) {
   }, [messagesBlock?.current?.scrollHeight])
   
   useEffect(() => {
+    props.SetChatConn(Boolean(props.chatSocket))
     props.chatSocket?.addEventListener('message', (e) => {
       let data = JSON.parse(e.data)
       props.AddMessage(data)
@@ -41,7 +45,7 @@ function ChatMessages(props) {
   }
   
   function handleSendMessage(e) {
-    if (e.keyCode === 13) {
+    if (e.keyCode === 13 && e.target.value) {
       props.chatSocket.send(JSON.stringify({
         'type': 'chat_message',
         'author': props.store.permissions.user_id,
@@ -51,24 +55,25 @@ function ChatMessages(props) {
     }
   }
   function handleClickIcon() {
-    props.chatSocket.send(JSON.stringify({
-      'type': 'chat_message',
-      'author': props.store.permissions.user_id,
-      'text': input.current.value,
-    }))
-    input.current.value = ''
+    if (input.current.value) {
+      props.chatSocket.send(JSON.stringify({
+        'type': 'chat_message', 
+        'author': props.store.permissions.user_id, 
+        'text': input.current.value,
+      }))
+      input.current.value = ''
+    }
   }
   
   function handleToggleConfirm(reject) {
-    toggleConfirmResponseOnLecture(data.lecture_id, data.talker_respondent, reject)
+    toggleConfirmResponseOnLecture(data.lecture_id, data.talker_respondent, selectedChatId, reject)
       .then(r => r.json())
       .then(data => {
         if (data.status === 'success') {
-          props.chatSocket.close()
-          
           if (reject) {
             props.setArea(false)
             props.SetSelectedChat(null)
+            props.chatSocket.close()
           }
         }
       })
@@ -87,6 +92,8 @@ function ChatMessages(props) {
   if (!props.isLoaded) return <Loader size={60} top="50%" left="50%" tX="-50%" tY="-50%"/>
   return (
     <div className="chat-messages__block">
+      {/* Добавить подтверждение действия для подтверждения и отмены отклика */}
+      {/*<ConfirmAction/>*/}
       <div className="actions__block">
         <div className="lecture">
           <div className="back-arrow" onClick={handleArrowClick}>
@@ -131,6 +138,7 @@ function ChatMessages(props) {
       <div className="input__block">
         <input placeholder='Введите текст' 
                onKeyUp={(e) => handleSendMessage(e)} 
+               disabled={data?.confirmed != null && !data.confirmed}
                ref={input}/>
         <img src={sendMessage} 
              alt="отправить" 
@@ -145,6 +153,7 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     AddMessage: (message) => dispatch(AddMessage(message)),
+    SetChatConn: (connected) => dispatch(SetChatConn(connected)),
     RemoveNotification: (chat_id) => dispatch(RemoveNotification(chat_id)),
     SetSelectedChat: (chat_id) => dispatch(SetSelectedChat(chat_id)),
     SetMessagesConfirmed: (confirmed) => dispatch(SetMessagesConfirmed(confirmed)),

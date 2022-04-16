@@ -6,14 +6,14 @@ import {UpdateMessages} from "../../redux/actions/messages";
 import {RemoveNotification, SetNeedRead} from "../../redux/actions/notifications";
 import {SetSelectedChat} from "../../redux/actions/header";
 import {getLecturePhoto} from "../../../../ProjectConstants";
+import {SetChatConnFail} from "../../redux/actions/ws";
 
 
 function NotificationsList(props) {
   let chatList = props.store.notifications
+  let selectedChatId = props.store.header.selectedChatId
   
-  function handleNotificationClick(chat_id) {
-    props.setArea(true)
-    createChatSocket(props.setChatSocket, chat_id)
+  function getMessages(chat_id) {
     getChatMessages(chat_id)
       .then(r => r.json())
       .then(data => {
@@ -27,6 +27,16 @@ function NotificationsList(props) {
           props.setArea(false)
         }
       })
+  }
+  
+  useEffect(() => {
+    if (selectedChatId && props.store.ws.chatConn) getMessages(selectedChatId)
+  }, [props.store.ws.chatConn])
+  
+  function handleNotificationClick(chat_id) {
+    props.setArea(true)
+    createChatSocket(props.setChatSocket, chat_id, props.SetChatConnFail)
+    getMessages(chat_id)
   }
 
   return (
@@ -59,6 +69,7 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     UpdateMessages: (data) => dispatch(UpdateMessages(data)),
+    SetChatConnFail: (failed) => dispatch(SetChatConnFail(failed)),
     RemoveNotification: (chat_id) => dispatch(RemoveNotification(chat_id)),
     SetSelectedChat: (chat_id) => dispatch(SetSelectedChat(chat_id)),
     SetNeedRead: (chat_id, need_read) => dispatch(SetNeedRead(chat_id, need_read)),

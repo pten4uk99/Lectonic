@@ -130,8 +130,8 @@ function Header(props) {
                alt="меню"/>
         </nav>
       </header>
-      
-      <AuthModal/>
+
+      {!loggedIn && <AuthModal/>}
       <ProfileDropDown/>
       {chatActive && (isLecturer || isCustomer) && 
         <ChatDropdown notificationsSocket={props.notificationsSocket} 

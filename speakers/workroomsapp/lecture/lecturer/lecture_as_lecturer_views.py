@@ -15,7 +15,8 @@ channel_layer = get_channel_layer()
 
 
 class LectureAsLecturerAPIView(APIView):
-    permission_classes = [workroomsapp_permissions.IsLecturer]
+    permission_classes = [workroomsapp_permissions.IsLecturer |
+                          workroomsapp_permissions.IsCustomer]
 
     @swagger_auto_schema(**lecture_docs.LectureAsLecturerCreateDoc)
     def post(self, request):
@@ -44,6 +45,28 @@ class LectureAsLecturerAPIView(APIView):
             lectures_list, many=True, context={'request': request})
 
         return lecture_responses.success_get_lectures(serializer.data)
+
+    @swagger_auto_schema(deprecated=True)
+    def delete(self, request):
+        lecture_id = request.GET.get('lecture_id')
+
+        if not lecture_id:
+            lecture_responses.not_in_data()
+
+        lecture = Lecture.objects.filter(pk=lecture_id).first()
+
+        if not lecture:
+            return lecture_responses.does_not_exist()
+
+        if lecture.lecturer:
+            if not lecture.lecturer.person.user == request.user:
+                return lecture_responses.not_a_creator()
+        elif lecture.customer:
+            if not lecture.customer.person.user == request.user:
+                return lecture_responses.not_a_creator()
+
+        lecture.delete()
+        return lecture_responses.lecture_deleted()
 
 
 class LectureDetailAPIView(APIView):
@@ -143,15 +166,15 @@ class LectureResponseAPIView(APIView):
             if respondent and not respondent.rejected:
                 can_response = False
 
+        format_dates = []
+        for date in dates:
+            format_dates.append(datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M'))
+
+        response_lecture_requests = lecture_requests.filter(event__datetime_start__in=format_dates)
+
         if can_response:
             if not dates:
                 return lecture_responses.not_in_data()
-
-            format_dates = []
-            for date in dates:
-                format_dates.append(datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M'))
-
-            response_lecture_requests = lecture_requests.filter(event__datetime_start__in=format_dates)
 
             if not response_lecture_requests:
                 return lecture_responses.does_not_exist()
@@ -160,9 +183,10 @@ class LectureResponseAPIView(APIView):
                 response_request.respondents.add(request.user.person)
                 response_request.save()
 
-            chat = Chat.objects.filter(users=request.user, lecture=lecture).first()
+            chat = Chat.objects.filter(lecture_requests__in=response_lecture_requests).first()
             if not chat:
                 chat = Chat.objects.create(lecture=lecture)
+                chat.lecture_requests.add(*response_lecture_requests)
                 chat.users.add(creator.user, request.user)
                 chat.save()
 
@@ -183,7 +207,8 @@ class LectureResponseAPIView(APIView):
                 "lecture": lecture,
                 "chat": chat,
                 "lecture_creator": creator.user,
-                "lecture_respondent": request.user
+                "lecture_respondent": request.user,
+                "lecture_requests": response_lecture_requests
             }
             async_to_sync(channel_layer.group_send)(f'user_{creator.user.pk}', user_consumer_data)
             async_to_sync(channel_layer.group_send)(f'user_{request.user.pk}', user_consumer_data)
@@ -197,7 +222,7 @@ class LectureResponseAPIView(APIView):
                 if respondent_obj and not respondent_obj.rejected:
                     lecture_request.respondents.remove(request.user.person)
                     lecture_request.save()
-            chat = Chat.objects.filter(users=request.user, lecture=lecture).first()
+            chat = Chat.objects.filter(lecture_requests__in=response_lecture_requests).first()
 
             async_to_sync(channel_layer.group_send)(
                 f'user_{creator.user.pk}',
@@ -205,7 +230,8 @@ class LectureResponseAPIView(APIView):
                     "type": "remove_respondent",
                     "lecture": lecture,
                     "lecture_respondent": request.user,
-                    "chat_id": chat.pk
+                    "chat_id": chat.pk,
+                    "lecture_requests": response_lecture_requests
                 }
             )
 
@@ -226,13 +252,15 @@ class LectureToggleConfirmRespondentAPIView(APIView):
     def get(self, request):
         lecture_id = request.GET.get('lecture')
         respondent_id = request.GET.get('respondent')
+        chat_id = request.GET.get('chat_id')
         reject = request.GET.get('reject')
 
-        if not lecture_id or not respondent_id:
+        if not lecture_id or not respondent_id or not chat_id:
             return lecture_responses.not_in_data()
 
         lecture = Lecture.objects.filter(pk=lecture_id).first()
         respondent = Person.objects.get(pk=respondent_id)
+        chat = Chat.objects.get(pk=chat_id)
 
         if not lecture:
             return lecture_responses.lecture_does_not_exist()
@@ -248,12 +276,11 @@ class LectureToggleConfirmRespondentAPIView(APIView):
         if not is_lecturer and not is_customer:
             return lecture_responses.not_a_creator()
 
-        lecture_requests = lecture.lecture_requests.filter(respondents=respondent)
+        lecture_requests = lecture.lecture_requests.filter(chat_list=chat)
 
         if not lecture_requests:
             return lecture_responses.not_a_respondent()
 
-        chat = Chat.objects.filter(users=respondent.user, lecture=lecture).first()
         chat_consumer_data = {
             "type": "chat_message",
             'author': request.user.pk,

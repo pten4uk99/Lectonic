@@ -1,10 +1,11 @@
 from speakers.utils import response
 
 LECTURE_CREATED = 'Лекция успешно создана'
+LECTURE_DELETED = 'Лекция успешно удалена'
 LECTURE_DOES_NOT_EXIST = 'Данной лекции не существует'
 RESPONDENT_DOES_NOT_EXIST = 'Выбранный пользователь не откликался на выбранную лекцию'
 NOT_IN_DATA = 'Не переданы необходимые параметры'
-DOES_NOT_EXIST = 'Лекции на выбранную дату не существует'
+DOES_NOT_EXIST = 'Лекции не существует'
 NOT_A_CREATOR = 'Пользователь не является создателем данной лекции'
 NOT_A_RESPONDENT = 'Выбранный пользователь не откликался на выбранную лекцию'
 SUCCESS_RESPONSE = 'Вы успешно откликнулись на лекцию'
@@ -28,6 +29,14 @@ def lecture_created():
         status=response.CREATE,
         detail=LECTURE_CREATED,
         status_code=201
+    )
+
+
+def lecture_deleted():
+    return response.get_response(
+        status=response.DELETE,
+        detail=LECTURE_DELETED,
+        status_code=200
     )
 
 

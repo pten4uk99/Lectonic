@@ -8,9 +8,10 @@ class DatabaseInteraction:
     @database_sync_to_async
     def create_new_chat(self, data):
         chat = Chat.objects.filter(
-            users=data["lecture_respondent"], lecture=data["lecture"]).first()
+            lecture_requests__in=data["lecture_requests"]).first()
         if not chat:
             chat = Chat.objects.create(lecture=data["lecture"])
+            chat.lecture_requests.add(data["lecture_requests"])
             chat.users.add(data["lecture_creator"], data["lecture_respondent"])
             chat.save()
 

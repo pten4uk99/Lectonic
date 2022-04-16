@@ -20,24 +20,26 @@ export function createNotificationsSocket(setSocket, userId, setFailConnection) 
     } else {
       notificationsWs = null
       setFailConnection(true)
-      setTimeout(() => createNotificationsSocket(setSocket, userId, setFailConnection), 3000)
-      console.log('Соединение разорвано')
+      setTimeout(() => createNotificationsSocket(setSocket, userId, setFailConnection), 1000)
     }
   }
 }
 
-export function createChatSocket(setSocket, chatId) {
+export function createChatSocket(setSocket, chatId, setFailConnection) {
   let socket = new WebSocket(`${baseWS}/ws/chat/${chatId}`)
   
   socket.onopen = (e) => {
     setSocket(socket);
+    setFailConnection(false)
     console.log('Соединение с чатом установлено')
   }
   socket.onclose = (e) => {
     if (e.wasClean) {
+      setFailConnection(false)
       console.log('Соединение с чатом завершено')
     } else {
-      setTimeout(() => createChatSocket(setSocket, chatId), 3000)
+      setFailConnection(true)
+      setTimeout(() => createChatSocket(setSocket, chatId, setFailConnection), 1000)
       console.log('Соединение с чатом разорвано')
     }
   }

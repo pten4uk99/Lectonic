@@ -180,7 +180,7 @@ class LecturesGetSerializer(serializers.Serializer):
         person = self.context['request'].user.person
         for lecture_request in obj.lecture_requests.all():
             respondent = Respondent.objects.filter(person=person, lecture_request=lecture_request).first()
-            if respondent and not respondent.rejected:
+            if respondent and not (respondent.rejected or respondent.confirmed):
                 return False
         return True
 

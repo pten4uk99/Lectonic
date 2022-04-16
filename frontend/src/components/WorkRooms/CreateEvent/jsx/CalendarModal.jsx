@@ -30,6 +30,16 @@ function CalendarModal(props) {
   }
   
   useEffect(() => {
+    if (allTimeEqual) {
+      if (chooseDates.length > 0) {
+        handleChosenStartValue(
+          [chooseDates[0].getHours(), chooseDates[0].getMinutes()].join(':')
+        )
+      }
+    }
+  }, [allTimeEqual])
+  
+  useEffect(() => {
     if (chooseDates.length === 0) setChosenDate(null)
     if (chooseDates.length === 1) setChosenDate(chooseDates[0])
     else if (chooseDates.length > 1) {

@@ -28,8 +28,9 @@ function Lecturer(props){
   
   return (
     <article className="lecturer__content">
-      <CreatedLectures role='lecturer' 
-                       data={createdLectures}/>
+      <CreatedLectures role='lecturer'
+                       data={createdLectures} 
+                       setData={setCreatedLectures}/>
       <LectureCardList header='Потенциальные заказы' 
                        isLecturer={true}
                        data={potentialLectures}/>
