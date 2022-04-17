@@ -78,7 +78,7 @@ function DropDown(props) {
     <>
       <div className='dropdown'>
         <div className="dropdown-top"
-        style={{width: props.width ? '' : width + 30, zIndex: props.input ? '100' : ''}}>
+        style={{width: props.width ? '' : width + 30, zIndex: props.input ? '90' : ''}}>
               <input readOnly={!props.input} 
                      autoComplete='nope' 
                      name={props?.inputName}
@@ -93,7 +93,7 @@ function DropDown(props) {
                    onClick={openSelectBottom}/>
           </div>
           <div className={isSelectOpen ? dropdown + " show" : dropdown}
-               style={{width: props.width ? '100%' : '', zIndex: props.input ? '99' : ''}}>
+               style={{width: props.width ? '100%' : '', zIndex: props.input ? '80' : ''}}>
             <div ref={dropDownBox} 
                  className='dropdown-box'>
                  {data?.map((elem,index) => {
@@ -101,8 +101,8 @@ function DropDown(props) {
                         <div 
                               className="dropdown-item" 
                               key={index}
-                              onClick={() => changeValue(elem.name == undefined ? elem : `${elem.name}`, index)}>
-                              {elem.name == undefined ? elem : `${elem.name}`}
+                              onClick={() => changeValue(elem.name == undefined ? elem : `${elem.name} ${elem.region == undefined ? '' : `, ${elem.region}`}`, index)}>
+                              {elem.name == undefined ? elem : `${elem.name} ${elem.region == undefined ? '' : `, ${elem.region}`}`}
                         </div>)
                     })
                   }

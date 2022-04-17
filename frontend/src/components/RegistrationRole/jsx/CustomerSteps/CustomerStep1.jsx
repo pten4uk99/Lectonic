@@ -1,19 +1,26 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import {connect} from "react-redux";
 
 import PhotoPreview from "../PhotoPreview";
 import {getDomainArray} from "../../../WorkRooms/CreateEvent/ajax/event";
-import {UpdateDomain} from "../../../WorkRooms/CreateEvent/redux/actions/event";
+import {UpdateDomain, DeleteDomain} from "../../../WorkRooms/CreateEvent/redux/actions/event";
 import {UpdatePassportPhoto, UpdateSelfiePhoto} from "../../redux/actions/lecturer";
 import DropDown from "../../../Utils/jsx/DropDown";
 import {domainSelectHandler} from "../../../WorkRooms/CreateEvent/jsx/CreateEvent";
+import btnDelete from '~/assets/img/btn-delete.svg';
 
 
 function CustomerStep1(props) {
   let selectedDomains = props.store.event.domain
-  
   let [domainArray, setDomainArray] = useState(null)
+  let [deletedDomain, setDeletedDomain] = useState();
   
+  function deleteElem (indexElem) {
+    props.DeleteDomain(selectedDomains, indexElem);
+    domainArray.push(deletedDomain)
+    setDomainArray(domainArray.sort());
+  }
+
   useEffect(() => {
     getDomainArray()
       .then(response => response.json())
@@ -81,7 +88,14 @@ function CustomerStep1(props) {
         <p className="step-block__left-part pt-0"/>
         <div className='domain-list flex'>
           {selectedDomains.map((domain, index) => {
-            return <div key={index} className='pill pill-grey'>{domain}</div>
+            return <div key={index} className='pill pill-grey'
+                        onMouseEnter={() => {setDeletedDomain(domain)}}>
+                        {domain}
+                        <div className='pill-btn-delete' 
+                             onClick={() => deleteElem(index)}>
+                             <img src={btnDelete} alt="delete"/>
+                        </div>
+                   </div>
           })}
         </div>
       </div>
@@ -94,6 +108,7 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     UpdateDomain: (domain) => dispatch(UpdateDomain(domain)),
+    DeleteDomain: (domain, i) => dispatch(DeleteDomain(domain, i)),
     UpdatePassportPhoto: (photo) => dispatch(UpdatePassportPhoto(photo)),
     UpdateSelfiePhoto: (photo) => dispatch(UpdateSelfiePhoto(photo)),
   })

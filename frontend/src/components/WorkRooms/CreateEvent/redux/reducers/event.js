@@ -18,6 +18,13 @@ export default function event(state=initialState, action) {
           action.payload.domain
         ]
       }
+    case "DELETE_DOMAIN":
+      return {
+        ...state, 
+        domain: [
+          ...state.domain.filter((elem, i) => action.payload.index != i), 
+        ]
+      }
     case "SWAP_EVENT_TYPE":
       return {...state, type: action.payload.type}    
     case "SWAP_PLACE":
