@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { connect } from 'react-redux'
 import Calendar from './Calendar/jsx/Calendar'
 import DateDetail from './DateDetail/jsx/DateDetail'
@@ -7,14 +7,22 @@ function FullCalendar(props) {
   let isLecturer = props.store.profile.is_lecturer
   let isCustomer = props.store.profile.is_customer
   
+  let [myLecturesActive, setMyLecturesActive] = useState(true)
+  
   return (
     <div className="calendar__block">
       <div className="workroom__block-header">
         {isLecturer && <span>Календарь лектора</span>}
         {isCustomer && <span>Календарь заказчика</span>}
       </div>
+      <div className="calendar-lectures__block">
+        <span className={myLecturesActive ? "lectures active" : "lectures"} 
+              onClick={() => setMyLecturesActive(true)}>Мои лекции</span>
+        <span className={!myLecturesActive ? "responses active" : "responses"}
+              onClick={() => setMyLecturesActive(false)}>Мои отклики</span>
+      </div>
       <div className='calendar__wrapper'>
-        <Calendar/>
+        <Calendar isMyLectures={myLecturesActive}/>
         <DateDetail/>
       </div>
       <div className="calendar__block-tooltips">

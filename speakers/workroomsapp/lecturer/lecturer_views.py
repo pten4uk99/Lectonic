@@ -48,3 +48,14 @@ class LecturerCreateAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return lecturer_responses.lecturer_created()
+
+
+class LecturersListGetAPIView(APIView):
+    @swagger_auto_schema(deprecated=True)
+    def get(self, request):
+        lecturers = Lecturer.objects.exclude(person__user=request.user)
+
+        serializer = LecturersListGetSerializer(
+            lecturers, many=True, context={'request': request})
+
+        return lecturer_responses.success_get_lecturers(serializer.data)

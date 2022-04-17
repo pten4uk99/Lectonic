@@ -55,7 +55,7 @@ function DateDetail(props) {
                   creator={event.creator}
                   status={event.status}
                   name={event.name}
-                  photo={event.photo}
+                  photo={event.svg}
                   customer={event.customer}
                   lecturer={event.lecturer}
                   respondents={event.respondents}

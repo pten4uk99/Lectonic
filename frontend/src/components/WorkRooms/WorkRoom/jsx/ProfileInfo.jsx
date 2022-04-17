@@ -7,9 +7,11 @@ import {getProfileInfo} from "../ajax/workRooms";
 import {useNavigate} from "react-router-dom";
 import {reverse} from "../../../../ProjectConstants";
 import PhotoName from "../../../Utils/jsx/PhotoName";
+import Loader from "../../../Utils/jsx/Loader";
 
 
 function ProfileInfo(props){
+  let [isLoaded, setIsLoaded] = useState(false)
   let navigate = useNavigate()
   const profile = props.store.profile
   let btnClassName = "profile-about__btn-role"
@@ -25,12 +27,16 @@ function ProfileInfo(props){
     getProfileInfo()
       .then(response => response.json())
       .then(data => {
-        if (data.status === 'success') props.UpdateProfile(data.data[0])
+        if (data.status === 'success') {
+          props.UpdateProfile(data.data[0])
+          setIsLoaded(true)
+        }
         else if (data.status === 'error') navigate(reverse('create_profile'))
       })
       .catch(error => console.log(error))
   }, [])
   
+  if (!isLoaded) return <Loader size={40} top={100} left="50%" tX="-50%"/>
   return (
     <div className="profile-about">
       <div className="profile-about__photo-box">

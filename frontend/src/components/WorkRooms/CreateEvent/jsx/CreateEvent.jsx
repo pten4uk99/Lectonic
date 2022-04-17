@@ -3,8 +3,6 @@ import {connect} from "react-redux";
 import {useNavigate, useSearchParams} from "react-router-dom";
 
 import calendarIcon from '~/assets/img/event/calendar-icon.svg'
-import photoIcon from '~/assets/img/photo-icon.svg'
-import downArrow from '~/assets/img/down-arrow.svg'
 import backArrow from '~/assets/img/back-arrow.svg'
 import {
   SwapEventType, SwapPayment, SwapPlace,
@@ -34,6 +32,7 @@ function CreateEvent(props) {
   let role = searchParams.get('role')
   
   let chooseDates = props.store.calendar.modalChooseDates
+  let duration = props.store.calendar.chosenDuration
   let selectedDomains = props.store.event.domain
   let eventType = props.store.event.type
   let place = props.store.event.place
@@ -50,8 +49,11 @@ function CreateEvent(props) {
   let [requiredFields, setRequiredFields] = useState({
     name: '',
     date: chooseDates,
-    // timeStart: '',
-    // timeEnd: ''
+  })
+  
+  let [errorMessages, setErrorMessages] = useState({
+    name: '',
+    datetime: '',
   })
   
   useEffect(() => {
@@ -61,6 +63,7 @@ function CreateEvent(props) {
   let [domainArray, setDomainArray] = useState(null)
   
   useEffect(() => {
+    if (role === 'customer') setRequiredFields({...requiredFields, listeners: ''})
     props.UpdatePhoto('')
     getDomainArray()
       .then(response => response.json())
@@ -88,19 +91,27 @@ function CreateEvent(props) {
     selectedDomains.map((elem) => formData.append('domain',  elem))
     for (let date of chooseDates) formData.append(
       'datetime',
-      (`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}T${formData.get('time_start')}` + 
+      (`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}T${date.getHours()}:${date.getMinutes()}` + 
       ',' +
-      `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}T${formData.get('time_end')}`)
+      `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}T${getStrTime(date.getHours(), date.getMinutes(), duration)}`)
     )
     formData.set('type', eventType)
+    formData.set('svg', String(1 + Math.floor(Math.random() * 5)))
     createEvent(formData, role)
       .then(response => response.json())
       .then(data => {
         if (data.status === 'created') navigate(reverse('workroom'))
+        else {
+          setErrorMessages({
+            name: data?.name,
+            datetime: data?.datetime,
+            listeners: data?.listeners
+          })
+        }
       })
       .catch(error => console.log('Ошибка в создании лекции: ', error))
   }
-  
+
   return (
     <>
       <div className="navigate-back__block" onClick={() => navigate(-1)}>
@@ -119,23 +130,23 @@ function CreateEvent(props) {
             </h2>
           </div>
           
-          <div className='cover-l label'>
-            Обложка:
-            <span className="required-sign step-block__required-sign">*</span>
-          </div>
-          <label className={titlePhotoSrc ? 'cover' : 'cover no-photo'}>
-            <img className='icon' 
-                 src={photoIcon} 
-                 alt='photo-icon'/>
-              <span className='add-photo'>Добавить фото</span>
-              <input name='photo'
-                     className='add-photo__input'
-                     type='file'
-                     onChange={e => addPhotoHandler(e, props.UpdatePhoto)}/>
-            <img className='title-img'
-                 src={titlePhotoSrc}
-                 alt='Обложка'/>
-          </label>
+          {/*<div className='cover-l label'>*/}
+          {/*  Обложка:*/}
+          {/*  <span className="required-sign step-block__required-sign">*</span>*/}
+          {/*</div>*/}
+          {/*<label className={titlePhotoSrc ? 'cover' : 'cover no-photo'}>*/}
+          {/*  <img className='icon' */}
+          {/*       src={photoIcon} */}
+          {/*       alt='photo-icon'/>*/}
+          {/*    <span className='add-photo'>Добавить фото</span>*/}
+          {/*    <input name='photo'*/}
+          {/*           className='add-photo__input'*/}
+          {/*           type='file'*/}
+          {/*           onChange={e => addPhotoHandler(e, props.UpdatePhoto)}/>*/}
+          {/*  <img className='title-img'*/}
+          {/*       src={titlePhotoSrc}*/}
+          {/*       alt='Обложка'/>*/}
+          {/*</label>*/}
           
           <div className='domain-l label'>
             Тематика:
@@ -176,7 +187,11 @@ function CreateEvent(props) {
                    autoComplete='none'
                    onChange={(e) => setRequiredFields({...requiredFields, name: e.target.value})}/>
           </div>
-          
+          {errorMessages.name && (<div className='form__input-error' 
+                                       style={{
+                                             gridArea: 'topic',
+                                             transform: 'translateY(25px)'
+                                           }}>{errorMessages.name[0]}</div>)}
           <div className='type-l label'>Тип лекции:</div>
           <div className='type flex'>
             <div className={eventType !== 'online' ? 'pill' : 'pill pill-blue'} 
@@ -207,17 +222,22 @@ function CreateEvent(props) {
                 <CalendarModal/>
             </Modal>
           </div>
+          {errorMessages.datetime && (<div className='form__input-error' 
+                                           style={{
+                                             gridArea: 'date',
+                                             transform: 'translateY(25px)'
+                                           }}>{errorMessages.datetime[0]}</div>)}
           
-          <div className='time-l label'>
-            Время:
-            <span className="required-sign step-block__required-sign">*</span>
-          </div>
-          <div className='time flex'>
-            <span>c</span>
-            <input name='time_start' type="time"/>
-            <span>до</span>
-            <input name='time_end' type="time"/>
-          </div>
+          {/*<div className='time-l label'>*/}
+          {/*  Время:*/}
+          {/*  <span className="required-sign step-block__required-sign">*</span>*/}
+          {/*</div>*/}
+          {/*<div className='time flex'>*/}
+          {/*  <span>c</span>*/}
+          {/*  <input name='time_start' type="time"/>*/}
+          {/*  <span>до</span>*/}
+          {/*  <input name='time_end' type="time"/>*/}
+          {/*</div>*/}
 
           {role === 'customer' && 
             <>
@@ -227,15 +247,20 @@ function CreateEvent(props) {
               </div>
               <div className='listeners flex'>
                 <input name='listeners' 
-                       type='number'
-                       min='0'
-                       step='10'
-                       className='text-input' 
-                       autoComplete='none'
-                       onChange={(e) => setRequiredFields({...requiredFields, name: e.target.value})}/>
+                       type='text'
+                       className='text-input'
+                       autoComplete='nope'
+                       onChange={(e) => {
+                         setRequiredFields({...requiredFields, listeners: e.target.value})
+                         onlyNumber(e, 3)
+                       }}/>
               </div>
             </>}
-          
+            {errorMessages.listeners && (<div className='form__input-error' 
+                                   style={{
+                                     gridArea: 'listeners',
+                                     transform: 'translateY(25px)'
+                                   }}>{errorMessages.listeners[0]}</div>)}
           <div className='workspace-l label'>Помещение для лекции:</div>
           <div className='workspace flex'>
             <div className={place ? 'pill pill-blue': 'pill'}
@@ -279,10 +304,9 @@ function CreateEvent(props) {
             </div>
             {payment ? <input name='cost' 
                               className='text-input' 
-                              type='number' 
-                              step={1000}
-                              min={0}
-                              placeholder='Укажите цену'/> : <></>}
+                              type='text'
+                              placeholder='Укажите цену' 
+                              onChange={(e) => onlyNumber(e, 5)}/> : <></>}
           </div>
           <div className='submit'>
             <button className='btn big-button' 
@@ -320,10 +344,26 @@ export function addPhotoHandler(inputEvent, UpdatePhoto) {
 }
 
 function checkRequiredFields(obj, props) {
-  if ((props.store.event.domain.length < 1) || !props.store.event.photo) return true
+  if ((props.store.event.domain.length < 1)) return true
   
   for (let field in obj) {
     if (!obj[field]) return true
   }
   return false
+}
+
+function getStrTime(hour, minute, duration) {
+  let oldMinutes = hour * 60 + minute
+  let newMinutes = oldMinutes + duration
+  let newHour = newMinutes / 60
+  let newMinute = newMinutes % 60
+  
+  if (newHour < 1) return `00:${newMinute}`
+  else return `${Math.floor(newHour)}:${newMinute}`
+}
+
+function onlyNumber(e, maxLength) {
+  if (isNaN(Number(e.target.value)) || e.target.value.length > maxLength) {
+    e.target.value = e.target.value.slice(0, -1)
+  }
 }

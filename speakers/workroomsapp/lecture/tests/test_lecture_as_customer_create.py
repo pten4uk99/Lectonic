@@ -73,17 +73,8 @@ class TestLectureAsCustomerCreate(APITestCase):
             msg='В базе не создан LectureDomain'
         )
         self.assertEqual(
-            CustomerLectureRequest.objects.all().exists(), True,
-            msg='В базе не создан CustomerLectureRequest'
-        )
-        self.assertEqual(
-            hasattr(Lecture.objects.first(), 'lecture_request'), True,
-            msg='У созданной лекции нет аттрибута lecture_request'
-        )
-        self.assertEqual(
-            os.path.exists(Lecture.objects.first().lecture_request.customer_lecture_request.photo.path),
-            True,
-            msg='Неверный путь изображения лекции'
+            hasattr(Lecture.objects.first(), 'lecture_requests'), True,
+            msg='У созданной лекции нет аттрибута lecture_requests'
         )
 
     def test_with_existing_datetime(self):
@@ -101,8 +92,10 @@ class TestLectureAsCustomerCreate(APITestCase):
         )
 
         temp_data['photo'] = test_image.create_image()
-        temp_data['datetime'] = [str(datetime.datetime.now() + datetime.timedelta(days=2, minutes=30)) + ',' +
-                                 str(datetime.datetime.now() + datetime.timedelta(days=2, hours=2))]
+        temp_data['datetime'] = [
+            (datetime.datetime.now() + datetime.timedelta(days=2, minutes=30)).strftime('%Y-%m-%dT%H:%M') +
+            ',' +
+            (datetime.datetime.now() + datetime.timedelta(days=2, hours=2)).strftime('%Y-%m-%dT%H:%M')]
         response3 = self.client.post(reverse('lecture_as_customer'), temp_data)
         self.assertEqual(
             response3.status_code,
@@ -112,8 +105,10 @@ class TestLectureAsCustomerCreate(APITestCase):
         )
 
         temp_data['photo'] = test_image.create_image()
-        temp_data['datetime'] = [str(datetime.datetime.now() + datetime.timedelta(days=2, hours=1)) + ',' +
-                                 str(datetime.datetime.now() + datetime.timedelta(days=2, hours=2))]
+        temp_data['datetime'] = [
+            (datetime.datetime.now() + datetime.timedelta(days=2, hours=1)).strftime('%Y-%m-%dT%H:%M') +
+            ',' +
+            (datetime.datetime.now() + datetime.timedelta(days=2, hours=2)).strftime('%Y-%m-%dT%H:%M')]
         response4 = self.client.post(reverse('lecture_as_customer'), temp_data)
         self.assertEqual(
             response4.status_code,
@@ -123,8 +118,10 @@ class TestLectureAsCustomerCreate(APITestCase):
         )
 
         temp_data['photo'] = test_image.create_image()
-        temp_data['datetime'] = [str(datetime.datetime.now() + datetime.timedelta(days=2, minutes=-15)) + ',' +
-                                 str(datetime.datetime.now() + datetime.timedelta(days=2))]
+        temp_data['datetime'] = [
+            (datetime.datetime.now() + datetime.timedelta(days=2, minutes=-15)).strftime('%Y-%m-%dT%H:%M') +
+            ',' +
+            (datetime.datetime.now() + datetime.timedelta(days=2)).strftime('%Y-%m-%dT%H:%M')]
         response5 = self.client.post(reverse('lecture_as_customer'), temp_data)
         self.assertEqual(
             response5.status_code,
@@ -134,8 +131,10 @@ class TestLectureAsCustomerCreate(APITestCase):
         )
 
         temp_data['photo'] = test_image.create_image()
-        temp_data['datetime'] = [str(datetime.datetime.now() + datetime.timedelta(days=2, minutes=-15)) + ',' +
-                                 str(datetime.datetime.now() + datetime.timedelta(days=2, minutes=15))]
+        temp_data['datetime'] = [
+            (datetime.datetime.now() + datetime.timedelta(days=2, minutes=-15)).strftime('%Y-%m-%dT%H:%M') +
+            ',' +
+            (datetime.datetime.now() + datetime.timedelta(days=2, minutes=15)).strftime('%Y-%m-%dT%H:%M')]
         response6 = self.client.post(reverse('lecture_as_customer'), temp_data)
         self.assertEqual(
             response6.status_code,

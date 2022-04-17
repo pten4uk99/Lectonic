@@ -1,6 +1,6 @@
 .chat-dropdown__block {
   position: absolute
-  top: 50px
+  top: 70px
   right: 144px
   
   width: 455px
@@ -10,7 +10,10 @@
   
   background: white;
   border-radius: 18px;
-  box-shadow: 0 0 15px rgba(0, 6, 32, 0.1);
+  box-shadow: 0 0 10px rgba(0, 6, 32, 0.1);
+  
+  transform-origin: 100% 0;
+  animation: chat-open .1s;
   
   z-index 9
   ::-webkit-scrollbar {
@@ -62,6 +65,9 @@
       margin-left: 12px
       width: 294px
       .lecture-name {
+        overflow-x: hidden;
+        white-space: nowrap
+        text-overflow: ellipsis
         font-size: 16px
         font-weight: 500
       }
@@ -84,5 +90,14 @@
     text-align: center
     margin-top: 200px
     color $main-grey
+  }
+}
+  
+@keyframes chat-open {
+  0% {
+    transform: scale(0)
+  }
+  100% {
+    transform: scale(1)
   }
 }

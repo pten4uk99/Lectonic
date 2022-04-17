@@ -3,16 +3,17 @@ import {connect} from "react-redux";
 import {getChatMessages, getNotificationsList} from "../../ajax";
 import {createChatSocket} from "../../../../webSocket";
 import {UpdateMessages} from "../../redux/actions/messages";
-import {SetNeedRead} from "../../redux/actions/notifications";
+import {RemoveNotification, SetNeedRead} from "../../redux/actions/notifications";
 import {SetSelectedChat} from "../../redux/actions/header";
+import {getLecturePhoto} from "../../../../ProjectConstants";
+import {SetChatConnFail} from "../../redux/actions/ws";
 
 
 function NotificationsList(props) {
   let chatList = props.store.notifications
+  let selectedChatId = props.store.header.selectedChatId
   
-  function handleNotificationClick(chat_id) {
-    props.setArea(true)
-    createChatSocket(props.setChatSocket, chat_id)
+  function getMessages(chat_id) {
     getChatMessages(chat_id)
       .then(r => r.json())
       .then(data => {
@@ -20,8 +21,22 @@ function NotificationsList(props) {
           props.UpdateMessages(data.data[0])
           props.SetNeedRead(chat_id, false)
           props.SetSelectedChat(chat_id)
+          props.setIsLoaded(true)
+        } else {
+          props.RemoveNotification(chat_id)
+          props.setArea(false)
         }
       })
+  }
+  
+  useEffect(() => {
+    if (selectedChatId && props.store.ws.chatConn) getMessages(selectedChatId)
+  }, [props.store.ws.chatConn])
+  
+  function handleNotificationClick(chat_id) {
+    props.setArea(true)
+    createChatSocket(props.setChatSocket, chat_id, props.SetChatConnFail)
+    getMessages(chat_id)
   }
 
   return (
@@ -32,16 +47,16 @@ function NotificationsList(props) {
         return <li key={elem.id} 
                    className="chat-dropdown__notification" 
                    onClick={() => handleNotificationClick(elem.id)}>
-          <div className="photo"><img src={elem.lecture_photo} alt="обложка"/></div>
+          <div className="photo"><img src={getLecturePhoto(elem.lecture_svg)} alt="обложка"/></div>
           <div className="text">
             <p className='lecture-name'>{elem.lecture_name}</p>
-            <p className='respondent-name'>Отклик: {elem.respondent_first_name} {elem.respondent_last_name}</p>
+            <p className='respondent-name'>{elem.respondent_first_name} {elem.respondent_last_name}</p>
           </div>
           {elem.need_read && <div className="need-read"/>}
         </li>
       }) :
         <div className="empty-list">
-          Здесь будут отображаться отклики на ваши неподтвержденные лекции
+          Здесь будут отображаться отклики на Ваши неподтвержденные лекции
         </div>
       }
       
@@ -54,6 +69,8 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     UpdateMessages: (data) => dispatch(UpdateMessages(data)),
+    SetChatConnFail: (failed) => dispatch(SetChatConnFail(failed)),
+    RemoveNotification: (chat_id) => dispatch(RemoveNotification(chat_id)),
     SetSelectedChat: (chat_id) => dispatch(SetSelectedChat(chat_id)),
     SetNeedRead: (chat_id, need_read) => dispatch(SetNeedRead(chat_id, need_read)),
   })

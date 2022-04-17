@@ -4,7 +4,7 @@ from django.db.models import Q
 from rest_framework import serializers
 
 from speakers.settings import DEFAULT_HOST
-from workroomsapp.calendar.utils import build_photo_path
+from workroomsapp.calendar.utils import CalendarDataSerializer
 from workroomsapp.models import CustomerCalendar
 
 
@@ -15,78 +15,23 @@ class CustomerCalendarSerializer(serializers.ModelSerializer):
         model = CustomerCalendar
         fields = ['calendar']
 
-    def get_date_events(self, obj):
-        request = self.context['request']
-        year = request.GET.get('year')
-        month = request.GET.get('month')
+    def get_calendar(self, obj):
+        return CalendarDataSerializer(serializer_obj=self,
+                                      owner_attr='customer',
+                                      opponent_attr='lecturer'
+                                      ).build_events_serialize()
 
-        if not (year and month):
-            raise serializers.ValidationError({'detail': "В запросе не передана дата"})
 
-        events = obj.calendar.events.order_by('datetime_start').filter(
-            Q(datetime_start__year=year) & Q(datetime_start__month=month))
+class CustomerCalendarResponsesSerializer(serializers.Serializer):
+    calendar = serializers.SerializerMethodField()
 
-        data = []
-
-        for event in events:
-            year = event.datetime_start.year
-            month = event.datetime_start.month
-            day = event.datetime_start.day
-
-            person = event.lecture_request.customer_lecture_request.customer.person
-            lecture = event.lecture_request.lecture
-
-            respondents = event.lecture_request.respondents.all()
-            confirmed_respondent = respondents.filter(confirmed=True).first()
-            respondent_list = []
-            for respondent in respondents:
-                respondent_list.append({
-                    'id': respondent.person.user.pk,
-                    'first_name': respondent.person.first_name,
-                    'last_name': respondent.person.last_name
-                })
-
-            new_event = {
-                'creator': [person.first_name, person.last_name],
-                'lecturer': '',
-                'respondents': respondent_list,
-                'photo': DEFAULT_HOST + event.lecture_request.customer_lecture_request.photo.url,
-                'name': lecture.name,
-                'status': lecture.status,
-                'hall_address': lecture.optional.hall_address,
-                'start': event.datetime_start.strftime('%H:%M'),
-                'end': event.datetime_end.strftime('%H:%M')
-            }
-
-            if confirmed_respondent:
-                confirmed_person = confirmed_respondent.person
-                new_event['lecturer'] = (confirmed_person.last_name,
-                                         confirmed_person.first_name,
-                                         confirmed_person.middle_name or "")
-
-            if not data:
-                data.append(
-                    {
-                        'date': str(datetime.datetime(year, month, day)),
-                        'events': [new_event]
-                    }
-                )
-
-            found = False
-            for date in data:
-                if date.get('date') == str(datetime.datetime(year, month, day)):
-                    if new_event not in date['events']:
-                        date['events'].append(new_event)
-                    found = True
-
-            if not found:
-                data.append(
-                    {
-                        'date': str(datetime.datetime(year, month, day)),
-                        'events': [new_event]
-                    }
-                )
-        return data
+    class Meta:
+        fields = ['calendar']
 
     def get_calendar(self, obj):
-        return self.get_date_events(obj)
+        return CalendarDataSerializer(
+            serializer_obj=self,
+            owner_attr='lecturer',
+            opponent_attr='customer',
+            responses=True
+        ).build_events_serialize()

@@ -31,23 +31,31 @@ class TestLecturerCalendarGet(APITestCase):
         self.client.post(reverse('lecturer'), temp_lecturer_data)
 
         for i in range(3):
-            self.client.post(reverse('lecture_as_lecturer'),
+            r = self.client.post(reverse('lecture_as_lecturer'),
                              {
+                                 'svg': 1,
                                  'name': f'Моя лектушка {i}',
-                                 'photo': test_image.create_image(),
                                  'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
-                                 'datetime': [str(datetime.datetime.now() + datetime.timedelta(days=2 + i)) + ',' +
-                                              str(datetime.datetime.now() + datetime.timedelta(days=2 + i, hours=1))],
+                                 'datetime': [
+                                     (datetime.datetime.now() +
+                                      datetime.timedelta(days=2 + i)).strftime('%Y-%m-%dT%H:%M') +
+                                     ',' +
+                                     (datetime.datetime.now() +
+                                      datetime.timedelta(days=2 + i, hours=1)).strftime('%Y-%m-%dT%H:%M')],
                                  'type': 'offline'
                              })
         for i in range(4, 7):
-            self.client.post(reverse('lecture_as_lecturer'),
+            r2 = self.client.post(reverse('lecture_as_lecturer'),
                              {
+                                 'svg': 1,
                                  'name': f'Моя лектушка {i}',
-                                 'photo': test_image.create_image(),
                                  'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
-                                 'datetime': [str(datetime.datetime.now() + datetime.timedelta(days=2 + i)) + ',' +
-                                              str(datetime.datetime.now() + datetime.timedelta(days=2 + i, hours=1))],
+                                 'datetime': [
+                                     (datetime.datetime.now() +
+                                      datetime.timedelta(days=2 + i)).strftime('%Y-%m-%dT%H:%M') +
+                                     ',' +
+                                     (datetime.datetime.now() +
+                                      datetime.timedelta(days=2 + i, hours=1)).strftime('%Y-%m-%dT%H:%M')],
                                  'type': 'offline'
                              })
 

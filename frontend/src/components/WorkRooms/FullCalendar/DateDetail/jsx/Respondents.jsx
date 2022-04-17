@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 
 import lecturerPhoto from '~/assets/img/TEST_PHOTO_LECTURER.svg'
+import PhotoName from "../../../../Utils/jsx/PhotoName";
 
 
 function Respondents(props) {
@@ -10,9 +11,11 @@ function Respondents(props) {
       {props.data.length > 0 ?
         <>
           <p className='respondents__text'>Откликнулись: </p>
-          {props.data.map(() => {
+          {props.data.map((elem) => {
             return <div className="respondent-photo">
-              <img src={lecturerPhoto} alt="инициалы откликнувшегося"/>
+              <PhotoName firstName={elem.first_name} 
+                         lastName={elem.last_name} 
+                         size={28}/>
             </div>})}
         </> :
         <>

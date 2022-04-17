@@ -1,7 +1,6 @@
 export const baseURL = 'https://dev.lectonic.ru'; // случайно могу иногда забыть поменять на dev.lectonic.ru
-const hostURL = baseURL.split('//')[1]
-export const baseWS = 'wss://' + hostURL
-
+const [protocol, host] = baseURL.split('//')
+export const baseWS = (protocol === 'https' ? 'wss://' : 'ws://') + host
 
 const routes = {
   'index': '/',
@@ -22,6 +21,8 @@ const routes = {
 
   'role_page': '/role_page',
   'lecture': '/lecture',
+  
+  '404': '/404',
 } // сюда прописываем все роуты и их имена (имя: роут)
 
 export function reverse(name, params=null) {
@@ -36,6 +37,10 @@ export function reverse(name, params=null) {
   return query ? routes[name] + query : routes[name]
 }
 
+export function reverseEqual(name, pathname) {
+  return pathname === reverse(name) || pathname === reverse(name) + '/'
+}
+
 
 export const withoutPermissionsList = [
   reverse('index'),
@@ -45,3 +50,14 @@ export const withoutPermissionsList = [
   
   '*', // звездочка должна быть последней
 ]
+
+export function getLecturePhoto(svgId) {
+  let svgArr = [
+    './assets/img/default_lecture_photo/1.svg',
+    './assets/img/default_lecture_photo/2.svg',
+    './assets/img/default_lecture_photo/3.svg',
+    './assets/img/default_lecture_photo/4.svg',
+    './assets/img/default_lecture_photo/5.svg',
+  ]
+  return svgArr[svgId - 1]
+}

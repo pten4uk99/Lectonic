@@ -4,8 +4,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 
 import {baseURL} from "~/ProjectConstants";
 import {SwapCustomer, SwapLecturer, SwapLogin, SwapPerson, SwapUserId} from "../redux/actions/permissions";
-import {hostURL, permissions, reverse, withoutPermissionsList} from "../../../ProjectConstants";
-import {getProfileInfo} from "../../WorkRooms/WorkRoom/ajax/workRooms";
+import {reverse, withoutPermissionsList} from "../../../ProjectConstants";
 import {SetErrorMessage} from "../../Layout/redux/actions/header";
 
 

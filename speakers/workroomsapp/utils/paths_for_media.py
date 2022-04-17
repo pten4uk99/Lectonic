@@ -33,7 +33,7 @@ def diploma_image(instance, filename):
 
 
 def lecturer_lecture_image(instance, filename):
-    lecture_id = get_id_with_prefix(instance.lecture_request.lecture.pk)
+    lecture_id = get_id_with_prefix(instance.lecture_requests.first().lecture.pk)
 
     user_id = get_id_with_prefix(instance.lecturer.person.user.pk)
     path = f'{user_id}/lectures/lecturer/{lecture_id}_{filename}'

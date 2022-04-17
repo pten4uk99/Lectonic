@@ -6,15 +6,18 @@ import NotificationsList from "./NotificationsList";
 
 function ChatDropdown(props) {
   let [messagesArea, setMessagesArea] = useState(false)
+  let [isLoaded, setIsLoaded] = useState(false)
   
   return (
     <div className="chat-dropdown__block">
       {!messagesArea ? 
         <NotificationsList setArea={setMessagesArea} 
                            setChatSocket={props.setChatSocket} 
-                           chatSocket={props.chatSocket}/> : 
+                           chatSocket={props.chatSocket} 
+                           setIsLoaded={setIsLoaded}/> : 
         <ChatMessages setArea={setMessagesArea} 
-                      chatSocket={props.chatSocket}/>
+                      chatSocket={props.chatSocket} 
+                      isLoaded={isLoaded}/>
       }
     </div>
   )

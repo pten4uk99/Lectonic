@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from speakers.settings import DEFAULT_HOST
 from workroomsapp.models import Lecturer, DiplomaImage, Domain
 
 
@@ -68,3 +69,25 @@ class LecturerCreateSerializer(serializers.Serializer):
             education=validated_data.get('education')
         )
 
+
+class LecturersListGetSerializer(serializers.ModelSerializer):
+    first_name = serializers.StringRelatedField(source='person.first_name')
+    last_name = serializers.StringRelatedField(source='person.last_name')
+    middle_name = serializers.StringRelatedField(source='person.middle_name')
+    photo = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Lecturer
+        fields = [
+            'id',
+            'photo',
+            'first_name',
+            'last_name',
+            'middle_name'
+        ]
+
+    def get_photo(self, obj):
+        if obj.person.photo:
+            return DEFAULT_HOST + obj.person.photo.url
+        else:
+            return ''

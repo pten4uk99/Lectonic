@@ -1,13 +1,11 @@
 import React, {useState} from 'react'
 import {connect} from "react-redux";
 
-import addLinkIcon from '~/assets/img/addLink-icon.svg'
-import addHoveredIcon from '~/assets/img/add-icon-hover.svg'
-
 
 function PhotoPreview(props) {
   
   function addPhotoHandler(inputEvent, UpdatePhoto) {
+    if (props.role.diploma_photos.length >= 5) return
     let file = inputEvent.target.files[0]
     let reader = new FileReader()
     reader.readAsDataURL(file);

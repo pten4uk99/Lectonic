@@ -1,0 +1,88 @@
+.lecture-dates__wrapper {
+  display flex
+  .dates__block {
+    display: flex
+    flex-wrap: wrap
+    width: 440px
+    margin-right: 30px
+    
+    .date__wrapper {
+      width: 80px
+      height: 53px
+      margin-right: 8px
+      margin-bottom: 12px
+      
+      .date__block {
+        text-align: center
+        height: 32px
+        padding-top: 6px
+        padding-bottom: 9px
+        box-sizing: border-box
+        
+        border: 1px solid
+        border-radius: 18px
+        overflow-y: hidden
+        cursor pointer
+        transition: height .1s
+        
+        &.active {
+          height: 53px
+          background-color: $main-blue
+          color: white
+          .time {
+            color: white
+          }
+        }
+        &.inactive {
+          background-color: $add-grey
+          cursor: not-allowed
+          color: $add-greyDisable
+          &:hover {
+            height: 32px
+          }
+        }
+        &:hover {
+          height: 53px;
+       }
+        span {
+          display: block
+        }
+        
+        .date {
+          font-size: 14px
+        }
+        .time {
+          margin-top: 8px
+          font-size: 11px
+          font-weight: 500
+          color: $main-blue
+        }
+      }
+    }
+  }
+  
+  .duration__block {
+    display flex
+    flex-direction column
+    align-items: center
+    
+    box-sizing border-box
+    padding: 12px 0
+    
+    width: 120px
+    height: 90px
+    background-color: rgba(95, 181, 255, 1);
+    border-radius 18px
+    
+    color: white
+    text-align: center
+    
+    .text {
+      font-size: 11px
+    }
+    .duration {
+      font-size: 36px
+      font-weight: 700
+    }
+  }
+}

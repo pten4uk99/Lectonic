@@ -4,7 +4,7 @@ import datetime
 from django.core.files.storage import default_storage
 from rest_framework import serializers
 
-from workroomsapp.models import Person, City, DocumentImage, Domain
+from workroomsapp.models import Person, City, Domain
 
 
 class PersonPhotoGetSerializer(serializers.HyperlinkedModelSerializer):
@@ -77,42 +77,6 @@ class PersonSerializer(serializers.ModelSerializer):
         if 'photo' in validated_data and instance.photo:
             default_storage.delete(instance.photo.path)
         return super().update(instance, validated_data)
-
-
-class DocumentImageCreateSerializer(serializers.Serializer):
-    passport = serializers.FileField()
-    selfie = serializers.FileField()
-
-    class Meta:
-        model = DocumentImage
-        fields = [
-            'passport',
-            'selfie'
-        ]
-
-    def validate_passport(self, passport):
-        image_format = passport.name.split('.')[-1]
-        passport.name = 'passport.' + image_format
-        return passport
-
-    def validate_selfie(self, selfie):
-        image_format = selfie.name.split('.')[-1]
-        selfie.name = 'selfie.' + image_format
-        return selfie
-
-    def create(self, validated_data):
-        DocumentImage.objects.all().delete()  # ТОЛЬКО В РЕЖИМЕ РАЗРАБОТКИ!!!
-        return DocumentImage.objects.create(
-            person=self.context['request'].user.person,
-            passport=validated_data['passport'],
-            selfie=validated_data['selfie']
-        )
-
-
-class DocumentImageGetSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = DocumentImage
-        fields = ['passport', 'selfie']
 
 
 class CitySerializer(serializers.ModelSerializer):

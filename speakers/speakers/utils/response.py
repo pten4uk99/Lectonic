@@ -9,6 +9,7 @@ CREATE = 'created'
 EMPTY = 'empty'
 DELETE = 'deleted'
 ERROR = 'error'
+WARNING = 'warning'
 
 IS_LECTURER = '1'
 IS_PROJECT_ADMIN = '2'
