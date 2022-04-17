@@ -1,14 +1,17 @@
-@import '~/variables';
-
-.rolepage__grid{
-    display: grid;
-    justify-content: space-between;
-    grid-template-columns: repeat(5,290px);
-    grid-row-gap: 40px;
+.rolepage__flex{
+    margin-top: 16px;
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
 }
 
-@media screen and (max-width: $middle-screen) {
-    .rolepage__grid{
-        grid-template-columns: repeat(4,290px);
-    }
+.rolepage__flex::-webkit-scrollbar-thumb{
+  background: #B4B4B4;
+  border-radius: 18px;
+}
+
+.rolepage__flex::-webkit-scrollbar {
+  height: 6px;
+  background-color: #DBDBDB;
+  border-radius: 18px;
 }

@@ -9,6 +9,7 @@
   border 1px solid $main-black
   display initial
   cursor pointer
+  position: relative;
 
   &-grey
     background $add-grey
@@ -18,6 +19,25 @@
     background $main-blue
     border 1px solid $main-blue
     color $main-white
+
+.pill-btn-delete
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+  background: #B4B4B4;
+  border-radius: 50%;
+  cursor: pointer;
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  visibility: hidden;
+
+.pill:hover{
+  .pill-btn-delete{
+    visibility: visible;
+  }
+}
 
 .flex
   display flex

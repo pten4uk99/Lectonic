@@ -7,7 +7,8 @@ import backArrow from '~/assets/img/back-arrow.svg'
 import {
   SwapEventType, SwapPayment, SwapPlace,
   UpdateDomain,
-  UpdatePhoto
+  UpdatePhoto,
+  DeleteDomain
 } from "../redux/actions/event";
 import {createEvent, getDomainArray} from "../ajax/event";
 import {reverse} from "../../../../ProjectConstants";
@@ -15,6 +16,7 @@ import Modal from "../../../Layout/jsx/Modal";
 import {ActivateModal} from "../../../Layout/redux/actions/header";
 import CalendarModal, {getMonth} from "./CalendarModal";
 import DropDown from "../../../Utils/jsx/DropDown";
+import btnDelete from '~/assets/img/btn-delete.svg';
 
 
 function CreateEvent(props) {
@@ -35,6 +37,14 @@ function CreateEvent(props) {
   let eventType = props.store.event.type
   let place = props.store.event.place
   let payment = props.store.event.payment
+  let titlePhotoSrc = props.store.event.photo
+  let [deletedDomain, setDeletedDomain] = useState();
+  
+  function deleteElem (indexElem) {
+    props.DeleteDomain(selectedDomains, indexElem);
+    domainArray.push(deletedDomain)
+    setDomainArray(domainArray.sort());
+  }
   
   let [requiredFields, setRequiredFields] = useState({
     name: '',
@@ -145,7 +155,7 @@ function CreateEvent(props) {
           <div className='domains'>
             <div className='domain-list flex'>
               <DropDown request={domainArray} 
-                    width={true}
+                    width={true} 
                     placeholder='Выберите тематику' 
                     onSelect={(value, setValue) => domainSelectHandler(value, setValue)} 
                     domainArr={true}/>
@@ -153,7 +163,14 @@ function CreateEvent(props) {
             <div className="step-block mt-12">
               <div className='domain-list flex'>
                 {selectedDomains.map((domain, index) => {
-                  return <div key={index} className='pill pill-grey'>{domain}</div>
+                  return <div key={index} className='pill pill-grey'
+                              onMouseEnter={() => {setDeletedDomain(domain)}}>
+                                {domain}
+                                <div className='pill-btn-delete' 
+                                  onClick={() => deleteElem(index)}>
+                                  <img src={btnDelete} alt="delete"/>
+                                </div>
+                        </div>
                 })}
         </div>
       </div>
@@ -308,6 +325,7 @@ export default connect(
     ActivateModal: () => dispatch(ActivateModal()),
     UpdatePhoto: (photo) => dispatch(UpdatePhoto(photo)),
     UpdateDomain: (domain) => dispatch(UpdateDomain(domain)),
+    DeleteDomain: (domain, i) => dispatch(DeleteDomain(domain, i)),
     SwapEventType: (type) => dispatch(SwapEventType(type)),
     SwapPlace: (place) => dispatch(SwapPlace(place)),
     SwapPayment: (payment) => dispatch(SwapPayment(payment)),

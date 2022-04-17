@@ -2,10 +2,11 @@ import React, {useEffect, useState} from 'react'
 import {connect} from "react-redux";
 
 import {getDomainArray} from "../../../WorkRooms/CreateEvent/ajax/event";
-import {UpdateDomain} from "~@/WorkRooms/CreateEvent/redux/actions/event";
+import {UpdateDomain, DeleteDomain} from "~@/WorkRooms/CreateEvent/redux/actions/event";
 import {AddPerfLink, AddPubLink} from "../../redux/actions/lecturer";
 import LecturerLink from "./LecturerLink";
 import DropDown from "../../../Utils/jsx/DropDown";
+import btnDelete from '~/assets/img/btn-delete.svg';
 
 
 function LecturerStep1(props) {
@@ -13,9 +14,15 @@ function LecturerStep1(props) {
   let performancesLinks = props.store.addRole.lecturer.performances_links
   let publicationLinks = props.store.addRole.lecturer.publication_links
   
-  
   let [domainArray, setDomainArray] = useState(null)
+  let [deletedDomain, setDeletedDomain] = useState();
   
+  function deleteElem (indexElem) {
+    props.DeleteDomain(selectedDomains, indexElem);
+    domainArray.push(deletedDomain)
+    setDomainArray(domainArray.sort());
+  }
+
   useEffect(() => {
     getDomainArray()
       .then(response => response.json())
@@ -26,7 +33,7 @@ function LecturerStep1(props) {
   useEffect(() => {
     if (selectedDomains.length > 0 && domainArray) {
       let newDomainArray
-      newDomainArray = domainArray.filter(elem => !selectedDomains.includes(elem.name))
+      newDomainArray = domainArray.filter(elem => !selectedDomains.includes(elem.name)) 
       setDomainArray(newDomainArray)
     }
   }, [selectedDomains])
@@ -54,7 +61,13 @@ function LecturerStep1(props) {
         <p className="step-block__left-part pt-0"/>
         <div className='domain-list flex'>
           {selectedDomains.map((domain, index) => {
-            return <div key={index} className='pill pill-grey'>{domain}</div>
+            return <div key={index} className='pill pill-grey'
+                        onMouseEnter={() => {setDeletedDomain(domain)}}>{domain}
+                        <div className='pill-btn-delete' 
+                          onClick={() => deleteElem(index)}>
+                          <img src={btnDelete} alt="delete"/>
+                        </div>
+                   </div>
           })}
         </div>
       </div>
@@ -73,6 +86,7 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     UpdateDomain: (domain) => dispatch(UpdateDomain(domain)),
+    DeleteDomain: (domain, i) => dispatch(DeleteDomain(domain, i)),
     AddPerfLink: (link) => dispatch(AddPerfLink(link)),
     AddPubLink: (link) => dispatch(AddPubLink(link)),
   })
