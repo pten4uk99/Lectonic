@@ -4,6 +4,9 @@ export function UpdatePhoto(photo) {
 export function UpdateDomain(domain) {
   return {type: "UPDATE_DOMAIN", payload: {domain: domain}}
 }
+export function DeleteDomain(domain, index) {
+  return {type: "DELETE_DOMAIN", payload: {domain: domain, index: index}}
+}
 export function SwapEventType(type) {
   return {type: "SWAP_EVENT_TYPE", payload: {type: type}}
 }
