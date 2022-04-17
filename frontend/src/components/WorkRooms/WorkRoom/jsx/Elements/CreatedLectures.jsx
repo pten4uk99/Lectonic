@@ -38,12 +38,14 @@ function CreatedLectures(props){
           props.DeactivateModal()
         }
       })
+    setSelectedLecture(null)
   }
   
     return (
         <section className="block__created-lectures">
-          {selectedLecture && <ConfirmAction onConfirm={handleConfirmDelete} 
-                         text="Вы уверены, что хотите удалить событие?"/>}
+          {selectedLecture && <ConfirmAction onConfirm={handleConfirmDelete}
+                                             onCancel={() => setSelectedLecture(null)}
+                                             text="Вы уверены, что хотите удалить событие?"/>}
           <div className="workroom__block-header">
             {props.role === 'lecturer' && <span>Созданные лекции</span>}
             {props.role === 'customer' && <span>Мои запросы на лекции</span>}

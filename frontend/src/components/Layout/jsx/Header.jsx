@@ -129,15 +129,16 @@ function Header(props) {
                src={burgerMenu} 
                alt="меню"/>
         </nav>
+        
+        {!loggedIn && <AuthModal/>}
+        <ProfileDropDown/>
+        {chatActive && (isLecturer || isCustomer) && 
+          <ChatDropdown notificationsSocket={props.notificationsSocket} 
+                        chatSocket={chatSocket} 
+                        setChatSocket={setChatSocket}/>}
+        {props.store.ws.notifyConnFail && <ErrorMessage msg="Соединение разорвано. Повторное подключение..."/>}
+            
       </header>
-
-      {!loggedIn && <AuthModal/>}
-      <ProfileDropDown/>
-      {chatActive && (isLecturer || isCustomer) && 
-        <ChatDropdown notificationsSocket={props.notificationsSocket} 
-                      chatSocket={chatSocket} 
-                      setChatSocket={setChatSocket}/>}
-      {props.store.ws.notifyConnFail && <ErrorMessage msg="Соединение разорвано. Повторное подключение..."/>}
     </>
   );
 }

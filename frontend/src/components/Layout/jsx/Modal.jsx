@@ -7,6 +7,12 @@ import {SetCheckedDate} from "../../WorkRooms/FullCalendar/Calendar/redux/action
 
 
 function Modal(props) {
+  
+  function handleCancel() {
+    if (props.onCancel) props.onCancel()
+    props.DeactivateModal()
+  }
+  
   return props.store.header.modalActive && (
     <div className='modal__background'
          style={props.styleWrapper}>
@@ -15,7 +21,7 @@ function Modal(props) {
           <img className='modal__close' 
              src={closeIcon} 
              alt='закрыть' 
-             onClick={() => {props.DeactivateModal()}}/>
+             onClick={handleCancel}/>
         </div>
         <div className="modal__body">
           {props.children}
