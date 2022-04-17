@@ -33,10 +33,8 @@ function App(props) {
   }, [permissions])
   
   useEffect(() => {
-    if (props.store.header.modalActive) {
-      document.body.style.overflowY = 'hidden'
-    }
-    else document.body.style.overflowY = 'inherit'
+    if (props.store.header.modalActive) document.body.style.overflowY = 'hidden'
+    else document.body.style = null
   }, [props.store.header.modalActive])
   
   return (
@@ -50,6 +48,7 @@ function App(props) {
                 <Route path={reverse('confirm_email')} element={<ConfirmEmail />} />
                 <Route path={reverse('continue_signup')} element={<></>} />
                 <Route path={reverse('create_profile')} element={<SetProfileInfo />}/>
+                <Route path={reverse('set_profile')} element={<SetProfileInfo />}/>
                 <Route path='/add_role/*' element={<RegistrationRole/>}/>
                 <Route path={reverse('workroom')} element={<Workroom />}/>
                 <Route path={reverse('create_event')} element={<CreateEvent/>}/>

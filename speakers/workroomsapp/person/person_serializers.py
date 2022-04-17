@@ -16,7 +16,7 @@ class PersonPhotoGetSerializer(serializers.HyperlinkedModelSerializer):
 class PersonSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     photo = serializers.FileField(required=False)
-    city = serializers.PrimaryKeyRelatedField(queryset=City.objects.all())
+    city = serializers.SerializerMethodField()
 
     class Meta:
         model = Person
@@ -72,6 +72,9 @@ class PersonSerializer(serializers.ModelSerializer):
         image_format = photo.name.split('.')[-1]
         photo.name = 'photo.' + image_format
         return photo
+
+    def get_city(self, obj):
+        return {'id': obj.city.id, 'name': obj.city.name, 'region': obj.city.region}
 
     def update(self, instance, validated_data):
         if 'photo' in validated_data and instance.photo:

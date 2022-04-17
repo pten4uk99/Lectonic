@@ -3,6 +3,7 @@ import Modal from "../../Layout/jsx/Modal";
 
 
 function ConfirmAction(props) {
+  
   return (
     <Modal onCancel={props.onCancel} styleBody={{maxWidth: 500, textAlign: 'center'}}>
       <div className="confirm-action">

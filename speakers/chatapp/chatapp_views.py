@@ -73,6 +73,8 @@ class MessageListGetAPIView(APIView):
             'lecture_name': lecture.name,
             'is_creator': is_creator,
             'confirmed': lecture_confirmed,
+            'response_dates': chat.lecture_requests.all().values_list(
+                'event__datetime_start', 'event__datetime_end'),
             'talker_respondent': respondent,
             'talker_first_name': talker_person.first_name,
             'talker_last_name': talker_person.last_name,

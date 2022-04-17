@@ -1,5 +1,6 @@
-import React from "react";
+import React, {useState} from "react";
 import {connect} from "react-redux";
+import Loader from "../../../Utils/jsx/Loader";
 
 
 function SignUp(props) {
@@ -36,7 +37,12 @@ function SignUp(props) {
                 type='submit' 
                 disabled={!props.agree} 
                 onClick={props.onSignUp}>
-          Зарегистрироваться
+          {!props.requestLoaded ? 
+            <Loader size={20} 
+                    left="50%" 
+                    top="50%" 
+                    tX="-50%" tY="-50%"/> : 
+            "Зарегистрироваться"}
         </button>
       </form>
     </div>

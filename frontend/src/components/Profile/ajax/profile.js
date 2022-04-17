@@ -15,3 +15,21 @@ export function createProfile(formData) {
   }
   return fetch(`${baseURL}/api/workrooms/profile/`, options)
 }
+
+export function getProfile(formData) {
+  let options = {
+    method: 'GET',
+    body: formData,
+    credentials: 'include',
+  }
+  return fetch(`${baseURL}/api/workrooms/profile/`, options)
+}
+
+export function setProfile(formData) {
+  let options = {
+    method: 'PATCH',
+    body: formData,
+    credentials: 'include',
+  }
+  return fetch(`${baseURL}/api/workrooms/profile/`, options)
+}

@@ -52,7 +52,6 @@ class PersonAPIView(APIView):
 
         return person_responses.success([{
             **serializer.data,
-            'city': City.objects.get(pk=serializer.data['city']).name,
             **photo_serializer.data
         }])
 
