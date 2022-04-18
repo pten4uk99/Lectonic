@@ -26,11 +26,11 @@ function App(props) {
   let userId = permissions.user_id
   let [notificationsSocket, setNotificationsSocket] = useState(null)
   
-  useEffect(() => {
-    if (userId && (permissions.is_lecturer || permissions.is_customer)) {
-      createNotificationsSocket(setNotificationsSocket, userId, props.SetNotifyConnFail)
-    }
-  }, [permissions])
+  // useEffect(() => {
+  //   if (userId && (permissions.is_lecturer || permissions.is_customer)) {
+  //     createNotificationsSocket(setNotificationsSocket, userId, props.SetNotifyConnFail)
+  //   }
+  // }, [permissions])
   
   useEffect(() => {
     if (props.store.header.modalActive) document.body.style.overflowY = 'hidden'

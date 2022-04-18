@@ -11,6 +11,7 @@ import Loader from '~@/Utils/jsx/Loader'
 import {SetChatConn} from "../../redux/actions/ws";
 import ConfirmAction from "../../../Utils/jsx/ConfirmAction";
 import {getMonth} from "../../../WorkRooms/CreateEvent/jsx/CalendarModal";
+import {createChatMessage, deleteChat, getNotificationsList} from "../../ajax";
 
 
 function ChatMessages(props) {
@@ -26,44 +27,62 @@ function ChatMessages(props) {
     if (messagesBlock && props.isLoaded) messagesBlock.current.scrollTop = messagesBlock.current.scrollHeight
   }, [messagesBlock?.current?.scrollHeight])
   
-  useEffect(() => {
-    props.SetChatConn(Boolean(props.chatSocket))
-    props.chatSocket?.addEventListener('message', (e) => {
-      let data = JSON.parse(e.data)
-      props.AddMessage(data)
-      if (data.confirm !== null) props.SetMessagesConfirmed(data.confirm)
-    })
-  }, [props.chatSocket])
+  // useEffect(() => {
+  //   props.SetChatConn(Boolean(props.chatSocket))
+  //   props.chatSocket?.addEventListener('message', (e) => {
+  //     let data = JSON.parse(e.data)
+  //     props.AddMessage(data)
+  //     if (data.confirm !== null) props.SetMessagesConfirmed(data.confirm)
+  //   })
+  // }, [props.chatSocket])
   
   function handleArrowClick(params) {
     if ((data.confirmed !== null && !data.confirmed && !data.is_creator) || params.cancel_response) {
-      props.chatSocket.send(JSON.stringify({
-        'type': 'read_reject_chat',
-        'chat_id': props.store.header.selectedChatId
-      }))
-      props.RemoveNotification(props.store.header.selectedChatId)
-    } else props.chatSocket.close()
+      // props.chatSocket.send(JSON.stringify({
+      //   'type': 'read_reject_chat',
+      //   'chat_id': props.store.header.selectedChatId
+      // }))
+      deleteChat(selectedChatId)
+        .then(r => r.json())
+        .then(data => props.RemoveNotification(props.store.header.selectedChatId))
+    } else {
+      // props.chatSocket.close()
+    }
     props.setArea(false)
     props.SetSelectedChat(null)
   }
   
   function handleSendMessage(e) {
     if (e.keyCode === 13 && e.target.value) {
-      props.chatSocket.send(JSON.stringify({
-        'type': 'chat_message',
-        'author': props.store.permissions.user_id,
-        'text': e.target.value,
-      }))
+      // props.chatSocket.send(JSON.stringify({
+      //   'type': 'chat_message',
+      //   'author': props.store.permissions.user_id,
+      //   'text': e.target.value,
+      // }))
+      createChatMessage(selectedChatId, input.current.value)
+        .then(r => r.json())
+        .then(data => {
+          if (data.status === 'success') {
+            props.AddMessage(data)
+          }
+        })
       e.target.value = ''
     }
   }
   function handleClickIcon() {
     if (input.current.value) {
-      props.chatSocket.send(JSON.stringify({
-        'type': 'chat_message', 
-        'author': props.store.permissions.user_id, 
-        'text': input.current.value,
-      }))
+      // props.chatSocket.send(JSON.stringify({
+      //   'type': 'chat_message', 
+      //   'author': props.store.permissions.user_id, 
+      //   'text': input.current.value,
+      // }))
+      createChatMessage(selectedChatId, input.current.value)
+        .then(r => r.json())
+        .then(data => {
+          if (data.status === 'success') {
+            props.AddMessage(data)
+          }
+        })
       input.current.value = ''
     }
   }
@@ -77,7 +96,7 @@ function ChatMessages(props) {
           if (rejectRespondent) {
             props.setArea(false)
             props.SetSelectedChat(null)
-            props.chatSocket.close()
+            // props.chatSocket.close()
           }
         }
       })

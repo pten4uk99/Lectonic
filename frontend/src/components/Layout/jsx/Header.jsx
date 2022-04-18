@@ -38,9 +38,12 @@ function Header(props) {
   
   useEffect(() => {
     if ((isLecturer || isCustomer) && !props.store.ws.notifyConnFail) {
-      getNotificationsList()
-        .then(r => r.json())
-        .then(data => props.UpdateNotifications(data.data))
+      setInterval(() => 
+        getNotificationsList()
+          .then(r => r.json())
+          .then(data => props.UpdateNotifications(data.data)),
+        5000
+      )
     }
   }, [isLecturer, isCustomer, props.store.ws.notifyConnFail])
   

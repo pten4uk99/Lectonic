@@ -206,17 +206,17 @@ class LectureResponseAPIView(APIView):
                      f'Возможные даты проведения: {", ".join(dates)}.'
             )
 
-            user_consumer_data = {
-                "type": "new_respondent",
-                "dates": format_dates,
-                "lecture": lecture,
-                "chat": chat,
-                "lecture_creator": creator.user,
-                "lecture_respondent": request.user,
-                "lecture_requests": response_lecture_requests
-            }
-            async_to_sync(channel_layer.group_send)(f'user_{creator.user.pk}', user_consumer_data)
-            async_to_sync(channel_layer.group_send)(f'user_{request.user.pk}', user_consumer_data)
+            # user_consumer_data = {
+            #     "type": "new_respondent",
+            #     "dates": format_dates,
+            #     "lecture": lecture,
+            #     "chat": chat,
+            #     "lecture_creator": creator.user,
+            #     "lecture_respondent": request.user,
+            #     "lecture_requests": response_lecture_requests
+            # }
+            # async_to_sync(channel_layer.group_send)(f'user_{creator.user.pk}', user_consumer_data)
+            # async_to_sync(channel_layer.group_send)(f'user_{request.user.pk}', user_consumer_data)
 
             lecture.save()
             return lecture_responses.success_response()
@@ -229,16 +229,16 @@ class LectureResponseAPIView(APIView):
                     lecture_request.save()
             chat = Chat.objects.filter(lecture_requests__in=response_lecture_requests).first()
 
-            async_to_sync(channel_layer.group_send)(
-                f'user_{creator.user.pk}',
-                {
-                    "type": "remove_respondent",
-                    "lecture": lecture,
-                    "lecture_respondent": request.user,
-                    "chat_id": chat.pk,
-                    "lecture_requests": response_lecture_requests
-                }
-            )
+            # async_to_sync(channel_layer.group_send)(
+            #     f'user_{creator.user.pk}',
+            #     {
+            #         "type": "remove_respondent",
+            #         "lecture": lecture,
+            #         "lecture_respondent": request.user,
+            #         "chat_id": chat.pk,
+            #         "lecture_requests": response_lecture_requests
+            #     }
+            # )
 
             if not chat:
                 chat_list = Chat.objects.filter(lecture=lecture)
@@ -301,11 +301,11 @@ class LectureToggleConfirmRespondentAPIView(APIView):
             lecture.save()
 
             chat_consumer_data['confirm'] = False
-            async_to_sync(channel_layer.group_send)(f'chat_{chat.pk}', chat_consumer_data)
-            async_to_sync(channel_layer.group_send)(
-                f'user_{respondent.user.pk}',
-                {'type': 'new_message', 'chat_id': chat.pk}
-            )
+            # async_to_sync(channel_layer.group_send)(f'chat_{chat.pk}', chat_consumer_data)
+            # async_to_sync(channel_layer.group_send)(
+            #     f'user_{respondent.user.pk}',
+            #     {'type': 'new_message', 'chat_id': chat.pk}
+            # )
             Message.objects.create(
                 author=request.user,
                 chat=chat,
@@ -327,9 +327,9 @@ class LectureToggleConfirmRespondentAPIView(APIView):
             confirm=chat_consumer_data.get('confirm')
         )
 
-        async_to_sync(channel_layer.group_send)(f'chat_{chat.pk}', chat_consumer_data)
-        async_to_sync(channel_layer.group_send)(
-            f'user_{respondent.user.pk}',
-            {'type': 'new_message', 'chat_id': chat.pk}
-        )
+        # async_to_sync(channel_layer.group_send)(f'chat_{chat.pk}', chat_consumer_data)
+        # async_to_sync(channel_layer.group_send)(
+        #     f'user_{respondent.user.pk}',
+        #     {'type': 'new_message', 'chat_id': chat.pk}
+        # )
         return lecture_responses.success_confirm()

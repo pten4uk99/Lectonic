@@ -30,5 +30,4 @@ class NotificationEventHandler:
         ))
 
     async def new_message(self, event):
-        print('we are here')
         await self.send(text_data=json.dumps(event))

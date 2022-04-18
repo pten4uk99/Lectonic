@@ -10,7 +10,7 @@ import {useNavigate} from "react-router-dom";
 import Loader from "../../../../Utils/jsx/Loader";
 
 
-function LectureCardList(props){
+function LectureCardList(props) {
   let [isLoaded, setIsLoaded] = useState(false)
   let navigate = useNavigate()
   

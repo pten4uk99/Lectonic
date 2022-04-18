@@ -23,14 +23,13 @@ class PersonAPIView(APIView):
         serializer.save()
 
         serializer.validated_data.pop('user')
-        city = serializer.validated_data.pop('city')
+        serializer.validated_data.pop('city')
 
         if 'photo' in serializer.validated_data:
             serializer.validated_data.pop('photo')
 
         return person_responses.created([{
             **serializer.validated_data,
-            'city': city.name,
             'user_id': request.user.pk
         }])
 
@@ -50,8 +49,11 @@ class PersonAPIView(APIView):
         if 'photo' in serializer.data:
             serializer.data.pop('photo')
 
+        city = City.objects.get(pk=serializer.data['city'])
+
         return person_responses.success([{
             **serializer.data,
+            'city': {'name': city.name, 'region': city.region, 'id': city.pk},
             **photo_serializer.data
         }])
 
