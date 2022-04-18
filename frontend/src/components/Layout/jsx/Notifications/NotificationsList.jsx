@@ -13,30 +13,13 @@ function NotificationsList(props) {
   let chatList = props.store.notifications
   let selectedChatId = props.store.header.selectedChatId
   
-  function getMessages(chat_id) {
-    getChatMessages(chat_id)
-      .then(r => r.json())
-      .then(data => {
-        if (data.status === 'success') {
-          props.UpdateMessages(data.data[0])
-          props.SetNeedRead(chat_id, false)
-          props.SetSelectedChat(chat_id)
-          props.setIsLoaded(true)
-        } else {
-          props.RemoveNotification(chat_id)
-          props.setArea(false)
-        }
-      })
-  }
-  
   useEffect(() => {
     if (selectedChatId && props.store.ws.chatConn) getMessages(selectedChatId)
   }, [props.store.ws.chatConn])
   
   function handleNotificationClick(chat_id) {
     props.setArea(true)
-    createChatSocket(props.setChatSocket, chat_id, props.SetChatConnFail)
-    getMessages(chat_id)
+    // createChatSocket(props.setChatSocket, chat_id, props.SetChatConnFail)
   }
 
   return (
@@ -46,7 +29,7 @@ function NotificationsList(props) {
       {chatList.length > 0 ? chatList.map((elem) => {
         return <li key={elem.id} 
                    className="chat-dropdown__notification" 
-                   onClick={() => handleNotificationClick(elem.id)}>
+                   onClick={() => props.setChatId(elem.id)}>
           <div className="photo"><img src={getLecturePhoto(elem.lecture_svg)} alt="обложка"/></div>
           <div className="text">
             <p className='lecture-name'>{elem.lecture_name}</p>

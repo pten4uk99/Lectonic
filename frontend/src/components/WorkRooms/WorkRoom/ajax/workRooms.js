@@ -17,14 +17,14 @@ export function getProfileInfo() {
 }
 
 
-export function getCreatedLecturesForLecturer() {
+export function getCreatedLecturesForLecturer(id='') {
   const options = {
     method: 'GET',
     headers: HEADERS,
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/lecture/as_lecturer/`,
+    `${baseURL}/api/workrooms/lecture/as_lecturer/?id=${id}`,
     options
   )
 }

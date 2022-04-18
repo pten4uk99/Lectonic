@@ -79,7 +79,6 @@ function MonthNav(props) {
     props.store.header.modalActive,
     props.store.profile,
     props.isMyLectures,
-    props.store.notifications
   ])
 
   return (

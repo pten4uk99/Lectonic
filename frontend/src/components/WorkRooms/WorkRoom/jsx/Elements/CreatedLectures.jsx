@@ -65,21 +65,21 @@ function CreatedLectures(props){
               <div className="created-lectures__wrapper">
                 <div className="created-lectures">
                   {props.data.map((lecture) => {
-                    return <WorkroomCard key={lecture.lecture_id} 
+                    return <WorkroomCard key={lecture.id} 
                                          data={{
                                            src: getLecturePhoto(lecture.svg),
                                            client: !props.isLecturer ? 'Лектор:' : 'Заказчик:',
                                            clientName: `${lecture.creator_first_name} ${lecture.creator_last_name}`,
-                                           name: lecture.lecture_name,
+                                           name: lecture.name,
                                            date: getDates(lecture.dates),
                                            description: lecture.description,
                                            city: lecture.hall_address,
                                            textBtn: 'Подробнее',
                                            createdLecture: true,
                                          }} 
-                                         onClick={() => navigate(reverse('lecture', {id: lecture.lecture_id}))} 
+                                         onClick={() => navigate(reverse('lecture', {id: lecture.id}))} 
                                          canDelete={true} 
-                                         onDelete={() => handleDeleteLecture(lecture.lecture_id)}/>})}
+                                         onDelete={() => handleDeleteLecture(lecture.id)}/>})}
               </div>
             </div>}
           </div>

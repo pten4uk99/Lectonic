@@ -3,6 +3,7 @@ from speakers.utils import response
 PHOTO_CREATED = 'Фотография успешно загружена'
 PHOTO_DOES_NOT_EXIST = 'Фотографий дипломов лектора не существует'
 LECTURER_CREATED = 'Профиль лектора успешно создан'
+LECTURER_DOES_NOT_EXIST = 'Профиль лектора не существует'
 
 DESCRIPTION = '\n\nВсе возможные статусы ответов:\n' \
               f'"{response.SUCCESS}"\n' \
@@ -48,4 +49,12 @@ def success_get_lecturers(data):
         status=response.SUCCESS,
         data=data,
         status_code=200
+    )
+
+
+def lecturer_does_not_exist():
+    return response.get_response(
+        status=response.ERROR,
+        detail=LECTURER_DOES_NOT_EXIST,
+        status_code=400
     )

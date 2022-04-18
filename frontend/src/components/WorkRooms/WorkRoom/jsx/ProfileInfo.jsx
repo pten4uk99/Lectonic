@@ -47,7 +47,7 @@ function ProfileInfo(props){
                      size={110}/>
           }
         </div>
-        <button className="profile-about__btn-download">
+        <button className="profile-about__btn-download" onClick={() => navigate(reverse('set_profile'))}>
           <img src={download} alt="download"/>
         </button>
       </div>

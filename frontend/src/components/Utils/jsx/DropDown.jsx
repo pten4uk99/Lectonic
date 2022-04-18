@@ -36,7 +36,7 @@ function DropDown(props) {
   
   useEffect(() => {
     setChosenValue(props.defaultValue)
-  }, [])
+  }, [props.defaultValue])
   
   useEffect(() => {
     if (props.timeStart) setChosenValue(props.store.dropdown.timeStart)
@@ -100,16 +100,16 @@ function DropDown(props) {
                style={{width: props.width ? '100%' : '', zIndex: props.input ? '80' : ''}}>
             <div ref={dropDownBox} 
                  className='dropdown-box'>
-                 {data?.map((elem,index) => {
-                      return (
-                        <div 
-                              className="dropdown-item" 
-                              key={index}
-                              onClick={() => changeValue(elem.name == undefined ? elem : `${elem.name} ${elem.region == undefined ? '' : `, ${elem.region}`}`, index)}>
-                              {elem.name == undefined ? elem : `${elem.name} ${elem.region == undefined ? '' : `, ${elem.region}`}`}
-                        </div>)
-                    })
-                  }
+                 {data?.map((elem, index) => {
+                   let name = elem?.name || elem
+                   let region = elem?.region ? ', ' + elem.region : ''
+                   return (
+                     <div className="dropdown-item" 
+                          key={index}
+                          onClick={() => changeValue(name + region, index)}>
+                       {name + region}
+                     </div>)
+                 })}
             </div>
           </div>
       </div>

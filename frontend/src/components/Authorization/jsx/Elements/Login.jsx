@@ -3,6 +3,7 @@ import {connect} from "react-redux";
 
 import eyeOpen from '~/assets/img/eye-open.svg'
 import eyeClose from '~/assets/img/eye-close.svg'
+import Loader from "../../../Utils/jsx/Loader";
 
 
 function Login(props) {
@@ -65,7 +66,12 @@ function Login(props) {
         <button className='btn auth__form__btn' 
                 type='submit' 
                 onClick={props.onSubmit}>
-          Войти
+          {!props.requestLoaded ? 
+            <Loader size={20} 
+                    left="50%" 
+                    top="50%" 
+                    tX="-50%" tY="-50%"/> : 
+            "Войти"}
         </button>
       </form>
 

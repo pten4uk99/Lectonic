@@ -14,6 +14,7 @@ import Login from "./Elements/Login";
 
 function Authorization(props) {
   const navigate = useNavigate();
+  let [requestLoaded, setRequestLoaded] = useState(true)
   
   //вывод текста ошибки под инпутами
   const [errorSignUpEmail, setErrorSignUpEmail] = useState('')
@@ -38,6 +39,7 @@ function Authorization(props) {
   }
 
    function onSubmitSignIn(e) {
+    setRequestLoaded(false)
     e.preventDefault()
      login(userSignIn)
       .then(response => {
@@ -61,6 +63,7 @@ function Authorization(props) {
           navigate(reverse('workroom'))
           props.DeactivateModal()
         }
+        setRequestLoaded(true)
       })
       .catch(error => props.SetErrorMessage('login'))
   }
@@ -84,8 +87,9 @@ function Authorization(props) {
   let userSignUpEmail = {
     email: signUpValue.email,
   }
-
+  
   function onSubmitSignUpEmail(e) {
+    setRequestLoaded(false)
     e.preventDefault()
     emailConfirmation(userSignUpEmail)
       .then(response => {
@@ -96,15 +100,15 @@ function Authorization(props) {
         //ниже идет проверка наличия ключа в объекте дата.
         if ('email' in data) {
           setErrorSignUpEmail(data.email[0])
-        }else if (data.status === 'error') {
+        } else if (data.status === 'error') {
           setErrorSignUpEmail(data.detail)
         } else if (data.status === 'success') {
-          window.sessionStorage.setItem('email', signUpValue.email) //чтоб отобразить почту на /verify_email
           navigate(reverse('verify_email'))
           props.DeactivateModal()
         }
+        setRequestLoaded(true)
       })
-      .catch(error => props.SetErrorMessage('signup'))
+      .catch(error => console.log(error))
   }
 
   //Checkbox согласие на обработку персональных данных
@@ -172,7 +176,8 @@ function Authorization(props) {
              onPasswordChange={onChangeSignIn} 
              handleForgotPassword={handlePasswordForgotten} 
              onSubmit={onSubmitSignIn} 
-             signUpShow={handleSignUpShow}/>
+             signUpShow={handleSignUpShow} 
+             requestLoaded={requestLoaded}/>
 
       {/* Блок Регистрация Почта*/}
       <SignUp show={signUpShown} 
@@ -181,7 +186,8 @@ function Authorization(props) {
               onSignUp={onSubmitSignUpEmail} 
               errorMessages={errorSignUpEmail} 
               onChange={onChangeSignUp} 
-              inputValue={signUpValue}/>
+              inputValue={signUpValue} 
+              requestLoaded={requestLoaded}/>
 
       {/* Блок Забыл пароль*/}
       <ForgotPassword show={emailForgottenShown} 

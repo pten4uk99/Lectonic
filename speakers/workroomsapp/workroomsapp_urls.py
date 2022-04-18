@@ -11,7 +11,7 @@ from workroomsapp.person.person_views import *
 
 urlpatterns = [
     path('profile/', PersonAPIView.as_view(), name='profile'),
-    path('profile/document_photos/', DocumentImageAPIVIew.as_view(), name='document_images'),
+    # path('profile/document_photos/', DocumentImageAPIVIew.as_view(), name='document_images'),
     path('city/', CityGetAPIView.as_view(), name='city'),
     path('domain/', DomainGetAPIView.as_view(), name='domain'),
 

@@ -16,7 +16,6 @@ class PersonPhotoGetSerializer(serializers.HyperlinkedModelSerializer):
 class PersonSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     photo = serializers.FileField(required=False)
-    city = serializers.PrimaryKeyRelatedField(queryset=City.objects.all())
 
     class Meta:
         model = Person

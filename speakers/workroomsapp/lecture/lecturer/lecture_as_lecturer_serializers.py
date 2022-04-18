@@ -71,19 +71,15 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
         )
 
 
-class LecturesGetSerializer(serializers.Serializer):
-    lecture_id = serializers.SerializerMethodField()
-    svg = serializers.SerializerMethodField()
+class LecturesGetSerializer(serializers.ModelSerializer):
     lecture_type = serializers.SerializerMethodField()
-    lecture_name = serializers.SerializerMethodField()
     domain = serializers.SerializerMethodField()
     dates = serializers.SerializerMethodField()
-    hall_address = serializers.SerializerMethodField()
-    description = serializers.SerializerMethodField()
-    equipment = serializers.SerializerMethodField()
-    cost = serializers.SerializerMethodField()
+    hall_address = serializers.StringRelatedField(source='optional.hall_address')
+    equipment = serializers.StringRelatedField(source='optional.equipment')
     creator_is_lecturer = serializers.SerializerMethodField()
     creator_user_id = serializers.SerializerMethodField()
+    creator_id = serializers.SerializerMethodField()
     creator_first_name = serializers.SerializerMethodField()
     creator_photo = serializers.SerializerMethodField()
     creator_last_name = serializers.SerializerMethodField()
@@ -92,32 +88,31 @@ class LecturesGetSerializer(serializers.Serializer):
     response_dates = serializers.SerializerMethodField()
 
     class Meta:
+        model = Lecture
         fields = [
-            'lecture_id',
+            'id',
             'svg',
-            'lecture_name',
+            'name',
             'lecture_type',
             'dates',
+            'domain',
             'hall_address',
             'description',
+            'equipment',
+            'cost',
             'can_response',
+            'response_dates',
             'creator_user_id',
+            'creator_is_lecturer',
+            'creator_id',
+            'creator_photo',
             'creator_first_name',
             'creator_last_name',
             'creator_middle_name',
         ]
 
-    def get_lecture_id(self, obj):
-        return obj.pk
-
-    def get_svg(self, obj):
-        return obj.svg
-
     def get_lecture_type(self, obj):
         return obj.get_type_display()
-
-    def get_lecture_name(self, obj):
-        return obj.name
 
     def get_domain(self, obj):
         return obj.lecture_domains.all().values_list('domain__name', flat=True)
@@ -132,20 +127,14 @@ class LecturesGetSerializer(serializers.Serializer):
             })
         return dates
 
-    def get_description(self, obj):
-        return obj.description
-
-    def get_equipment(self, obj):
-        return obj.optional.equipment
-
-    def get_cost(self, obj):
-        return obj.cost
-
-    def get_hall_address(self, obj):
-        return obj.optional.hall_address
-
     def get_creator_is_lecturer(self, obj):
         return bool(obj.lecturer)
+
+    def get_creator_id(self, obj):
+        if obj.lecturer:
+            return obj.lecturer.pk
+        else:
+            return obj.customer.pk
 
     def get_creator_first_name(self, obj):
         if obj.customer:

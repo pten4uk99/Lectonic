@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { connect } from 'react-redux'
 
-import lecturerPhoto from '~/assets/img/TEST_PHOTO_LECTURER.svg'
 import Respondents from "./Respondents";
 import PhotoName from "../../../../Utils/jsx/PhotoName";
 import {getLecturePhoto} from "../../../../../ProjectConstants";

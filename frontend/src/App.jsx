@@ -26,17 +26,15 @@ function App(props) {
   let userId = permissions.user_id
   let [notificationsSocket, setNotificationsSocket] = useState(null)
   
-  useEffect(() => {
-    if (userId && (permissions.is_lecturer || permissions.is_customer)) {
-      createNotificationsSocket(setNotificationsSocket, userId, props.SetNotifyConnFail)
-    }
-  }, [permissions])
+  // useEffect(() => {
+  //   if (userId && (permissions.is_lecturer || permissions.is_customer)) {
+  //     createNotificationsSocket(setNotificationsSocket, userId, props.SetNotifyConnFail)
+  //   }
+  // }, [permissions])
   
   useEffect(() => {
-    if (props.store.header.modalActive) {
-      document.body.style.overflowY = 'hidden'
-    }
-    else document.body.style.overflowY = 'inherit'
+    if (props.store.header.modalActive) document.body.style.overflowY = 'hidden'
+    else document.body.style = null
   }, [props.store.header.modalActive])
   
   return (
@@ -50,6 +48,7 @@ function App(props) {
                 <Route path={reverse('confirm_email')} element={<ConfirmEmail />} />
                 <Route path={reverse('continue_signup')} element={<></>} />
                 <Route path={reverse('create_profile')} element={<SetProfileInfo />}/>
+                <Route path={reverse('set_profile')} element={<SetProfileInfo />}/>
                 <Route path='/add_role/*' element={<RegistrationRole/>}/>
                 <Route path={reverse('workroom')} element={<Workroom />}/>
                 <Route path={reverse('create_event')} element={<CreateEvent/>}/>

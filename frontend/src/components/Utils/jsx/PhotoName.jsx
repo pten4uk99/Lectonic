@@ -3,8 +3,8 @@ import {connect} from "react-redux";
 
 
 function PhotoName(props) {
-  let firstName = props.firstName[0]
-  let lastName = props.lastName[0]
+  let firstName = props?.firstName?.slice(0, 1)
+  let lastName = props?.lastName?.slice(0, 1)
   let fontSize = props.size / 2.6
   return (
     <div className="photo-name__wrapper" 
