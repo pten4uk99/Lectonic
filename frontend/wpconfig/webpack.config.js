@@ -13,7 +13,7 @@ const PATHS = {
   public: path.join(__dirname, '../public/'),
   build: path.join(__dirname, '../build/'),
   conf: path.join(__dirname, './'),
-  assets: 'assets/',
+  assets: './assets/',
 }
 
 const PAGES_DIR = `${PATHS.src}/pages/`

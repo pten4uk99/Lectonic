@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 
-import lectureBg from '~/assets/img/lecture-bg.svg'
-import backArrow from '~/assets/img/back-arrow.svg'
+import lectureBg from '~/assets/img/lecture-bg.png'
+import backArrowWhite from '~/assets/img/back-arrow-white.svg'
 import LectureDates from "./LectureDates";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {getLectureDetail} from "../ajax/lecture";
@@ -73,9 +73,9 @@ function Lecture(props) {
   if (!isLoaded) return <Loader main={true}/>
   return (
     <>
-      <div className="navigate-back__block" style={{top: 220}}
+      <div className="navigate-back__block"
            onClick={() => navigate(reverse('workroom'))}>
-        <img src={backArrow} alt="назад"/>
+        <img src={backArrowWhite} alt="назад" style={{fill: 'white'}}/>
       </div>
       
       <div className="lecture__container">
@@ -91,7 +91,10 @@ function Lecture(props) {
               <div className="type blue">{lectureData?.creator_is_lecturer ? "Лекция" : "Запрос на лекцию"}</div>
               <div className="type">{lectureData?.lecture_type}</div>
             </div>
-            <div className="block__person">
+            <div className="block__person" 
+                 onClick={() => lectureData?.creator_is_lecturer ? 
+                   navigate(reverse('role_page', {lecturer: lectureData.creator_id})) : 
+                   navigate(reverse('role_page', {customer: lectureData.creator_id})) }>
               <div className="header">{lectureData?.creator_is_lecturer ? "Лектор:" : "Заказчик:"}</div>
               <div className="block__data">
                 <div className="person-photo">

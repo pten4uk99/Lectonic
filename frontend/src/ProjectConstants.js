@@ -54,11 +54,11 @@ export const withoutPermissionsList = [
 
 export function getLecturePhoto(svgId) {
   let svgArr = [
-    './assets/img/default_lecture_photo/1.svg',
-    './assets/img/default_lecture_photo/2.svg',
-    './assets/img/default_lecture_photo/3.svg',
-    './assets/img/default_lecture_photo/4.svg',
-    './assets/img/default_lecture_photo/5.svg',
+    '/assets/img/default_lecture_photo/1.svg',
+    '/assets/img/default_lecture_photo/2.svg',
+    '/assets/img/default_lecture_photo/3.svg',
+    '/assets/img/default_lecture_photo/4.svg',
+    '/assets/img/default_lecture_photo/5.svg',
   ]
   return svgArr[svgId - 1]
 }

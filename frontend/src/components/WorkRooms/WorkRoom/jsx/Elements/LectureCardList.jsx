@@ -20,35 +20,36 @@ function LectureCardList(props){
   
     return (
         <section className="block__created-lectures">
-          <div className="workroom__block-header">
-            <span>{props.header}</span>
-            <img src={tooltip} alt="Подсказка"/>
-            {!isLoaded && <Loader size={15} left={12}/>}
-          </div>
+          {!props?.inPage && 
+            <div className="workroom__block-header">
+              <span>{props.header}</span>
+              <img src={tooltip} alt="Подсказка"/>
+              {!isLoaded && <Loader size={15} left={12}/>}
+          </div>}
           
           <div className="cards-block minus-ml-20">
             {props.data.length > 0 && 
               <div className="created-lectures__wrapper">
                 <div className="created-lectures">
                   {props.data.map((lecture, index) => {
-                    return <WorkroomCard key={index} 
+                    return <WorkroomCard key={lecture.id} 
                                          data={{
                                            src: getLecturePhoto(lecture.svg), 
                                            client: !props.isLecturer ? 'Лектор:' : 'Заказчик:', 
                                            clientName: `${lecture.creator_first_name} ${lecture.creator_last_name}`, 
-                                           name: lecture.lecture_name, 
+                                           name: lecture.name, 
                                            date: getDates(lecture.dates), 
                                            description: lecture.description, 
                                            city: lecture.hall_address, 
                                            textBtn: 'Подробнее', 
                                            potentialLecture: true,
                                          }} 
-                                         onClick={(e) => navigate(reverse('lecture', {id: lecture.lecture_id}))}/>})}
+                                         onClick={(e) => navigate(reverse('lecture', {id: lecture.id}))}/>})}
                 </div>
             </div>}
           </div>
-          
-          <div className="workroom__block-underline"/>
+
+          {!props?.inPage && <div className="workroom__block-underline"/>}
         </section>
     )
 }
