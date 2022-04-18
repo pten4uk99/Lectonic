@@ -5,7 +5,7 @@ import NotificationsList from "./NotificationsList";
 import {getChatMessages} from "../../ajax";
 import {UpdateMessages} from "../../redux/actions/messages";
 import {SetSelectedChat} from "../../redux/actions/header";
-import {SetNeedRead} from "../../redux/actions/notifications";
+import {RemoveNotification, SetNeedRead} from "../../redux/actions/notifications";
 
 
 function ChatDropdown(props) {
@@ -35,7 +35,11 @@ function ChatDropdown(props) {
   }, [chatId])
   
   useEffect(() => {
-    if (messagesArea) setFunc(setInterval(() => getMessages(chatId), 3000))
+    if (messagesArea) {
+      setIsLoaded(false)
+      getMessages(chatId)
+      setFunc(setInterval(() => getMessages(chatId), 3000))
+    }
     else {
       clearInterval(func)
       setChatId(null)
@@ -65,5 +69,6 @@ export default connect(
     UpdateMessages: (data) => dispatch(UpdateMessages(data)),
     SetSelectedChat: (chat_id) => dispatch(SetSelectedChat(chat_id)),
     SetNeedRead: (chat_id, need_read) => dispatch(SetNeedRead(chat_id, need_read)),
+    RemoveNotification: (chat_id) => dispatch(RemoveNotification(chat_id)),
   })
 )(ChatDropdown);

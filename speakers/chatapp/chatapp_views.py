@@ -89,16 +89,17 @@ class MessageListGetAPIView(APIView):
 
         messages = Message.objects.order_by('datetime').filter(chat=chat)
         other_messages = messages.exclude(author=request.user)
-        for message in other_messages:
-            message.need_read = False
-            message.save()
-
+        for message in messages:
             if lecture_confirmed is not None:
                 continue
             if message.confirm is None:
                 lecture_confirmed = None
             else:
                 lecture_confirmed = message.confirm
+
+        for message in other_messages:
+            message.need_read = False
+            message.save()
 
         serializer = MessageSerializer(messages, many=True)
         return chatapp_responses.success([{
