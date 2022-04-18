@@ -14,7 +14,7 @@ import {getNotificationsList} from "../ajax";
 import {AddNotifications, RemoveNotification, SetNeedRead, UpdateNotifications} from "../redux/actions/notifications";
 import PhotoName from "../../Utils/jsx/PhotoName";
 import AuthModal from "../../Authorization/jsx/AuthModal";
-import {SetNotifyConn} from "../redux/actions/ws";
+import {SetNotifyConn, SetNotifyConnFail} from "../redux/actions/ws";
 import ErrorMessage from "../../Utils/jsx/ErrorMessage";
 
 
@@ -31,6 +31,19 @@ function Header(props) {
   let [chatSocket, setChatSocket] = useState(null)
   let selectedChatId = props.store.header.selectedChatId
   
+  function notificationList() {
+    getNotificationsList()
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === 'success') {
+          props.SetNotifyConnFail(false)
+          props.UpdateNotifications(data.data)
+        }
+        else props.SetNotifyConnFail(true)
+      })
+      .catch(e => props.SetNotifyConnFail(true))
+  }
+  
   useEffect(() => {
     if (isCustomer || isLecturer) setIconsVisible(true)
     else setIconsVisible(false)
@@ -38,12 +51,8 @@ function Header(props) {
   
   useEffect(() => {
     if ((isLecturer || isCustomer) && !props.store.ws.notifyConnFail) {
-      setInterval(() => 
-        getNotificationsList()
-          .then(r => r.json())
-          .then(data => props.UpdateNotifications(data.data)),
-        5000
-      )
+      notificationList()
+      setInterval(() => {notificationList()}, 5000)
     }
   }, [isLecturer, isCustomer, props.store.ws.notifyConnFail])
   
@@ -151,6 +160,7 @@ export default connect(
   dispatch => ({
     ActivateModal: () => dispatch(ActivateModal()),
     SetNotifyConn: (connected) => dispatch(SetNotifyConn(connected)),
+    SetNotifyConnFail: (connected) => dispatch(SetNotifyConnFail(connected)),
     SetSelectedChat: (chat_id) => dispatch(SetSelectedChat(chat_id)),
     SetNeedRead: (chat_id, need_read) => dispatch(SetNeedRead(chat_id, need_read)),
     UpdateNotifications: (data) => dispatch(UpdateNotifications(data)),

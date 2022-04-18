@@ -63,7 +63,7 @@ function ChatMessages(props) {
         .then(r => r.json())
         .then(data => {
           if (data.status === 'success') {
-            props.AddMessage(data)
+            props.AddMessage(data.data[0].text)
           }
         })
       e.target.value = ''
@@ -80,7 +80,7 @@ function ChatMessages(props) {
         .then(r => r.json())
         .then(data => {
           if (data.status === 'success') {
-            props.AddMessage(data)
+            props.AddMessage(data.data[0].text)
           }
         })
       input.current.value = ''
@@ -186,7 +186,7 @@ function ChatMessages(props) {
               <div className={props.store.permissions.user_id === elem.author ? 
                 "self-message" : "other-message"}>{elem.text}</div>
             </div>
-            else if (!elem.confirm) return <div key={index} className="block-message">
+            else if (elem.confirm === false) return <div key={index} className="block-message">
               <div className="reject-message">Лекция отклонена!</div>
             </div>
           })}
