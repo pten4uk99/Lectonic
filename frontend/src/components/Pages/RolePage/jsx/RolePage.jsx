@@ -1,14 +1,15 @@
 import React, {useEffect, useState} from 'react'
 
-import background from '~/assets/img/rolepage/rolepage_header_bg.svg';
-import backArrow from '~/assets/img/back-arrow.svg'
+import lecturerBackground from '~/assets/img/rolepage/rolepage_header_bg.svg';
+import customerBackground from '~/assets/img/rolepage/customer-bg.png';
+import backArrow from '~/assets/img/back-arrow-white.svg'
 import '../styles/RolePage.styl'
 import LectureCardList from "../../../WorkRooms/WorkRoom/jsx/Elements/LectureCardList";
 import {useNavigate, useSearchParams} from "react-router-dom";
-import {getLecturerDetail} from "../ajax/rolePage";
+import {getCustomerDetail, getLecturerDetail} from "../ajax/rolePage";
 import PhotoName from "../../../Utils/jsx/PhotoName";
 import {reverse} from "../../../../ProjectConstants";
-import {getCreatedLecturesForLecturer} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
+import {getCreatedLecturesForCustomer, getCreatedLecturesForLecturer} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
 
 
 function RolePage(props) {
@@ -35,7 +36,17 @@ function RolePage(props) {
         })
         .catch((error) => console.log(error))
     } else if (customerId) {
+      getCustomerDetail(customerId)
+        .then(r => r.json())
+        .then(data => setData(data.data[0]))
+        .catch(e => console.log(e))
       
+      getCreatedLecturesForCustomer(customerId)
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') setCreatedLecturesList(data.data)
+        })
+        .catch((error) => console.log(error))
     }
   }, [])
 
@@ -46,7 +57,8 @@ function RolePage(props) {
         <img src={backArrow} alt="назад"/>
       </div>
       
-        <div className="rolepage__header" style={{backgroundImage: `url(${background})`}}/>
+        <div className="rolepage__header" 
+             style={{backgroundImage: `url(${customerId ? customerBackground : lecturerBackground})`}}/>
         <div className='container'>
             <div className='rolepage__title'>
                 <div className='rolepage__img-wrapper'>
@@ -63,33 +75,50 @@ function RolePage(props) {
                         <span>{data?.person.last_name}</span>
                     </div>
                     <div>
-                        <div className='rolepage__tag tag-role'>Лектор</div>
-                        <div className='rolepage__tag tag-city'>г. {data?.person.city.name}</div>
+                        <div className='rolepage__tag tag-role'>{customerId ? "Заказчик" : "Лектор"}</div>
+                        <div className='rolepage__tag tag-city'>г. {data?.person.city}</div>
                     </div>
                 </div>
             </div>
             <div className='rolepage__description'>
                 <div className='rolepage__box-1'>
                     <div className='rolepage__description-box'>
-                        <span>Лектор о себе:</span>
-                        <p>{data?.person.description || "Нет"}</p>
+                      {customerId ? 
+                        <span>{data?.company_name}</span> :
+                        <>
+                          <span>Лектор о себе:</span>
+                          <p>{data?.person.description || "Нет"}</p>
+                        </>}
+
                     </div>
                     <div className='rolepage__description-box'>
-                        <span>Образование:</span>
-                        <p>{data?.education || "Не указано"}</p>
+                      <span>{customerId ? "Описание:" : "Образование:"}</span>
+                      <p>
+                        {customerId ? 
+                          (data?.company_description || "Нет") : 
+                          (data?.education || "Не указано")}
+                      </p>
                     </div>
                     <div className='rolepage__description-box'>
-                        <span>Ссылки на видео выступлений:</span>
-                      {data?.performances_links.length > 0 ? data.performances_links.map((elem, index) => {
-                        return <div className='pill pill-grey' key={index}>{elem}</div>
-                      }) : "Нет"}
+                        <span>{customerId ? "Сайт:" : "Ссылки на видео выступлений:"}</span>
+                      {customerId ?
+                        <div className='pill pill-grey'>
+                          <a href={data?.company_site} target="_blank">{data?.company_site}</a>
+                        </div> : 
+                        (data?.performances_links?.length > 0 ? data.performances_links.map((elem, index) => {
+                        return <div className='pill pill-grey' key={index}>
+                          <a href={elem} target="_blank">{elem}</a>
+                        </div>
+                      }) : "Нет")}
                     </div>
-                    <div className='rolepage__description-box'>
+                  {lecturerId && <div className='rolepage__description-box'>
                         <span>Ссылки на публикации:</span>
-                      {data?.performances_links.length > 0 ? data.publication_links.map((elem, index) => {
-                        return <div className='pill pill-grey' key={index}>{elem}</div>
+                      {data?.performances_links?.length > 0 ? data.publication_links.map((elem, index) => {
+                        return <div className='pill pill-grey' key={index}>
+                          <a href={elem} target="_blank">{elem}</a>
+                        </div>
                       }) : "Нет"}
-                    </div>
+                    </div>}
                 </div>
                 <div className='rolepage__box-2'>
                     <div className='rolepage__description-box'>

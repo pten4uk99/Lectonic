@@ -122,16 +122,17 @@
 }
 
 .workroom-card__img-lecture{
-    max-width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin: 0 auto;
-    img{
-        display: block;
-        border-radius: 50%;
-        width: 100%;
-        height: 100%;
-    }
+  display: flex
+  justify-content: center;
+  align-items: center
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto
+  overflow: hidden
+  img {
+    max-height: 100%;
+  }
 }
 
 .workroom-card__img-potential-lecture{

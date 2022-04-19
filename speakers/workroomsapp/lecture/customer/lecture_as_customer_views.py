@@ -25,16 +25,21 @@ class LectureAsCustomerAPIView(APIView):
 
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        lectures_list = None
+        customer_id = request.GET.get('id')
+        created_lectures = []
 
-        if hasattr(request.user.person, 'customer'):
-            created_lectures = request.user.person.customer.lectures.all()
-            lectures_list = []
-            for lecture in created_lectures:
-                lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
-                lowest = lowest.get('maximum')
-                if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
-                    lectures_list.append(lecture)
+        if not customer_id:
+            if hasattr(request.user.person, 'customer'):
+                created_lectures = request.user.person.customer.lectures.all()
+        else:
+            created_lectures = Customer.objects.get(pk=customer_id).lectures.all()
+
+        lectures_list = []
+        for lecture in created_lectures:
+            lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
+            lowest = lowest.get('maximum')
+            if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
+                lectures_list.append(lecture)
 
         serializer = LecturesGetSerializer(
             lectures_list, many=True, context={'request': request})

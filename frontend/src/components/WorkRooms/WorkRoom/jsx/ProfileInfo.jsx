@@ -57,10 +57,11 @@ function ProfileInfo(props){
         <span>{profile.middle_name}</span>
       </div>
       <div className="profile-about__btn-box">
-        <button className="profile-about__btn-add-role" 
+        {!(permissions.is_lecturer || permissions.is_customer) && 
+          <button className="profile-about__btn-add-role" 
                 onClick={() => navigate(reverse('add_role'))}>
           <img src={iconPlus} alt="icon-plus"/>
-        </button>
+        </button>}
         {permissions.is_lecturer && 
           <button className={profile.is_lecturer ? btnClassName + " active" : btnClassName} 
                 onClick={props.SwapToLecturer}>Лектор</button>}

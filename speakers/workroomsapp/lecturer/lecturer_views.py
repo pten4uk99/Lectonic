@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 
 from workroomsapp.lecturer.docs import lecturer_docs
 from workroomsapp.lecturer.lecturer_serializers import *
+from workroomsapp.models import City
 from workroomsapp.utils import workroomsapp_permissions
 from workroomsapp.lecturer import lecturer_responses
 
@@ -59,6 +60,8 @@ class LecturerCreateAPIView(APIView):
             return lecturer_responses.lecturer_does_not_exist()
 
         serializer = LecturerGetSerializer(lecturer, many=True, context={'request': request})
+        city_id = serializer.data[0]['person']['city']
+        serializer.data[0]['person']['city'] = City.objects.get(pk=city_id).name
         return lecturer_responses.success_get_lecturers(serializer.data)
 
 

@@ -136,20 +136,10 @@ function Authorization(props) {
 
   //Блок Забыл пароль, смена пароля
   const [emailForgottenShown, setEmailForgottenShown] = useState(false)
-  const [emailChangePassword, setEmailChangePassword] = useState('')
-
-  function onEmailChangePassword(e) {
-    setEmailChangePassword(e.target.value)
-  }
 
   function handlePasswordForgotten() {
     setSignInShown(false)
     setEmailForgottenShown(true)
-  }
-
-  function onSubmitPasswordChange() {
-    //пока нет api
-    navigate(reverse('change_password'))
   }
 
   return (
@@ -191,9 +181,8 @@ function Authorization(props) {
 
       {/* Блок Забыл пароль*/}
       <ForgotPassword show={emailForgottenShown} 
-                      inputValue={emailChangePassword} 
-                      onChange={onEmailChangePassword} 
-                      onSubmit={onSubmitPasswordChange} 
+                      setRequestLoaded={setRequestLoaded}
+                      setError={setErrorSignUpEmail}
                       signInShow={handleSignInShow}/>
     </div>
   )

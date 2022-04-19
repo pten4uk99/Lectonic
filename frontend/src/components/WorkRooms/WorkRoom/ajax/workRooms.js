@@ -28,14 +28,14 @@ export function getCreatedLecturesForLecturer(id='') {
     options
   )
 }
-export function getCreatedLecturesForCustomer() {
+export function getCreatedLecturesForCustomer(id='') {
   const options = {
     method: 'GET',
     headers: HEADERS,
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/lecture/as_customer/`,
+    `${baseURL}/api/workrooms/lecture/as_customer/?id=${id}`,
     options
   )
 }

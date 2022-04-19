@@ -1,4 +1,4 @@
-export const baseURL = 'https://dev.lectonic.ru'; // случайно могу иногда забыть поменять на dev.lectonic.ru
+export const baseURL = 'http://127.0.0.1:8000'; // случайно могу иногда забыть поменять на dev.lectonic.ru
 const [protocol, host] = baseURL.split('//')
 export const baseWS = (protocol === 'https' ? 'wss://' : 'ws://') + host
 
@@ -48,6 +48,7 @@ export const withoutPermissionsList = [
   reverse('confirm_email'),
   reverse('continue_signup'),
   reverse('verify_email'),
+  reverse('change_password'),
   
   '*', // звездочка должна быть последней
 ]
@@ -59,6 +60,11 @@ export function getLecturePhoto(svgId) {
     '/assets/img/default_lecture_photo/3.svg',
     '/assets/img/default_lecture_photo/4.svg',
     '/assets/img/default_lecture_photo/5.svg',
+    '/assets/img/default_lecture_photo/6.svg',
+    '/assets/img/default_lecture_photo/7.svg',
+    '/assets/img/default_lecture_photo/8.svg',
+    '/assets/img/default_lecture_photo/9.svg',
+    '/assets/img/default_lecture_photo/10.svg',
   ]
   return svgArr[svgId - 1]
 }

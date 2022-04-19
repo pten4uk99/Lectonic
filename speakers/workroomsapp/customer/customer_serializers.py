@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from workroomsapp.models import Customer, Domain
+from workroomsapp.person.person_serializers import PersonSerializer
 
 
 class CustomerCreateSerializer(serializers.Serializer):
@@ -37,3 +38,30 @@ class CustomerCreateSerializer(serializers.Serializer):
             hall_address=validated_data.get('hall_address'),
             equipment=validated_data.get('equipment'),
         )
+
+
+class CustomerGetSerializer(serializers.ModelSerializer):
+    person = PersonSerializer()
+    domain = serializers.SerializerMethodField()
+    optional = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Customer
+        fields = [
+            'id',
+            'person',
+            'company_name',
+            'company_description',
+            'company_site',
+            'optional',
+            'domain',
+        ]
+
+    def get_optional(self, customer):
+        return {
+            'hall_address': customer.optional.hall_address,
+            'equipment': customer.optional.equipment
+        }
+
+    def get_domain(self, customer):
+        return customer.customer_domains.all().values_list('domain__name', flat=True)

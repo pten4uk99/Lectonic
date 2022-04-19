@@ -6,11 +6,14 @@ from django.db import models
 from django.utils import timezone
 
 
-class EmailConfirmation(models.Model):
+class BaseEmailConfirmation(models.Model):
     email = models.EmailField(unique=True)
     key = models.CharField(max_length=15)
     created_at = models.DateTimeField(auto_now_add=True)
     confirmed = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
 
     def save(self, *args, **kwargs):
         if not self.key:
@@ -29,3 +32,11 @@ class EmailConfirmation(models.Model):
 
     def __str__(self):
         return self.key
+
+
+class EmailConfirmation(BaseEmailConfirmation):
+    pass
+
+
+class EmailResetPassword(BaseEmailConfirmation):
+    pass
