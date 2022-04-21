@@ -15,22 +15,16 @@ body
   background-color var(--main-white)
   font-family 'Montserrat', sans-serif
 
-/* чтоб футер был прибит к низу, но не заезжал на контент при скролле */
 html, body
   width: 100%
   height 100%
 
-//#root
-//  min-height 100%
-//  display flex
-//  flex-direction column
-//
 main
   float: left;
   width: 100%
   min-height: calc(100vh - 174px)
-  //flex 1 1 auto
 
+  
 /* Заголовки */
 h1
   font-weight 500
@@ -63,17 +57,20 @@ h5
 /* КНОПКИ */
 /*Main buttons*/
 .btn
+  box-sizing: border-box
+  height: 44px
   width 320px
   border-radius 30px
   font-weight 500
   font-size 14px
   line-height 17px
-  padding 14px 0px
+  padding 14px 0
   border none
   background-color var(--add-purple)
   color var(--main-white)
   cursor pointer
   transform rotate(360deg)
+  font-family: 'Montserrat', sans-serif;
 
 .btn:disabled
   background-color var(--add-greyDisable)
@@ -136,9 +133,11 @@ h5
   padding-bottom 8px
   cursor pointer
   border-radius 0
+  font-family: 'Montserrat', sans-serif;
 
 .form__input::placeholder
   color var(--add-darkGrey)
+  font-family: 'Montserrat', sans-serif;
 
 .form__input:disabled
   border-bottom 1px solid var(--add-darkGrey)
@@ -188,7 +187,7 @@ h5
   
 /* TEXTAREA */
 .form__textarea 
-  width 298px /*тк паддинги и бордеры*/
+  width 441px /*тк паддинги и бордеры*/
   /*высота разная по проекту, ниже описаны модифаеры*/
   border 1px solid var(--add-darkGrey)
   border-radius 18px
@@ -198,6 +197,10 @@ h5
   padding-top 8px
   padding-left 20px
   resize none
+  
+  .w-298 {
+    width: 298px
+  }
 
 .form__textarea::placeholder
   color var(--add-darkGrey)
@@ -246,6 +249,8 @@ h5
   width: 50px
   height: 50px
   cursor: pointer
+  
+  z-index: 10
 }
 /*Адаптив под разную ширину экранов*/
 @media screen and (max-width: 720px) {

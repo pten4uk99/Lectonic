@@ -6,7 +6,7 @@ from speakers.settings import DEFAULT_HOST
 
 class ChatSerializer(serializers.ModelSerializer):
     lecture_name = serializers.SerializerMethodField()
-    lecture_photo = serializers.SerializerMethodField()
+    lecture_svg = serializers.SerializerMethodField()
     need_read = serializers.SerializerMethodField()
     respondent_id = serializers.SerializerMethodField()
     respondent_first_name = serializers.SerializerMethodField()
@@ -17,7 +17,7 @@ class ChatSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'lecture_name',
-            'lecture_photo',
+            'lecture_svg',
             'need_read',
             'respondent_id',
             'respondent_first_name',
@@ -25,17 +25,14 @@ class ChatSerializer(serializers.ModelSerializer):
         ]
 
     def get_lecture_name(self, obj):
-        return obj.lecture_request.lecture.name
+        return obj.lecture.name
 
     def get_need_read(self, obj):
         return Message.objects.filter(chat=obj, need_read=True).exclude(
             author=self.context['request'].user).exists()
 
-    def get_lecture_photo(self, obj):
-        if hasattr(obj.lecture_request, 'lecturer_lecture_request'):
-            return DEFAULT_HOST + obj.lecture_request.lecturer_lecture_request.photo.url
-        elif hasattr(obj.lecture_request, 'customer_lecture_request'):
-            return DEFAULT_HOST + obj.lecture_request.customer_lecture_request.photo.url
+    def get_lecture_svg(self, obj):
+        return obj.lecture.svg
 
     def get_respondent_id(self, obj):
         return obj.users.exclude(pk=self.context['request'].user.pk).first().pk
@@ -52,4 +49,4 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['author', 'text', 'chat', 'datetime']
+        fields = ['author', 'text', 'chat', 'datetime', 'confirm']

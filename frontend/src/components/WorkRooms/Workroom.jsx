@@ -7,7 +7,6 @@ import background from '~/assets/img/workrooms/user-account_bg.svg';
 import Lecturer from "./WorkRoom/jsx/Lecturer";
 import FullCalendar from "~@/WorkRooms/FullCalendar/FullCalendar";
 import {reverse} from "../../ProjectConstants";
-import CreatedLectures from "./WorkRoom/jsx/Elements/CreatedLectures";
 import Customer from "./WorkRoom/jsx/Customer";
 
 
@@ -31,8 +30,8 @@ function Workroom(props){
           </div>
           <div className="user-account__wrapper">
             <div className="user-account__content">
-              {isLecturer && <Lecturer/>}
-              {isCustomer && <Customer/>}
+              {isLecturer && props.store.permissions.is_lecturer && <Lecturer/>}
+              {isCustomer && props.store.permissions.is_customer && <Customer/>}
               <FullCalendar/>
             </div>
           </div>

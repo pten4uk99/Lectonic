@@ -2,12 +2,11 @@ import React, {useEffect, useState} from 'react'
 import {connect} from "react-redux";
 import { Routes, Route } from 'react-router-dom'
 
-import Main from '~@/Layout/jsx/Main'
+import Index from '~@/Layout/jsx/Index'
 import Footer from '~@/Layout/jsx/Footer'
 import NotFoundPage from '~@/Layout/jsx/NotFoundPage'
-import VerifyEmail from '~@/Authorization/jsx/VerifyEmail'
-import ChangePassword from '~@/Authorization/jsx/ChangePassword'
-import ContinueRegistration from '~@/Authorization/jsx/ContinueRegistration'
+import VerifyEmail from '~@/Layout/jsx/VerifyEmail'
+import ChangePassword from '~@/Layout/jsx/ChangePassword'
 import ConfirmEmail from '~@/Authorization/jsx/ConfirmEmail'
 import SetProfileInfo from '~@/Profile/jsx/SetProfileInfo'
 import RegistrationRole from '~@/RegistrationRole/jsx/RegistrationRole'
@@ -16,9 +15,10 @@ import CreateEvent from "~@/WorkRooms/CreateEvent/jsx/CreateEvent"
 import Header from "~@/Layout/jsx/Header"
 import RolePage from "~@/Pages/RolePage/jsx/RolePage";
 import Permissions from "./components/Authorization/jsx/Permissions";
-import {hostURL, permissions, reverse} from "./ProjectConstants";
+import {reverse} from "./ProjectConstants";
 import {createNotificationsSocket} from "./webSocket";
-import Lecture from "./components/WorkRooms/Lecture/jsx/Lecture";
+import Lecture from "./components/Pages/Lecture/jsx/Lecture";
+import {SetNotifyConnFail} from "./components/Layout/redux/actions/ws";
 
 
 function App(props) {
@@ -26,11 +26,16 @@ function App(props) {
   let userId = permissions.user_id
   let [notificationsSocket, setNotificationsSocket] = useState(null)
   
+  // useEffect(() => {
+  //   if (userId && (permissions.is_lecturer || permissions.is_customer)) {
+  //     createNotificationsSocket(setNotificationsSocket, userId, props.SetNotifyConnFail)
+  //   }
+  // }, [permissions])
+  
   useEffect(() => {
-    if (userId && (permissions.is_lecturer || permissions.is_customer)) {
-      createNotificationsSocket(setNotificationsSocket, userId)
-    }
-  }, [permissions])
+    if (props.store.header.modalActive) document.body.style.overflowY = 'hidden'
+    else document.body.style = null
+  }, [props.store.header.modalActive])
   
   return (
     <>
@@ -38,11 +43,12 @@ function App(props) {
           <main>
             <Permissions>
               <Routes>
-                <Route path={reverse('index')} element={<Main/>}/>
+                <Route path={reverse('index')} element={<Index/>}/>
                 <Route path={reverse('verify_email')} element={<VerifyEmail />} />
                 <Route path={reverse('confirm_email')} element={<ConfirmEmail />} />
-                <Route path={reverse('continue_signup')} element={<ContinueRegistration />} />
+                <Route path={reverse('continue_signup')} element={<></>} />
                 <Route path={reverse('create_profile')} element={<SetProfileInfo />}/>
+                <Route path={reverse('set_profile')} element={<SetProfileInfo />}/>
                 <Route path='/add_role/*' element={<RegistrationRole/>}/>
                 <Route path={reverse('workroom')} element={<Workroom />}/>
                 <Route path={reverse('create_event')} element={<CreateEvent/>}/>
@@ -60,5 +66,7 @@ function App(props) {
 
 export default connect(
   state => ({store: state}),
-  dispatch => ({})
+  dispatch => ({
+    SetNotifyConnFail: (failed) => dispatch(SetNotifyConnFail(failed))
+  })
 )(App)

@@ -32,6 +32,7 @@ function LecturerSteps(props) {
   let education = role.education
   let hallAddress = role.hall_address
   let equipment = role.equipment
+
   
   function handleSubmit(e) {
     e.preventDefault()
@@ -48,20 +49,22 @@ function LecturerSteps(props) {
       .then(response => response.json())
       .then(data => {
         if (data.status === 'created') {
-          let diploma = new File(role.diploma_photos, 'diploma.png')
-          let diplomaForm = new FormData()
-          diplomaForm.set('diploma', diploma)
-          
-          uploadDiplomaPhotos(diplomaForm)
-            .then(response => response.json())
-            .then(data => {
-              props.SwapLecturer(true)
-              navigate(reverse('workroom'))
-            })
-            .catch(error => props.SetErrorMessage('upload_diploma'))
+          // for (let photo of role.diploma_photos) {
+          //   let format = photo?.match(/\/(.+);/)[1]
+          //   let diploma = new File(role.diploma_photos, `diploma.${format}`)
+          //   let diplomaForm = new FormData()
+          //   diplomaForm.set('diploma', diploma)
+          //  
+          //   uploadDiplomaPhotos(diplomaForm)
+          //     .then(response => response.json())
+          //     .then(data => {})
+          //     .catch(error => console.log(error))
+          // }
+          props.SwapLecturer(true)
+          navigate(reverse('workroom'))
         }
       })
-      .catch(error => props.SetErrorMessage('create_lecturer'))
+      .catch(error => console.log(error))
   }
   
   return (

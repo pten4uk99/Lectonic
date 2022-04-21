@@ -1,0 +1,158 @@
+
+.lecture__container {
+  //display: flex
+  //flex-direction: column
+  //align-items: center
+  overflow-x: hidden;
+  font-size: 12px
+
+  .header {
+    margin-bottom: 8px
+    font-size: 12px
+    font-weight: 600
+    color: $main-blue
+  }
+  
+  .header__picture {
+    height: 150px;
+    img {
+      height: 200px
+    }
+  }
+  
+  .lecture__wrapper {
+    position: relative
+    display: flex
+    justify-content: center;
+    width: 100%
+    background-color: white
+    
+    .left-block {
+      position: relative
+      top: -75px
+      display: flex
+      flex-direction: column
+      margin-top: 18px
+      margin-right: 36px
+      
+      .lecture-photo {
+        width: 290px
+        height: 163px
+        border-radius: 18px
+        text-align: center
+        background-color: white
+        box-shadow: 0px 2px 20px 0px rgba(0, 5, 26, 0.1);
+
+        
+        img {
+          max-height 163px
+          max-width 290px
+        }
+      }
+      .subheader {
+        display flex
+        .type {
+          height: 20px
+          background-color: rgba(95, 181, 255, 1);
+          border-radius: 45px
+  
+          text-align: center
+          line-height: 20px
+          color: white
+          font-size: 11px
+          font-weight: 500
+          
+          margin-top: 19px
+          margin-right: 9px
+          padding: 0 12px
+          
+          &.blue {
+            background-color: $main-blue
+          }
+        }
+      }
+
+      .block__person {
+        margin-top: 37px
+        cursor: pointer
+        .header {
+          margin-bottom: 16px
+        }
+        
+        .block__data {
+          display: flex
+          
+          .person-photo {
+            width: 90px
+            height: 90px
+            border-radius: 50%
+            text-align: center
+            overflow: hidden;
+            
+            img {
+              max-width: 90px
+              max-height: 90px
+            }
+          }
+          .person-data {
+            display: flex
+            flex-direction: column
+            justify-content: center
+            margin-left: 12px
+            font-size: 14px
+            font-weight: 700
+          }
+        }
+      }
+      .block__equipment {
+        margin-top: 32px
+      }
+      .block__cost {
+        margin-top: 32px
+      }
+    }
+    .right-block {
+      display: flex
+      flex-direction: column
+      margin-top: 18px
+      
+      .lecture-name {
+        width: 719px
+        font-size: 36px
+        font-weight: 600
+      }
+      .block__domains {
+        display: flex
+        flex-wrap: wrap;
+        margin-top: 12px
+        width: 719px
+        
+        .domain {
+          background-color: $add-grey
+          padding: 6px 20px
+          margin-right: 12px
+          margin-bottom: 12px
+          border-radius 18px
+        }
+      }
+      .block__dates {
+        margin-top: 36px      
+        .header {
+          margin-bottom: 16px
+        }
+      }
+      .block__address {
+        margin-top: 41px
+      }
+      .block__description {
+        width: 550px
+        margin-top: 32px
+      }
+      .btn-response {
+        margin-top: 57px
+        margin-bottom: 72px
+        font-family: 'Montserrat', sans-serif
+      }
+    }
+  }
+}

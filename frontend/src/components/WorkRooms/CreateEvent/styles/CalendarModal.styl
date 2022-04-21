@@ -6,6 +6,7 @@
     align-items: center
     margin-top: 55px
     margin-left: 63px
+    width: 380px
     
     .calendar-modal__header {
       font-size: 18px
@@ -14,7 +15,21 @@
     }
     
     .calendar-modal__tooltip {
+      text-align: center
       margin-top: 32px
+    }
+    
+    .calendar-modal__duration {
+      display flex
+      flex-direction column
+      z-index: 10
+      
+      span {
+        margin-top: 36px
+        margin-bottom: 8px
+        font-size: 12px
+        font-weight: 700
+      }
     }
     
     .calendar-modal__dates-block {
@@ -22,21 +37,39 @@
       flex-direction: column
       align-items: center
       margin-top: 24px
-      .span {
+      span {
         display: block
         text-align: center
+        font-weight: 700
+        font-size: 12px
       }
       
       .calendar-modal__dates-list {
-        display: grid
-        grid-template-columns: repeat(4, 93px)
-        grid-auto-rows: 32px
+        display: flex
+        flex-wrap: wrap
         justify-content: center
         align-items: center
         
         margin-top: 12px
         grid-column-gap: 8px
         grid-row-gap: 12px
+      }
+    }
+    .calendar-modal__time {
+      display flex
+      flex-direction column
+      align-items: center
+      margin-top: 24px
+      margin-bottom: 14px
+      &>span {
+        font-weight: 700
+        font-size: 12px
+        margin-bottom: 8px
+      }
+      .time-dropdown {
+        .end {
+          margin-left: 5px
+        }
       }
     }
   }
@@ -58,7 +91,14 @@
   
   border: 1px solid #000000
   border-radius: 45px
-  
+  cursor: pointer
+
+  &.active {
+    background-color: $main-blue
+    color: white
+    font-weight: 700
+    border: 1px solid $main-blue
+  }
   &.ml-8 {
     margin-left: 8px
   }

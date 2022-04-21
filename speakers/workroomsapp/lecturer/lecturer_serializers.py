@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
+from speakers.settings import DEFAULT_HOST
 from workroomsapp.models import Lecturer, DiplomaImage, Domain
+from workroomsapp.person.person_serializers import PersonSerializer
 
 
 class DiplomaImageCreateSerializer(serializers.Serializer):
@@ -68,3 +70,52 @@ class LecturerCreateSerializer(serializers.Serializer):
             education=validated_data.get('education')
         )
 
+
+class LecturersListGetSerializer(serializers.ModelSerializer):
+    first_name = serializers.StringRelatedField(source='person.first_name')
+    last_name = serializers.StringRelatedField(source='person.last_name')
+    middle_name = serializers.StringRelatedField(source='person.middle_name')
+    photo = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Lecturer
+        fields = [
+            'id',
+            'photo',
+            'first_name',
+            'last_name',
+            'middle_name'
+        ]
+
+    def get_photo(self, obj):
+        if obj.person.photo:
+            return DEFAULT_HOST + obj.person.photo.url
+        else:
+            return ''
+
+
+class LecturerGetSerializer(serializers.ModelSerializer):
+    person = PersonSerializer()
+    domain = serializers.SerializerMethodField()
+    optional = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Lecturer
+        fields = [
+            'id',
+            'person',
+            'performances_links',
+            'publication_links',
+            'education',
+            'optional',
+            'domain',
+        ]
+
+    def get_optional(self, lecturer):
+        return {
+            'hall_address': lecturer.optional.hall_address,
+            'equipment': lecturer.optional.equipment
+        }
+
+    def get_domain(self, lecturer):
+        return lecturer.lecturer_domains.all().values_list('domain__name', flat=True)

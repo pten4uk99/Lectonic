@@ -1,6 +1,35 @@
+.confirm-dates__header {
+  font-weight: 700
+}
+  
+.confirm-dates__underline {
+  background-color: $add-grey
+  margin-top: 16px
+  margin-bottom: 23px
+  width: 448px
+  height: 1px
+}
+
+.confirm-dates__block {
+  .confirm-date {
+    display: flex
+    align-items: center
+    justify-content: center
+    margin-bottom: 12px
+    .time {
+      margin: 0
+      font-weight: 700
+      margin-left: 15px
+    }
+  }
+}
+
 .chat-messages__block {
+  display: grid
+  grid-auto-flow: row
+  grid-template-rows: min-content 1fr .2fr
+  height: 100%
   .actions__block {
-    height: 100px
     background-color: white
     padding: 18px
     box-sizing border-box
@@ -35,6 +64,17 @@
       justify-content: center;
       margin-top: 7px
       
+      .lecture-confirmed {
+        text-align: center
+        font-size: 12px
+        color: $main-blue;
+      }
+      .lecture-rejected {
+        text-align: center
+        font-size: 12px
+        color: $add-pink;
+      }
+      
       button {
         width: 100px
         height: 29px
@@ -55,7 +95,7 @@
     }
   }
   .messages__block {
-    height: 434px
+    //height: 434px
     background-color: rgba(245, 245, 245, 1);
     padding-top: 40px
     padding-bottom: 10px
@@ -67,7 +107,21 @@
       position: relative;
       width: 100%;
       padding: 5px 15px;
+      box-sizing border-box
   /*     border: 1px solid; */
+      
+      .confirm-message {
+        margin: 20px 0
+        text-align: center
+        font-size: 11pt
+        color: $main-blue
+      }      
+      .reject-message {
+        margin: 20px 0
+        text-align: center
+        font-size: 11pt
+        color: $add-pink
+      }
       .self-message, .other-message {
         padding: 8px 16px;
     
@@ -88,7 +142,7 @@
         float: left;
         background-color: rgba(219, 219, 219, 1);
         border-radius: 14px 14px 14px 0;
-        margin-left: 30px;
+        
       }  
     }
   }
@@ -96,7 +150,7 @@
     display flex
     justify-content: center;
     align-items: center
-    height: 68px
+    //height: 68px
     background-color: white
     
     input {

@@ -4,3 +4,6 @@ export function UpdateMessages(data) {
 export function AddMessage(message) {
   return {type: "ADD_MESSAGE", payload: message}
 }
+export function SetMessagesConfirmed(confirmed) {
+  return {type: "SET_MESSAGES_CONFIRMED", payload: confirmed}
+}

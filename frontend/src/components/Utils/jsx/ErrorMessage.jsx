@@ -2,13 +2,14 @@ import React from "react";
 import {connect} from "react-redux";
 
 import errorIcon from '~/assets/img/error-message-icon.svg'
+import Loader from "./Loader";
 
 function ErrorMessage(props) {
-  let message = props.store.header.errorMessage
   return (
     <div className="header__error-message">
       <img src={errorIcon} alt=""/>
-      <span>Ошибка сервера: {message}</span>
+      <span>{props.msg}</span>
+      <Loader size={15} left={12}/>
     </div>
   )
 }

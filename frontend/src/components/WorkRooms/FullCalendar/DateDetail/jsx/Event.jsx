@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { connect } from 'react-redux'
 
-import lecturerPhoto from '~/assets/img/TEST_PHOTO_LECTURER.svg'
 import Respondents from "./Respondents";
+import PhotoName from "../../../../Utils/jsx/PhotoName";
+import {getLecturePhoto} from "../../../../../ProjectConstants";
 
 
 function Event(props) {
@@ -14,6 +15,7 @@ function Event(props) {
 
   useEffect(() => {
     if (!props.status) setClass('left-block grey')
+    else setClass('left-block blue')
   }, [props.status])
   
   useEffect(() => {
@@ -39,10 +41,12 @@ function Event(props) {
       
       <div className="date-detail__event-photo-block">
         <div className="lecturer-photo">
-          <img src={lecturerPhoto} alt="инициалы создателя"/>
+          <PhotoName firstName={props.creator[0]} 
+                     lastName={props.creator[1]} 
+                     size={32}/>
         </div>
         <div className="event-photo">
-          <img src={props.photo} alt="обложка"/>
+          <img src={getLecturePhoto(props.photo)} alt="обложка"/>
         </div>
       </div>
       
@@ -57,11 +61,11 @@ function Event(props) {
         </div>
         {props.lecturer &&
           <div className='lecturer'>
-            Лектор: <span>{props.lecturer}</span>
+            Лектор: <span>{props.lecturer[0]} {props.lecturer[1]} {props.lecturer[2]}</span>
           </div>}
         {props.customer && 
           <div className='lecturer'>
-            Заказчик: <span>{props.customer}</span>
+            Заказчик: <span>{props.customer[0]} {props.customer[1]} {props.customer[2]}</span>
           </div>}
         {props.address && 
           <div className='address'>

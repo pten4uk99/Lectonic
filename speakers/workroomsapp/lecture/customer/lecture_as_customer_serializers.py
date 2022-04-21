@@ -2,19 +2,17 @@ import datetime
 
 from rest_framework import serializers
 
-from speakers.settings import DEFAULT_HOST
-from workroomsapp.calendar.utils import build_photo_path
+
 from workroomsapp.lecture.utils import (
     convert_datetime,
     check_datetime_for_lecture_as_customer,
-    check_datetime_for_lecture_as_lecturer
 )
-from workroomsapp.models import Lecture, LecturerLectureRequest
+from workroomsapp.models import Lecture, Lecturer
 
 
 class LectureCreateAsCustomerSerializer(serializers.Serializer):
     name = serializers.CharField()
-    photo = serializers.FileField()
+    svg = serializers.IntegerField(min_value=1)
     domain = serializers.ListField()
     datetime = serializers.ListField()
     hall_address = serializers.CharField(required=False)
@@ -27,7 +25,7 @@ class LectureCreateAsCustomerSerializer(serializers.Serializer):
     class Meta:
         fields = [
             'name',
-            'photo',
+            'svg',
             'domain',
             'hall_address',
             'equipment',
@@ -41,11 +39,6 @@ class LectureCreateAsCustomerSerializer(serializers.Serializer):
         lecture.name = 'lecture.' + image_format
         return lecture
 
-    def validate_photo(self, photo):
-        image_format = photo.name.split('.')[-1]
-        photo.name = 'photo.' + image_format
-        return photo
-
     def validate_datetime(self, datetime_list):
         dates = []
         for elem in datetime_list:
@@ -56,8 +49,8 @@ class LectureCreateAsCustomerSerializer(serializers.Serializer):
                     self.context['request'].user.person.customer, start.date(), start.time(), end.time()):
                 raise serializers.ValidationError(f'Событие на выбранное время уже существует {start} - {end}')
 
-            if start < datetime.datetime.now() + datetime.timedelta(days=1):
-                msg = 'Между созданием и проведением лекции должно быть не менее 24 часов'
+            if start < datetime.datetime.now() + datetime.timedelta(hours=1):
+                msg = 'Невозможно создать событие на прошедшую дату'
                 raise serializers.ValidationError(msg)
 
             dates.append([start, end])
@@ -68,71 +61,13 @@ class LectureCreateAsCustomerSerializer(serializers.Serializer):
         return Lecture.objects.create_as_customer(
             customer=self.context['request'].user.person.customer,
             name=validated_data.get('name'),
-            photo=validated_data.get('photo'),
+            svg=validated_data.get('svg'),
             domain=validated_data.get('domain'),
             datetime=validated_data.get('datetime'),
             hall_address=validated_data.get('hall_address'),
             equipment=validated_data.get('equipment'),
             listeners=validated_data.get('listeners'),
             lecture_type=validated_data.get('type'),
-            status=False,
             cost=validated_data.get('cost', 0),
             description=validated_data.get('description'),
         )
-
-
-class LectureAsCustomerGetSerializer(serializers.ModelSerializer):
-    lecture_id = serializers.SerializerMethodField()
-    lecture_name = serializers.SerializerMethodField()
-    dates = serializers.SerializerMethodField()
-    hall_address = serializers.SerializerMethodField()
-    description = serializers.SerializerMethodField()
-    creator_first_name = serializers.SerializerMethodField()
-    creator_last_name = serializers.SerializerMethodField()
-    in_respondents = serializers.SerializerMethodField()
-    photo = serializers.SerializerMethodField()
-
-    class Meta:
-        model = LecturerLectureRequest
-        fields = [
-            'lecture_id',
-            'lecture_name',
-            'dates',
-            'hall_address',
-            'description',
-            'photo',
-            'in_respondents',
-            'creator_first_name',
-            'creator_last_name',
-        ]
-
-    def get_lecture_id(self, obj):
-        return obj.lecture_request.lecture.pk
-
-    def get_lecture_name(self, obj):
-        return obj.lecture_request.lecture.name
-
-    def get_dates(self, obj):
-        events = obj.lecture_request.events.all()
-        dates = []
-        for event in events:
-            dates.append(event.datetime_start)
-        return dates
-
-    def get_description(self, obj):
-        return obj.lecture_request.lecture.description
-
-    def get_in_respondents(self, obj):
-        return bool(obj.lecture_request.respondents.filter(person=self.context['request'].user.person).first())
-
-    def get_hall_address(self, obj):
-        return obj.lecture_request.lecture.optional.hall_address
-
-    def get_photo(self, obj):
-        return DEFAULT_HOST + obj.photo.url
-
-    def get_creator_first_name(self, obj):
-        return obj.lecturer.person.first_name
-
-    def get_creator_last_name(self, obj):
-        return obj.lecturer.person.last_name

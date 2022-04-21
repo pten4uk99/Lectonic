@@ -1,14 +1,37 @@
 // Обертка для карточки + общие стили
 
+.delete__icon {
+  display: none
+  position: absolute
+  right: 10px
+  top: 10px
+  transform: translate(15px, -15px)
+  
+  cursor pointer
+  
+  z-index: 5
+}
+
+.workroom-card__box-del-wrapper {
+  display: inline-block
+  position: relative
+  transition: transform .1s
+  
+  &:hover {
+    transform: translateY(-5px)
+    .delete__icon {
+      display: inherit
+    }
+  }
+}
 .workroom-card__box{
-    display: inline-block
-    box-sizing: border-box;
-    font-family: 'Montserrat', sans-serif;
-    border-radius: 18px;
-    text-align: center;
-    margin-left: 12px;
-    width: 240px
-    overflow: hidden;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+  border-radius: 18px;
+  text-align: center;
+  margin-left: 12px;
+  width: 240px
+  overflow: hidden;
 }
 
 .workroom-card__box-name{
