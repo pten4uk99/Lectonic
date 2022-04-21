@@ -39,11 +39,11 @@ function CreateEvent(props) {
   let place = props.store.event.place
   let payment = props.store.event.payment
   let titlePhotoSrc = props.store.event.photo
-  let [deletedDomain, setDeletedDomain] = useState();
-  
+  let [deletedDomain, setDeletedDomain] = useState([{}]);
+
   function deleteElem (indexElem) {
     props.DeleteDomain(selectedDomains, indexElem);
-    domainArray.push(deletedDomain)
+    domainArray.push(deletedDomain);
     setDomainArray(domainArray.sort());
   }
   
@@ -59,7 +59,7 @@ function CreateEvent(props) {
   }, [chooseDates])
   
   let [domainArray, setDomainArray] = useState(null)
-  
+
   useEffect(() => {
     props.UpdatePhoto('')
     getDomainArray()
@@ -153,7 +153,7 @@ function CreateEvent(props) {
               <div className='domain-list flex'>
                 {selectedDomains.map((domain, index) => {
                   return <div key={index} className='pill pill-grey'
-                              onMouseEnter={() => {setDeletedDomain(domain)}}>
+                              onMouseEnter={() => {setDeletedDomain({id: index,name: domain})}}>
                                 {domain}
                                 <div className='pill-btn-delete' 
                                   onClick={() => deleteElem(index)}>
