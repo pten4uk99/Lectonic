@@ -17,6 +17,18 @@ export function getProfileInfo() {
 }
 
 
+export function getConfirmedLectures(obj_name) {
+  const options = {
+    method: 'GET',
+    headers: HEADERS,
+    credentials: 'include',
+  }
+  return fetch(
+    `${baseURL}/api/workrooms/lecture/confirmed_list/?obj_name=${obj_name}`,
+    options
+  )
+}
+
 export function getCreatedLecturesForLecturer(id='') {
   const options = {
     method: 'GET',

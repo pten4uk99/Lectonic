@@ -10,10 +10,12 @@ import {getCustomerDetail, getLecturerDetail} from "../ajax/rolePage";
 import PhotoName from "../../../Utils/jsx/PhotoName";
 import {reverse} from "../../../../ProjectConstants";
 import {getCreatedLecturesForCustomer, getCreatedLecturesForLecturer} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
+import Loader from "../../../Utils/jsx/Loader";
 
 
 function RolePage(props) {
-  const [lastLectures, setLastLectures] = useState(true);
+  let [isLoaded, setIsLoaded] = useState(false)
+  let [lastLectures, setLastLectures] = useState(true);
   let [searchParams, setSearchParams] = useSearchParams()
   let navigate = useNavigate()
   let lecturerId = searchParams.get('lecturer')
@@ -21,6 +23,10 @@ function RolePage(props) {
   
   let [data, setData] = useState(null)
   let [createdLecturesList, setCreatedLecturesList] = useState([])
+  
+  useEffect(() => {
+    if (data) setIsLoaded(true)
+  }, [data])
   
   useEffect(() => {
     if (lecturerId) {
@@ -49,7 +55,8 @@ function RolePage(props) {
         .catch((error) => console.log(error))
     }
   }, [])
-
+  
+  if (!isLoaded) return <Loader main={true}/>
   return (
     <>
       <div className="navigate-back__block"

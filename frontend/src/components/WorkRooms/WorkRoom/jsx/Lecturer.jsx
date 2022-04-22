@@ -2,15 +2,26 @@ import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 
 import CreatedLectures from "~@/WorkRooms/WorkRoom/jsx/Elements/CreatedLectures";
-import {getAllLecturesForLecturer, getCreatedLectures, getCreatedLecturesForLecturer} from "../ajax/workRooms";
+import {
+  getAllLecturesForLecturer, getConfirmedLectures,
+  getCreatedLecturesForLecturer
+} from "../ajax/workRooms";
 import LectureCardList from "./Elements/LectureCardList";
 
 
 function Lecturer(props){
   let [createdLectures, setCreatedLectures] = useState([])
   let [potentialLectures, setPotentialLectures] = useState([])
+  let [confirmedLectures, setConfirmedLectures] = useState([])
 
   useEffect(() => {
+    getConfirmedLectures('customer')
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') setConfirmedLectures(data.data)
+      })
+      .catch((error) => console.log(error))
+        
     getCreatedLecturesForLecturer()
       .then(response => response.json())
       .then(data => {
@@ -34,6 +45,10 @@ function Lecturer(props){
       <LectureCardList header='Потенциальные заказы' 
                        isLecturer={true}
                        data={potentialLectures}/>
+      <LectureCardList header='Подтвержденные лекции' 
+                 isLecturer={true}
+                 data={confirmedLectures}/>
+
     </article>
   )
 }

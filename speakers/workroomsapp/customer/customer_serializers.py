@@ -11,6 +11,7 @@ class CustomerCreateSerializer(serializers.Serializer):
     company_site = serializers.CharField(required=False)
     education = serializers.CharField(required=False)
     hall_address = serializers.CharField(max_length=200, required=False)
+    equipment = serializers.CharField(max_length=200, required=False)
 
     class Meta:
         fields = [
@@ -19,6 +20,7 @@ class CustomerCreateSerializer(serializers.Serializer):
             'company_description',
             'company_site',
             'education',
+            'equipment',
             'hall_address'
         ]
 

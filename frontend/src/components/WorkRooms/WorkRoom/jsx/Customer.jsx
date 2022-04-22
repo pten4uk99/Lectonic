@@ -3,16 +3,28 @@ import {connect} from "react-redux";
 
 import CreatedLectures from "~@/WorkRooms/WorkRoom/jsx/Elements/CreatedLectures";
 import LectureCardList from "./Elements/LectureCardList";
-import {getAllLecturersForCustomer, getAllLecturesForCustomer, getCreatedLecturesForCustomer} from "../ajax/workRooms";
+import {
+  getAllLecturersForCustomer,
+  getAllLecturesForCustomer, getConfirmedLectures,
+  getCreatedLecturesForCustomer
+} from "../ajax/workRooms";
 import LecturersList from "./Elements/LecturersList";
 
 
 function Customer(props) {
   let [createdLectures, setCreatedLectures] = useState([])
   let [potentialLectures, setPotentialLectures] = useState([])
+  let [confirmedLectures, setConfirmedLectures] = useState([])
   let [lecturersList, setLecturersList] = useState([])
   
   useEffect(() => {
+    getConfirmedLectures('lecturer')
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') setConfirmedLectures(data.data)
+      })
+      .catch((error) => console.log(error))
+        
     getCreatedLecturesForCustomer()
       .then(response => response.json())
       .then(data => {
@@ -42,6 +54,9 @@ function Customer(props) {
           <LectureCardList header='Новые лекции' 
                            isLecturer={false}
                            data={potentialLectures}/>
+          <LectureCardList header='Подтвержденные лекции' 
+                           isLecturer={true} 
+                           data={confirmedLectures}/>
           <LecturersList data={lecturersList}/>
         </article>
     )

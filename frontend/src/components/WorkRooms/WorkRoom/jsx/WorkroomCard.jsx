@@ -22,7 +22,8 @@ function WoorkroomCard(props){
         )}
     if (props.data.lectorCard){
         return(
-            <div className="workroom-card__box">
+            <div className="workroom-card__box" 
+                 onClick={props.onClick} style={{cursor: 'pointer'}}>
                 <div className= "workroom-card__img-lector">
                   {props.data.src ? 
                     <img src={props.data.src} alt="photo"/> :
