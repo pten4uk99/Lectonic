@@ -4,7 +4,7 @@ import ChatMessages from "./ChatMessages";
 import NotificationsList from "./NotificationsList";
 import {getChatMessages} from "../../ajax";
 import {UpdateMessages} from "../../redux/actions/messages";
-import {SetSelectedChat} from "../../redux/actions/header";
+import {ActiveChatDropdown, SetSelectedChat} from "../../redux/actions/header";
 import {RemoveNotification, SetNeedRead} from "../../redux/actions/notifications";
 
 
@@ -67,6 +67,7 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     UpdateMessages: (data) => dispatch(UpdateMessages(data)),
+    ActiveChatDropdown: (active) => dispatch(ActiveChatDropdown(active)),
     SetSelectedChat: (chat_id) => dispatch(SetSelectedChat(chat_id)),
     SetNeedRead: (chat_id, need_read) => dispatch(SetNeedRead(chat_id, need_read)),
     RemoveNotification: (chat_id) => dispatch(RemoveNotification(chat_id)),

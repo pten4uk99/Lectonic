@@ -1,6 +1,6 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from django.db.models import Max
+from django.db.models import Max, Min
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
@@ -100,9 +100,11 @@ class LecturesHistoryGetAPIView(APIView):
 
         lectures_list = []
         for lecture in created_lectures:
-            biggest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
-            biggest = biggest.get('maximum')
-            if biggest < datetime.datetime.now(tz=datetime.timezone.utc) and lecture.confirmed_person:
+            aggregate = lecture.lecture_requests.aggregate(min=Min('event__datetime_start'))
+            minimum = aggregate.get('min')
+
+            if (minimum < datetime.datetime.now(tz=datetime.timezone.utc) and
+                    lecture.lecture_requests.filter(respondent__confirmed=True)):
                 lectures_list.append(lecture)
 
         serializer = LecturesGetSerializer(

@@ -24,17 +24,9 @@ function ProfileInfo(props){
   
   
   useEffect(() => {
-    getProfileInfo()
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'success') {
-          props.UpdateProfile(data.data[0])
-          setIsLoaded(true)
-        }
-        else if (data.status === 'error') navigate(reverse('create_profile'))
-      })
-      .catch(error => console.log(error))
-  }, [])
+    if (profile.first_name) setIsLoaded(true)
+    else setIsLoaded(false)
+  }, [profile])
   
   if (!isLoaded) return <Loader size={40} top={100} left="50%" tX="-50%"/>
   return (

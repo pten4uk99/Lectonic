@@ -46,7 +46,7 @@ function WoorkroomCard(props){
                         <img src={props.data.src} alt="photo"/>
                     </div>
                     <h2 className="workroom-card__box-name">{props.data.name}</h2>
-                    <p className="workroom-card__box-description">{props.data.description}</p>
+                    <p className="workroom-card__box-description">{props.data.type}</p>
                     <div>
                         <span>{props.data.date}</span>
                         <span>{props.data.city}</span>

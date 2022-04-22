@@ -29,6 +29,18 @@ export function getConfirmedLectures(obj_name) {
   )
 }
 
+export function getLecturesHistory(query_from) {
+  const options = {
+    method: 'GET',
+    headers: HEADERS,
+    credentials: 'include',
+  }
+  return fetch(
+    `${baseURL}/api/workrooms/lecture/history_list/?query_from=${query_from}`,
+    options
+  )
+}
+
 export function getCreatedLecturesForLecturer(id='') {
   const options = {
     method: 'GET',
