@@ -170,6 +170,7 @@ class LecturesGetSerializer(serializers.ModelSerializer):
         for lecture_request in obj.lecture_requests.all():
             respondent = Respondent.objects.filter(person=person, lecture_request=lecture_request).first()
             if respondent and not (respondent.rejected or respondent.confirmed):
+                serializers.ValidationError
                 return False
         return True
 

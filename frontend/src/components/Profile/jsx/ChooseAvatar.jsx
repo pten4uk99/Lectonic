@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react'
 import CropAvatar from "./CropAvatar";
 import Modal from "../../Layout/jsx/Modal";
+import {connect} from "react-redux";
+import {DeactivateModal} from "../../Layout/redux/actions/header";
 
 
-function ChooseAvatar() {
+function ChooseAvatar(props) {
   //выбранный файл для редактирования
   const [chosenFile, setChosenFile] = useState(null)
   //уже обрезанное фото, значение придёт из ImageCropper 
@@ -28,12 +30,16 @@ function ChooseAvatar() {
   function updateFileImg(imgValue, clearState) {
     setChosenFile(clearState); //меняем стейт на null, чтоб исчез редактор фото
     setFinalCroppedImg(imgValue);
-    console.log("finalCroppedImg", finalCroppedImg)
   }
-
+  
+  function handleConfirm() {
+    props.onConfirm(finalCroppedImg)
+    props.DeactivateModal()
+  }
+  
   //блоки убираются при отображении редактора, чтоб было чище
   //вроде и без этого работает, надо проверить на большом экране
-/* useEffect(() => {
+useEffect(() => {
       if (chosenFile) {
         document.body.style.overflowY = "";
         document.querySelector(".userInfo").style.display = "none";
@@ -42,7 +48,7 @@ function ChooseAvatar() {
         document.querySelector(".userInfo").style.display = "";
         document.querySelector(".navigate-back__block").style.display = "";
       }
-  }, [chosenFile])*/
+  }, [chosenFile])
 
   return (
     <>
@@ -57,22 +63,19 @@ function ChooseAvatar() {
               <label htmlFor='choose-avatar__file'>
                 <div className='btn-outline choose-avatar__btn'>Выбрать файл</div>
               </label>
-              <input
-                type='file'
-                id='choose-avatar__file'
-                accept='image/jpeg, image/png'
-                onChange={onFileChange}
-              />
+              <input type='file' 
+                     id='choose-avatar__file' 
+                     accept='image/jpeg, image/png' 
+                     onChange={onFileChange}/>
             </form>
-            <div className="blue-circle-avatar"
-                 style={{display: finalCroppedImg ? "" : "none"}}>
-              <img className="chosen-avatar"
-                   src={finalCroppedImg}
-                   alt="аватар"/>
+            <div className="blue-circle-avatar" style={{display: finalCroppedImg ? "" : "none"}}>
+              <img className="chosen-avatar" src={finalCroppedImg} alt="аватар"/>
             </div>
-            <button 
-              className="btn" 
-              disabled={!finalCroppedImg}>Сохранить изменения</button>
+            <button className="btn"
+                    disabled={!finalCroppedImg}
+                    onClick={handleConfirm}>
+              Сохранить изменения
+            </button>
           </div>
         </Modal>
       )}
@@ -81,4 +84,9 @@ function ChooseAvatar() {
   )
 }
 
-export default ChooseAvatar
+export default connect(
+  state => ({}), 
+  dispatch => ({
+    DeactivateModal: () => dispatch(DeactivateModal())
+  })
+)(ChooseAvatar)

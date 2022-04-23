@@ -3,15 +3,12 @@
 import React from 'react'
 import ImageCropper from "../../Utils/jsx/ImageEditor/ImageCropper"
 
-function CropAvatar(props) {
 
+function CropAvatar(props) {
   return (
     <>
       <div className="edit-avatar">
-        <ImageCropper 
-            img={props.img} 
-            updateFileImg={props.updateFileImg} 
-        />
+        <ImageCropper img={props.img} updateFileImg={props.updateFileImg}/>
       </div>
     </>
    
