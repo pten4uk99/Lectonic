@@ -16,11 +16,6 @@ function NotificationsList(props) {
   useEffect(() => {
     if (selectedChatId && props.store.ws.chatConn) getMessages(selectedChatId)
   }, [props.store.ws.chatConn])
-  
-  function handleNotificationClick(chat_id) {
-    props.setArea(true)
-    // createChatSocket(props.setChatSocket, chat_id, props.SetChatConnFail)
-  }
 
   return (
     <div className="notifications-list__block">

@@ -1,5 +1,6 @@
 import React, {useState, useCallback, useEffect} from 'react'
 import Cropper from 'react-easy-crop'
+
 import getCroppedImg from "./defaultForCropper"
 import '../../styles/ImageCropper.styl'
 import rotateLeft from '~/assets/img/rotate-icon-left.svg'
@@ -38,7 +39,6 @@ function ImageCropper(props) {
   const saveCroppedImage = useCallback(async () => {
     try {
       const croppedImage = await getCroppedImg( currentImage, croppedAreaPixels, rotation)
-      console.log('croppedImage: ', { croppedImage })
       setCroppedImage(croppedImage);
       props.updateFileImg(croppedImage, null); //передаём значения в ChooseAvatar
     } catch (e) {
@@ -105,6 +105,6 @@ function ImageCropper(props) {
       </div>
     </>
   )
-};
+}
 
 export default ImageCropper

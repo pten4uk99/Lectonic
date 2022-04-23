@@ -25,6 +25,7 @@ function Lecture(props) {
   
   let [lectureData, setLectureData] = useState(null)
   let [isCreator, setIsCreator] = useState(null)
+  let [confirmedRespondent, setConfirmedRespondent] = useState(null)
   
   useEffect(() => {
     props.UpdateLectureDetailChosenDates([])
@@ -36,6 +37,9 @@ function Lecture(props) {
           setIsLoaded(true)
           setLectureData(data.data[0])
           setIsCreator(data.data[0].creator_user_id === userId)
+          data.data[0].response_dates.forEach(elem => {
+            if (elem.confirmed) setConfirmedRespondent(true)
+          })
         }
         else if (data.status === 'error') navigate(reverse('404'))
       })
@@ -67,7 +71,7 @@ function Lecture(props) {
   }
   
   function checkDisabledButton() {
-    if (props.store.lectureDetail.chosenDates.length < 1) return true
+    if (props.store.lectureDetail.chosenDates.length < 1 || confirmedRespondent) return true
   }
   
   if (!isLoaded) return <Loader main={true}/>
@@ -153,7 +157,9 @@ function Lecture(props) {
                           left="50%" 
                           top="50%" 
                           tX="-50%" tY="-50%"/> : 
-                  lectureData?.can_response ? "Откликнуться" : "Отменить отклик"}
+                  confirmedRespondent ? "Лекция подтверждена" : 
+                    lectureData?.can_response ? 
+                      "Откликнуться" : "Отменить отклик"}
               </button>}
           </div>
           

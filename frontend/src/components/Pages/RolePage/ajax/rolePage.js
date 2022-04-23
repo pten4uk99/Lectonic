@@ -22,3 +22,15 @@ export function getLecturerDetail(id) {
     options
   )
 }
+
+export function getCustomerDetail(id) {
+  const options = {
+    method: 'GET',
+    headers: HEADERS,
+    credentials: 'include',
+  }
+  return fetch(
+    `${baseURL}/api/workrooms/customer/?id=${id}`,
+    options
+  )
+}

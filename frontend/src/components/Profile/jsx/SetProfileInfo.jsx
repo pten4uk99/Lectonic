@@ -8,7 +8,7 @@ import birthdateIcon from '~/assets/img/birthdate-icon.svg'
 import backArrow from '~/assets/img/back-arrow.svg'
 import infoIcon from '~/assets/img/Info-icon.svg'
 import {getDaysArr, getMonthsArr, getYearsArr} from "./utils/date";
-import {UpdateBirthDate} from "../redux/actions/profile";
+import {UpdateBirthDate, UpdateProfile} from "../redux/actions/profile";
 import {createProfile, getCities, getProfile, setProfile} from "../ajax/profile";
 import {reverse, reverseEqual} from "../../../ProjectConstants";
 import {SwapPerson, SwapUserId} from "../../Authorization/redux/actions/permissions";
@@ -32,6 +32,7 @@ function SetProfileInfo(props) {
   //этот стейт и логика с ним ниже возможно и не нужна будет
   // пока закомментировано, чтоб работало
   let [avatarPreview, setAvatarPreview] = useState(null)
+  let [avatarFile, setAvatarFile] = useState(null)
 
   useEffect(() => {
     if (!setInfo) {
@@ -49,11 +50,19 @@ function SetProfileInfo(props) {
   }, [])
   
   useEffect(() => {
+    if (avatarPreview) {
+      fetch(avatarPreview)
+        .then(r => r.blob())
+        .then(data => setAvatarFile(data))
+    }
+  }, [avatarPreview])
+  
+  useEffect(() => {
     if (profileInfo) {
       let [year, month, day] = profileInfo.birth_date.split('-')
       props.UpdateBirthDate({year: year, month: month, day: day})
       props.SetIdDropDown(profileInfo.city.id)
-     // setAvatarPreview(profileInfo.photo)
+      setAvatarPreview(profileInfo.photo)
     }
   }, [profileInfo])
   
@@ -64,14 +73,14 @@ function SetProfileInfo(props) {
   })
   
   //в работе сейчас не участвует
-  const handleAvatarPreview = e => {
+  const handleAvatarPreview = (file) => {
     const reader = new FileReader();
     reader.onload = () => {
       if(reader.readyState === 2) {
         setAvatarPreview(reader.result)
       }
     }
-    reader.readAsDataURL(e.target.files[0])
+    reader.readAsDataURL(file)
   }
   
   let [dayArray, setDayArray] = useState(getDaysArr(birth_date.year, birth_date.month))
@@ -93,6 +102,7 @@ function SetProfileInfo(props) {
     setLoadedRequest(false)
     e.preventDefault()
     let formData = new FormData(e.target)
+    if (avatarFile) formData.set('photo', new File([avatarFile], 'photo.jpeg'))
     formData.set('city', props.store.dropdown.id)
     formData.delete('year')
     formData.delete('month')
@@ -125,7 +135,8 @@ function SetProfileInfo(props) {
         .then(data => {
           if (data.status === 'success') {
             setLoadedRequest(true)
-            navigate(reverse('workroom'))
+            navigate(reverse('workroom')) 
+            props.UpdateProfile({...props.store.profile, photo: avatarPreview})
           } else {
             setErrorMessages({
               firstName: data?.first_name || '',
@@ -143,7 +154,7 @@ function SetProfileInfo(props) {
   
   return (
     <>
-      <ChooseAvatar />
+      <ChooseAvatar onConfirm={setAvatarPreview}/>
       {setInfo && <div className="navigate-back__block" 
                        onClick={() => navigate(reverse('workroom'))}>
         <img src={backArrow} alt="назад"/>
@@ -158,20 +169,17 @@ function SetProfileInfo(props) {
 
         <form className='userInfo__form' onSubmit={e => handleFormSubmit(e)}>
           <div className='avatar'>
-            {/*avatarPreview && (
+            {avatarPreview && (
               <img src={avatarPreview} 
                    className='preview-avatar__img' 
-                   alt='аватар'
-              />)*/}
+                   alt='аватар'/>)}
               <div className="avatar__add"
-                /* открывает модальное окно в компоненте  ChooseAvatar*/
+                /* открывает модальное окно в компоненте ChooseAvatar*/
                    onClick={props.ActivateModal}>
                 <img src={photoIcon}
-                    alt='выбрать фото'
-                  /* style={{display: avatarPreview ? '-130px' : ''}} */
-                />
-               <div className='avatar__add-text'
-                 /* style={{display: avatarPreview ? 'none' : ''}} */>Добавить аватар
+                    alt='выбрать фото' style={{marginLeft: avatarPreview ? '-130px' : ''}}/>
+               <div className='avatar__add-text' style={{display: avatarPreview ? 'none' : ''}}>
+                 Добавить аватар
                </div>
             </div>
           </div>
@@ -276,6 +284,7 @@ export default connect(
     SwapUserId: (user_id) => dispatch(SwapUserId(user_id)),
     SetIdDropDown: (id) => dispatch(SetIdDropDown(id)),
     SwapPerson: (is_person) => dispatch(SwapPerson(is_person)),
+    UpdateProfile: (data) => dispatch(UpdateProfile(data)),
     UpdateBirthDate: (data) => dispatch(UpdateBirthDate(data)),
     ActivateModal: () =>  dispatch(ActivateModal()),
     DeactivateModal: () => dispatch(DeactivateModal())

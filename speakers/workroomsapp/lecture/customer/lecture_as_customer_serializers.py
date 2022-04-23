@@ -3,11 +3,11 @@ import datetime
 from rest_framework import serializers
 
 
-from workroomsapp.lecture.utils import (
+from workroomsapp.lecture.utils.datetime import (
     convert_datetime,
     check_datetime_for_lecture_as_customer,
 )
-from workroomsapp.models import Lecture, Lecturer
+from workroomsapp.models import Lecture
 
 
 class LectureCreateAsCustomerSerializer(serializers.Serializer):

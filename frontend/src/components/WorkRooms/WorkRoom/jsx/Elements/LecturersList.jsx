@@ -4,10 +4,13 @@ import {connect} from "react-redux";
 import tooltip from "~/assets/img/workrooms/workroom/tooltip.svg";
 import WorkroomCard from "../WorkroomCard";
 import Loader from "../../../../Utils/jsx/Loader";
+import {reverse} from "../../../../../ProjectConstants";
+import {useNavigate} from "react-router-dom";
 
 
 function LecturersList(props){
   let [isLoaded, setIsLoaded] = useState(false)
+  let navigate = useNavigate()
   
   useEffect(() => {
     if (props.data) setIsLoaded(true)
@@ -26,6 +29,7 @@ function LecturersList(props){
             <div className="created-lectures">
               {props.data.map((lecturer, index) => {
                 return <WorkroomCard key={index} 
+                                     onClick={() => navigate(reverse('role_page', {lecturer: lecturer.id}))}
                                      data={{
                                        src: lecturer.photo,
                                        name: `${lecturer.last_name} \n ${lecturer.first_name} ${lecturer.middle_name}`,

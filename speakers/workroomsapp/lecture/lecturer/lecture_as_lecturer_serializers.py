@@ -3,11 +3,11 @@ import datetime
 from rest_framework import serializers
 
 from speakers.settings import DEFAULT_HOST
-from workroomsapp.lecture.utils import (
+from workroomsapp.lecture.utils.datetime import (
     convert_datetime,
     check_datetime_for_lecture_as_lecturer
 )
-from workroomsapp.models import Lecture, Person, Respondent
+from workroomsapp.models import Lecture, Respondent
 
 
 class LectureCreateAsLecturerSerializer(serializers.Serializer):
@@ -170,6 +170,7 @@ class LecturesGetSerializer(serializers.ModelSerializer):
         for lecture_request in obj.lecture_requests.all():
             respondent = Respondent.objects.filter(person=person, lecture_request=lecture_request).first()
             if respondent and not (respondent.rejected or respondent.confirmed):
+                serializers.ValidationError
                 return False
         return True
 
@@ -181,7 +182,8 @@ class LecturesGetSerializer(serializers.ModelSerializer):
             respondent = Respondent.objects.get(person=person, lecture_request=lecture_request)
             data.append({
                 'date': lecture_request.event.datetime_start,
-                'rejected': respondent.rejected
+                'rejected': respondent.rejected,
+                'confirmed': respondent.confirmed
             })
 
         return data
