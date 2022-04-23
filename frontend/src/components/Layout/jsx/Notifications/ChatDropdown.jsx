@@ -35,15 +35,16 @@ function ChatDropdown(props) {
   }, [chatId])
   
   useEffect(() => {
+    return () => clearInterval(func)
+  }, [func])
+  
+  useEffect(() => {
     if (messagesArea) {
       setIsLoaded(false)
       getMessages(chatId)
       setFunc(setInterval(() => getMessages(chatId), 3000))
     }
-    else {
-      clearInterval(func)
-      setChatId(null)
-    }
+    else setChatId(null)
   }, [messagesArea])
   
   return (

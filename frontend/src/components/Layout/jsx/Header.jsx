@@ -23,7 +23,6 @@ import AuthModal from "../../Authorization/jsx/AuthModal";
 import {SetNotifyConn, SetNotifyConnFail} from "../redux/actions/ws";
 import ErrorMessage from "../../Utils/jsx/ErrorMessage";
 import {getProfileInfo} from "../../WorkRooms/WorkRoom/ajax/workRooms";
-import {reverse} from "../../../ProjectConstants";
 import {UpdateProfile} from "../../Profile/redux/actions/profile";
 
 
@@ -89,8 +88,8 @@ function Header(props) {
   }, [isLecturer, isCustomer, props.store.ws.notifyConnFail])
 
   useEffect(() => {
-    if (chatSocket && !chatActive) {
-      chatSocket.close()
+    if (!chatActive) {
+      // chatSocket.close()
       props.SetSelectedChat(null)
     }
   }, [chatActive])
