@@ -16,6 +16,9 @@ import {SetErrorMessage} from "../../Layout/redux/actions/header";
 import DropDown from '~@/Utils/jsx/DropDown';
 import {SetIdDropDown} from "../../Utils/redux/actions/dropdown";
 import Loader from "../../Utils/jsx/Loader";
+import {ActivateModal, DeactivateModal} from "../../Layout/redux/actions/header";
+import ChooseAvatar from "./ChooseAvatar";
+
 
 
 function SetProfileInfo(props) {
@@ -26,6 +29,8 @@ function SetProfileInfo(props) {
   let [loadedRequest, setLoadedRequest] = useState(true)
   
   let [profileInfo, setProfileInfo] = useState(null)
+  //этот стейт и логика с ним ниже возможно и не нужна будет
+  // пока закомментировано, чтоб работало
   let [avatarPreview, setAvatarPreview] = useState(null)
 
   useEffect(() => {
@@ -48,7 +53,7 @@ function SetProfileInfo(props) {
       let [year, month, day] = profileInfo.birth_date.split('-')
       props.UpdateBirthDate({year: year, month: month, day: day})
       props.SetIdDropDown(profileInfo.city.id)
-      setAvatarPreview(profileInfo.photo)
+     // setAvatarPreview(profileInfo.photo)
     }
   }, [profileInfo])
   
@@ -58,6 +63,7 @@ function SetProfileInfo(props) {
     city: '',
   })
   
+  //в работе сейчас не участвует
   const handleAvatarPreview = e => {
     const reader = new FileReader();
     reader.onload = () => {
@@ -134,9 +140,10 @@ function SetProfileInfo(props) {
     }
     
   }
-
+  
   return (
     <>
+      <ChooseAvatar />
       {setInfo && <div className="navigate-back__block" 
                        onClick={() => navigate(reverse('workroom'))}>
         <img src={backArrow} alt="назад"/>
@@ -150,31 +157,30 @@ function SetProfileInfo(props) {
         </p>
 
         <form className='userInfo__form' onSubmit={e => handleFormSubmit(e)}>
-          <div className='add-avatar'>
-            {avatarPreview && (
+          <div className='avatar'>
+            {/*avatarPreview && (
               <img src={avatarPreview} 
                    className='preview-avatar__img' 
-                   alt='аватар'/>)}
-            <label className='add-avatar__label' 
-                   htmlFor='avatar'>
-              <img src={photoIcon} 
-                   alt='выбрать фото' 
-                   style={{marginLeft: avatarPreview ? '-130px' : ''}}/>
-              <div className='add-avatar__text' 
-                   style={{display: avatarPreview ? 'none' : ''}}>Добавить аватар</div>
-            </label>
-            <input type='file' 
-                   name='photo'
-                   id='avatar' 
-                   accept='image/jpeg, image/png' 
-                   onChange={handleAvatarPreview}/>
+                   alt='аватар'
+              />)*/}
+              <div className="avatar__add"
+                /* открывает модальное окно в компоненте  ChooseAvatar*/
+                   onClick={props.ActivateModal}>
+                <img src={photoIcon}
+                    alt='выбрать фото'
+                  /* style={{display: avatarPreview ? '-130px' : ''}} */
+                />
+               <div className='avatar__add-text'
+                 /* style={{display: avatarPreview ? 'none' : ''}} */>Добавить аватар
+               </div>
+            </div>
           </div>
           
           <div className='userInfo__form__input-container'>
             <input name='last_name' 
                    className='form__input'
                    type='text' 
-                   placeholder='Фамилия' 
+                   placeholder='Фамилия'
                    defaultValue={profileInfo?.last_name}
                    onChange={(e) => setRequiredFields({...requiredFields, lastName: e.target.value})}/>
             <span className='required-sign'>*</span>
@@ -271,6 +277,8 @@ export default connect(
     SetIdDropDown: (id) => dispatch(SetIdDropDown(id)),
     SwapPerson: (is_person) => dispatch(SwapPerson(is_person)),
     UpdateBirthDate: (data) => dispatch(UpdateBirthDate(data)),
+    ActivateModal: () =>  dispatch(ActivateModal()),
+    DeactivateModal: () => dispatch(DeactivateModal())
   })
 )(SetProfileInfo)
 
