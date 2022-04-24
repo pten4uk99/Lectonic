@@ -39,16 +39,19 @@ function ChooseAvatar(props) {
   
   //блоки убираются при отображении редактора, чтоб было чище
   //вроде и без этого работает, надо проверить на большом экране
-useEffect(() => {
-      if (chosenFile) {
-        document.body.style.overflowY = "";
-        document.querySelector(".userInfo").style.display = "none";
-        document.querySelector(".navigate-back__block").style.display = "none";
-      } else if (chosenFile === null) {
-        document.querySelector(".userInfo").style.display = "";
-        document.querySelector(".navigate-back__block").style.display = "";
-      }
-  }, [chosenFile])
+  useEffect(() => {
+    let userInfo = document.querySelector(".userInfo")
+    let navigateBack = document.querySelector(".navigate-back__block")
+    
+    if (chosenFile) {
+      document.body.style.overflowY = "";
+      if (userInfo) userInfo.style.display = "none";
+      if (navigateBack) navigateBack.style.display = "none";
+    } else if (chosenFile === null) {
+      if (userInfo) userInfo.style.display = "";
+      if (navigateBack) navigateBack.style.display = "";
+    }
+    }, [chosenFile])
 
   return (
     <>
