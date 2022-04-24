@@ -5,7 +5,7 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import calendarIcon from '~/assets/img/event/calendar-icon.svg'
 import backArrow from '~/assets/img/back-arrow.svg'
 import {
-  SwapEventType, SwapPayment, SwapPlace,
+  SwapEventType, SwapPayment, SwapPlace, SwapEquipment,
   UpdateDomain,
   UpdatePhoto,
   DeleteDomain
@@ -36,14 +36,15 @@ function CreateEvent(props) {
   let selectedDomains = props.store.event.domain
   let eventType = props.store.event.type
   let place = props.store.event.place
+  let equipment = props.store.event.equipment
   let payment = props.store.event.payment
   let titlePhotoSrc = props.store.event.photo
-  let [deletedDomain, setDeletedDomain] = useState([{}]);
+  let [deletedDomain, setDeletedDomain] = useState();
 
   function deleteElem (indexElem) {
     props.DeleteDomain(selectedDomains, indexElem);
     domainArray.push(deletedDomain);
-    setDomainArray(domainArray.sort());
+    setDomainArray(domainArray.sort((a, b) => a.name > b.name ? 1 : -1));
   }
   
   let [requiredFields, setRequiredFields] = useState({
@@ -60,7 +61,7 @@ function CreateEvent(props) {
     setRequiredFields({...requiredFields, date: chooseDates})
   }, [chooseDates])
   
-  let [domainArray, setDomainArray] = useState(null)
+  let [domainArray, setDomainArray] = useState()
 
   useEffect(() => {
     if (role === 'customer') setRequiredFields({...requiredFields, listeners: ''})
@@ -79,7 +80,7 @@ function CreateEvent(props) {
     }
   }, [selectedDomains])
   
-  function domainSelectHandler(value, setValue) {
+  function domainSelectHandler(value, setValue, index) {
     if (props.store.event.domain.length >= 10) return setValue('')
     props.UpdateDomain(value)
     setValue('')
@@ -164,7 +165,7 @@ function CreateEvent(props) {
               <div className='domain-list flex'>
                 {selectedDomains.map((domain, index) => {
                   return <div key={index} className='pill pill-grey'
-                              onMouseEnter={() => {setDeletedDomain({id: index,name: domain})}}>
+                              onMouseUp={() => {setDeletedDomain({name: domain})}}>
                                 {domain}
                                 <div className='pill-btn-delete' 
                                   onClick={() => deleteElem(index)}>
@@ -277,13 +278,22 @@ function CreateEvent(props) {
                       rows='4'
                       readOnly={!place}/>
           </div>
+
+          <div className='workspace-2 label'>Оборудование:</div>
+          <div className='workspace-btn flex'>
+            <div className={equipment ? 'pill pill-blue': 'pill'}
+                 onClick={() => props.SwapEquipment(true)}>Есть</div>
+            <div className={equipment ? 'pill' : 'pill pill-blue'}
+                 onClick={() => props.SwapEquipment(false)}>Нет</div>
+          </div>
           
-          <div className='equip-l label'>Оборудование:</div>
+          <div className={equipment ? 'equip-l label' : 'equip-l label disabled'}>Список оборудования:</div>
           <div className='equip flex'>
             <textarea name='equipment' 
                       className='text-area' 
                       rows='4'
-                      placeholder='Перечислите имеющееся для лекции оборудование'/>
+                      placeholder='Перечислите имеющееся для лекции оборудование'
+                      readOnly={!equipment}/>
           </div>
           
           <div className='desc-l label'>Описание:</div>
@@ -328,6 +338,7 @@ export default connect(
     DeleteDomain: (domain, i) => dispatch(DeleteDomain(domain, i)),
     SwapEventType: (type) => dispatch(SwapEventType(type)),
     SwapPlace: (place) => dispatch(SwapPlace(place)),
+    SwapEquipment: (equipment) => dispatch(SwapEquipment(equipment)),
     SwapPayment: (payment) => dispatch(SwapPayment(payment)),
   })
 )(CreateEvent)

@@ -45,6 +45,11 @@ function SignUp(props) {
             "Зарегистрироваться"}
         </button>
       </form>
+      <div className='auth__text auth__text-margin'>Уже есть аккаунт?{' '}
+        <span className="auth__link"
+              onClick={props.signInShow}>
+          Войти</span>
+      </div>
     </div>
   )
 }

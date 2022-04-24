@@ -46,7 +46,7 @@ function CreatedLectures(props){
           {selectedLecture && <ConfirmAction onConfirm={handleConfirmDelete}
                                              onCancel={() => setSelectedLecture(null)}
                                              text="Вы уверены, что хотите удалить событие?"/>}
-          <div className="workroom__block-header">
+          <div className="workroom__block-header  workroom__block-header-mt0">
             {props.role === 'lecturer' && <span>Созданные лекции</span>}
             {props.role === 'customer' && <span>Мои запросы на лекции</span>}
             <img src={tooltip} alt="Подсказка"/>

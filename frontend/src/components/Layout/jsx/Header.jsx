@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import {connect} from "react-redux";
 
 import logo from '~/assets/img/header_logo.svg'
@@ -92,10 +92,13 @@ function Header(props) {
     props.notificationsSocket?.addEventListener('message', eventFunction)
     return () => props.notificationsSocket?.removeEventListener('message', eventFunction)
   }, [props.notificationsSocket, selectedChatId])
+
+  let {pathname} = useLocation();
+  console.log(pathname);
   
   return (
     <>
-      <header className="header">
+      <header className="header" style={{position: (pathname === '/workroom') ? 'fixed' : 'relative'}}>
         <Link to="/">
           <img className="header-logo" src={logo} alt="логотип" />
         </Link>

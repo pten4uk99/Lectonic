@@ -13,6 +13,8 @@ function CustomerStep3(props) {
   /*переключение блоков Да/Нет*/
   const [yesSelected, setYesSelected] = useState(false);
   const [noSelected, setNoSelected] = useState(true);
+  const [yesSelectedEquip, setYesSelectedEquip] = useState(false);
+  const [noSelectedEquip, setNoSelectedEquip] = useState(true);
  
   function saysYes() {
     setYesSelected(true);
@@ -24,11 +26,23 @@ function CustomerStep3(props) {
     setNoSelected(true);
   }
 
+  function saysYesEquip() {
+    setYesSelectedEquip(true);
+    setNoSelectedEquip(false);
+  }
+  
+  function saysNoEquip() {
+    setYesSelectedEquip(false);
+    setNoSelectedEquip(true);
+  }
+
   /*согласие с условиями пользовательского соглашения*/
   const [isAgreed, setAgreed] = useState(false)
   function changeAgreement() {
     setAgreed(!isAgreed)
   }
+
+  console.log(props.store)
   
   return (
     <>
@@ -67,10 +81,24 @@ function CustomerStep3(props) {
           </textarea>
         </div>
 
+        <div className="step-block margin-bottom-12">
+          <p className="step-block__left-part">Оборудование:</p>
+          <button className={`${yesSelectedEquip ? "btn-role-selected" : "btn-role"} margin-right-12`} 
+                  type='button'
+                  onClick={saysYesEquip}>Есть</button>
+          <button className={`${noSelectedEquip ? "btn-role-selected" : "btn-role"}`} 
+                  type='button'
+                  onClick={saysNoEquip}>Нет</button>
+        </div>
+
         <div className="step-block-with-textarea margin-bottom-24">
-          <p className="step-block__left-part left-part-with-textarea">Оборудование:</p>
+          <p className="step-block__left-part left-part-with-textarea" 
+             style={{color: noSelectedEquip ? "var(--add-darkGrey" : ""}}>
+               Список оборудования:
+          </p>
           <textarea className="form__textarea textarea-height88" 
                     placeholder="Перечислите имеющееся для лекций оборудование" 
+                    readOnly={noSelectedEquip}
                     defaultValue={equipment}
                     onBlur={(e) => props.UpdateCustomerEquipment(e.target.value)}>
           </textarea>

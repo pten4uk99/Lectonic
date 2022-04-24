@@ -119,8 +119,8 @@ function Authorization(props) {
   }
 
   //переключение блоков Вход и Регистрация
-  const [signInShown, setSignInShown] = useState(true)
-  const [signUpShown, setSignUpShown] = useState(false)
+  const [signInShown, setSignInShown] = useState(false)
+  const [signUpShown, setSignUpShown] = useState(true)
 
   function handleSignInShow() {
     setSignInShown(true)
@@ -155,17 +155,18 @@ function Authorization(props) {
   return (
     <div className='auth'>
       <div className='auth__header'>
+        <h2 className='auth__header__SignUp-text' 
+            onClick={handleSignUpShow} 
+            style={{color: signUpShown ? 'var(--main-blue)' : 'var(--add-darkGrey)',}}>
+          Регистрация
+        </h2>
+
         <h2 className='auth__header__SignIn-text' 
             onClick={handleSignInShow} 
             style={{color: signInShown || emailForgottenShown ? 'var(--main-blue)' : 'var(--add-darkGrey)',}}>
           Вход
         </h2>
 
-        <h2 className='auth__header__SignUp-text' 
-            onClick={handleSignUpShow} 
-            style={{color: signUpShown ? 'var(--main-blue)' : 'var(--add-darkGrey)',}}>
-          Регистрация
-        </h2>
       </div>
 
       {/* Блок Вход*/}
@@ -187,6 +188,7 @@ function Authorization(props) {
               errorMessages={errorSignUpEmail} 
               onChange={onChangeSignUp} 
               inputValue={signUpValue} 
+              signInShow={handleSignInShow}
               requestLoaded={requestLoaded}/>
 
       {/* Блок Забыл пароль*/}

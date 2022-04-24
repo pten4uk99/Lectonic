@@ -43,8 +43,8 @@ function ProfileInfo(props){
         <div className="profile-about__photo">
           {profile.photo ? <img src={profile.photo} alt="Фотография"/> :
           <PhotoName firstName={profile.first_name}
-                     lastName={profile.last_name}
-                     size={110}/>
+                    lastName={profile.last_name}
+                    size={110}/>
           }
         </div>
         <button className="profile-about__btn-download" onClick={() => navigate(reverse('set_profile'))}>

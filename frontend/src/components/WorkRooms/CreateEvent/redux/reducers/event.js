@@ -3,6 +3,7 @@ const initialState = {
   domain: [],
   type: 'online',
   place: false,
+  equipment: false,
   payment: false
 }
 
@@ -14,8 +15,8 @@ export default function event(state=initialState, action) {
       return {
         ...state, 
         domain: [
-          ...state.domain, 
-          action.payload.domain
+           ...state.domain,
+           action.payload.domain,
         ]
       }
     case "DELETE_DOMAIN":
@@ -29,6 +30,8 @@ export default function event(state=initialState, action) {
       return {...state, type: action.payload.type}    
     case "SWAP_PLACE":
       return {...state, place: action.payload.place}
+    case "SWAP_EQUIPMENT":
+      return {...state, equipment: action.payload.equipment}
     case "SWAP_PAYMENT":
       return {...state, payment: action.payload.payment}
         default:

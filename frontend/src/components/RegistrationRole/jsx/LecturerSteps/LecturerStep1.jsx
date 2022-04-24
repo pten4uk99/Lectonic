@@ -19,8 +19,8 @@ function LecturerStep1(props) {
   
   function deleteElem (indexElem) {
     props.DeleteDomain(selectedDomains, indexElem);
-    domainArray.push(deletedDomain)
-    setDomainArray(domainArray.sort());
+    domainArray.push(deletedDomain);
+    setDomainArray(domainArray.sort((a, b) => a.name > b.name ? 1 : -1));
   }
 
   useEffect(() => {
@@ -62,7 +62,7 @@ function LecturerStep1(props) {
         <div className='domain-list flex'>
           {selectedDomains.map((domain, index) => {
             return <div key={index} className='pill pill-grey'
-                        onMouseEnter={() => {setDeletedDomain(domain)}}>{domain}
+                        onMouseUp={() => {setDeletedDomain({name: domain})}}>{domain}
                         <div className='pill-btn-delete' 
                           onClick={() => deleteElem(index)}>
                           <img src={btnDelete} alt="delete"/>
