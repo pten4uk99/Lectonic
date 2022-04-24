@@ -24,17 +24,9 @@ function ProfileInfo(props){
   
   
   useEffect(() => {
-    getProfileInfo()
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'success') {
-          props.UpdateProfile(data.data[0])
-          setIsLoaded(true)
-        }
-        else if (data.status === 'error') navigate(reverse('create_profile'))
-      })
-      .catch(error => console.log(error))
-  }, [])
+    if (profile.first_name) setIsLoaded(true)
+    else setIsLoaded(false)
+  }, [profile])
   
   if (!isLoaded) return <Loader size={40} top={100} left="50%" tX="-50%"/>
   return (
@@ -57,10 +49,11 @@ function ProfileInfo(props){
         <span>{profile.middle_name}</span>
       </div>
       <div className="profile-about__btn-box">
-        <button className="profile-about__btn-add-role" 
+        {!(permissions.is_lecturer || permissions.is_customer) && 
+          <button className="profile-about__btn-add-role" 
                 onClick={() => navigate(reverse('add_role'))}>
           <img src={iconPlus} alt="icon-plus"/>
-        </button>
+        </button>}
         {permissions.is_lecturer && 
           <button className={profile.is_lecturer ? btnClassName + " active" : btnClassName} 
                 onClick={props.SwapToLecturer}>Лектор</button>}

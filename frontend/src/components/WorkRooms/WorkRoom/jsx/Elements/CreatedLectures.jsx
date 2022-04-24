@@ -72,7 +72,7 @@ function CreatedLectures(props){
                                            clientName: `${lecture.creator_first_name} ${lecture.creator_last_name}`,
                                            name: lecture.name,
                                            date: getDates(lecture.dates),
-                                           description: lecture.description,
+                                           type: lecture.lecture_type,
                                            city: lecture.hall_address,
                                            textBtn: 'Подробнее',
                                            createdLecture: true,

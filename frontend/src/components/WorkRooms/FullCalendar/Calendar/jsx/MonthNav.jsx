@@ -29,7 +29,9 @@ function MonthNav(props) {
   
   function updateEvents(year, month) {
     if (!props.store.header.modalActive) {
-      if (props.store.profile.is_lecturer && props.store.permissions.is_lecturer) {
+      if (props.store.profile.is_lecturer && 
+        props.store.permissions.is_lecturer && 
+        props.store.permissions.logged_in) {
         if (!props.isMyLectures) {
           getEventsForLecturerResponsesMonth()
             .then(response => response.json())
@@ -49,7 +51,9 @@ function MonthNav(props) {
             .catch(error => console.log(error))
           props.setIsLoaded(false)
         }
-      } else if (props.store.profile.is_customer && props.store.permissions.is_customer) {
+      } else if (props.store.profile.is_customer && 
+        props.store.permissions.is_customer && 
+        props.store.permissions.logged_in) {
         if (!props.isMyLectures) {
           getEventsForCustomerResponsesMonth()
             .then(response => response.json())

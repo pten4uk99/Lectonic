@@ -6,6 +6,10 @@ SIGNED_IN = 'Пользователь успешно зарегистриров�
 LOGGED_IN = 'Пользователь успешно авторизован'
 LOGGED_OUT = 'Пользователь успешно вышел из системы'
 DELETED = 'Пользователь успешно удален'
+NOT_IN_DATA = 'Не переданы необходимые параметры'
+DOES_NOT_EXIST = 'Пользователь с таким email не существует'
+NOT_CONFIRMED = 'Данный адрес электронной почты не подтвержден'
+SUCCESS_CHANGE_PASSWORD = 'Пароль успешно изменен'
 
 DESCRIPTION = '\n\nВсе возможные статусы ответов:\n' \
               f'"{response.ERROR}"\n' \
@@ -31,6 +35,14 @@ def success():
     )
 
 
+def success_change_password():
+    return response.get_response(
+        status=response.SUCCESS,
+        detail=SUCCESS_CHANGE_PASSWORD,
+        status_code=200
+    )
+
+
 def success_check_auth(data):
     return response.get_response(
         status=response.SUCCESS,
@@ -46,6 +58,30 @@ def not_a_person(data):
         detail=SUCCESS,
         data=data,
         status_code=200
+    )
+
+
+def not_in_data():
+    return response.get_response(
+        status=response.ERROR,
+        detail=NOT_IN_DATA,
+        status_code=400
+    )
+
+
+def not_confirmed():
+    return response.get_response(
+        status=response.ERROR,
+        detail=NOT_CONFIRMED,
+        status_code=400
+    )
+
+
+def does_not_exist():
+    return response.get_response(
+        status=response.ERROR,
+        detail=DOES_NOT_EXIST,
+        status_code=400
     )
 
 

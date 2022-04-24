@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import {connect} from "react-redux";
 
-import { useNavigate } from 'react-router-dom'
+import {useNavigate, useSearchParams} from 'react-router-dom'
 import eyeOpen from '~/assets/img/eye-open.svg'
 import eyeClose from '~/assets/img/eye-close.svg'
 import 'regenerator-runtime/runtime'
@@ -13,6 +13,8 @@ import {SwapLogin, SwapUserId} from "../../redux/actions/permissions";
 
 function CreatePassword(props) {
   const navigate = useNavigate();
+  let [params, setParams] = useSearchParams()
+  let resetPassword = params.get('reset_password') === 'true'
 
   const [signUpValue, setSignUpValue] = useState({
     email: '',
@@ -36,7 +38,7 @@ function CreatePassword(props) {
 
   function onSubmitSignUp(e) {
     e.preventDefault()
-    signUp(userSignUp)
+    signUp(userSignUp, resetPassword)
       .then(response => response.json())
       .then(data => {
         if ('password' in data) {
@@ -46,6 +48,10 @@ function CreatePassword(props) {
           props.SwapLogin(true)
           navigate(reverse('create_profile'))
           props.DeactivateModal()
+        }
+        if (resetPassword && data.status === 'success') {
+          navigate(reverse('index'))
+          props.ActivateModal()
         }
       })
       .catch(error => console.log('ERROR: ', error))
@@ -61,8 +67,12 @@ function CreatePassword(props) {
   return (
     <div>
       <div className='auth__text'>
-        Ваш e-mail успешно подтвержден.<br/>
-        Придумайте пароль
+        {resetPassword ?
+          <>Введите новый пароль</> :
+          <>
+            Ваш e-mail успешно подтвержден.<br/>
+            Придумайте пароль
+          </>}
       </div>
       <form className='auth__form'>
         <div className='input-temporary-margin'>

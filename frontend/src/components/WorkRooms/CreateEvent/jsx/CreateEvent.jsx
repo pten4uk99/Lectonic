@@ -97,7 +97,7 @@ function CreateEvent(props) {
       `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}T${getStrTime(date.getHours(), date.getMinutes(), duration)}`)
     )
     formData.set('type', eventType)
-    formData.set('svg', String(1 + Math.floor(Math.random() * 5)))
+    formData.set('svg', String(1 + Math.floor(Math.random() * 10)))
     createEvent(formData, role)
       .then(response => response.json())
       .then(data => {

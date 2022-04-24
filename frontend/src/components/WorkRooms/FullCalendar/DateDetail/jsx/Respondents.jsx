@@ -10,8 +10,8 @@ function Respondents(props) {
       {props.data.length > 0 ?
         <>
           <p className='respondents__text'>Откликнулись: </p>
-          {props.data.map((elem) => {
-            return <div className="respondent-photo">
+          {props.data.map((elem, index) => {
+            return <div className="respondent-photo" key={index}>
               <PhotoName firstName={elem.first_name} 
                          lastName={elem.last_name} 
                          size={28}/>

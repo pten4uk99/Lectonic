@@ -98,6 +98,8 @@ class LecturerGetSerializer(serializers.ModelSerializer):
     person = PersonSerializer()
     domain = serializers.SerializerMethodField()
     optional = serializers.SerializerMethodField()
+    performances_links = serializers.SerializerMethodField()
+    publication_links = serializers.SerializerMethodField()
 
     class Meta:
         model = Lecturer
@@ -116,6 +118,12 @@ class LecturerGetSerializer(serializers.ModelSerializer):
             'hall_address': lecturer.optional.hall_address,
             'equipment': lecturer.optional.equipment
         }
+
+    def get_performances_links(self, lecturer):
+        return lecturer.performances_links.all().values_list('url', flat=True)
+
+    def get_publication_links(self, lecturer):
+        return lecturer.publication_links.all().values_list('url', flat=True)
 
     def get_domain(self, lecturer):
         return lecturer.lecturer_domains.all().values_list('domain__name', flat=True)

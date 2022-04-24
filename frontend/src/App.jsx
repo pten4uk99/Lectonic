@@ -19,6 +19,7 @@ import {reverse} from "./ProjectConstants";
 import {createNotificationsSocket} from "./webSocket";
 import Lecture from "./components/Pages/Lecture/jsx/Lecture";
 import {SetNotifyConnFail} from "./components/Layout/redux/actions/ws";
+import {ActiveChatDropdown, ActiveProfileDropdown} from "./components/Layout/redux/actions/header";
 
 
 function App(props) {
@@ -40,7 +41,7 @@ function App(props) {
   return (
     <>
         <Header notificationsSocket={notificationsSocket}/>
-          <main>
+          <main onClick={() => {props.ActiveProfileDropdown(false); props.ActiveChatDropdown(false)}}>
             <Permissions>
               <Routes>
                 <Route path={reverse('index')} element={<Index/>}/>
@@ -67,6 +68,8 @@ function App(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
-    SetNotifyConnFail: (failed) => dispatch(SetNotifyConnFail(failed))
+    SetNotifyConnFail: (failed) => dispatch(SetNotifyConnFail(failed)),
+    ActiveChatDropdown: (active) => dispatch(ActiveChatDropdown(active)),
+    ActiveProfileDropdown: (active) => dispatch(ActiveProfileDropdown(active)),
   })
 )(App)

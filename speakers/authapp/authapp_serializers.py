@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from emailapp.models import EmailConfirmation
 from speakers.utils.validators import EMAIL_VALIDATOR
 from workroomsapp.models import Person
 
@@ -58,10 +59,10 @@ class UserCreateSerializer(serializers.ModelSerializer):
         if User.objects.filter(email=email).first():
             raise ValidationError('Пользователь с данным email уже зарегистрирован')
 
-        # confirmation = EmailConfirmation.objects.filter(email=email).first()
-        #
-        # if not confirmation or (confirmation and not confirmation.confirmed):
-        #     raise ValidationError('Данный адрес электронной почты не подтвержден')
+        confirmation = EmailConfirmation.objects.filter(email=email).first()
+
+        if not confirmation or (confirmation and not confirmation.confirmed):
+            raise ValidationError('Данный адрес электронной почты не подтвержден')
 
         return email
 
