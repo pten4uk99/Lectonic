@@ -33,7 +33,7 @@ function CreatedLectures(props){
       .then(r => r.json())
       .then(data => {
         if (data.status === 'deleted') {
-          let newData = props.data.filter((elem) => elem.lecture_id !== selectedLecture)
+          let newData = props.data.filter((elem) => elem.id !== selectedLecture)
           props.setData(newData)
           props.DeactivateModal()
         }

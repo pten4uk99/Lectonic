@@ -1,5 +1,5 @@
 export const baseURL = 'https://dev.lectonic.ru'; // случайно могу иногда забыть поменять на dev.lectonic.ru
-const [protocol, host] = baseURL.split('//')
+const [protocol, host] = baseURL.split('://')
 export const baseWS = (protocol === 'https' ? 'wss://' : 'ws://') + host
 
 const routes = {

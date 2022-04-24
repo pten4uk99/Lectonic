@@ -58,7 +58,8 @@ function Customer(props) {
   }, [])
     return (
         <article className="customer__content">
-          <CreatedLectures role='customer' 
+          <CreatedLectures role='customer'
+                           setData={setCreatedLectures}
                            data={createdLectures}/>
           <LectureCardList header='Новые лекции' 
                            isLecturer={false}
