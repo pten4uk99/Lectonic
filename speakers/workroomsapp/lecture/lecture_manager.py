@@ -8,9 +8,8 @@ from workroomsapp import models as workrooms_models
 class LectureManager(models.Manager):
     @transaction.atomic
     def __create_dependences(self, **kwargs):
-        if not kwargs.get('lecturer'):
-            raise exceptions.ValidationError(
-                'В объектный менеджер не передан объект лектора')
+        if not kwargs.get('lecturer') and not kwargs.get('customer'):
+            raise exceptions.ValidationError('В объектный менеджер не передан объект создателя лекции')
         if not kwargs.get('lecture_type'):
             raise exceptions.ValidationError('В менеджер не передан тип лекции')
 
