@@ -39,6 +39,7 @@ function Header(props) {
   let [chatSocket, setChatSocket] = useState(null)
   let [intervalFunc, setIntervalFunc] = useState(null)
   let selectedChatId = props.store.header.selectedChatId
+  let {pathname} = useLocation();
   
   function notificationList() {
     if ((isLecturer || isCustomer) && props.store.permissions.logged_in) {
@@ -123,7 +124,7 @@ function Header(props) {
   //   props.notificationsSocket?.addEventListener('message', eventFunction)
   //   return () => props.notificationsSocket?.removeEventListener('message', eventFunction)
   // }, [props.notificationsSocket, selectedChatId])
-  
+
   return (
     <>
       <header className="header" style={{position: (pathname === '/workroom') ? 'fixed' : 'relative'}}>
