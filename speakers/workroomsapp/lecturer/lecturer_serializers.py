@@ -75,6 +75,7 @@ class LecturersListGetSerializer(serializers.ModelSerializer):
     first_name = serializers.StringRelatedField(source='person.first_name')
     last_name = serializers.StringRelatedField(source='person.last_name')
     middle_name = serializers.StringRelatedField(source='person.middle_name')
+    bgc_number = serializers.StringRelatedField(source='person.bgc_number')
     photo = serializers.SerializerMethodField()
 
     class Meta:
@@ -84,7 +85,8 @@ class LecturersListGetSerializer(serializers.ModelSerializer):
             'photo',
             'first_name',
             'last_name',
-            'middle_name'
+            'middle_name',
+            'bgc_number'
         ]
 
     def get_photo(self, obj):

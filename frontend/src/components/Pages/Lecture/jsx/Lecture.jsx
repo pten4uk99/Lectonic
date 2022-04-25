@@ -104,9 +104,11 @@ function Lecture(props) {
                 <div className="person-photo">
                   {lectureData?.creator_photo ?
                     <img src={lectureData.creator_photo} alt="фото"/> :
-                    lectureData && <PhotoName firstName={lectureData?.creator_first_name}
+                    lectureData && 
+                    <PhotoName firstName={lectureData?.creator_first_name}
                                lastName={lectureData?.creator_last_name}
-                               size={90}/>
+                               size={90} 
+                               colorNumber={lectureData?.creator_bgc_number}/>
                   }
                 </div>
                 <div className="person-data">
@@ -127,7 +129,7 @@ function Lecture(props) {
           </div>
           
           <div className="right-block">
-            <div className="lecture-name">{lectureData?.lecture_name}</div>
+            <div className="lecture-name">{lectureData?.name}</div>
             <div className="block__domains">
               {lectureData?.domain && lectureData.domain.map((elem, index) => {
                 return <div className="domain" key={index}>{elem}</div>

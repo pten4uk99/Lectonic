@@ -84,6 +84,7 @@ class LecturesGetSerializer(serializers.ModelSerializer):
     creator_photo = serializers.SerializerMethodField()
     creator_last_name = serializers.SerializerMethodField()
     creator_middle_name = serializers.SerializerMethodField()
+    creator_bgc_number = serializers.SerializerMethodField()
     can_response = serializers.SerializerMethodField()
     response_dates = serializers.SerializerMethodField()
 
@@ -109,6 +110,7 @@ class LecturesGetSerializer(serializers.ModelSerializer):
             'creator_first_name',
             'creator_last_name',
             'creator_middle_name',
+            'creator_bgc_number'
         ]
 
     def get_lecture_type(self, obj):
@@ -164,6 +166,14 @@ class LecturesGetSerializer(serializers.ModelSerializer):
         if obj.customer:
             return obj.customer.person.middle_name
         return obj.lecturer.person.middle_name
+
+
+    def get_creator_bgc_number(self, obj):
+        if obj.customer:
+            return obj.customer.person.bgc_number
+        return obj.lecturer.person.bgc_number
+
+
 
     def get_can_response(self, obj):
         person = self.context['request'].user.person

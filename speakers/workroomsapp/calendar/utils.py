@@ -106,6 +106,7 @@ class CalendarDataSerializer:
                 'id': respondent.user.pk,
                 'first_name': respondent.first_name,
                 'last_name': respondent.last_name,
+                'bgc_number': respondent.bgc_number,
                 'middle_name': respondent.middle_name or "",
                 'confirmed': confirmed,
             })
@@ -123,7 +124,7 @@ class CalendarDataSerializer:
         respondent_list, confirmed_respondent = self.get_respondent_list_serialize(event)
 
         data = {
-            'creator': [creator.first_name, creator.last_name],
+            'creator': [creator.first_name, creator.last_name, creator.bgc_number],
             'svg': lecture.svg,
             'respondents': respondent_list,
             'name': lecture.name,

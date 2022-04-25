@@ -24,7 +24,9 @@ function LecturersList(props){
       </div>
       
       <div className="cards-block mt-20">
-        {props.data.length > 0 && 
+        {props.isError ? 
+          <div className="lecture-cards__error">Ошибка загрузки данных</div> :
+          props.data.length > 0 && 
           <div className="created-lectures__wrapper">
             <div className="created-lectures">
               {props.data.map((lecturer, index) => {
@@ -36,6 +38,7 @@ function LecturersList(props){
                                        firstName: lecturer.first_name,
                                        lastName: lecturer.last_name,
                                        lectorCard: true,
+                                       colorNumber: lecturer.bgc_number
                                      }}/>})}
           </div>
         </div>}

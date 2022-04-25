@@ -69,7 +69,8 @@ class DiplomaImage(models.Model):
 
 class Person(models.Model):
     """Базовый профиль пользователя"""
-    photo = models.ImageField(upload_to=person_image, null=True)  # убрать null=True после заливки на сервер
+    photo = models.ImageField(upload_to=person_image, null=True)
+    bgc_number = models.IntegerField()
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, null=True, blank=True)

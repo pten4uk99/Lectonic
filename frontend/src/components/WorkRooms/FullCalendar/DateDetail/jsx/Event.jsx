@@ -43,7 +43,8 @@ function Event(props) {
         <div className="lecturer-photo">
           <PhotoName firstName={props.creator[0]} 
                      lastName={props.creator[1]} 
-                     size={32}/>
+                     size={32} 
+                     colorNumber={props.creator[2]}/>
         </div>
         <div className="event-photo">
           <img src={getLecturePhoto(props.photo)} alt="обложка"/>

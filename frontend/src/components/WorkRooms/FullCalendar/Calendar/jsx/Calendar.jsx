@@ -19,9 +19,9 @@ function Calendar(props) {
     <div className='calendar__container'>
       {!isLoaded && <Loader size={15} right={15} top={15} position={'absolute'}/>}
       <div className='inside__container'>
-        <MonthNav isMyLectures={props.isMyLectures} setIsLoaded={setIsLoaded}/>
-        <DaysOfWeek />
-        <DatesListSwappable />
+        <MonthNav isMyLectures={props.isMyLectures} setIsLoaded={setIsLoaded} setIsError={props.setIsError}/>
+        <DaysOfWeek/>
+        <DatesListSwappable/>
       </div>
     </div>
   )

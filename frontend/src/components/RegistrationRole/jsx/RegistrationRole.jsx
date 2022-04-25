@@ -81,6 +81,7 @@ function RegistrationRole(props) {
         </Routes>
       </div>
       
+      <div className="steps__underline"/>
       <div className="step-block steps__btn mb-148" style={currentStep > 2 ? {display: "none"} : {}}>
         {currentStep > 1 && 
           <div className="link-to-back" onClick={() => props.SwapAddRoleStep(currentStep - 1)}>
@@ -88,7 +89,6 @@ function RegistrationRole(props) {
             <span>Предыдущий шаг</span>
           </div>}
         
-        <div className="step-block__left-part"/>
         <button className="btn" 
                 onClick={() => props.SwapAddRoleStep(currentStep + 1)} 
                 disabled={handleDisabledButton()}>Следующий шаг</button>

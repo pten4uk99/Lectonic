@@ -36,19 +36,23 @@ function MonthNav(props) {
           getEventsForLecturerResponsesMonth()
             .then(response => response.json())
             .then(data => {
-              props.setIsLoaded(true)
-              props.UpdateEvents(data.data)
+              if (data.status === 'success') {
+                props.setIsError(false)
+                props.setIsLoaded(true)
+                props.UpdateEvents(data.data)
+              } else props.setIsError(true)
             })
-            .catch(error => console.log(error))
           props.setIsLoaded(false)
         } else {
           getEventsForLecturerMonth(year, month + 1)
             .then(response => response.json())
             .then(data => {
-              props.setIsLoaded(true)
-              props.UpdateEvents(data.data)
+              if (data.status === 'success') {
+                props.setIsError(false)
+                props.setIsLoaded(true)
+                props.UpdateEvents(data.data)
+              } else props.setIsError(true)
             })
-            .catch(error => console.log(error))
           props.setIsLoaded(false)
         }
       } else if (props.store.profile.is_customer && 
@@ -58,19 +62,23 @@ function MonthNav(props) {
           getEventsForCustomerResponsesMonth()
             .then(response => response.json())
             .then(data => {
-              props.setIsLoaded(true)
-              props.UpdateEvents(data.data)
+              if (data.status === 'success') {
+                props.setIsError(false)
+                props.setIsLoaded(true)
+                props.UpdateEvents(data.data)
+              } else props.setIsError(true)
             })
-            .catch(error => console.log(error))
           props.setIsLoaded(false)
         } else {
           getEventsForCustomerMonth()
             .then(response => response.json())
             .then(data => {
-              props.setIsLoaded(true)
-              props.UpdateEvents(data.data)
+              if (data.status === 'success') {
+                props.setIsError(false)
+                props.setIsLoaded(true)
+                props.UpdateEvents(data.data)
+              } else props.setIsError(true)
             })
-            .catch(error => console.log(error))
           props.setIsLoaded(false)
         }
       }
