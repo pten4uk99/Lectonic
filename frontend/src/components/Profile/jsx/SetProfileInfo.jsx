@@ -103,6 +103,7 @@ function SetProfileInfo(props) {
     e.preventDefault()
     let formData = new FormData(e.target)
     if (avatarFile) formData.set('photo', new File([avatarFile], 'photo.jpeg'))
+    formData.set('bgc_number', profileInfo?.bgc_number || String(1 + Math.floor(Math.random() * 5)))
     formData.set('city', props.store.dropdown.id)
     formData.delete('year')
     formData.delete('month')
@@ -113,8 +114,8 @@ function SetProfileInfo(props) {
       createProfile(formData)
         .then(response => response.json())
         .then(data => {
+          setLoadedRequest(true)
           if (data.status === 'created') {
-            setLoadedRequest(true)
             props.SwapUserId(data.data[0].user_id)
             props.SwapPerson(true)
             navigate(reverse('add_role'))
@@ -133,8 +134,8 @@ function SetProfileInfo(props) {
       setProfile(formData)
         .then(r => r.json())
         .then(data => {
+          setLoadedRequest(true)
           if (data.status === 'success') {
-            setLoadedRequest(true)
             navigate(reverse('workroom')) 
             props.UpdateProfile({...props.store.profile, photo: avatarPreview})
           } else {
@@ -192,7 +193,7 @@ function SetProfileInfo(props) {
                    defaultValue={profileInfo?.last_name}
                    onChange={(e) => setRequiredFields({...requiredFields, lastName: e.target.value})}/>
             <span className='required-sign'>*</span>
-            {errorMessages.lastName && (<div className='form__input-error'>{errorMessages.firstName}</div>)}
+            {errorMessages.lastName && (<div className='form__input-error'>{errorMessages.lastName}</div>)}
           </div>
 
           <div className='userInfo__form__input-container'>
@@ -203,7 +204,7 @@ function SetProfileInfo(props) {
                    defaultValue={profileInfo?.first_name}
                    onChange={(e) => setRequiredFields({...requiredFields, firstName: e.target.value})}/>
             <span className='required-sign'>*</span>
-            {errorMessages.firstName && (<div className='form__input-error'>{errorMessages.lastName}</div>)}
+            {errorMessages.firstName && (<div className='form__input-error'>{errorMessages.firstName}</div>)}
           </div>
 
           <div className='userInfo__form__input-container'>

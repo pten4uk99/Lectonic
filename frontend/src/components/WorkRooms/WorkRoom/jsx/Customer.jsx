@@ -18,59 +18,75 @@ function Customer(props) {
   let [lecturesHistory, setLecturesHistory] = useState([])
   let [lecturersList, setLecturersList] = useState([])
   
+  let [createdError, setCreatedError] = useState(false)
+  let [potentialError, setPotentialError] = useState(false)
+  let [confirmedError, setConfirmedError] = useState(false)
+  let [historyError, setHistoryError] = useState(false)
+  let [lecturersError, setLecturersError] = useState(false)
+  
   useEffect(() => {
     if (props.store.permissions.is_customer && props.store.permissions.logged_in) {
       getConfirmedLectures('lecturer')
         .then(response => response.json())
         .then(data => {
           if (data.status === 'success') setConfirmedLectures(data.data)
+          else setConfirmedError(true)
         })
-        .catch((error) => console.log(error))
+        .catch(() => setConfirmedError(true))
       
       getLecturesHistory('customer')
         .then(response => response.json())
         .then(data => {
           if (data.status === 'success') setLecturesHistory(data.data)
+          else setHistoryError(true)
         })
-        .catch((error) => console.log(error))
+        .catch(() => setHistoryError(true))
           
       getCreatedLecturesForCustomer()
         .then(response => response.json())
         .then(data => {
           if (data.status === 'success') setCreatedLectures(data.data)
+          else setCreatedError(true)
         })
-        .catch((error) => console.log(error))
+        .catch(() => setCreatedError(true))
       
       getAllLecturesForCustomer()
         .then(response => response.json())
         .then(data => {
           if (data.status === 'success') setPotentialLectures(data.data)
+          else setPotentialError(true)
         })
-        .catch((error) => console.log(error))
+        .catch(() => setPotentialError(true))
       
       getAllLecturersForCustomer()
         .then(response => response.json())
         .then(data => {
           if (data.status === 'success') setLecturersList(data.data)
+          else setLecturersError(true)
         })
-        .catch((error) => console.log(error))
+        .catch(() => setLecturersError(true))
     }
   }, [])
     return (
         <article className="customer__content">
           <CreatedLectures role='customer'
                            setData={setCreatedLectures}
-                           data={createdLectures}/>
+                           data={createdLectures} 
+                           isError={createdError}/>
           <LectureCardList header='Новые лекции' 
                            isLecturer={false}
-                           data={potentialLectures}/>          
+                           data={potentialLectures} 
+                           isError={potentialError}/>          
           <LectureCardList header='История' 
                            isLecturer={false}
-                           data={lecturesHistory}/>
+                           data={lecturesHistory} 
+                           isError={historyError}/>
           <LectureCardList header='Подтвержденные лекции' 
-                           isLecturer={true} 
-                           data={confirmedLectures}/>
-          <LecturersList data={lecturersList}/>
+                           isLecturer={false} 
+                           data={confirmedLectures} 
+                           isError={confirmedError}/>
+          <LecturersList data={lecturersList} 
+                         isError={lecturersError}/>
         </article>
     )
 }

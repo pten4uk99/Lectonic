@@ -94,13 +94,13 @@ function LecturerStep3(props) {
       </div>
       </div>
       
+      <div className="steps__underline"/>
       <div className="step-block steps__btn mb-148">
           <div className="link-to-back" onClick={() => props.SwapAddRoleStep(2)}>
             <img src={backArrow} alt="предыдущий шаг"/>
             <span>Предыдущий шаг</span>
           </div>
-        <div className="step-block__left-part"/>
-        <button className="btn" type="submit">Завершить регистрацию</button>
+        <button className="btn" type="submit" disabled={!isAgreed}>Завершить регистрацию</button>
       </div>
     </>
   )

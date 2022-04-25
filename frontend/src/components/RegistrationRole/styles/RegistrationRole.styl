@@ -74,6 +74,7 @@
     display: flex
     flex-direction: column
     .lecturer-link__input {
+      position: relative;
       display flex
       input {
         font-family: 'Montserrat', sans-serif
@@ -176,8 +177,9 @@
 .link-to-back {
   display: flex
   align-items: center
-  position: absolute
-  left: 62px
+  //position: absolute
+  //left: 62px
+  margin-right: 20px
   cursor: pointer
   font-size: 11px
   span {
@@ -186,7 +188,21 @@
 }
 
 .step-block.steps__btn.mb-148 {
+  display: flex
+  justify-content: center;
   margin-bottom: 148px
+}
+  
+.steps__underline {
+  opacity: .3
+  margin: 0 auto
+  width: 63%
+  height: 4px
+
+  margin-bottom: 24px
+  
+  border-radius: 3px
+  background-color: $add-grey
 }
 
   

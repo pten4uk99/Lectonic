@@ -272,9 +272,12 @@ class LectureResponseAPIView(APIView):
                     if elem.users.all().count() < 2:
                         elem.delete()
                 return lecture_responses.success_cancel([{'type': 'chat_does_not_exist'}])
+
+            chat_id = chat.pk
+            chat.delete()
             return lecture_responses.success_cancel([{
                 'type': 'remove_respondent',
-                'id': chat.pk
+                'id': chat_id
             }])
 
 

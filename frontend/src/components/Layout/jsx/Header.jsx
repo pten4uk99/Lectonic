@@ -153,7 +153,8 @@ function Header(props) {
                          alt="меню"/> :
                     <PhotoName firstName={props.store.profile.first_name} 
                                lastName={props.store.profile.last_name} 
-                               size={32}/>
+                               size={32} 
+                               colorNumber={props.store.profile.bgc_number}/>
                   }
                 </div> : 
                 <img className="header__nav-profile is-desktop"

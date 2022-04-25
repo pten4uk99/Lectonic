@@ -183,8 +183,9 @@ function ChatMessages(props) {
               <div className="confirm-message">Лекция подтверждена!</div>
             </div>
             else if (elem.confirm === null) return <div key={index} className="block-message">
-              <div className={props.store.permissions.user_id === elem.author ? 
-                "self-message" : "other-message"}>{elem.text}</div>
+              {props.store.permissions.user_id === elem.author ? 
+                <div className="self-message">{elem.text} {elem.need_read && <div className="need-read"/>}</div> :
+                <div className="other-message">{elem.text}</div>}
             </div>
             else if (elem.confirm === false) return <div key={index} className="block-message">
               <div className="reject-message">Лекция отклонена!</div>

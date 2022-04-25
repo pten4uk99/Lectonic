@@ -73,7 +73,8 @@ function RolePage(props) {
                     <img src={data.person.photo} alt="photo"/> :
                     <PhotoName size={140} 
                                firstName={data?.person.first_name} 
-                               lastName={data?.person.last_name}/>
+                               lastName={data?.person.last_name} 
+                               colorNumber={data?.person.bgc_number}/>
                   }
                 </div>
                 <div className='rolepage__title-box'>

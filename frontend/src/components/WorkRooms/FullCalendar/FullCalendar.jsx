@@ -8,6 +8,7 @@ function FullCalendar(props) {
   let isCustomer = props.store.profile.is_customer
   
   let [myLecturesActive, setMyLecturesActive] = useState(true)
+  let [isError, setIsError] = useState(false)
   
   return (
     <div className="calendar__block">
@@ -21,10 +22,13 @@ function FullCalendar(props) {
         <span className={!myLecturesActive ? "responses active" : "responses"}
               onClick={() => setMyLecturesActive(false)}>Мои отклики</span>
       </div>
-      <div className='calendar__wrapper'>
-        <Calendar isMyLectures={myLecturesActive}/>
-        <DateDetail/>
-      </div>
+
+      {isError ? 
+        <div className="lecture-cards__error">Ошибка загрузки данных</div> :
+        <div className='calendar__wrapper'>
+          <Calendar isMyLectures={myLecturesActive} setIsError={setIsError}/>
+          <DateDetail/>
+        </div>}
       <div className="calendar__block-tooltips">
         <div className="tooltip__not-confirmed"><span/>Событие не подтверждено</div>
         <div className="tooltip__confirmed"><span/>Событие подтверждено</div>

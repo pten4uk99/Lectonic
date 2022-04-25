@@ -29,7 +29,8 @@ function WoorkroomCard(props){
                     <img src={props.data.src} alt="photo"/> :
                     <PhotoName firstName={props.data.firstName} 
                                lastName={props.data.lastName} 
-                               size={110}/>}
+                               size={110} 
+                               colorNumber={props.data.colorNumber}/>}
                 </div>
                 <h2 className="workroom-card__box-name">{props.data.name}</h2>
                 <p className="workroom-card__box-lecture-name">{props.data.description}</p>
