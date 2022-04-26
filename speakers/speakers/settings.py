@@ -29,7 +29,7 @@ INSTALLED_APPS = [
 
     # Наши приложения
     'adminapp',
-    'questapp',
+    'guestapp',
     'emailapp',
     'authapp',
     'workroomsapp',
