@@ -4,7 +4,6 @@
     display: flex
     flex-direction: column
     align-items: center
-    margin-top: 55px
     margin-left: 63px
     width: 380px
     
@@ -37,18 +36,28 @@
       flex-direction: column
       align-items: center
       margin-top: 24px
-      span {
-        display: block
-        text-align: center
-        font-weight: 700
-        font-size: 12px
+      
+      max-height: 270px
+      
+      .title {
+        display: flex
+        span {
+          display: block
+          width: 100px
+          text-align: center
+          font-weight: 700
+          font-size: 12px
+          &.mr-5 {
+            margin-right: 5px
+          }
+        }
       }
       
       .calendar-modal__dates-list {
-        display: flex
-        flex-wrap: wrap
-        justify-content: center
-        align-items: center
+        //display: flex
+        //flex-wrap: wrap
+        //justify-content: center
+        //align-items: center
         
         margin-top: 12px
         grid-column-gap: 8px
@@ -82,16 +91,29 @@
   }
 }
 
+.calendar-modal__date-wrapper {
+  display: flex
+}
+  
 .calendar-modal__date {
   display: flex
   justify-content: center
   align-items: center
+  
+  box-sizing: border-box
+  width: 90px
 
-  padding: 6px 20px
+  padding: 6px 0
+  margin-bottom: 12px
+  margin-right: 16px
   
   border: 1px solid #000000
   border-radius: 45px
   cursor: pointer
+  
+  &.create-event {
+    margin: 0
+  }
 
   &.active {
     background-color: $main-blue

@@ -37,10 +37,10 @@ function DropDown(props) {
   useEffect(() => {
     setChosenValue(props.defaultValue)
   }, [props.defaultValue])
-  
-  useEffect(() => {
-    if (props.timeStart) setChosenValue(props.store.dropdown.timeStart)
-  }, [props.store.dropdown.timeStart])
+
+  // useEffect(() => {
+  //   if (props.timeStart) setChosenValue(props.store.dropdown.timeStart)
+  // }, [props.store.dropdown.timeStart])
 
   function getRequest(name) {
     props.request(name)
@@ -80,7 +80,7 @@ function DropDown(props) {
 
   return (
     <>
-      <div className='dropdown'>
+      <div className='dropdown' style={{zIndex: props.zIndex}}>
         <div className="dropdown-top"
         style={{width: props.width ? '' : width + 30, zIndex: props.input ? '90' : ''}}>
               <input readOnly={!props.input} 

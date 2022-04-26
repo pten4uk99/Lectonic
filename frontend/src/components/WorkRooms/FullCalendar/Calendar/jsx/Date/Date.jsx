@@ -123,6 +123,7 @@ function hoverHandler(props, enter) {
 
 function SwapChooseDates(props) {
   let choseDates = props.store.calendar.modalChooseDates
+  let canChoose = props.store.calendar.modalChooseDates.length < 5
   let newDates = []
   let contains = false
   
@@ -131,7 +132,10 @@ function SwapChooseDates(props) {
       newDates.push(date)
     } else contains = true
   }
-  if (!contains) newDates.push(props.date)
+  if (contains) props.SwapModalChooseDates(newDates)
+  else if (canChoose) {
+    newDates.push(props.date)
+    props.SwapModalChooseDates(newDates)
+  }
   
-  props.SwapModalChooseDates(newDates)
 }

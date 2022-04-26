@@ -17,6 +17,7 @@ import {ActivateModal} from "../../../Layout/redux/actions/header";
 import CalendarModal, {getMonth} from "./CalendarModal";
 import DropDown from "../../../Utils/jsx/DropDown";
 import btnDelete from '~/assets/img/btn-delete.svg';
+import {SwapModalChooseDates} from "../../FullCalendar/Calendar/redux/actions/calendar";
 
 
 function CreateEvent(props) {
@@ -211,14 +212,15 @@ function CreateEvent(props) {
               <img src={calendarIcon} alt=""/>
               {chooseDates.length > 0 ? 
                 chooseDates.map((elem, index) => (
-              <div className="calendar-modal__date ml-8" key={index}>
+              <div className="calendar-modal__date create-event ml-8" key={index}>
                 {elem.getDate()} {getMonth(elem.getMonth())}
               </div>)) : 
                 <div className='date-link'>Открыть календарь</div>}
               
             </div>
             <Modal styleWrapper={{background: 'background: rgba(0, 5, 26, 1)'}} 
-                   styleBody={{width: 1045, height: 681}}>
+                   styleBody={{width: 1045, height: 681}} 
+                   onCancel={() => props.SwapModalChooseDates([])}>
                 <CalendarModal/>
             </Modal>
           </div>
@@ -329,6 +331,7 @@ export default connect(
     SwapEventType: (type) => dispatch(SwapEventType(type)),
     SwapPlace: (place) => dispatch(SwapPlace(place)),
     SwapPayment: (payment) => dispatch(SwapPayment(payment)),
+    SwapModalChooseDates: (dates) => dispatch(SwapModalChooseDates(dates)),
   })
 )(CreateEvent)
 
