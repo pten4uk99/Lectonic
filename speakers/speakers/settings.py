@@ -25,8 +25,10 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
     'channels',
+    'django_dump_load_utf8',
 
     # Наши приложения
+    'adminapp',
     'emailapp',
     'authapp',
     'workroomsapp',

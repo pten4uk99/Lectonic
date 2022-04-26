@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .admin-button {
+            display: block;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px;
+            background-color: blue;
+            width: max-content;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div style="margin-bottom: 30px;">Вы вошли как: {{user}}</div>
+    <a href="{% url 'admin_make_dump' %}" class="admin-button">
+        Сделать дамп базы
+    </a>
+
+    {% if dbdump %}
+        <div style="display: flex; align-items: center;">
+            <a href="{% url 'admin_save_dump' %}"
+               class="admin-button"
+               style="background-color: darkgreen;"
+               download="dbdump.json">
+                Скачать последний дамп
+            </a>
+            <span style="margin-left: 10px;">От: {{ last_change }}</span>
+        </div>
+    {% endif %}
+</body>
+</html>
