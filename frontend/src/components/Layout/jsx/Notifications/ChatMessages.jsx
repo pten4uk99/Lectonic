@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 
 import backArrow from '~/assets/img/back-arrow.svg'
 import sendMessage from '~/assets/img/send-message-icon.svg'
-import {AddMessage, SetMessagesConfirmed} from "../../redux/actions/messages";
+import {AddMessage, ReadMessages, SetMessagesConfirmed} from "../../redux/actions/messages";
 import {ActivateModal, DeactivateModal, SetSelectedChat} from "../../redux/actions/header";
 import {toggleConfirmResponseOnLecture, toggleResponseOnLecture} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
 import {RemoveNotification} from "../../redux/actions/notifications";
@@ -25,20 +25,24 @@ function ChatMessages(props) {
   
   useEffect(() => {
     if (messagesBlock && props.isLoaded) messagesBlock.current.scrollTop = messagesBlock.current.scrollHeight
-  }, [messagesBlock?.current?.scrollHeight])
+  }, [messagesBlock?.current?.scrollHeight, props.isLoaded])
   
-  // useEffect(() => {
-  //   props.SetChatConn(Boolean(props.chatSocket))
-  //   props.chatSocket?.addEventListener('message', (e) => {
-  //     let data = JSON.parse(e.data)
-  //     props.AddMessage(data)
-  //     if (data.confirm !== null) props.SetMessagesConfirmed(data.confirm)
-  //   })
-  // }, [props.chatSocket])
+  useEffect(() => {
+    let eventFunction = (e) => {
+      let data = JSON.parse(e.data)
+      if (data.type === 'chat_message') {
+        props.AddMessage(data)
+        if (data.author !== props.store.permissions.user_id) props.ReadMessages()
+      } else if (data.type === 'read_messages') props.ReadMessages()
+      // if (data.confirm !== null) props.SetMessagesConfirmed(data.confirm)
+    }
+    props.socket?.addEventListener('message', eventFunction)
+    return () => props.socket.removeEventListener('message', eventFunction)
+  }, [props.socket])
   
   function handleArrowClick(params) {
     if ((data.confirmed !== null && !data.confirmed && !data.is_creator) || params.cancel_response) {
-      // props.chatSocket.send(JSON.stringify({
+      // props.socket.send(JSON.stringify({
       //   'type': 'read_reject_chat',
       //   'chat_id': props.store.header.selectedChatId
       // }))
@@ -54,18 +58,20 @@ function ChatMessages(props) {
   
   function handleSendMessage(e) {
     if (e.keyCode === 13 && e.target.value) {
-      // props.chatSocket.send(JSON.stringify({
-      //   'type': 'chat_message',
-      //   'author': props.store.permissions.user_id,
-      //   'text': e.target.value,
-      // }))
-      createChatMessage(selectedChatId, input.current.value)
-        .then(r => r.json())
-        .then(data => {
-          if (data.status === 'success') {
-            props.AddMessage(data.data[0].text)
-          }
-        })
+      let message = {
+        'type': 'chat_message',
+        'author': props.store.permissions.user_id,
+        'text': e.target.value,
+        'chat_id': selectedChatId
+      }
+      props.socket.send(JSON.stringify(message))
+      // createChatMessage(selectedChatId, input.current.value)
+      //   .then(r => r.json())
+      //   .then(data => {
+      //     if (data.status === 'success') {
+      //       props.AddMessage(data.data[0].text)
+      //     }
+      //   })
       e.target.value = ''
     }
   }
@@ -212,6 +218,7 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     AddMessage: (message) => dispatch(AddMessage(message)),
+    ReadMessages: () => dispatch(ReadMessages()),
     ActivateModal: () => dispatch(ActivateModal()),
     DeactivateModal: () => dispatch(DeactivateModal()),
     SetChatConn: (connected) => dispatch(SetChatConn(connected)),

@@ -12,6 +12,12 @@ export default function messages(state=initialState, action) {
           action.payload
         ]
       }
+    case "READ_MESSAGES":
+      let newMessages = state.messages.map((elem) => {
+        elem.need_read = false
+        return elem
+      })
+      return {...state, messages: newMessages}    
     case "SET_MESSAGES_CONFIRMED":
       return {...state, confirmed: action.payload}
     default:

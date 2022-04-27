@@ -101,6 +101,14 @@ class MessageListGetAPIView(APIView):
             message.need_read = False
             message.save()
 
+        async_to_sync(channel_layer.send)(
+            talker_person.user.ws_client.channel_name,
+            {
+                'type': 'read_messages',
+                'chat_id': chat_id,
+            }
+        )
+
         serializer = MessageSerializer(messages, many=True)
         return chatapp_responses.success([{
             'lecture_id': lecture.pk,

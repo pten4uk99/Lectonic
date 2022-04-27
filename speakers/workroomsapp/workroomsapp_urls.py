@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('lecture/<int:pk>/', LectureDetailAPIView.as_view(), name='lecture_detail'),
     path('lecture/response/', LectureResponseAPIView.as_view(), name='lecture_response'),
+    path('lecture/cancel_response/', LectureCancelResponseAPIView.as_view(), name='lecture_cancel_response'),
     path('lecture/response/confirm/', LectureToggleConfirmRespondentAPIView.as_view(), name='lecture_confirm'),
     path('lecture/history_list/', LecturesHistoryGetAPIView.as_view(), name='lecture_history'),
     path('lecture/confirmed_list/', ConfirmedLecturesGetAPIView.as_view(), name='lecture_history'),

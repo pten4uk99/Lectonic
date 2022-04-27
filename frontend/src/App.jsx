@@ -16,24 +16,14 @@ import Header from "~@/Layout/jsx/Header"
 import RolePage from "~@/Pages/RolePage/jsx/RolePage";
 import Permissions from "./components/Authorization/jsx/Permissions";
 import {reverse} from "./ProjectConstants";
-import {createNotificationsSocket} from "./webSocket";
 import Lecture from "./components/Pages/Lecture/jsx/Lecture";
-import {SetNotifyConnFail} from "./components/Layout/redux/actions/ws";
 import {ActiveChatDropdown, ActiveProfileDropdown} from "./components/Layout/redux/actions/header";
+import WebSocket from "./components/Layout/jsx/WebSocket";
 
 
 function App(props) {
-  let permissions = props.store.permissions
-  let userId = permissions.user_id
-  let [notificationsSocket, setNotificationsSocket] = useState(null)
-  
-  // временно подрубил сокет для тестов ромы, по идее он не должен ни на что влиять
-  useEffect(() => {
-    if (userId && (permissions.is_lecturer || permissions.is_customer)) {
-      createNotificationsSocket(setNotificationsSocket, userId, props.SetNotifyConnFail)
-    }
-  }, [permissions])
-  
+  let [socket, setSocket] = useState(null)
+
   useEffect(() => {
     if (props.store.header.modalActive) document.body.style.overflowY = 'hidden'
     else document.body.style = null
@@ -41,27 +31,28 @@ function App(props) {
   
   return (
     <>
-        <Header notificationsSocket={notificationsSocket}/>
-          <main onClick={() => {props.ActiveProfileDropdown(false); props.ActiveChatDropdown(false)}}>
-            <Permissions>
-              <Routes>
-                <Route path={reverse('index')} element={<Index/>}/>
-                <Route path={reverse('verify_email')} element={<VerifyEmail />} />
-                <Route path={reverse('confirm_email')} element={<ConfirmEmail />} />
-                <Route path={reverse('continue_signup')} element={<></>} />
-                <Route path={reverse('create_profile')} element={<SetProfileInfo />}/>
-                <Route path={reverse('set_profile')} element={<SetProfileInfo />}/>
-                <Route path='/add_role/*' element={<RegistrationRole/>}/>
-                <Route path={reverse('workroom')} element={<Workroom />}/>
-                <Route path={reverse('create_event')} element={<CreateEvent/>}/>
-                <Route path={reverse('change_password')} element={<ChangePassword />} />
-                <Route path={reverse('role_page')} element={<RolePage />} />
-                <Route path={reverse('lecture')} element={<Lecture/>} />
-                <Route path='*' element={<NotFoundPage/>}/>
-              </Routes>
-            </Permissions>
-          </main>
-        <Footer />
+      <Header socket={socket}/>
+      <WebSocket setSocket={setSocket} socket={socket}/>
+        <main onClick={() => {props.ActiveProfileDropdown(false); props.ActiveChatDropdown(false)}}>
+          <Permissions>
+            <Routes>
+              <Route path={reverse('index')} element={<Index/>}/>
+              <Route path={reverse('verify_email')} element={<VerifyEmail />} />
+              <Route path={reverse('confirm_email')} element={<ConfirmEmail />} />
+              <Route path={reverse('continue_signup')} element={<></>} />
+              <Route path={reverse('create_profile')} element={<SetProfileInfo />}/>
+              <Route path={reverse('set_profile')} element={<SetProfileInfo />}/>
+              <Route path='/add_role/*' element={<RegistrationRole/>}/>
+              <Route path={reverse('workroom')} element={<Workroom />}/>
+              <Route path={reverse('create_event')} element={<CreateEvent/>}/>
+              <Route path={reverse('change_password')} element={<ChangePassword />} />
+              <Route path={reverse('role_page')} element={<RolePage />} />
+              <Route path={reverse('lecture')} element={<Lecture/>} />
+              <Route path='*' element={<NotFoundPage/>}/>
+            </Routes>
+          </Permissions>
+        </main>
+      <Footer />
     </>
   )
 }
@@ -69,7 +60,6 @@ function App(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
-    SetNotifyConnFail: (failed) => dispatch(SetNotifyConnFail(failed)),
     ActiveChatDropdown: (active) => dispatch(ActiveChatDropdown(active)),
     ActiveProfileDropdown: (active) => dispatch(ActiveProfileDropdown(active)),
   })

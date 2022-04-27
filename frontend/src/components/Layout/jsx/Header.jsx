@@ -16,11 +16,10 @@ import {
 } from "../redux/actions/header";
 import ProfileDropDown from "./ProfileDropDown";
 import ChatDropdown from "./Notifications/ChatDropdown";
-import {getNotificationsList} from "../ajax";
 import {AddNotifications, RemoveNotification, SetNeedRead, UpdateNotifications} from "../redux/actions/notifications";
 import PhotoName from "../../Utils/jsx/PhotoName";
 import AuthModal from "../../Authorization/jsx/AuthModal";
-import {SetNotifyConn, SetNotifyConnFail} from "../redux/actions/ws";
+import {SetNotifyConnFail} from "../redux/actions/ws";
 import ErrorMessage from "../../Utils/jsx/ErrorMessage";
 import {getProfileInfo} from "../../WorkRooms/WorkRoom/ajax/workRooms";
 import {UpdateProfile} from "../../Profile/redux/actions/profile";
@@ -36,35 +35,10 @@ function Header(props) {
   let chatActive = props.store.header.chatDropdownActive
   let [chatUnread, setChatUnread] = useState(false)
   let [headerIconsVisible, setIconsVisible] = useState(false)
-  let [chatSocket, setChatSocket] = useState(null)
-  let [intervalFunc, setIntervalFunc] = useState(null)
-  let selectedChatId = props.store.header.selectedChatId
-  
-  function notificationList() {
-    if ((isLecturer || isCustomer) && props.store.permissions.logged_in) {
-      getNotificationsList()
-        .then(r => r.json())
-        .then(data => {
-          if (data.status === 'success') {
-            props.SetNotifyConnFail(false)
-            props.UpdateNotifications(data.data)
-          }
-          else {
-            if (props.store.permissions.logged_in) props.SetNotifyConnFail(true)
-          }
-        })
-        .catch(e => {
-          if (props.store.permissions.logged_in) props.SetNotifyConnFail(true)
-        })
-    }
-  }
   
   useEffect(() => {
     if (isCustomer || isLecturer) setIconsVisible(true)
-    else {
-      clearInterval(intervalFunc)
-      setIconsVisible(false)
-    }
+    else setIconsVisible(false)
   }, [permissions, props.store.ws.notifyConnFail])
   
   useEffect(() => {
@@ -80,16 +54,9 @@ function Header(props) {
     }
   }, [props.store.permissions.is_person, props.store.permissions.logged_in])
   
-  useEffect(() => {
-    if ((isLecturer || isCustomer) && !props.store.ws.notifyConnFail) {
-      notificationList()
-      if (!intervalFunc) setIntervalFunc(setInterval(() => notificationList(), 5000))
-    }
-  }, [isLecturer, isCustomer, props.store.ws.notifyConnFail])
 
   useEffect(() => {
     if (!chatActive) {
-      // chatSocket.close()
       props.SetSelectedChat(null)
     }
   }, [chatActive])
@@ -104,25 +71,6 @@ function Header(props) {
     }
     setChatUnread(need_read)
   }, [props.store.notifications])
-  
-  // useEffect(() => {
-  //   props.SetNotifyConn(Boolean(props.notificationsSocket))
-  //  
-  //   let chatId = props.store.header.selectedChatId
-  //   let eventFunction = (e) => {
-  //     let data = JSON.parse(e.data)
-  //     if (data.type === 'new_respondent') props.AddNotifications(data)
-  //     if (data.type === 'remove_respondent') props.RemoveNotification(data.id)
-  //     if (data.type === 'new_message') {
-  //       if (chatId !== data.chat_id) props.SetNeedRead(data.chat_id, true)
-  //     }
-  //     if (data.type === 'read_reject_chat') {
-  //       if (data.response === 'deleted') chatSocket.close()
-  //     }
-  //   }
-  //   props.notificationsSocket?.addEventListener('message', eventFunction)
-  //   return () => props.notificationsSocket?.removeEventListener('message', eventFunction)
-  // }, [props.notificationsSocket, selectedChatId])
   
   return (
     <>
@@ -177,9 +125,7 @@ function Header(props) {
         {!loggedIn && <AuthModal/>}
         <ProfileDropDown/>
         {chatActive && (isLecturer || isCustomer) && 
-          <ChatDropdown notificationsSocket={props.notificationsSocket} 
-                        chatSocket={chatSocket} 
-                        setChatSocket={setChatSocket}/>}
+          <ChatDropdown socket={props.socket}/>}
         {props.store.ws.notifyConnFail && <ErrorMessage msg="Соединение разорвано. Повторное подключение..."/>}
             
       </header>
@@ -193,7 +139,6 @@ export default connect(
     ActivateModal: () => dispatch(ActivateModal()),
     UpdateProfile: (data) => dispatch(UpdateProfile(data)),
     ActiveChatDropdown: (active) => dispatch(ActiveChatDropdown(active)),
-    SetNotifyConn: (connected) => dispatch(SetNotifyConn(connected)),
     SetNotifyConnFail: (connected) => dispatch(SetNotifyConnFail(connected)),
     SetSelectedChat: (chat_id) => dispatch(SetSelectedChat(chat_id)),
     SetNeedRead: (chat_id, need_read) => dispatch(SetNeedRead(chat_id, need_read)),
@@ -201,8 +146,7 @@ export default connect(
     AddNotifications: (data) => dispatch(AddNotifications(data)),
     RemoveNotification: (chat_id) => dispatch(RemoveNotification(chat_id)),
     DeactivateModal: () => dispatch(DeactivateModal()),
-    ActiveProfileDropdown: 
-      (active) => dispatch(ActiveProfileDropdown(active)),
+    ActiveProfileDropdown: (active) => dispatch(ActiveProfileDropdown(active)),
   })
 )(Header)
 

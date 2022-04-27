@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
-import {getChatMessages, getNotificationsList} from "../../ajax";
-import {createChatSocket} from "../../../../webSocket";
+
 import {UpdateMessages} from "../../redux/actions/messages";
 import {RemoveNotification, SetNeedRead} from "../../redux/actions/notifications";
 import {SetSelectedChat} from "../../redux/actions/header";
@@ -11,11 +10,6 @@ import {SetChatConnFail} from "../../redux/actions/ws";
 
 function NotificationsList(props) {
   let chatList = props.store.notifications
-  let selectedChatId = props.store.header.selectedChatId
-  
-  useEffect(() => {
-    if (selectedChatId && props.store.ws.chatConn) getMessages(selectedChatId)
-  }, [props.store.ws.chatConn])
 
   return (
     <div className="notifications-list__block">

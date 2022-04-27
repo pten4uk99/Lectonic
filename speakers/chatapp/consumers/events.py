@@ -1,7 +1,7 @@
 import json
 
 
-class NotificationEventHandler:
+class EventHandler:
     async def new_respondent(self, event):
         lecture = event['lecture']
         respondent = event['lecture_respondent'].person
@@ -29,5 +29,17 @@ class NotificationEventHandler:
             }
         ))
 
-    async def new_message(self, event):
+    # для чата ->
+    async def chat_message(self, event):
         await self.send(text_data=json.dumps(event))
+
+    async def read_messages(self, event):
+        await self.send(text_data=json.dumps(event))
+
+    async def read_reject_chat(self, event):
+        chat_id = await self.remove_chat(event)
+        await self.send(text_data=json.dumps({
+            'type': 'read_reject_chat',
+            'response': 'deleted',
+            'chat_id': chat_id
+        }))
