@@ -5,7 +5,7 @@ import backArrow from '~/assets/img/back-arrow.svg'
 import sendMessage from '~/assets/img/send-message-icon.svg'
 import {AddMessage, ReadMessages, SetMessagesConfirmed} from "../../redux/actions/messages";
 import {ActivateModal, DeactivateModal, SetSelectedChat} from "../../redux/actions/header";
-import {toggleConfirmResponseOnLecture, toggleResponseOnLecture} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
+import {toggleConfirmResponseOnLecture, cancelResponseOnLecture} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
 import {RemoveNotification} from "../../redux/actions/notifications";
 import Loader from '~@/Utils/jsx/Loader'
 import {SetChatConn} from "../../redux/actions/ws";
@@ -46,9 +46,6 @@ function ChatMessages(props) {
       //   'type': 'read_reject_chat',
       //   'chat_id': props.store.header.selectedChatId
       // }))
-      deleteChat(selectedChatId)
-        .then(r => r.json())
-        .then(data => props.RemoveNotification(props.store.header.selectedChatId))
     } else {
       // props.chatSocket.close()
     }
@@ -65,30 +62,18 @@ function ChatMessages(props) {
         'chat_id': selectedChatId
       }
       props.socket.send(JSON.stringify(message))
-      // createChatMessage(selectedChatId, input.current.value)
-      //   .then(r => r.json())
-      //   .then(data => {
-      //     if (data.status === 'success') {
-      //       props.AddMessage(data.data[0].text)
-      //     }
-      //   })
       e.target.value = ''
     }
   }
   function handleClickIcon() {
     if (input.current.value) {
-      // props.chatSocket.send(JSON.stringify({
-      //   'type': 'chat_message', 
-      //   'author': props.store.permissions.user_id, 
-      //   'text': input.current.value,
-      // }))
-      createChatMessage(selectedChatId, input.current.value)
-        .then(r => r.json())
-        .then(data => {
-          if (data.status === 'success') {
-            props.AddMessage(data.data[0].text)
-          }
-        })
+      let message = {
+        'type': 'chat_message',
+        'author': props.store.permissions.user_id,
+        'text': e.target.value,
+        'chat_id': selectedChatId
+      }
+      props.socket.send(JSON.stringify(message))
       input.current.value = ''
     }
   }
@@ -114,7 +99,7 @@ function ChatMessages(props) {
   }
   
   function handleRejectResponse() {
-    toggleResponseOnLecture(data.lecture_id)
+    cancelResponseOnLecture(data.lecture_id)
       .then(r => r.json())
       .then(data => {
         if (data.status === 'success') {

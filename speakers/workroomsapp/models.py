@@ -158,8 +158,8 @@ class Optional(models.Model):
 
 
 class Respondent(models.Model):
-    person = models.ForeignKey('Person', on_delete=models.CASCADE)
-    lecture_request = models.ForeignKey('LectureRequest', on_delete=models.CASCADE)
+    person = models.ForeignKey('Person', on_delete=models.CASCADE, related_name='respondent_obj')
+    lecture_request = models.ForeignKey('LectureRequest', on_delete=models.CASCADE, related_name='respondent_obj')
     confirmed = models.BooleanField(default=False)
     rejected = models.BooleanField(default=False)
 

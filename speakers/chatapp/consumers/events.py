@@ -5,7 +5,8 @@ class EventHandler:
     async def new_respondent(self, event):
         lecture = event['lecture']
         respondent = event['lecture_respondent'].person
-        chat = await self.create_new_chat(event)
+        # chat = await self.create_new_chat(event)
+        chat = event['chat']
         need_read_messages = await self.get_need_read({**event, 'chat': chat})
 
         data = {

@@ -27,6 +27,8 @@ class DatabaseInteraction:
             client = WsClient.objects.filter(user_id=user_id).first()
         elif channel_name is not None:
             client = WsClient.objects.filter(channel_name=channel_name).first()
+        else:
+            raise AttributeError('В функцию должен быть передан хотя бы один аргумент')
         return client
 
 

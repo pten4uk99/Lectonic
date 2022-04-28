@@ -11,7 +11,7 @@ from chatapp.models import Chat, Message
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.lecturer.lecture_as_lecturer_serializers import *
-from workroomsapp.lecture.utils.mixins import LectureResponseMixin
+from workroomsapp.lecture.utils.response_on_lecture import *
 from workroomsapp.models import LectureRequest, Lecturer, Customer, Respondent, Person
 from workroomsapp.utils import workroomsapp_permissions
 
@@ -109,7 +109,7 @@ class LecturesHistoryGetAPIView(APIView):
             minimum = aggregate.get('min')
 
             if (minimum < datetime.datetime.now(tz=datetime.timezone.utc) and
-                    lecture.lecture_requests.filter(respondent__confirmed=True)):
+                    lecture.lecture_requests.filter(respondent_obj__confirmed=True)):
                 lectures_list.append(lecture)
 
         serializer = LecturesGetSerializer(
@@ -147,7 +147,7 @@ class PotentialLecturerLecturesGetAPIView(APIView):
         lecture_list = []
         for customer in customers:
             for lecture in customer.lectures.all():
-                if lecture.lecture_requests.filter(respondent__confirmed=True):
+                if lecture.lecture_requests.filter(respondent_obj__confirmed=True):
                     continue
                 lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
                 lowest = lowest.get('maximum')
@@ -164,7 +164,6 @@ class LectureResponseAPIView(APIView, LectureResponseMixin):
     permission_classes = [workroomsapp_permissions.IsLecturer |
                           workroomsapp_permissions.IsCustomer]
 
-    # проверить =>
     def add_respondent(self):
         for response_request in self.get_responses():
             response_request.respondents.add(self.request.user.person)
@@ -199,54 +198,68 @@ class LectureResponseAPIView(APIView, LectureResponseMixin):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
         with transaction.atomic():
-            self.check_can_response(cancel=False)
-            self.add_respondent()
-            self.get_or_create_chat()
-            self.create_response_message()
+            self.check_can_response()  # может ли пользователь откликаться на эту лекцию
+            self.add_respondent()  # добавляем откликнувшегося к лекции
+            chat = self.get_or_create_chat()
+            self.create_response_message()  # создаем сообщение по умолчанию при отклике
+
+            self.send_ws_message(clients=[request.user, self.get_creator().user], message={
+                    'type': 'new_respondent',
+                    'lecture': self.get_lecture(),
+                    'chat': chat,
+                    'lecture_respondent': self.request.user,
+                })  # отправляем сообщение обоим собеседникам чата
+
         return lecture_responses.success_response()
 
 
-class LectureCancelResponseAPIView(APIView, LectureResponseMixin):
+class LectureCancelResponseAPIView(APIView, LectureCancelResponseMixin):
     permission_classes = [workroomsapp_permissions.IsLecturer |
                           workroomsapp_permissions.IsCustomer]
 
-    # доделать и проверить =>
     def remove_respondent(self):
         for lecture_request in self.get_lecture().lecture_requests.all():
-            respondent_obj = lecture_request.respondent.filter(person=self.request.user.person).first()
+            respondent_obj = lecture_request.respondent_obj.filter(person=self.request.user.person).first()
 
             if respondent_obj and not respondent_obj.rejected:
                 lecture_request.respondents.remove(self.request.user.person)
                 lecture_request.save()
+                logger.info(f'respodent_obj:{respondent_obj}, rejected: {respondent_obj.rejected}')
 
     def remove_chat(self):
-        chat = Chat.objects.filter(lecture_requests__in=self.get_responses()).first()
+        chat = Chat.objects.filter(lecture=self.get_lecture()).first()
 
         if not chat:
             chat_list = Chat.objects.filter(lecture=self.get_lecture())
             for elem in chat_list:
                 if elem.users.all().count() < 2:
                     elem.delete()
-            # тут надо заменить return, думаю через вебсокет делать. Потому что скорее всего будет ошибка,
-            # если тут он будет возвращать объект Response
+
             return lecture_responses.success_cancel([{'type': 'chat_does_not_exist'}])
 
+        logger.info(f'chat: {chat}')
         chat_id = chat.pk
+        users = []
+
+        for user in chat.users.all():
+            users.append(user)
+
         chat.delete()
-        return chat_id
+        return chat_id, users
 
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
         with transaction.atomic():
-            self.check_can_response(cancel=True)
+            self.check_can_response()
             self.remove_respondent()
-            chat_id = self.remove_chat()
+            chat_id, users = self.remove_chat()  # возвращает id и собеседников удаленного чата
 
-        # тут возможно тоже из-за веб сокета такой ответ будет не нужен
-        return lecture_responses.success_cancel([{
-            'type': 'remove_respondent',
-            'id': chat_id
-        }])
+            self.send_ws_message(clients=users, message={
+                    'type': 'remove_respondent',
+                    'chat_id': chat_id,
+                })  # отправляем сообщение обоим собеседникам чата
+
+        return lecture_responses.success_cancel()
 
 
 class LectureToggleConfirmRespondentAPIView(APIView):

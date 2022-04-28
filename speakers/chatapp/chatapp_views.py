@@ -15,15 +15,6 @@ class ChatListGetAPIView(APIView):
     permission_classes = [workroomsapp_permissions.IsLecturer |
                           workroomsapp_permissions.IsCustomer]
 
-# ---------------------- Пока не работает вебсокет --------------------------------
-    @swagger_auto_schema(deprecated=True)
-    def delete(self, request):
-        chat_id = request.GET.get('chat_id')
-        chat = Chat.objects.get(pk=chat_id)
-        chat.delete()
-        return chatapp_responses.success([{'chat': chat_id}])
-# ---------------------- Пока не работает вебсокет --------------------------------
-
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
         chat = Chat.objects.filter(users__pk=request.user.pk)

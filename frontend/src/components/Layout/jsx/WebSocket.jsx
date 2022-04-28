@@ -5,7 +5,7 @@ import {useEffect} from "react";
 import {createSocket} from "../../../webSocket";
 import {getNotificationsList} from "../ajax";
 import {SetNotifyConn, SetNotifyConnFail} from "../redux/actions/ws";
-import {SetNeedRead, UpdateNotifications} from "../redux/actions/notifications";
+import {AddNotifications, RemoveNotification, SetNeedRead, UpdateNotifications} from "../redux/actions/notifications";
 
 
 function WebSocket(props) {
@@ -58,7 +58,9 @@ export default connect(
   dispatch => ({
     SetNotifyConnFail: (connected) => dispatch(SetNotifyConnFail(connected)),
     SetNotifyConn: (connected) => dispatch(SetNotifyConn(connected)),
+    AddNotifications: (data) => dispatch(AddNotifications(data)),
     SetNeedRead: (chat_id, need_read) => dispatch(SetNeedRead(chat_id, need_read)),
+    RemoveNotification: (chat_id) => dispatch(RemoveNotification(chat_id)),
     UpdateNotifications: (data) => dispatch(UpdateNotifications(data)),
   })
 )(WebSocket)

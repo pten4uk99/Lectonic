@@ -70,7 +70,7 @@ def lecture_does_not_exist():
     return response.ErrorException(detail=LECTURE_DOES_NOT_EXIST, status_code=400)
 
 
-def success_cancel(data):
+def success_cancel(data=None):
     return response.get_response(
         status=response.SUCCESS,
         detail=SUCCESS_CANCEL,

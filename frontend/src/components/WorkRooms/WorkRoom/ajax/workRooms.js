@@ -113,7 +113,7 @@ export function getAllLecturersForCustomer() {
 }
 
 
-export function toggleResponseOnLecture(lecture_id, dates) {
+export function responseOnLecture(lecture_id, dates) {
   let datesParam = ''
   if (dates) {
     for (let date of dates) {
@@ -128,6 +128,18 @@ export function toggleResponseOnLecture(lecture_id, dates) {
   }
   return fetch(
     `${baseURL}/api/workrooms/lecture/response/?lecture=${lecture_id}${datesParam}`,
+    options
+  )
+}
+
+export function cancelResponseOnLecture(lecture_id) {
+  const options = {
+    method: 'GET',
+    headers: HEADERS,
+    credentials: 'include',
+  }
+  return fetch(
+    `${baseURL}/api/workrooms/lecture/cancel_response/?lecture=${lecture_id}`,
     options
   )
 }

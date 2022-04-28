@@ -21,13 +21,6 @@ export function getNotificationsList() {
   })
 }
 
-export function deleteChat(id) {
-  return fetch(`${baseURL}/api/chat/chat_list/?chat_id=${id}`, {
-    method: 'DELETE',
-    credentials: 'include'
-  })
-}
-
 export function getChatMessages(chat_id) {
   return fetch(`${baseURL}/api/chat/message_list/?chat_id=${chat_id}`, {
     method: 'GET',
