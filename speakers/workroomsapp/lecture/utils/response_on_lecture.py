@@ -1,23 +1,10 @@
 import datetime
 
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
-
-from chatapp.models import WsClient
+from chatapp.models import Chat, Message
+from workroomsapp.calendar.utils import get_model_from_attrs
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.models import Lecture
-
-
-class WsMessageSender:
-    channel_layer = get_channel_layer()
-
-    def __init__(self, clients: list, message: dict):
-        self.message = message
-        self.clients = WsClient.objects.filter(user__in=clients)
-
-    def send(self):
-        for client in self.clients:
-            async_to_sync(self.channel_layer.send)(getattr(client, 'channel_name', ''), self.message)
+from workroomsapp.utils.ws import WsMessageSender
 
 
 class LectureResponseBaseMixin:
@@ -115,3 +102,107 @@ class LectureCancelResponseMixin(LectureResponseBaseMixin):
                     respondents=self.request.user.person, respondent_obj__rejected=True)
         if not requests:
             return lecture_responses.can_not_cancel_response()
+
+
+class LectureToggleConfirmBaseMixin(LectureResponseBaseMixin):
+    def get_params(self):
+        params = super().get_params()
+
+        respondent_id = self.request.GET.get('respondent')
+        chat_id = self.request.GET.get('chat_id')
+
+        if not (respondent_id and chat_id):
+            return lecture_responses.not_in_data()
+
+        params['respondent_id'] = respondent_id
+        params['chat_id'] = chat_id
+
+        return params
+
+    def get_responses(self):
+        """ Проверяет, является ли выбранный пользователь откликнувшимся на данную лекцию и
+        возвращает объекты LectureRequest принадлежащие текущему чату """
+
+        lecture_requests = self.get_lecture().lecture_requests.filter(chat_list=self.get_chat())
+
+        if not lecture_requests:
+            return lecture_responses.not_a_respondent()
+
+        return lecture_requests
+
+    def get_chat(self):
+        """ Возвращает объект модели Chat """
+
+        return Chat.objects.get(pk=self.get_params()['chat_id'])
+
+    def handle_respondent(self):
+        """ Базовый метод для обработки откликнувшегося пользователя """
+
+        raise NotImplementedError()
+
+    def check_is_creator(self):
+        """ Проверяет, является ли пользователь создателем лекции """
+
+        lecture = self.get_lecture()
+        lecture_user = get_model_from_attrs(lecture, ['lecturer', 'customer']).person.user
+
+        if not lecture_user == self.request.user:
+            return lecture_responses.not_a_creator()
+
+    def get_message_data(self):
+        """ Возвращает данные для сообщения веб сокета """
+
+        return {
+            'type': 'chat_message',
+            'chat_id': self.get_params()['chat_id'],
+            'author': self.request.user.pk,
+            'text': '',
+            # в классах-наследниках должен быть добавлен ключ 'confirm' со значениями True/False
+        }
+
+    def create_message(self):
+        data = self.get_message_data()
+        Message.objects.create(
+            author=self.request.user,
+            chat=self.get_chat(),
+            text=data['text'],
+            confirm=data['confirm']
+        )
+        return data
+
+    def handle_message(self):
+        """ Создает сообщение о подтверждении/отклонении лекции (объект Message) и
+        отправляет его по веб сокету """
+
+        message_data = self.create_message()
+        self.send_ws_message(clients=self.get_chat().users.all(), message=message_data)
+
+
+class LectureConfirmRespondentMixin(LectureToggleConfirmBaseMixin):
+    def handle_respondent(self):
+        """ Подтверждает откликнувшегося пользователя на выбранные даты """
+
+        for lecture_request in self.get_responses():
+            lecture_respondent = lecture_request.respondent_obj.get(person=self.get_params()['respondent_id'])
+            lecture_respondent.confirmed = True
+            lecture_respondent.save()
+
+    def get_message_data(self):
+        data = super().get_message_data()
+        data['confirm'] = True
+        return data
+
+
+class LectureRejectRespondentMixin(LectureToggleConfirmBaseMixin):
+    def handle_respondent(self):
+        """ Отклоняет откликнувшегося пользователя на выбранные даты """
+
+        for lecture_request in self.get_responses():
+            lecture_respondent = lecture_request.respondent_obj.get(person=self.get_params()['respondent_id'])
+            lecture_respondent.rejected = True
+            lecture_respondent.save()
+
+    def get_message_data(self):
+        data = super().get_message_data()
+        data['confirm'] = False
+        return data

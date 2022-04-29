@@ -1,13 +1,12 @@
 import logging
 
-from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.db import transaction
 from django.db.models import Max, Min
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
-from chatapp.models import Chat, Message
+from chatapp.chatapp_serializers import ChatSerializer
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.lecturer.lecture_as_lecturer_serializers import *
@@ -172,14 +171,16 @@ class LectureResponseAPIView(APIView, LectureResponseMixin):
 
     def get_or_create_chat(self):
         responses = self.get_responses()
-        chat = Chat.objects.filter(lecture_requests__in=responses).first()
+        chat = Chat.objects.filter(
+            lecture_requests__in=responses, users=self.get_creator().user).filter(
+            users=self.request.user).first()
 
         if not chat:
             chat = Chat.objects.create(lecture=self.get_lecture())
             chat.lecture_requests.add(*responses)
             chat.users.add(self.get_creator().user, self.request.user)
             chat.save()
-        logger.info(f'users: {chat.users.all()}')
+        logger.info(f'chat: {chat}')
         return chat
 
     def create_response_message(self):
@@ -203,12 +204,14 @@ class LectureResponseAPIView(APIView, LectureResponseMixin):
             chat = self.get_or_create_chat()
             self.create_response_message()  # создаем сообщение по умолчанию при отклике
 
+            chat_serializer = ChatSerializer(chat, context={'request': request})
+
             self.send_ws_message(clients=[request.user, self.get_creator().user], message={
-                    'type': 'new_respondent',
-                    'lecture': self.get_lecture(),
-                    'chat': chat,
-                    'lecture_respondent': self.request.user,
-                })  # отправляем сообщение обоим собеседникам чата
+                'type': 'new_respondent',
+                'chat': chat,
+                'respondent_id': self.request.user.pk,
+                **chat_serializer.data
+            })  # отправляем сообщение обоим собеседникам чата
 
         return lecture_responses.success_response()
 
@@ -217,26 +220,19 @@ class LectureCancelResponseAPIView(APIView, LectureCancelResponseMixin):
     permission_classes = [workroomsapp_permissions.IsLecturer |
                           workroomsapp_permissions.IsCustomer]
 
-    def remove_respondent(self):
-        for lecture_request in self.get_lecture().lecture_requests.all():
-            respondent_obj = lecture_request.respondent_obj.filter(person=self.request.user.person).first()
+    def remove_chat(self, lecture_request):
+        chat_list = getattr(lecture_request, 'chat_list', None)
 
-            if respondent_obj and not respondent_obj.rejected:
-                lecture_request.respondents.remove(self.request.user.person)
-                lecture_request.save()
-                logger.info(f'respodent_obj:{respondent_obj}, rejected: {respondent_obj.rejected}')
+        if not chat_list:
+            chats = Chat.objects.filter(lecture=self.get_lecture())
 
-    def remove_chat(self):
-        chat = Chat.objects.filter(lecture=self.get_lecture()).first()
-
-        if not chat:
-            chat_list = Chat.objects.filter(lecture=self.get_lecture())
-            for elem in chat_list:
+            for elem in chats:
                 if elem.users.all().count() < 2:
                     elem.delete()
 
             return lecture_responses.success_cancel([{'type': 'chat_does_not_exist'}])
 
+        chat = chat_list.filter(users=self.request.user).first()
         logger.info(f'chat: {chat}')
         chat_id = chat.pk
         users = []
@@ -247,12 +243,29 @@ class LectureCancelResponseAPIView(APIView, LectureCancelResponseMixin):
         chat.delete()
         return chat_id, users
 
+    def remove_respondent(self):
+        user_list = []
+        chat = None
+
+        for lecture_request in self.get_lecture().lecture_requests.all():
+            respondent_obj = lecture_request.respondent_obj.filter(person=self.request.user.person).first()
+
+            if respondent_obj and not respondent_obj.rejected:
+                lecture_request.respondents.remove(self.request.user.person)
+                chat_id, users = self.remove_chat(lecture_request)
+                user_list = users
+                chat = chat_id
+                lecture_request.save()
+                logger.info(f'respodent_obj:{respondent_obj}, rejected: {respondent_obj.rejected}')
+
+        return chat, user_list
+
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
         with transaction.atomic():
             self.check_can_response()
-            self.remove_respondent()
-            chat_id, users = self.remove_chat()  # возвращает id и собеседников удаленного чата
+            chat_id, users = self.remove_respondent()  # удаляет откликнувшегося и
+            # возвращает id и собеседников удаленного чата
 
             self.send_ws_message(clients=users, message={
                     'type': 'remove_respondent',
@@ -262,87 +275,19 @@ class LectureCancelResponseAPIView(APIView, LectureCancelResponseMixin):
         return lecture_responses.success_cancel()
 
 
-class LectureToggleConfirmRespondentAPIView(APIView):
+class LectureConfirmRespondentAPIView(APIView, LectureConfirmRespondentMixin):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-
-        # переписать код как при отклике на лекцию
-
-        lecture_id = request.GET.get('lecture')
-        respondent_id = request.GET.get('respondent')
-        chat_id = request.GET.get('chat_id')
-        reject = request.GET.get('reject')
-
-        if not lecture_id or not respondent_id or not chat_id:
-            return lecture_responses.not_in_data()
-
-        lecture = Lecture.objects.filter(pk=lecture_id).first()
-        respondent = Person.objects.get(pk=respondent_id)
-        chat = Chat.objects.get(pk=chat_id)
-
-        if not lecture:
-            return lecture_responses.lecture_does_not_exist()
-
-        is_lecturer = False
-        is_customer = False
-
-        if lecture.lecturer:
-            is_lecturer = lecture.lecturer.person.user == request.user
-        elif lecture.customer:
-            is_customer = lecture.customer.person.user == request.user
-
-        if not is_lecturer and not is_customer:
-            return lecture_responses.not_a_creator()
-
-        lecture_requests = lecture.lecture_requests.filter(chat_list=chat)
-
-        if not lecture_requests:
-            return lecture_responses.not_a_respondent()
-
-        chat_consumer_data = {
-            "type": "chat_message",
-            'author': request.user.pk,
-            'text': '',
-            'confirm': True
-        }
-
-        if reject == 'true':
-            for lecture_request in lecture_requests:
-                respondent_obj = Respondent.objects.get(lecture_request=lecture_request, person=respondent)
-                respondent_obj.rejected = True
-                respondent_obj.save()
-            lecture.save()
-
-            chat_consumer_data['confirm'] = False
-            # async_to_sync(channel_layer.group_send)(f'chat_{chat.pk}', chat_consumer_data)
-            # async_to_sync(channel_layer.group_send)(
-            #     f'user_{respondent.user.pk}',
-            #     {'type': 'new_message', 'chat_id': chat.pk}
-            # )
-            Message.objects.create(
-                author=request.user,
-                chat=chat,
-                text=chat_consumer_data['text'],
-                confirm=chat_consumer_data.get('confirm')
-            )
-            return lecture_responses.success_denied()
-
-        for lecture_request in lecture_requests:
-            lecture_respondent = Respondent.objects.get(person=respondent, lecture_request=lecture_request)
-            lecture_respondent.confirmed = True
-            lecture_respondent.save()
-        lecture.save()
-
-        Message.objects.create(
-            author=request.user,
-            chat=chat,
-            text=chat_consumer_data['text'],
-            confirm=chat_consumer_data.get('confirm')
-        )
-
-        # async_to_sync(channel_layer.group_send)(f'chat_{chat.pk}', chat_consumer_data)
-        # async_to_sync(channel_layer.group_send)(
-        #     f'user_{respondent.user.pk}',
-        #     {'type': 'new_message', 'chat_id': chat.pk}
-        # )
+        self.check_is_creator()
+        self.handle_respondent()  # обрабатываем откликнувшегося пользователя (подтверждаем, отклоняем)
+        self.handle_message()
         return lecture_responses.success_confirm()
+
+
+class LectureRejectRespondentAPIView(APIView, LectureRejectRespondentMixin):
+    @swagger_auto_schema(deprecated=True)
+    def get(self, request):
+        self.check_is_creator()
+        self.handle_respondent()  # обрабатываем откликнувшегося пользователя (подтверждаем/отклоняем)
+        self.handle_message()  # обрабатываем сообщение (объект Message): создаем, и отправляем по веб сокету
+        return lecture_responses.success_denied()

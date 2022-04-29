@@ -56,6 +56,18 @@
         }
         .respondent-name {
           font-size: 14px
+          
+          .is-online, .is-offline {
+            margin-left: 8px;
+            font-size: 12px;
+            font-weight: 500;
+          }
+          .is-online {
+            color: rgba(0, 211, 120, 1);
+          }      
+          .is-offline {
+            color: $add-grey;
+          }
         }
       }
     }
@@ -159,28 +171,30 @@
     }
   }
   .input__block {
-    display flex
-    justify-content: center;
-    align-items: center
-    //height: 68px
+    display: flex
+    align-items: flex-end
+    position: relative
+    padding: 20px
     background-color: white
     
-    input {
-      width: 437px
-      height: 32px
+    textarea {
+      width: 351px
+      resize: none
       border-radius 18px
       border 1px solid $main-grey
       outline none
       padding: 8px 16px
       box-sizing border-box
       font-family: 'Montserrat', sans-serif;
+      
       &::-webkit-scrollbar {
         display none
       }
     }
     img {
       position: absolute
-      right: 8px
+      right: 20px
+      bottom: 20px
     }
   }
 }

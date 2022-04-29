@@ -144,14 +144,26 @@ export function cancelResponseOnLecture(lecture_id) {
   )
 }
 
-export function toggleConfirmResponseOnLecture(lecture_id, respondent_id, chat_id, reject) {
+export function confirmResponseOnLecture(lecture_id, respondent_id, chat_id) {
   const options = {
     method: 'GET',
     headers: HEADERS,
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/lecture/response/confirm/?lecture=${lecture_id}&chat_id=${chat_id}&respondent=${respondent_id}&reject=${reject}`,
+    `${baseURL}/api/workrooms/lecture/confirm/?lecture=${lecture_id}&chat_id=${chat_id}&respondent=${respondent_id}`,
+    options
+  )
+}
+
+export function rejectResponseOnLecture(lecture_id, respondent_id, chat_id) {
+  const options = {
+    method: 'GET',
+    headers: HEADERS,
+    credentials: 'include',
+  }
+  return fetch(
+    `${baseURL}/api/workrooms/lecture/reject/?lecture=${lecture_id}&chat_id=${chat_id}&respondent=${respondent_id}`,
     options
   )
 }

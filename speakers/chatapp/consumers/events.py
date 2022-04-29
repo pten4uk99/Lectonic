@@ -2,22 +2,23 @@ import json
 
 
 class EventHandler:
+    async def set_online_users(self, event):
+        users = await self.get_all_clients()
+        event['users'] = users
+        await self.send(text_data=json.dumps(event))
+
     async def new_respondent(self, event):
-        lecture = event['lecture']
-        respondent = event['lecture_respondent'].person
-        # chat = await self.create_new_chat(event)
         chat = event['chat']
-        need_read_messages = await self.get_need_read({**event, 'chat': chat})
+        talker = await self.get_talker(event)
+        need_read_messages = await self.get_need_read_messages({**event, 'chat': chat})
+        event.pop('chat')
 
         data = {
             'type': 'new_respondent',
-            'id': chat.pk,
+            **event,
             'need_read': need_read_messages,
-            'lecture_name': lecture.name,
-            'lecture_svg': lecture.svg,
-            'respondent_id': respondent.pk,
-            'respondent_first_name': respondent.first_name,
-            'respondent_last_name': respondent.last_name
+            'talker_first_name': talker.first_name,
+            'talker_last_name': talker.last_name,
         }
         await self.send(text_data=json.dumps(data))
 
@@ -30,7 +31,6 @@ class EventHandler:
             }
         ))
 
-    # для чата ->
     async def chat_message(self, event):
         await self.send(text_data=json.dumps(event))
 

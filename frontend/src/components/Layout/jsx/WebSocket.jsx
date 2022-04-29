@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import {useEffect} from "react";
 import {createSocket} from "../../../webSocket";
 import {getNotificationsList} from "../ajax";
-import {SetNotifyConn, SetNotifyConnFail} from "../redux/actions/ws";
+import {SetNotifyConn, SetNotifyConnFail, SetOnlineUsers} from "../redux/actions/ws";
 import {AddNotifications, RemoveNotification, SetNeedRead, UpdateNotifications} from "../redux/actions/notifications";
 
 
@@ -14,6 +14,7 @@ function WebSocket(props) {
   let isLecturer = permissions.is_lecturer
   let userId = permissions.user_id
   let selectedChatId = props.store.header.selectedChatId
+  let onlineUsers = props.store.ws.onlineUsers
   
   useEffect(() => {
     if (userId && (permissions.is_lecturer || permissions.is_customer)) {
@@ -26,13 +27,14 @@ function WebSocket(props) {
     let chatId = props.store.header.selectedChatId
     let eventFunction = (e) => {
       let data = JSON.parse(e.data)
-      if (data.type === 'new_respondent') props.AddNotifications(data)
-      if (data.type === 'remove_respondent') props.RemoveNotification(data.id)
-      if (data.type === 'chat_message') {
-        if (chatId !== data.chat_id) props.SetNeedRead(data.chat_id, true)
+      if (data.type === 'set_online_users') props.SetOnlineUsers(data.users)
+      else if (data.type === 'new_respondent') props.AddNotifications(data)
+      else if (data.type === 'remove_respondent') props.RemoveNotification(data.id)
+      else if (data.type === 'chat_message') {
+        if (chatId != data.chat_id) props.SetNeedRead(data.chat_id, true)
       }
-      if (data.type === 'read_reject_chat') {
-        if (data.response === 'deleted') chatSocket.close()
+      else if (data.type === 'read_reject_chat') {
+        if (data.response === 'deleted') props.RemoveNotification(data.chat_id)
       }
     }
     props.socket?.addEventListener('message', eventFunction)
@@ -58,6 +60,7 @@ export default connect(
   dispatch => ({
     SetNotifyConnFail: (connected) => dispatch(SetNotifyConnFail(connected)),
     SetNotifyConn: (connected) => dispatch(SetNotifyConn(connected)),
+    SetOnlineUsers: (users) => dispatch(SetOnlineUsers(users)),
     AddNotifications: (data) => dispatch(AddNotifications(data)),
     SetNeedRead: (chat_id, need_read) => dispatch(SetNeedRead(chat_id, need_read)),
     RemoveNotification: (chat_id) => dispatch(RemoveNotification(chat_id)),

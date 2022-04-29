@@ -27,19 +27,3 @@ export function getChatMessages(chat_id) {
     credentials: 'include'
   })
 }
-
-
-// пока не настроен вебсокет
-export function createChatMessage(chat_id, text, confirm) {
-  let options = {
-    method: 'POST',
-    headers: HEADERS,
-    body: JSON.stringify({
-      chat_id: chat_id,
-      text: text,
-      confirm: confirm
-    }),
-    credentials: 'include'
-  }
-  return fetch(`${baseURL}/api/chat/message_list/`, options)
-}

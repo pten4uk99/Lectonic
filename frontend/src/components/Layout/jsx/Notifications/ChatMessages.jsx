@@ -5,19 +5,22 @@ import backArrow from '~/assets/img/back-arrow.svg'
 import sendMessage from '~/assets/img/send-message-icon.svg'
 import {AddMessage, ReadMessages, SetMessagesConfirmed} from "../../redux/actions/messages";
 import {ActivateModal, DeactivateModal, SetSelectedChat} from "../../redux/actions/header";
-import {toggleConfirmResponseOnLecture, cancelResponseOnLecture} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
-import {RemoveNotification} from "../../redux/actions/notifications";
+import {
+  cancelResponseOnLecture,
+  confirmResponseOnLecture, rejectResponseOnLecture
+} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
+import {RemoveNotification, SetConfirmNotification} from "../../redux/actions/notifications";
 import Loader from '~@/Utils/jsx/Loader'
 import {SetChatConn} from "../../redux/actions/ws";
 import ConfirmAction from "../../../Utils/jsx/ConfirmAction";
 import {getMonth} from "../../../WorkRooms/CreateEvent/jsx/CalendarModal";
-import {createChatMessage, deleteChat, getNotificationsList} from "../../ajax";
 
 
 function ChatMessages(props) {
   let data = props.store.messages
   let selectedChatId = props.store.header.selectedChatId
   let messages = data.messages
+  let onlineUsers = props.store.ws.onlineUsers
   let messagesBlock = useRef()
   let input = useRef()
   
@@ -32,9 +35,10 @@ function ChatMessages(props) {
       let data = JSON.parse(e.data)
       if (data.type === 'chat_message') {
         props.AddMessage(data)
+        if (data.confirm !== null) props.SetMessagesConfirmed(data.confirm)
         if (data.author !== props.store.permissions.user_id) props.ReadMessages()
-      } else if (data.type === 'read_messages') props.ReadMessages()
-      // if (data.confirm !== null) props.SetMessagesConfirmed(data.confirm)
+      } 
+      else if (data.type === 'read_messages') props.ReadMessages()
     }
     props.socket?.addEventListener('message', eventFunction)
     return () => props.socket.removeEventListener('message', eventFunction)
@@ -42,12 +46,10 @@ function ChatMessages(props) {
   
   function handleArrowClick(params) {
     if ((data.confirmed !== null && !data.confirmed && !data.is_creator) || params.cancel_response) {
-      // props.socket.send(JSON.stringify({
-      //   'type': 'read_reject_chat',
-      //   'chat_id': props.store.header.selectedChatId
-      // }))
-    } else {
-      // props.chatSocket.close()
+      props.socket.send(JSON.stringify({
+        'type': 'read_reject_chat',
+        'chat_id': props.store.header.selectedChatId
+      }))
     }
     props.setArea(false)
     props.SetSelectedChat(null)
@@ -78,19 +80,40 @@ function ChatMessages(props) {
     }
   }
   
-  function handleConfirmAction() {
-    toggleConfirmResponseOnLecture(data.lecture_id, data.talker_respondent, selectedChatId, rejectRespondent)
-      .then(r => r.json())
-      .then(data => {
-        if (data.status === 'success') {
-          props.DeactivateModal()
-          if (rejectRespondent) {
+  function handleTextareaSize(e) {
+    if (e.target.clientHeight >= 112 && e.keyCode !== 8) return
+    e.target.style.height = 'auto'
+    let height = e.target.scrollHeight
+    e.target.style.height = height + 'px'
+  }
+  
+  function handleConfirmAction(e) {
+    if (rejectRespondent) {
+      rejectResponseOnLecture(data.lecture_id, data.talker_respondent, selectedChatId)
+        .then(r => r.json())
+        .then(data => {
+          if (data.status === 'success') {
+            props.DeactivateModal()
             props.setArea(false)
             props.SetSelectedChat(null)
-            // props.chatSocket.close()
+            props.SetConfirmNotification(selectedChatId, false)
           }
-        }
-      })
+        })
+        .catch(() => {
+          e.target.innerText = 'Ошибка...'
+          setTimeout(() => e.target.innerText = 'Подтвердить', 2000)
+        })
+    } else {
+      confirmResponseOnLecture(data.lecture_id, data.talker_respondent, selectedChatId)
+        .then(r => r.json())
+        .then(data => {
+          if (data.status === 'success') props.DeactivateModal()
+        })
+        .catch(() => {
+          e.target.innerText = 'Ошибка...'
+          setTimeout(() => e.target.innerText = 'Подтвердить', 2000)
+        })
+    }
   }
   
   function handleToggleConfirm(reject) {
@@ -116,7 +139,7 @@ function ChatMessages(props) {
       {selectedChatId && rejectRespondent !== null && (rejectRespondent ?
         <ConfirmAction text="Вы уверены, что хотите отклонить запрос на лекцию? 
         Данный пользователь больше не сможет откликнуться на выбранную дату." 
-                       onConfirm={handleConfirmAction}
+                       onConfirm={(e) => handleConfirmAction(e)}
                        onCancel={() => setRejectRespondent(null)}/> :
         <ConfirmAction onCancel={() => setRejectRespondent(null)} onConfirm={handleConfirmAction}>
           <div className="confirm-dates__header">Подтверждение лекции</div>
@@ -149,7 +172,11 @@ function ChatMessages(props) {
             </div>
             <div className="text">
               <p className='lecture-name'>{data.lecture_name}</p>
-              <p className='respondent-name'>{data.talker_first_name} {data.talker_last_name}</p>
+              <p className='respondent-name'>
+                {data.talker_first_name} {data.talker_last_name}
+                {onlineUsers.includes(data.talker_respondent) ? 
+                  <span className='is-online'>В сети</span> : <span className='is-offline'>Не в сети</span>}
+              </p>
             </div>
           </div>
           <div className="buttons">
@@ -185,10 +212,12 @@ function ChatMessages(props) {
         </div>
         
         <div className="input__block">
-          <input placeholder='Введите текст' 
-                 onKeyUp={(e) => handleSendMessage(e)} 
-                 disabled={data?.confirmed != null && !data.confirmed}
-                 ref={input}/>
+          <textarea placeholder='Введите текст' 
+                    onKeyUp={(e) => handleSendMessage(e)} 
+                    onKeyDown={(e) => handleTextareaSize(e)}
+                    rows={1}
+                    disabled={data?.confirmed != null && !data.confirmed}
+                    ref={input}/>
           <img src={sendMessage} 
                alt="отправить" 
                onClick={handleClickIcon}/>
@@ -204,6 +233,7 @@ export default connect(
   dispatch => ({
     AddMessage: (message) => dispatch(AddMessage(message)),
     ReadMessages: () => dispatch(ReadMessages()),
+    SetConfirmNotification: (chat_id, confirm) => dispatch(SetConfirmNotification(chat_id, confirm)),
     ActivateModal: () => dispatch(ActivateModal()),
     DeactivateModal: () => dispatch(DeactivateModal()),
     SetChatConn: (connected) => dispatch(SetChatConn(connected)),

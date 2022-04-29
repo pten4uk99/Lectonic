@@ -22,6 +22,16 @@ class DatabaseInteraction:
         return WsClient.objects.get(channel_name=channel_name).delete()
 
     @database_sync_to_async
+    def get_all_clients(self):
+        clients = WsClient.objects.all().values_list('user', flat=True)
+        users = []
+
+        for client in clients:
+            users.append(client)
+
+        return users
+
+    @database_sync_to_async
     def get_ws_client(self, channel_name=None, user_id=None):
         if user_id is not None:
             client = WsClient.objects.filter(user_id=user_id).first()
@@ -30,8 +40,6 @@ class DatabaseInteraction:
         else:
             raise AttributeError('В функцию должен быть передан хотя бы один аргумент')
         return client
-
-
 
     @database_sync_to_async
     def create_new_chat(self, data):
@@ -56,17 +64,35 @@ class DatabaseInteraction:
         return chat
 
     @database_sync_to_async
-    def get_need_read(self, data):
-        if self.scope["url_route"]["kwargs"]["pk"] == data['lecture_respondent'].pk:
-            return False
-        return Message.objects.filter(
-            chat=data['chat'], author=data['lecture_respondent'], need_read=True).exists()
+    def get_ws_clients_from_chat(self, chat_id):
+        clients = []
+        chat = Chat.objects.filter(pk=chat_id).first()
+
+        if chat:
+            for user in chat.users.all():
+                client = getattr(user, 'ws_client', None)
+                if client:
+                    clients.append(client)
+
+        return clients
+
+    @database_sync_to_async
+    def get_talker(self, data):
+        return data['chat'].users.exclude(pk=self.scope["url_route"]["kwargs"]["pk"]).first().person
+
+    @database_sync_to_async
+    def get_need_read_messages(self, data):
+        return Message.objects.filter(chat=data['chat'], need_read=True).exclude(
+            author_id=self.scope["url_route"]["kwargs"]["pk"]).exists()
 
     @database_sync_to_async
     def remove_chat(self, data):
         chat_id = data['chat_id']
-        chat = Chat.objects.get(pk=chat_id)
-        chat.delete()
+        chat = Chat.objects.filter(pk=chat_id).first()
+
+        if chat:
+            chat.delete()
+
         return chat_id
 
     @database_sync_to_async
