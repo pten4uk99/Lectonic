@@ -12,51 +12,40 @@ function ChatDropdown(props) {
   let [messagesArea, setMessagesArea] = useState(false)
   let [isLoaded, setIsLoaded] = useState(false)
   let [chatId, setChatId] = useState(null)
-  let [func, setFunc] = useState(null)
-  
-  function getMessages(chat_id) {
-    getChatMessages(chat_id)
-      .then(r => r.json())
-      .then(data => {
-        if (data.status === 'success') {
-          props.UpdateMessages(data.data[0])
-          props.SetNeedRead(chat_id, false)
-          props.SetSelectedChat(chat_id)
-          setIsLoaded(true)
-        } else {
-          props.RemoveNotification(chat_id)
-          setMessagesArea(false)
-        }
-      })
-  }
   
   useEffect(() => {
     if (chatId) setMessagesArea(true)
   }, [chatId])
   
   useEffect(() => {
-    return () => clearInterval(func)
-  }, [func])
-  
-  useEffect(() => {
-    if (messagesArea) {
+    if (messagesArea && props.socket) {
       setIsLoaded(false)
-      getMessages(chatId)
-      setFunc(setInterval(() => getMessages(chatId), 3000))
+      getChatMessages(chatId)
+        .then(r => r.json())
+        .then(data => {
+          if (data.status === 'success') {
+            props.UpdateMessages(data.data[0])
+            props.SetNeedRead(chatId, false)
+            props.SetSelectedChat(chatId)
+            setIsLoaded(true)
+          } else {
+            props.RemoveNotification(chatId)
+            setMessagesArea(false)
+          }
+        })
     }
     else setChatId(null)
-  }, [messagesArea])
+  }, [messagesArea, props.socket])
   
   return (
     <div className="chat-dropdown__block">
       {!messagesArea ? 
         <NotificationsList setArea={setMessagesArea}
                            setChatId={setChatId}
-                           setChatSocket={props.setChatSocket} 
-                           chatSocket={props.chatSocket} 
+                           socket={props.socket} 
                            setIsLoaded={setIsLoaded}/> : 
         <ChatMessages setArea={setMessagesArea} 
-                      chatSocket={props.chatSocket} 
+                      socket={props.socket} 
                       isLoaded={isLoaded}/>
       }
     </div>

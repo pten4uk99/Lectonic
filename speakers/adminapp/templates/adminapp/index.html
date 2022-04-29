@@ -24,16 +24,18 @@
         Сделать дамп базы
     </a>
 
-    {% if dbdump %}
-        <div style="display: flex; align-items: center;">
-            <a href="{% url 'admin_save_dump' %}"
+    {% for file in files %}
+            <div style="display: flex; align-items: center;">
+            <a href="save_file/?file={{file.name}}"
                class="admin-button"
                style="background-color: darkgreen;"
-               download="dbdump.json">
-                Скачать последний дамп
+               download="{{file.filename}}">
+                {{file.path}}
             </a>
-            <span style="margin-left: 10px;">От: {{ last_change }}</span>
+                {% if file.filename == 'dbdump.json' %}
+                    <span style="margin-left: 10px;">От: {{ last_change }}</span>
+                {% endif %}
         </div>
-    {% endif %}
+    {% endfor %}
 </body>
 </html>

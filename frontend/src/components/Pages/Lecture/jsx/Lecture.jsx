@@ -6,9 +6,9 @@ import LectureDates from "./LectureDates";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {getLectureDetail} from "../ajax/lecture";
 import {getLecturePhoto, reverse} from "../../../../ProjectConstants";
-import {toggleResponseOnLecture} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
+import {responseOnLecture, cancelResponseOnLecture} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
 import {connect} from "react-redux";
-import {RemoveNotification} from "../../../Layout/redux/actions/notifications";
+import {AddNotifications, RemoveNotification} from "../../../Layout/redux/actions/notifications";
 import PhotoName from "../../../Utils/jsx/PhotoName";
 import {UpdateLectureDetailChosenDates} from "../redux/actions/lectureDetail";
 import Loader from "../../../Utils/jsx/Loader";
@@ -53,21 +53,35 @@ function Lecture(props) {
     let dates = props.store.lectureDetail.chosenDates.map(
       elem => `${elem.getUTCFullYear()}-${elem.getUTCMonth() + 1}-${elem.getUTCDate()}T${elem.getUTCHours()}:${elem.getUTCMinutes()}`)
     
-    toggleResponseOnLecture(lectureId, dates)
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'success') {
-          setResponseLoaded(true)
-          text === 'Откликнуться' ? 
-            e.target.innerText = 'Отменить отклик' : 
-            e.target.innerText = 'Откликнуться'
-          if (data.data[0]?.type === 'remove_respondent') {
-            props.UpdateLectureDetailChosenDates([])
-            props.RemoveNotification(data.data[0].id)
-          }
-          navigate(reverse('workroom'))
-        }
-      })
+    if (lectureData) {
+      if (lectureData.can_response) {
+        responseOnLecture(lectureId, dates)
+          .then(response => response.json())
+          .then(data => {
+            setResponseLoaded(true)
+            if (data.status === 'success') {
+              e.target.innerText = 'Отменить отклик'
+              navigate(reverse('workroom'))
+            }
+          })
+          .catch(() => e.target.innerText = 'Ошибка...')
+      } else {
+        cancelResponseOnLecture(lectureId)
+          .then(response => response.json())
+          .then(data => {
+            setResponseLoaded(true)
+            if (data.status === 'success') {
+              e.target.innerText = 'Откликнуться'
+              if (data.data[0]?.type === 'remove_respondent') {
+                props.UpdateLectureDetailChosenDates([])
+                props.RemoveNotification(data.data[0].id)
+              }
+              navigate(reverse('workroom'))
+            }
+          })
+          .catch(() => e.target.innerText = 'Ошибка...')
+      }
+    }
   }
   
   function checkDisabledButton() {
@@ -175,6 +189,7 @@ export default connect(
   state => ({store: state}),
   dispatch => ({
     RemoveNotification: (data) => dispatch(RemoveNotification(data)),
+    AddNotifications: (data) => dispatch(AddNotifications(data)),
     UpdateLectureDetailChosenDates: (dates) => dispatch(UpdateLectureDetailChosenDates(dates))
   })
 )(Lecture);

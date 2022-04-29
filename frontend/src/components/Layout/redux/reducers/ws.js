@@ -1,8 +1,7 @@
 const initialState = {
-  chatConn: false,
   notifyConn: false,
   notifyConnFail: false,
-  chatConnFail: false,
+  onlineUsers: [],
 }
 
 export default function ws(state=initialState, action) {
@@ -14,7 +13,9 @@ export default function ws(state=initialState, action) {
     case "SET_CHAT_CONN":
       return {...state, chatConn: action.payload}    
     case "SET_CHAT_CONN_FAIL":
-      return {...state, chatConnFail: action.payload}
+      return {...state, chatConnFail: action.payload}    
+    case "SET_ONLINE_USERS":
+      return {...state, onlineUsers: action.payload}
     default:
       return state
   }

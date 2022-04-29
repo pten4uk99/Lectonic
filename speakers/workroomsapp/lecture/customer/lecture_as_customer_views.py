@@ -54,7 +54,7 @@ class PotentialCustomerLecturesGetAPIView(APIView):
         lecture_list = []
         for lecturer in lecturers:
             for lecture in lecturer.lectures.all():
-                if lecture.lecture_requests.filter(respondent__confirmed=True):
+                if lecture.lecture_requests.filter(respondent_obj__confirmed=True):
                     continue
                 lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
                 lowest = lowest.get('maximum')

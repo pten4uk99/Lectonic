@@ -116,55 +116,70 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'authapp.User'
 
 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'formatters': {
-#         'standart': {
-#             'format': '{asctime} {levelname} {message}',
-#             'style': '{',
-#         },
-#         'forwarning': {
-#             'format': '{asctime} {levelname} {pathname} {message}',
-#             'style': '{',
-#         },
-#         'forerror': {
-#             'format': '{asctime} {levelname} {pathname} {exc_info} {message}',
-#             'style': '{',
-#         }
-#     },
-#     'handlers': {
-#         'general': {
-#             'level': 'INFO',
-#             'class': 'logging.FileHandler',
-#             'filename': 'log/general.log',
-#             'formatter': 'standart'
-#         },
-#         'errors': {
-#             'level': 'ERROR',
-#             'class': 'logging.FileHandler',
-#             'filename': 'log/errors.log',
-#             'formatter': 'forerror'
-#         },
-#         'console': {
-#             'level': 'INFO',
-#             'class': 'logging.StreamHandler',
-#             'formatter': 'standart',
-#         }
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['console', 'general'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#         'django.request': {
-#             'handlers': ['errors'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#     },
-# }
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '{message}',
+            'style': '{',
+        },
+        'own': {
+            'format': '{asctime} {pathname} line:{lineno} [{message}]',
+            'style': '{',
+        },
+        'info': {
+            'format': '{asctime} {levelname} {pathname} line:{lineno} [{message}]',
+            'style': '{',
+        },
+        'error': {
+            'format': '{asctime} {levelname} {pathname} {exc_info} line:{lineno} [{message}]',
+            'style': '{',
+        }
+    },
+    'handlers': {
+        'own_handler': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'log/own.log',
+            'formatter': 'own'
+        },
+        'info': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'log/info.log',
+            'formatter': 'info'
+        },
+        'errors': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'log/error.log',
+            'formatter': 'error'
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'console',
+        }
+    },
+    'loggers': {
+        'workroomsapp': {
+            'handlers': ['own_handler'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django': {
+            'handlers': ['console', 'info'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['errors'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 
 try:

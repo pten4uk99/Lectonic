@@ -29,3 +29,8 @@ class Chat(models.Model):
 
     def __str__(self):
         return f'{self.pk} {self.users.all()}'
+
+
+class WsClient(models.Model):
+    channel_name = models.CharField(max_length=300, unique=True)
+    user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, related_name='ws_client')

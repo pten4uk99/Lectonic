@@ -15,15 +15,6 @@ class ChatListGetAPIView(APIView):
     permission_classes = [workroomsapp_permissions.IsLecturer |
                           workroomsapp_permissions.IsCustomer]
 
-# ---------------------- Пока не работает вебсокет --------------------------------
-    @swagger_auto_schema(deprecated=True)
-    def delete(self, request):
-        chat_id = request.GET.get('chat_id')
-        chat = Chat.objects.get(pk=chat_id)
-        chat.delete()
-        return chatapp_responses.success([{'chat': chat_id}])
-# ---------------------- Пока не работает вебсокет --------------------------------
-
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
         chat = Chat.objects.filter(users__pk=request.user.pk)
@@ -37,29 +28,6 @@ class ChatListGetAPIView(APIView):
 class MessageListGetAPIView(APIView):
     permission_classes = [workroomsapp_permissions.IsLecturer |
                           workroomsapp_permissions.IsCustomer]
-
-# -------------- Пока не настроен вебсокет --------------------------------
-    @swagger_auto_schema(deprecated=True)
-    def post(self, request):
-        chat_id = request.data['chat_id']
-
-        messages = Message.objects.filter(chat_id=chat_id)
-        other_messages = messages.exclude(author=request.user)
-        for message in other_messages:
-            message.need_read = False
-            message.save()
-        if messages.count() > 500:
-            messages.first().delete()
-
-        message = Message.objects.create(
-            author=request.user,
-            chat=Chat.objects.get(pk=chat_id),
-            text=request.data['text'],
-            confirm=request.data.get('confirm')
-        )
-
-        return chatapp_responses.success([{'text': message.text}])
-# -------------- Пока не настроен вебсокет --------------------------------
 
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
@@ -100,6 +68,17 @@ class MessageListGetAPIView(APIView):
         for message in other_messages:
             message.need_read = False
             message.save()
+
+        ws_client = getattr(talker_person.user, 'ws_client', None)
+
+        if ws_client:
+            async_to_sync(channel_layer.send)(
+                ws_client.channel_name,
+                {
+                    'type': 'read_messages',
+                    'chat_id': chat_id,
+                }
+            )
 
         serializer = MessageSerializer(messages, many=True)
         return chatapp_responses.success([{
