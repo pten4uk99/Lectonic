@@ -3,13 +3,16 @@ import React, {useEffect, useState} from 'react'
 import lecturerBackground from '~/assets/img/rolepage/rolepage_header_bg.svg';
 import customerBackground from '~/assets/img/rolepage/customer-bg.png';
 import backArrow from '~/assets/img/back-arrow-white.svg'
-import '../styles/RolePage.styl'
 import LectureCardList from "../../../WorkRooms/WorkRoom/jsx/Elements/LectureCardList";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {getCustomerDetail, getLecturerDetail} from "../ajax/rolePage";
 import PhotoName from "../../../Utils/jsx/PhotoName";
 import {reverse} from "../../../../ProjectConstants";
-import {getCreatedLecturesForCustomer, getCreatedLecturesForLecturer} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
+import {
+  getCreatedLecturesForCustomer,
+  getCreatedLecturesForLecturer,
+  getLecturesHistory
+} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
 import Loader from "../../../Utils/jsx/Loader";
 
 
@@ -23,6 +26,7 @@ function RolePage(props) {
   
   let [data, setData] = useState(null)
   let [createdLecturesList, setCreatedLecturesList] = useState([])
+  let [lecturesHistory, setLecturesHistory] = useState([])
   
   useEffect(() => {
     if (data) setIsLoaded(true)
@@ -40,6 +44,13 @@ function RolePage(props) {
         .then(data => {
           if (data.status === 'success') setCreatedLecturesList(data.data)
         })
+        .catch((error) => console.log(error))      
+      
+      getLecturesHistory('lecturer', lecturerId)
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') setLecturesHistory(data.data)
+        })
         .catch((error) => console.log(error))
     } else if (customerId) {
       getCustomerDetail(customerId)
@@ -51,6 +62,13 @@ function RolePage(props) {
         .then(response => response.json())
         .then(data => {
           if (data.status === 'success') setCreatedLecturesList(data.data)
+        })
+        .catch((error) => console.log(error))
+      
+      getLecturesHistory('customer', customerId)
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') setLecturesHistory(data.data)
         })
         .catch((error) => console.log(error))
     }
@@ -149,21 +167,20 @@ function RolePage(props) {
         <div>
             <div className='rolepage__lecture'>
                 <div className='rolepage__line'/>
-                <span onClick={() => setLastLectures(true)} className={lastLectures ? '' : 'no-active'}>
+                <button onClick={() => setLastLectures(true)} className={lastLectures ? '' : 'no-active'}>
                   Проведеные лекции
-                </span>
-                <span onClick={() => setLastLectures(false)} className={!lastLectures ? '' : 'no-active'}>
+                </button>
+                <button onClick={() => setLastLectures(false)} className={!lastLectures ? '' : 'no-active'}>
                   Будущие лекции
-                </span>
+                </button>
               
                 <div>{lastLectures ?
-                  <LectureCardList data={[]} inPage={true}/> : 
+                  <LectureCardList data={lecturesHistory} inPage={true}/> : 
                   <LectureCardList data={createdLecturesList} inPage={true}/>
                 }
                 </div>
               
               <div className='rolepage__line rolepage__line-mt'/>
-              {/*<button className='rolepage__lecture-btn'>Предложить заказ</button>*/}
             </div>
         </div>
     </>

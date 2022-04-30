@@ -136,6 +136,11 @@ function Lecture(props) {
               <div className="header">Оборудование в наличии:</div>
               <span className="content">{lectureData?.equipment ? lectureData.equipment : 'Нет'}</span>
             </div>
+            {!lectureData?.creator_is_lecturer && 
+              <div className="block__listeners">
+                <div className="header">Количество слушателей:</div>
+                <span className="content">{lectureData?.listeners}</span>
+              </div>}
             <div className="block__cost">
               <div className="header">Стоимость:</div>
               <span className="content">{lectureData?.cost} р.</span>

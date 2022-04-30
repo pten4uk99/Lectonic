@@ -72,7 +72,7 @@ function ChatMessages(props) {
       let message = {
         'type': 'chat_message',
         'author': props.store.permissions.user_id,
-        'text': e.target.value,
+        'text': input.current.value,
         'chat_id': selectedChatId
       }
       props.socket.send(JSON.stringify(message))
