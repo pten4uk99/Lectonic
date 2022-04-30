@@ -18,9 +18,11 @@ import CalendarModal, {getMonth} from "./CalendarModal";
 import DropDown from "../../../Utils/jsx/DropDown";
 import btnDelete from '~/assets/img/btn-delete.svg';
 import {SwapModalChooseDates} from "../../FullCalendar/Calendar/redux/actions/calendar";
+import Loader from "../../../Utils/jsx/Loader";
 
 
 function CreateEvent(props) {
+  let [responseLoaded, setResponseLoaded] = useState(true)
   let navigate = useNavigate()
   let [searchParams, setSearchParams] = useSearchParams()
   useEffect(() => {
@@ -87,6 +89,7 @@ function CreateEvent(props) {
   }
   
   function submitFormHandler(e) {
+    setResponseLoaded(false)
     e.preventDefault()
     let formData = new FormData(e.target)
     selectedDomains.map((elem) => formData.append('domain',  elem))
@@ -101,6 +104,7 @@ function CreateEvent(props) {
     createEvent(formData, role)
       .then(response => response.json())
       .then(data => {
+        setResponseLoaded(true)
         if (data.status === 'created') navigate(reverse('workroom'))
         else {
           setErrorMessages({
@@ -110,7 +114,7 @@ function CreateEvent(props) {
           })
         }
       })
-      .catch(error => console.log('Ошибка в создании лекции: ', error))
+      .catch(() => e.target.innerText = 'Ошибка...')
   }
 
   return (
@@ -122,12 +126,17 @@ function CreateEvent(props) {
       <form onSubmit={(e) => submitFormHandler(e)}>
         <div className={role === 'customer' ? 'create-event__wrapper customer' : 'create-event__wrapper'}>
           <div className='heading'>
-            <h1 className='main-heading'>Создание мероприятия</h1>
+            <h1 className='main-heading'>{role === 'lecturer' ? 
+              "Создание мероприятия" : "Создание заказа на мероприятие"}</h1>
           </div>
           <div className='subheading'>
             <h2 className='main-subheading'>
-              Вы можете создать одно или несколько мероприятий, чтобы потенциальне
-              слушатели могли откликнуться.
+              {role === 'lecturer' ? 
+                "Вы можете создать одно или несколько мероприятий, " +
+                "чтобы потенциальне слушатели могли откликнуться." :
+                "Вы можете создать один или несколько заказов на мероприятие, " +
+                "чтобы потенциальне лекторы могли откликнуться."
+              }
             </h2>
           </div>
           
@@ -229,17 +238,6 @@ function CreateEvent(props) {
                                              gridArea: 'date',
                                              transform: 'translateY(25px)'
                                            }}>{errorMessages.datetime[0]}</div>)}
-          
-          {/*<div className='time-l label'>*/}
-          {/*  Время:*/}
-          {/*  <span className="required-sign step-block__required-sign">*</span>*/}
-          {/*</div>*/}
-          {/*<div className='time flex'>*/}
-          {/*  <span>c</span>*/}
-          {/*  <input name='time_start' type="time"/>*/}
-          {/*  <span>до</span>*/}
-          {/*  <input name='time_end' type="time"/>*/}
-          {/*</div>*/}
 
           {role === 'customer' && 
             <>
@@ -254,7 +252,7 @@ function CreateEvent(props) {
                        autoComplete='nope'
                        onChange={(e) => {
                          setRequiredFields({...requiredFields, listeners: e.target.value})
-                         onlyNumber(e, 3)
+                         onlyNumber(e, 5)
                        }}/>
               </div>
             </>}
@@ -304,16 +302,21 @@ function CreateEvent(props) {
               <div className={payment ? 'pill' : 'pill pill-blue'} 
                    onClick={() => props.SwapPayment(false)}>Бесплатно</div>
             </div>
-            {payment ? <input name='cost' 
+            {payment ? <><input name='cost' 
                               className='text-input' 
                               type='text'
                               placeholder='Укажите цену' 
-                              onChange={(e) => onlyNumber(e, 5)}/> : <></>}
+                              onChange={(e) => onlyNumber(e, 7)}/> <span>руб.</span></> : 
+              <></>}
           </div>
           <div className='submit'>
             <button className='btn big-button' 
                     type='submit' 
-                    disabled={checkRequiredFields(requiredFields, props)}>Создать</button>
+                    disabled={checkRequiredFields(requiredFields, props)}>
+              {!responseLoaded ? 
+                <Loader size={20} left="50%" top="50%" tX="-50%" tY="-50%"/> : 
+                'Создать'}
+            </button>
           </div>
         </div>
       </form>
@@ -367,6 +370,9 @@ function getStrTime(hour, minute, duration) {
 
 function onlyNumber(e, maxLength) {
   if (isNaN(Number(e.target.value)) || e.target.value.length > maxLength) {
+    e.target.value = e.target.value.slice(0, -1)
+  }
+  else if (e.target.value.length === 1 && e.target.value == 0) {
     e.target.value = e.target.value.slice(0, -1)
   }
 }

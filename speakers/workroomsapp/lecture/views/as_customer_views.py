@@ -3,10 +3,9 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
 from workroomsapp.lecture import lecture_responses
-from workroomsapp.lecture.customer.lecture_as_customer_serializers import *
-from workroomsapp.lecture.docs import lecture_docs
-from workroomsapp.lecture.lecturer.lecture_as_lecturer_serializers import LecturesGetSerializer
-from workroomsapp.models import LectureRequest, Customer, Lecturer, Respondent
+from workroomsapp.lecture.serializers.as_customer_serializers import *
+from workroomsapp.lecture.serializers.as_lecturer_serializers import LecturesGetSerializer
+from workroomsapp.models import Customer, Lecturer
 from workroomsapp.utils import workroomsapp_permissions
 
 

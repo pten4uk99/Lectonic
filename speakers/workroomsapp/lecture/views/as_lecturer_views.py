@@ -7,11 +7,10 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
 from chatapp.chatapp_serializers import ChatSerializer
-from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.docs import lecture_docs
-from workroomsapp.lecture.lecturer.lecture_as_lecturer_serializers import *
+from workroomsapp.lecture.serializers.as_lecturer_serializers import *
 from workroomsapp.lecture.utils.response_on_lecture import *
-from workroomsapp.models import LectureRequest, Lecturer, Customer, Respondent, Person
+from workroomsapp.models import Lecturer, Customer
 from workroomsapp.utils import workroomsapp_permissions
 
 channel_layer = get_channel_layer()
@@ -91,70 +90,6 @@ class LectureDetailAPIView(APIView):
 
         serializer = LecturesGetSerializer(
             lecture, many=True, context={'request': request})
-
-        return lecture_responses.success_get_lectures(serializer.data)
-
-
-class LecturesHistoryGetAPIView(APIView):
-    @swagger_auto_schema(deprecated=True)
-    def get(self, request):
-        query_from = request.GET.get('query_from')
-        person = request.user.person
-        created_lectures = getattr(person, query_from).lectures.all()
-
-        lectures_list = []
-        for lecture in created_lectures:
-            aggregate = lecture.lecture_requests.aggregate(min=Min('event__datetime_start'))
-            minimum = aggregate.get('min')
-
-            if (minimum < datetime.datetime.now(tz=datetime.timezone.utc) and
-                    lecture.lecture_requests.filter(respondent_obj__confirmed=True)):
-                lectures_list.append(lecture)
-
-        serializer = LecturesGetSerializer(
-            lectures_list, many=True, context={'request': request})
-
-        return lecture_responses.success_get_lectures(serializer.data)
-
-
-class ConfirmedLecturesGetAPIView(APIView):
-    @swagger_auto_schema(deprecated=True)
-    def get(self, request):
-        obj_name = request.GET.get('obj_name')
-
-        respondents = Respondent.objects.filter(
-            person=request.user.person,
-            confirmed=True,
-            lecture_request__event__datetime_start__gte=datetime.datetime.now(tz=datetime.timezone.utc))
-
-        lecture_list = []
-        for respondent in respondents:
-            lecture = respondent.lecture_request.lecture
-            if getattr(lecture, obj_name):
-                lecture_list.append(respondent.lecture_request.lecture)
-
-        serializer = LecturesGetSerializer(
-            lecture_list, many=True, context={'request': request})
-
-        return lecture_responses.success_get_lectures(serializer.data)
-
-
-class PotentialLecturerLecturesGetAPIView(APIView):
-    @swagger_auto_schema(deprecated=True)
-    def get(self, request):
-        customers = Customer.objects.exclude(person__user=request.user)
-        lecture_list = []
-        for customer in customers:
-            for lecture in customer.lectures.all():
-                if lecture.lecture_requests.filter(respondent_obj__confirmed=True):
-                    continue
-                lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
-                lowest = lowest.get('maximum')
-                if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
-                    lecture_list.append(lecture)
-
-        serializer = LecturesGetSerializer(
-            lecture_list, many=True, context={'request': request})
 
         return lecture_responses.success_get_lectures(serializer.data)
 

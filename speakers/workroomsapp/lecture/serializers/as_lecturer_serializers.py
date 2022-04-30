@@ -3,6 +3,7 @@ import datetime
 from rest_framework import serializers
 
 from speakers.settings import DEFAULT_HOST
+from workroomsapp.calendar.utils import get_model_from_attrs
 from workroomsapp.lecture.utils.datetime import (
     convert_datetime,
     check_datetime_for_lecture_as_lecturer
@@ -11,7 +12,7 @@ from workroomsapp.models import Lecture, Respondent
 
 
 class LectureCreateAsLecturerSerializer(serializers.Serializer):
-    name = serializers.CharField()
+    name = serializers.CharField(max_length=100)
     svg = serializers.IntegerField(min_value=1)
     domain = serializers.ListField()
     datetime = serializers.ListField()
@@ -87,6 +88,7 @@ class LecturesGetSerializer(serializers.ModelSerializer):
     creator_bgc_number = serializers.SerializerMethodField()
     can_response = serializers.SerializerMethodField()
     response_dates = serializers.SerializerMethodField()
+    related_person = serializers.SerializerMethodField()
 
     class Meta:
         model = Lecture
@@ -98,11 +100,13 @@ class LecturesGetSerializer(serializers.ModelSerializer):
             'dates',
             'domain',
             'hall_address',
+            'listeners',
             'description',
             'equipment',
             'cost',
             'can_response',
             'response_dates',
+            'related_person',
             'creator_user_id',
             'creator_is_lecturer',
             'creator_id',
@@ -121,7 +125,7 @@ class LecturesGetSerializer(serializers.ModelSerializer):
 
     def get_dates(self, obj):
         dates = []
-        lecture_requests = obj.lecture_requests.all()
+        lecture_requests = obj.lecture_requests.order_by('event__datetime_start').all()
         for lecture_request in lecture_requests:
             dates.append({
                 'start': lecture_request.event.datetime_start,
@@ -131,6 +135,30 @@ class LecturesGetSerializer(serializers.ModelSerializer):
 
     def get_creator_is_lecturer(self, obj):
         return bool(obj.lecturer)
+
+    def get_related_person(self, obj):
+        query_from = self.context.get('query_from')
+
+        if not query_from:
+            return
+
+        person = None
+
+        if get_model_from_attrs(obj, [query_from]):  # проверяем является ли запрашивающий создателем лекции
+            lecture_request = obj.lecture_requests.filter(respondent_obj__confirmed=True).first()
+            person = lecture_request.respondent_obj.get(confirmed=True).person
+        else:
+            if obj.lecturer:
+                person = obj.lecturer.person
+            else:
+                person = obj.customer.person
+
+        return {
+            'user_id': person.user.pk,
+            'first_name': person.first_name,
+            'last_name': person.last_name,
+            'middle_name': person.middle_name
+        }
 
     def get_creator_id(self, obj):
         if obj.lecturer:
@@ -167,13 +195,10 @@ class LecturesGetSerializer(serializers.ModelSerializer):
             return obj.customer.person.middle_name
         return obj.lecturer.person.middle_name
 
-
     def get_creator_bgc_number(self, obj):
         if obj.customer:
             return obj.customer.person.bgc_number
         return obj.lecturer.person.bgc_number
-
-
 
     def get_can_response(self, obj):
         person = self.context['request'].user.person

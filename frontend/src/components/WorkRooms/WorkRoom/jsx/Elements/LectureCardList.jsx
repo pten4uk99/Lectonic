@@ -14,6 +14,15 @@ function LectureCardList(props) {
   let [isLoaded, setIsLoaded] = useState(false)
   let navigate = useNavigate()
   
+  function getClientName(lecture) {
+    if (lecture?.related_person) {
+      return `${lecture.related_person.first_name} ${lecture.related_person.last_name}`
+    }
+    else {
+      return `${lecture.creator_first_name} ${lecture.creator_last_name}`
+    }
+  }
+  
   useEffect(() => {
     if (props.data) setIsLoaded(true)
   }, [props.data])
@@ -38,7 +47,7 @@ function LectureCardList(props) {
                                            data={{
                                              src: getLecturePhoto(lecture.svg), 
                                              client: !props.isLecturer ? 'Лектор:' : 'Заказчик:', 
-                                             clientName: `${lecture.creator_first_name} ${lecture.creator_last_name}`, 
+                                             clientName: getClientName(lecture), 
                                              name: lecture.name, 
                                              date: getDates(lecture.dates), 
                                              type: lecture.lecture_type, 

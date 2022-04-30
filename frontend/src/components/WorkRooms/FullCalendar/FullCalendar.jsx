@@ -18,7 +18,9 @@ function FullCalendar(props) {
       </div>
       <div className="calendar-lectures__block">
         <span className={myLecturesActive ? "lectures active" : "lectures"} 
-              onClick={() => setMyLecturesActive(true)}>Мои лекции</span>
+              onClick={() => setMyLecturesActive(true)}>
+          {isLecturer ? "Мои лекции" : "Мои заказы"}
+        </span>
         <span className={!myLecturesActive ? "responses active" : "responses"}
               onClick={() => setMyLecturesActive(false)}>Мои отклики</span>
       </div>

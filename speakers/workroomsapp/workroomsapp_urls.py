@@ -2,8 +2,9 @@ from django.urls import path
 
 from workroomsapp.calendar.customer.customer_calendar_views import *
 from workroomsapp.calendar.lecturer.lecturer_calendar_views import *
-from workroomsapp.lecture.customer.lecture_as_customer_views import *
-from workroomsapp.lecture.lecturer.lecture_as_lecturer_views import *
+from workroomsapp.lecture.views.as_customer_views import *
+from workroomsapp.lecture.views.as_lecturer_views import *
+from workroomsapp.lecture.views.lectures_list_views import *
 from workroomsapp.lecturer.lecturer_views import *
 from workroomsapp.customer.customer_views import *
 from workroomsapp.person.person_views import *
