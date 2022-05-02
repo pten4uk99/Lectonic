@@ -1,4 +1,7 @@
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class EventHandler:
@@ -20,6 +23,7 @@ class EventHandler:
             'talker_first_name': talker.first_name,
             'talker_last_name': talker.last_name,
         }
+        logger.info(f'data: {data}')
         await self.send(text_data=json.dumps(data))
 
     async def remove_respondent(self, event):

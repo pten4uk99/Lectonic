@@ -187,11 +187,14 @@ class LectureCancelResponseAPIView(APIView, LectureCancelResponseMixin):
 
             if respondent_obj and not respondent_obj.rejected:
                 lecture_request.respondents.remove(self.request.user.person)
-                chat_id, users = self.remove_chat(lecture_request)
+
+                if not chat:
+                    chat_id, users = self.remove_chat(lecture_request)
+
                 user_list = users
                 chat = chat_id
                 lecture_request.save()
-                logger.info(f'respodent_obj:{respondent_obj}, rejected: {respondent_obj.rejected}')
+                logger.info(f'respondent_obj: {respondent_obj}, rejected: {respondent_obj.rejected}')
 
         return chat, user_list
 
