@@ -11,10 +11,8 @@ class EventHandler:
         await self.send(text_data=json.dumps(event))
 
     async def new_respondent(self, event):
-        chat = event['chat']
         talker = await self.get_talker(event)
-        need_read_messages = await self.get_need_read_messages({**event, 'chat': chat})
-        event.pop('chat')
+        need_read_messages = await self.get_need_read_messages(event)
 
         data = {
             'type': 'new_respondent',
@@ -23,7 +21,7 @@ class EventHandler:
             'talker_first_name': talker.first_name,
             'talker_last_name': talker.last_name,
         }
-        logger.info(f'data: {data}')
+        logger.info(f'new_respondent_data: {data}')
         await self.send(text_data=json.dumps(data))
 
     async def remove_respondent(self, event):

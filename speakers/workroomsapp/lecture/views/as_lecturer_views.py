@@ -143,7 +143,6 @@ class LectureResponseAPIView(APIView, LectureResponseMixin):
 
             self.send_ws_message(clients=[request.user, self.get_creator().user], message={
                 'type': 'new_respondent',
-                'chat': chat,
                 'respondent_id': self.request.user.pk,
                 **chat_serializer.data
             })  # отправляем сообщение обоим собеседникам чата

@@ -1,10 +1,14 @@
 import datetime
+import logging
 
 from chatapp.models import Chat, Message
 from workroomsapp.calendar.utils import get_model_from_attrs
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.models import Lecture
 from workroomsapp.utils.ws import WsMessageSender
+
+
+logger = logging.getLogger(__name__)
 
 
 class LectureResponseBaseMixin:
@@ -33,6 +37,7 @@ class LectureResponseBaseMixin:
         raise NotImplementedError('This method was not defined')
 
     def send_ws_message(self, clients, message):
+        logger.info(f'clients: {clients}, ws_message: {message}')
         return WsMessageSender(clients=clients, message=message).send()
 
 
@@ -98,8 +103,8 @@ class LectureResponseMixin(LectureResponseBaseMixin):
 
 class LectureCancelResponseMixin(LectureResponseBaseMixin):
     def check_can_response(self):
-        requests = self.get_lecture().lecture_requests.filter(
-                    respondents=self.request.user.person, respondent_obj__rejected=True)
+        requests = self.get_lecture().lecture_requests.filter(respondents=self.request.user.person)
+
         if not requests:
             return lecture_responses.can_not_cancel_response()
 

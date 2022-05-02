@@ -78,11 +78,12 @@ class DatabaseInteraction:
 
     @database_sync_to_async
     def get_talker(self, data):
-        return data['chat'].users.exclude(pk=self.scope["url_route"]["kwargs"]["pk"]).first().person
+        return Chat.objects.get(pk=data['id']).users.exclude(
+            pk=self.scope["url_route"]["kwargs"]["pk"]).first().person
 
     @database_sync_to_async
     def get_need_read_messages(self, data):
-        return Message.objects.filter(chat=data['chat'], need_read=True).exclude(
+        return Message.objects.filter(chat_id=data['id'], need_read=True).exclude(
             author_id=self.scope["url_route"]["kwargs"]["pk"]).exists()
 
     @database_sync_to_async
