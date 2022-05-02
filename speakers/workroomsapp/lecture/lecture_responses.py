@@ -47,15 +47,15 @@ def not_in_data():
 
 
 def does_not_exist():
-    return response.ErrorException(detail=DOES_NOT_EXIST, status_code=400)
+    raise response.ErrorException(detail=DOES_NOT_EXIST, status_code=400)
 
 
 def lecturer_forbidden():
-    return response.ErrorException(detail=LECTURER_FORBIDDEN, status_code=400)
+    raise response.ErrorException(detail=LECTURER_FORBIDDEN, status_code=400)
 
 
 def customer_forbidden():
-    return response.ErrorException(detail=CUSTOMER_FORBIDDEN, status_code=400)
+    raise response.ErrorException(detail=CUSTOMER_FORBIDDEN, status_code=400)
 
 
 def success_response():
@@ -67,7 +67,7 @@ def success_response():
 
 
 def lecture_does_not_exist():
-    return response.ErrorException(detail=LECTURE_DOES_NOT_EXIST, status_code=400)
+    raise response.ErrorException(detail=LECTURE_DOES_NOT_EXIST, status_code=400)
 
 
 def success_cancel(data=None):
@@ -89,19 +89,19 @@ def error_cancel(data):
 
 
 def not_a_creator():
-    return response.ErrorException(detail=NOT_A_CREATOR, status_code=400)
+    raise response.ErrorException(detail=NOT_A_CREATOR, status_code=400)
 
 
 def not_a_respondent():
-    return response.ErrorException(detail=NOT_A_RESPONDENT, status_code=400)
+    raise response.ErrorException(detail=NOT_A_RESPONDENT, status_code=400)
 
 
 def can_not_response():
-    return response.ErrorException(detail=CAN_NOT_RESPONSE, status_code=400)
+    raise response.ErrorException(detail=CAN_NOT_RESPONSE, status_code=400)
 
 
 def can_not_cancel_response():
-    return response.ErrorException(detail=CAN_NOT_CANCEL_RESPONSE, status_code=400)
+    raise response.ErrorException(detail=CAN_NOT_CANCEL_RESPONSE, status_code=400)
 
 
 def success_confirm():
