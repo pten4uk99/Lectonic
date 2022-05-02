@@ -11,10 +11,8 @@ class EventHandler:
         await self.send(text_data=json.dumps(event))
 
     async def new_respondent(self, event):
-        chat = event['chat']
         talker = await self.get_talker(event)
-        need_read_messages = await self.get_need_read_messages({**event, 'chat': chat})
-        event.pop('chat')
+        need_read_messages = await self.get_need_read_messages(event)
 
         data = {
             'type': 'new_respondent',
