@@ -30,14 +30,6 @@ function Lecturer(props){
         })
         .catch(() => setConfirmedError(true))
       
-      getLecturesHistory('lecturer')
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') setLecturesHistory(data.data)
-          else setHistoryError(true)
-        })
-        .catch(() => setHistoryError(true))
-      
       getCreatedLecturesForLecturer()
         .then(response => response.json())
         .then(data => {
@@ -66,10 +58,6 @@ function Lecturer(props){
                        isLecturer={true}
                        data={potentialLectures} 
                        isError={potentialError}/>
-      <LectureCardList header='История' 
-                       isLecturer={true}
-                       data={lecturesHistory} 
-                       isError={historyError}/>
       <LectureCardList header='Подтвержденные лекции' 
                        isLecturer={true} 
                        data={confirmedLectures} 

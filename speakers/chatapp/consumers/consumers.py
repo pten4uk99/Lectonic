@@ -52,8 +52,8 @@ class WsConsumer(AsyncWebsocketConsumer, DatabaseInteraction, EventHandler):
         data['confirm'] = message.confirm
         data['need_read'] = message.need_read
 
-        await self.channel_layer.send(recipient_client.channel_name, data)
-        await self.channel_layer.send(author_client.channel_name, data)
+        await self.channel_layer.send(getattr(recipient_client, 'channel_name', 'None'), data)
+        await self.channel_layer.send(getattr(author_client, 'channel_name', 'None'), data)
 
     async def handle_read_reject_chat(self, data):
         chat_id = data['chat_id']

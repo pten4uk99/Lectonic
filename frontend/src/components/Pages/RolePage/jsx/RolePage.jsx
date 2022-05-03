@@ -44,13 +44,6 @@ function RolePage(props) {
         .then(data => {
           if (data.status === 'success') setCreatedLecturesList(data.data)
         })
-        .catch((error) => console.log(error))      
-      
-      getLecturesHistory('lecturer', lecturerId)
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') setLecturesHistory(data.data)
-        })
         .catch((error) => console.log(error))
     } else if (customerId) {
       getCustomerDetail(customerId)
@@ -166,19 +159,9 @@ function RolePage(props) {
         </div>
         <div>
             <div className='rolepage__lecture'>
-                <div className='rolepage__line'/>
-                <button onClick={() => setLastLectures(true)} className={lastLectures ? '' : 'no-active'}>
-                  Проведеные лекции
-                </button>
-                <button onClick={() => setLastLectures(false)} className={!lastLectures ? '' : 'no-active'}>
-                  Будущие лекции
-                </button>
-              
-                <div>{lastLectures ?
-                  <LectureCardList data={lecturesHistory} inPage={true}/> : 
-                  <LectureCardList data={createdLecturesList} inPage={true}/>
-                }
-                </div>
+              <div className='rolepage__line'/>
+              <button>Будущие лекции</button>
+              <div><LectureCardList data={createdLecturesList} inPage={true}/></div>
               
               <div className='rolepage__line rolepage__line-mt'/>
             </div>

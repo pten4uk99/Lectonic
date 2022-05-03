@@ -6,6 +6,7 @@ LECTURE_DOES_NOT_EXIST = 'Данной лекции не существует'
 RESPONDENT_DOES_NOT_EXIST = 'Выбранный пользователь не откликался на выбранную лекцию'
 NOT_IN_DATA = 'Не переданы необходимые параметры'
 DOES_NOT_EXIST = 'Лекции не существует'
+FORBIDDEN = 'Откликаться на выбранные даты запрещено'
 NOT_A_CREATOR = 'Пользователь не является создателем данной лекции'
 NOT_A_RESPONDENT = 'Выбранный пользователь не откликался на выбранную лекцию'
 CAN_NOT_RESPONSE = 'Пользователь не может откликнуться на данную лекцию'
@@ -44,6 +45,10 @@ def lecture_deleted():
 
 def not_in_data():
     raise response.ErrorException(detail=NOT_IN_DATA, status_code=400)
+
+
+def forbidden():
+    raise response.ErrorException(detail=FORBIDDEN, status_code=400)
 
 
 def does_not_exist():

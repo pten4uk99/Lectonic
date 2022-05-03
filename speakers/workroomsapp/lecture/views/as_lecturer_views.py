@@ -216,6 +216,7 @@ class LectureConfirmRespondentAPIView(APIView, LectureConfirmRespondentMixin):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
         self.check_is_creator()
+        self.check_is_possible()  # проверяем возможно ли подтвердить пользователя на выбранные даты
         self.handle_respondent()  # обрабатываем откликнувшегося пользователя (подтверждаем, отклоняем)
         self.handle_message()
         return lecture_responses.success_confirm()

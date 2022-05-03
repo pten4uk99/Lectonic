@@ -4,7 +4,7 @@ import logging
 from chatapp.models import Chat, Message
 from workroomsapp.calendar.utils import get_model_from_attrs
 from workroomsapp.lecture import lecture_responses
-from workroomsapp.models import Lecture
+from workroomsapp.models import Lecture, Person
 from workroomsapp.utils.ws import WsMessageSender
 
 
@@ -12,6 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 class LectureResponseBaseMixin:
+    """ Базовый класс для отклика на лекцию """
+
     def get_params(self):
         """ Получает параметр лекции из запроса и проверяет передан он или нет. """
 
@@ -110,6 +112,8 @@ class LectureCancelResponseMixin(LectureResponseBaseMixin):
 
 
 class LectureToggleConfirmBaseMixin(LectureResponseBaseMixin):
+    """ Базовый класс для подтверждения или отклонения лекции """
+
     def get_params(self):
         params = super().get_params()
 
@@ -119,10 +123,16 @@ class LectureToggleConfirmBaseMixin(LectureResponseBaseMixin):
         if not (respondent_id and chat_id):
             return lecture_responses.not_in_data()
 
-        params['respondent_id'] = respondent_id
+        params['respondent_id'] = respondent_id  # ожидается id объекта Person
         params['chat_id'] = chat_id
 
         return params
+
+    def check_is_possible(self):
+        """ Базовый метод для проверки, возможно ли
+        провести необходимые действия с выбранной лекцией """
+
+        raise NotImplementedError()
 
     def get_responses(self):
         """ Проверяет, является ли выбранный пользователь откликнувшимся на данную лекцию и
@@ -184,10 +194,78 @@ class LectureToggleConfirmBaseMixin(LectureResponseBaseMixin):
 
 
 class LectureConfirmRespondentMixin(LectureToggleConfirmBaseMixin):
+    def check_is_possible(self):
+        """ Проверяет не подтверждена ли уже лекция на даты в текущем чате """
+
+        confirmed_lectures = self.get_lecture().lecture_requests.filter(
+            chat_list=self.get_chat(), respondent_obj__confirmed=True)
+
+        if confirmed_lectures:
+            return lecture_responses.forbidden()
+
+    def handle_chats(self, lecture_request):
+        """ Обрабатывает чаты и все остальные отклики на подтвержденную лекцию:
+        удаляет чат, если дата только одна,
+        удаляет запрос на выбранную дату из списка запросов данного чата, если дат несколько """
+
+        chat_list = lecture_request.chat_list.exclude(users__person=self.get_params()['respondent_id'])
+
+        for chat in chat_list:
+            # Если в чате больше одной даты, то отправляем пользователю сообщение,
+            # что какие-то из дат заняты
+            if chat.lecture_requests.all().count() > 1:
+                chat.lecture_requests.remove(lecture_request)
+                chat.save()
+
+                dates = []
+                for chat_request in chat.lecture_requests.all():
+                    dates.append(chat_request.event.datetime_start.strftime('%d.%m'))
+
+                message = Message.objects.create(
+                    author=self.request.user,
+                    chat=chat,
+                    text=f'Одна или более из выбранных вами дат на данную лекцию '
+                         f'уже подтверждена для другого пользователя. '
+                         f'Возможные даты проведения: {", ".join(dates)}.'
+                )
+
+                self.send_ws_message(
+                    clients=[chat.users.exclude(pk=self.request.user.pk).first().pk],
+                    message={
+                        'type': 'chat_message',
+                        'author': message.author.pk,
+                        'text': message.text,
+                        'chat_id': message.chat.pk
+                    }
+                )
+            else:
+                # иначе удаляем чат и отправляем сообщение об удалении
+                self.send_ws_message(
+                    clients=[chat.users.exclude(pk=self.request.user.pk).first().pk],
+                    message={
+                        'type': 'read_reject_chat',
+                        'chat_id': chat.pk
+                    }
+                )
+                chat.delete()
+
+    def remove_other_respondents(self, lecture_request):
+        """ Принимает запрос на лекцию и удаляет всех остальных откликнувшихся
+         подтвержденной лекции """
+
+        respondents = lecture_request.respondents.exclude(pk=self.get_params()['respondent_id'])
+
+        for respondent in respondents:
+            lecture_request.respondents.remove(respondent)
+
+        self.handle_chats(lecture_request)
+        lecture_request.save()
+
     def handle_respondent(self):
         """ Подтверждает откликнувшегося пользователя на выбранные даты """
 
         for lecture_request in self.get_responses():
+            self.remove_other_respondents(lecture_request)
             lecture_respondent = lecture_request.respondent_obj.get(person=self.get_params()['respondent_id'])
             lecture_respondent.confirmed = True
             lecture_respondent.save()

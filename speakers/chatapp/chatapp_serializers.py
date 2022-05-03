@@ -9,7 +9,7 @@ class ChatSerializer(serializers.ModelSerializer):
     lecture_svg = serializers.SerializerMethodField()
     need_read = serializers.SerializerMethodField()
     respondent_id = serializers.SerializerMethodField()
-    talker_online = serializers.SerializerMethodField()
+    talker_id = serializers.SerializerMethodField()
     talker_first_name = serializers.SerializerMethodField()
     talker_last_name = serializers.SerializerMethodField()
     chat_confirm = serializers.SerializerMethodField()
@@ -23,7 +23,7 @@ class ChatSerializer(serializers.ModelSerializer):
             'lecture_svg',
             'need_read',
             'respondent_id',
-            'talker_online',
+            'talker_id',
             'talker_first_name',
             'talker_last_name',
             'talker_photo',
@@ -54,9 +54,9 @@ class ChatSerializer(serializers.ModelSerializer):
         else:
             return obj.lecture.customer.person.user.pk
 
-    def get_talker_online(self, obj):
+    def get_talker_id(self, obj):
         talker_user = obj.users.exclude(pk=self.context['request'].user.pk).first()
-        return hasattr(talker_user, 'ws_client')
+        return talker_user.pk
 
     def get_talker_first_name(self, obj):
         return obj.users.exclude(pk=self.context['request'].user.pk).first().person.first_name

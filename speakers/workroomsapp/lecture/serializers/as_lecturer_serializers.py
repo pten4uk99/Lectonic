@@ -126,11 +126,22 @@ class LecturesGetSerializer(serializers.ModelSerializer):
     def get_dates(self, obj):
         dates = []
         lecture_requests = obj.lecture_requests.order_by('event__datetime_start').all()
+        user = self.context['request'].user
+        lecture_creator = get_model_from_attrs(
+            lecture_requests.first().lecture, ['lecturer', 'customer']).person
+
         for lecture_request in lecture_requests:
-            dates.append({
-                'start': lecture_request.event.datetime_start,
-                'end': lecture_request.event.datetime_end,
-            })
+            respondents = lecture_request.respondent_obj.filter(confirmed=True)
+
+            if (not respondents.exists() or  # если дата лекции не подтверждена
+                    respondents.filter(person=user.person).exists() or  # если пользователь является подтвержденным
+                    lecture_creator == user.person):  # если пользователь является создателем лекции
+
+                dates.append({
+                    'start': lecture_request.event.datetime_start,
+                    'end': lecture_request.event.datetime_end,
+                })
+
         return dates
 
     def get_creator_is_lecturer(self, obj):
