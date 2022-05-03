@@ -28,6 +28,7 @@ function ProfileDropDown(props) {
         props.SwapLecturer(undefined)
         props.SwapCustomer(undefined)
         navigate(reverse('index'))
+        location.reload()
       })
   }
   

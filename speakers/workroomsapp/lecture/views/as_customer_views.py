@@ -44,24 +44,3 @@ class LectureAsCustomerAPIView(APIView):
             lectures_list, many=True, context={'request': request})
 
         return lecture_responses.success_get_lectures(serializer.data)
-
-
-class PotentialCustomerLecturesGetAPIView(APIView):
-    @swagger_auto_schema(deprecated=True)
-    def get(self, request):
-        lecturers = Lecturer.objects.exclude(person__user=request.user)
-        lecture_list = []
-        for lecturer in lecturers:
-            for lecture in lecturer.lectures.all():
-                if lecture.lecture_requests.filter(respondent_obj__confirmed=True):
-                    continue
-                lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
-                lowest = lowest.get('maximum')
-                if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
-                    lecture_list.append(lecture)
-
-        serializer = LecturesGetSerializer(
-            lecture_list, many=True, context={'request': request})
-
-        return lecture_responses.success_get_lectures(serializer.data)
-

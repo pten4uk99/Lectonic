@@ -43,7 +43,7 @@ function NotificationsList(props) {
           <div className="text">
             <p className='lecture-name'>{elem.lecture_name}</p>
             <p className='respondent-name'>{elem.talker_first_name} {elem.talker_last_name}</p>
-            {onlineUsers.includes(elem.respondent_id) ? 
+            {onlineUsers.includes(elem.talker_id) ? 
               <p className='is-online'>В сети</p> : <p className='is-offline'>Не в сети</p>}
           </div>
           {elem.need_read && <div className="need-read"/>}

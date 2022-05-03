@@ -19,7 +19,7 @@ urlpatterns = [
     path('lecture/as_lecturer/', LectureAsLecturerAPIView.as_view(), name='lecture_as_lecturer'),
     path('lecture/as_customer/', LectureAsCustomerAPIView.as_view(), name='lecture_as_customer'),
 
-    path('lecture/history_list/', LecturesHistoryGetAPIView.as_view(), name='lecture_history'),
+    # path('lecture/history_list/', LecturesHistoryGetAPIView.as_view(), name='lecture_history'),
     path('lecture/confirmed_list/', ConfirmedLecturesGetAPIView.as_view(), name='lecture_history'),
 
     path('lecture/response/', LectureResponseAPIView.as_view(), name='lecture_response'),
@@ -40,7 +40,7 @@ urlpatterns = [
     path('lecturer/potential_lectures/',
          PotentialLecturerLecturesGetAPIView.as_view(),
          name='potential_lecturer_lectures'),
-    path('lecturer/diploma_photos/', DiplomaImageAPIView.as_view(), name='diploma_images'),
+    # path('lecturer/diploma_photos/', DiplomaImageAPIView.as_view(), name='diploma_images'),
 
     path('customer/', CustomerAPIView.as_view(), name='customer'),
     path('customer/lecturers_list/', LecturersListGetAPIView.as_view(), name='lecturers_list'),
