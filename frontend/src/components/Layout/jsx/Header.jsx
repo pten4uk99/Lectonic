@@ -31,36 +31,10 @@ function Header(props) {
   let loggedIn = permissions.logged_in
   let isCustomer = permissions.is_customer
   let isLecturer = permissions.is_lecturer
-  
+  let {pathname} = useLocation();
   let chatActive = props.store.header.chatDropdownActive
   let [chatUnread, setChatUnread] = useState(false)
   let [headerIconsVisible, setIconsVisible] = useState(false)
-<<<<<<< HEAD
-  let [chatSocket, setChatSocket] = useState(null)
-  let [intervalFunc, setIntervalFunc] = useState(null)
-  let selectedChatId = props.store.header.selectedChatId
-  let {pathname} = useLocation();
-  
-  function notificationList() {
-    if ((isLecturer || isCustomer) && props.store.permissions.logged_in) {
-      getNotificationsList()
-        .then(r => r.json())
-        .then(data => {
-          if (data.status === 'success') {
-            props.SetNotifyConnFail(false)
-            props.UpdateNotifications(data.data)
-          }
-          else {
-            if (props.store.permissions.logged_in) props.SetNotifyConnFail(true)
-          }
-        })
-        .catch(e => {
-          if (props.store.permissions.logged_in) props.SetNotifyConnFail(true)
-        })
-    }
-  }
-=======
->>>>>>> dd3df3ccd26dfb4835f57a491b043175aecb62c5
   
   useEffect(() => {
     if (isCustomer || isLecturer) setIconsVisible(true)
@@ -98,28 +72,6 @@ function Header(props) {
     setChatUnread(need_read)
   }, [props.store.notifications])
   
-<<<<<<< HEAD
-  // useEffect(() => {
-  //   props.SetNotifyConn(Boolean(props.notificationsSocket))
-  //  
-  //   let chatId = props.store.header.selectedChatId
-  //   let eventFunction = (e) => {
-  //     let data = JSON.parse(e.data)
-  //     if (data.type === 'new_respondent') props.AddNotifications(data)
-  //     if (data.type === 'remove_respondent') props.RemoveNotification(data.id)
-  //     if (data.type === 'new_message') {
-  //       if (chatId !== data.chat_id) props.SetNeedRead(data.chat_id, true)
-  //     }
-  //     if (data.type === 'read_reject_chat') {
-  //       if (data.response === 'deleted') chatSocket.close()
-  //     }
-  //   }
-  //   props.notificationsSocket?.addEventListener('message', eventFunction)
-  //   return () => props.notificationsSocket?.removeEventListener('message', eventFunction)
-  // }, [props.notificationsSocket, selectedChatId])
-
-=======
->>>>>>> dd3df3ccd26dfb4835f57a491b043175aecb62c5
   return (
     <>
       <header className="header" style={{position: (pathname === '/workroom') ? 'fixed' : 'relative'}}>

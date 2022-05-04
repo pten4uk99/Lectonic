@@ -37,14 +37,9 @@ function ProfileInfo(props){
         <div className="profile-about__photo">
           {profile.photo ? <img src={profile.photo} alt="Фотография"/> :
           <PhotoName firstName={profile.first_name}
-<<<<<<< HEAD
-                    lastName={profile.last_name}
-                    size={110}/>
-=======
                      lastName={profile.last_name}
                      size={110} 
                      colorNumber={profile.bgc_number}/>
->>>>>>> dd3df3ccd26dfb4835f57a491b043175aecb62c5
           }
         </div>
         <button className="profile-about__btn-download" onClick={() => navigate(reverse('set_profile'))}>
