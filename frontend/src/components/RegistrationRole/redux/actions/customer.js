@@ -1,6 +1,9 @@
 export function SwapIsCompany(is_company) {
   return {type: "SWAP_IS_COMPANY", payload: {is_company: is_company}}
 }
+export function UpdateCustomerType(type) {
+  return {type: "UPDATE_CUSTOMER_TYPE", payload: {type: type}}
+}
 export function UpdateCustomerHallAddress(address) {
   return {type: "UPDATE_CUSTOMER_HALL_ADDRESS", payload: {address: address}}
 }
