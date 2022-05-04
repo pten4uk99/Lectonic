@@ -36,18 +36,22 @@ class EmailConfirmationView(APIView):
                 return can_not_repeat_confirmation()
 
         if reset_password == 'true':
-            html = render_to_string(
-                'emailapp/reset_password.html',
-                {
-                    'key': email_confirmation.key,
-                    'host': settings.DEFAULT_HOST
-                },
-            )
+            if User.objects.filter(email=email).first():
+                html = render_to_string(
+                    'emailapp/reset_password.html',
+                    {
+                        'key': email_confirmation.key,
+                        'host': settings.DEFAULT_HOST
+                    },
+                )
 
-            msg = EmailMultiAlternatives(
-                subject='Лектоник: Запрос на восстановление пароля',
-                to=[email]
-            )
+                msg = EmailMultiAlternatives(
+                    subject='Лектоник: Запрос на восстановление пароля',
+                    to=[email]
+                )
+
+                msg.attach_alternative(html, 'text/html')
+                msg.send()
         else:
             html = render_to_string(
                 'emailapp/confirm_email.html',
@@ -62,8 +66,8 @@ class EmailConfirmationView(APIView):
                 to=[email]
             )
 
-        msg.attach_alternative(html, 'text/html')
-        msg.send()
+            msg.attach_alternative(html, 'text/html')
+            msg.send()
 
         return mail_is_sent()
 

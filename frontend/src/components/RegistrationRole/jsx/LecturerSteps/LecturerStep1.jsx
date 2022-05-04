@@ -75,7 +75,7 @@ function LecturerStep1(props) {
       <LecturerLink label="Ссылки на видео Ваших выступлений:" 
                     links={performancesLinks}
                     blur={props.AddPerfLink}/>
-      <LecturerLink label="Ссылки на видео Ваших публикаций:" 
+      <LecturerLink label="Ссылки на Ваши публикации:" 
                     links={publicationLinks}
                     blur={props.AddPubLink}/>
     </>

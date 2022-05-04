@@ -19,6 +19,16 @@ def build_photo_path(request, part_of_path):
 
 
 def get_model_from_attrs(model, attr_names=None):
+    """ Позволяет получить объект из нескольких вариантов атрибутов, например:
+    Если передать в параметр model объект модели Lecture, а в параметр attr_names
+    передать список ['customer', 'lecturer'], то функция проверит, есть ли
+
+    Lecture.customer, если нет - перейдет к следующему переданному атрибуту
+    Lecture.lecturer, и, если у данного объекта есть связанный объект lecturer,
+    то функция его вернет. В данном случае она вернет Lecture.lecturer
+
+    Если найдено больше одного совпадения, то функция вернет список объектов. """
+
     if attr_names is None:
         attr_names = []
 
@@ -26,12 +36,16 @@ def get_model_from_attrs(model, attr_names=None):
 
     for attr in attr_names:
         if hasattr(model, attr):
-            list_of_attrs.append(getattr(model, attr))
+            obj = getattr(model, attr)
+
+            if obj:
+                list_of_attrs.append(obj)
 
     if not list_of_attrs:
         return False
     if len(list_of_attrs) == 1:
         return list_of_attrs[0]
+
     return list_of_attrs
 
 
@@ -54,7 +68,7 @@ class CalendarDataGripper:
         lecture_requests = self.request.user.person.responses.order_by(
             'event__datetime_start').filter(
             event__datetime_start__gte=datetime.datetime.now(),
-            respondent__rejected=False
+            respondent_obj__rejected=False
         )
 
         for lecture_request in lecture_requests:
@@ -106,6 +120,7 @@ class CalendarDataSerializer:
                 'id': respondent.user.pk,
                 'first_name': respondent.first_name,
                 'last_name': respondent.last_name,
+                'bgc_number': respondent.bgc_number,
                 'middle_name': respondent.middle_name or "",
                 'confirmed': confirmed,
             })
@@ -123,7 +138,7 @@ class CalendarDataSerializer:
         respondent_list, confirmed_respondent = self.get_respondent_list_serialize(event)
 
         data = {
-            'creator': [creator.first_name, creator.last_name],
+            'creator': [creator.first_name, creator.last_name, creator.bgc_number],
             'svg': lecture.svg,
             'respondents': respondent_list,
             'name': lecture.name,

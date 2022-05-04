@@ -1,5 +1,5 @@
 export const baseURL = 'https://dev.lectonic.ru'; // случайно могу иногда забыть поменять на dev.lectonic.ru
-const [protocol, host] = baseURL.split('//')
+const [protocol, host] = baseURL.split('://')
 export const baseWS = (protocol === 'https' ? 'wss://' : 'ws://') + host
 
 const routes = {
@@ -67,4 +67,15 @@ export function getLecturePhoto(svgId) {
     '/assets/img/default_lecture_photo/10.svg',
   ]
   return svgArr[svgId - 1]
+}
+
+export function getProfileBgc(number) {
+  let bgcArr = [
+    'rgba(0, 211, 120, 1)',
+    'rgba(95, 181, 255, 1)',
+    'rgba(185, 36, 255, 1)',
+    'rgba(255, 0, 193, 1)',
+    'rgba(255, 138, 0, 1)'
+  ]
+  return bgcArr[number - 1]
 }

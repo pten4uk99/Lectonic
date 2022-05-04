@@ -14,6 +14,11 @@ function Lecturer(props){
   let [potentialLectures, setPotentialLectures] = useState([])
   let [confirmedLectures, setConfirmedLectures] = useState([])
   let [lecturesHistory, setLecturesHistory] = useState([])
+  
+  let [createdError, setCreatedError] = useState(false)
+  let [potentialError, setPotentialError] = useState(false)
+  let [confirmedError, setConfirmedError] = useState(false)
+  let [historyError, setHistoryError] = useState(false)
 
   useEffect(() => {
     if (props.store.permissions.is_lecturer && props.store.permissions.logged_in) {
@@ -21,29 +26,25 @@ function Lecturer(props){
         .then(response => response.json())
         .then(data => {
           if (data.status === 'success') setConfirmedLectures(data.data)
+          else setConfirmedError(true)
         })
-        .catch((error) => console.log(error))
-      
-      getLecturesHistory('lecturer')
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') setLecturesHistory(data.data)
-        })
-        .catch((error) => console.log(error))
+        .catch(() => setConfirmedError(true))
       
       getCreatedLecturesForLecturer()
         .then(response => response.json())
         .then(data => {
           if (data.status === 'success') setCreatedLectures(data.data)
+          else setCreatedError(true)
         })
-        .catch((error) => console.log(error))
+        .catch(() => setCreatedError(true))
       
       getAllLecturesForLecturer()
         .then(response => response.json())
         .then(data => {
           if (data.status === 'success') setPotentialLectures(data.data)
+          else setPotentialError(true)
         })
-        .catch((error) => console.log(error))
+        .catch(() => setPotentialError(true))
     }
   }, [])
   
@@ -51,17 +52,16 @@ function Lecturer(props){
     <article className="lecturer__content">
       <CreatedLectures role='lecturer'
                        data={createdLectures} 
-                       setData={setCreatedLectures}/>
+                       setData={setCreatedLectures} 
+                       isError={createdError}/>
       <LectureCardList header='Потенциальные заказы' 
                        isLecturer={true}
-                       data={potentialLectures}/>
-      <LectureCardList header='История' 
-                       isLecturer={true}
-                       data={lecturesHistory}/>
+                       data={potentialLectures} 
+                       isError={potentialError}/>
       <LectureCardList header='Подтвержденные лекции' 
-                 isLecturer={true}
-                 data={confirmedLectures}/>
-
+                       isLecturer={true} 
+                       data={confirmedLectures} 
+                       isError={confirmedError}/>
     </article>
   )
 }

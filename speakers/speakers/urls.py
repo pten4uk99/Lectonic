@@ -7,7 +7,8 @@ from django.urls import include
 from .utils.yasg import urlpatterns as swagger_urls
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
+    path('api/lectonic_admin/', include('adminapp.adminapp_urls')),
 
     path('api/email/', include('emailapp.emailapp_urls')),
     path('api/auth/', include('authapp.authapp_urls')),

@@ -14,6 +14,15 @@ function LectureCardList(props) {
   let [isLoaded, setIsLoaded] = useState(false)
   let navigate = useNavigate()
   
+  function getClientName(lecture) {
+    if (lecture?.related_person) {
+      return `${lecture.related_person.first_name} ${lecture.related_person.last_name}`
+    }
+    else {
+      return `${lecture.creator_first_name} ${lecture.creator_last_name}`
+    }
+  }
+  
   useEffect(() => {
     if (props.data) setIsLoaded(true)
   }, [props.data])
@@ -28,25 +37,27 @@ function LectureCardList(props) {
           </div>}
           
           <div className="cards-block minus-ml-20">
-            {props.data.length > 0 && 
-              <div className="created-lectures__wrapper">
-                <div className="created-lectures">
-                  {props.data.map((lecture, index) => {
-                    return <WorkroomCard key={lecture.id} 
-                                         data={{
-                                           src: getLecturePhoto(lecture.svg), 
-                                           client: !props.isLecturer ? 'Лектор:' : 'Заказчик:', 
-                                           clientName: `${lecture.creator_first_name} ${lecture.creator_last_name}`, 
-                                           name: lecture.name, 
-                                           date: getDates(lecture.dates), 
-                                           type: lecture.lecture_type, 
-                                           city: lecture.hall_address, 
-                                           textBtn: 'Подробнее', 
-                                           potentialLecture: true,
-                                         }} 
-                                         onClick={(e) => navigate(reverse('lecture', {id: lecture.id}))}/>})}
-                </div>
-            </div>}
+            {props.isError ? 
+              <div className="lecture-cards__error">Ошибка загрузки данных</div> : 
+              props.data.length > 0 &&
+                <div className="created-lectures__wrapper">
+                  <div className="created-lectures">
+                    {props.data.map((lecture) => {
+                      return <WorkroomCard key={lecture.id} 
+                                           data={{
+                                             src: getLecturePhoto(lecture.svg), 
+                                             client: !props.isLecturer ? 'Лектор:' : 'Заказчик:', 
+                                             clientName: getClientName(lecture), 
+                                             name: lecture.name, 
+                                             date: getDates(lecture.dates), 
+                                             type: lecture.lecture_type, 
+                                             city: lecture.hall_address, 
+                                             textBtn: 'Подробнее', 
+                                             potentialLecture: true,
+                                           }} 
+                                           onClick={(e) => navigate(reverse('lecture', {id: lecture.id}))}/>})}
+                  </div>
+                </div>}
           </div>
 
           {!props?.inPage && <div className="workroom__block-underline"/>}

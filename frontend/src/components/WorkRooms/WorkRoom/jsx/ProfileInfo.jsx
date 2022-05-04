@@ -18,8 +18,10 @@ function ProfileInfo(props){
   
   let permissions = props.store.permissions
   useEffect(() => {
-    if (permissions.is_lecturer) props.SwapToLecturer()
-    else if (permissions.is_customer) props.SwapToCustomer()
+    if (!(permissions.is_lecturer && permissions.is_customer)) {
+      if (permissions.is_lecturer) props.SwapToLecturer() 
+      else if (permissions.is_customer) props.SwapToCustomer()
+    }
   }, [permissions.is_lecturer, permissions.is_customer])
   
   
@@ -35,8 +37,14 @@ function ProfileInfo(props){
         <div className="profile-about__photo">
           {profile.photo ? <img src={profile.photo} alt="Фотография"/> :
           <PhotoName firstName={profile.first_name}
+<<<<<<< HEAD
                     lastName={profile.last_name}
                     size={110}/>
+=======
+                     lastName={profile.last_name}
+                     size={110} 
+                     colorNumber={profile.bgc_number}/>
+>>>>>>> dd3df3ccd26dfb4835f57a491b043175aecb62c5
           }
         </div>
         <button className="profile-about__btn-download" onClick={() => navigate(reverse('set_profile'))}>
@@ -55,10 +63,10 @@ function ProfileInfo(props){
           <img src={iconPlus} alt="icon-plus"/>
         </button>}
         {permissions.is_lecturer && 
-          <button className={profile.is_lecturer ? btnClassName + " active" : btnClassName} 
+          <button className={profile?.is_lecturer ? btnClassName + " active" : btnClassName} 
                 onClick={props.SwapToLecturer}>Лектор</button>}
         {permissions.is_customer && 
-          <button className={profile.is_customer ? btnClassName + " active" : btnClassName} 
+          <button className={profile?.is_customer ? btnClassName + " active" : btnClassName} 
                 onClick={props.SwapToCustomer}>Заказчик</button>}
       </div> 
     </div>

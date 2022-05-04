@@ -6,7 +6,6 @@
 }
 
 .rolepage__header{
-    padding-top: 29px;
     height: 150px;
     background: #F4B400;
 }
@@ -118,19 +117,24 @@
 .rolepage__lecture{
     margin: 40px 0 72px;
     padding: 0 60px;
-    span{
-        margin-right: 24px;
-        font-family: 'Montserrat';
-        font-weight: 600;
-        font-size: 12px;
-        line-height: 15px;
-        color: #0025FF;
-        text-align: center;
-        cursor: pointer;
-    }
-    .no-active{
-        opacity: 0.3;
-        color: #000000;
+    & > button {
+      padding: 6px 20px
+      background-color: $main-blue;
+      outline: none;
+      border: none
+      margin-right: 24px;
+      border-radius: 18px;
+      font-family: 'Montserrat';
+      font-weight: 600;
+      font-size: 12px;
+      color: white;
+      text-align: center;
+      cursor: pointer;
+      &.no-active{
+        border: 1px solid
+        background-color: white;
+        color: black;
+      }
     }
     .rolepage__lecture-btn{
         padding: 13px 91.5px 14px 91.5px;

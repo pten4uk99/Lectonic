@@ -18,7 +18,6 @@ export default function permissions(state=initialState, action) {
       return {...state, is_lecturer: action.payload.is_lecturer}
     case "SWAP_CUSTOMER":
       return {...state, is_customer: action.payload.is_customer}
-    
     default:
       return state
   }

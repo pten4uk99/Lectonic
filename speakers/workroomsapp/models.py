@@ -69,7 +69,8 @@ class DiplomaImage(models.Model):
 
 class Person(models.Model):
     """Базовый профиль пользователя"""
-    photo = models.ImageField(upload_to=person_image, null=True)  # убрать null=True после заливки на сервер
+    photo = models.ImageField(upload_to=person_image, null=True)
+    bgc_number = models.IntegerField()
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, null=True, blank=True)
@@ -157,8 +158,8 @@ class Optional(models.Model):
 
 
 class Respondent(models.Model):
-    person = models.ForeignKey('Person', on_delete=models.CASCADE)
-    lecture_request = models.ForeignKey('LectureRequest', on_delete=models.CASCADE)
+    person = models.ForeignKey('Person', on_delete=models.CASCADE, related_name='respondent_obj')
+    lecture_request = models.ForeignKey('LectureRequest', on_delete=models.CASCADE, related_name='respondent_obj')
     confirmed = models.BooleanField(default=False)
     rejected = models.BooleanField(default=False)
 
@@ -168,6 +169,9 @@ class LectureRequest(models.Model):
     lecture = models.ForeignKey('Lecture', on_delete=models.CASCADE, related_name='lecture_requests')
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.lecture}, {self.respondents.all()}'
 
 
 class Lecture(models.Model):

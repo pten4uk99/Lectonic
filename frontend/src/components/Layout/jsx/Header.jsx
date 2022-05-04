@@ -16,11 +16,10 @@ import {
 } from "../redux/actions/header";
 import ProfileDropDown from "./ProfileDropDown";
 import ChatDropdown from "./Notifications/ChatDropdown";
-import {getNotificationsList} from "../ajax";
 import {AddNotifications, RemoveNotification, SetNeedRead, UpdateNotifications} from "../redux/actions/notifications";
 import PhotoName from "../../Utils/jsx/PhotoName";
 import AuthModal from "../../Authorization/jsx/AuthModal";
-import {SetNotifyConn, SetNotifyConnFail} from "../redux/actions/ws";
+import {SetNotifyConnFail} from "../redux/actions/ws";
 import ErrorMessage from "../../Utils/jsx/ErrorMessage";
 import {getProfileInfo} from "../../WorkRooms/WorkRoom/ajax/workRooms";
 import {UpdateProfile} from "../../Profile/redux/actions/profile";
@@ -36,6 +35,7 @@ function Header(props) {
   let chatActive = props.store.header.chatDropdownActive
   let [chatUnread, setChatUnread] = useState(false)
   let [headerIconsVisible, setIconsVisible] = useState(false)
+<<<<<<< HEAD
   let [chatSocket, setChatSocket] = useState(null)
   let [intervalFunc, setIntervalFunc] = useState(null)
   let selectedChatId = props.store.header.selectedChatId
@@ -59,13 +59,12 @@ function Header(props) {
         })
     }
   }
+=======
+>>>>>>> dd3df3ccd26dfb4835f57a491b043175aecb62c5
   
   useEffect(() => {
     if (isCustomer || isLecturer) setIconsVisible(true)
-    else {
-      clearInterval(intervalFunc)
-      setIconsVisible(false)
-    }
+    else setIconsVisible(false)
   }, [permissions, props.store.ws.notifyConnFail])
   
   useEffect(() => {
@@ -81,16 +80,9 @@ function Header(props) {
     }
   }, [props.store.permissions.is_person, props.store.permissions.logged_in])
   
-  useEffect(() => {
-    if ((isLecturer || isCustomer) && !props.store.ws.notifyConnFail) {
-      notificationList()
-      if (!intervalFunc) setIntervalFunc(setInterval(() => notificationList(), 5000))
-    }
-  }, [isLecturer, isCustomer, props.store.ws.notifyConnFail])
 
   useEffect(() => {
     if (!chatActive) {
-      // chatSocket.close()
       props.SetSelectedChat(null)
     }
   }, [chatActive])
@@ -106,6 +98,7 @@ function Header(props) {
     setChatUnread(need_read)
   }, [props.store.notifications])
   
+<<<<<<< HEAD
   // useEffect(() => {
   //   props.SetNotifyConn(Boolean(props.notificationsSocket))
   //  
@@ -125,6 +118,8 @@ function Header(props) {
   //   return () => props.notificationsSocket?.removeEventListener('message', eventFunction)
   // }, [props.notificationsSocket, selectedChatId])
 
+=======
+>>>>>>> dd3df3ccd26dfb4835f57a491b043175aecb62c5
   return (
     <>
       <header className="header" style={{position: (pathname === '/workroom') ? 'fixed' : 'relative'}}>
@@ -154,7 +149,8 @@ function Header(props) {
                          alt="меню"/> :
                     <PhotoName firstName={props.store.profile.first_name} 
                                lastName={props.store.profile.last_name} 
-                               size={32}/>
+                               size={32} 
+                               colorNumber={props.store.profile.bgc_number}/>
                   }
                 </div> : 
                 <img className="header__nav-profile is-desktop"
@@ -177,9 +173,7 @@ function Header(props) {
         {!loggedIn && <AuthModal/>}
         <ProfileDropDown/>
         {chatActive && (isLecturer || isCustomer) && 
-          <ChatDropdown notificationsSocket={props.notificationsSocket} 
-                        chatSocket={chatSocket} 
-                        setChatSocket={setChatSocket}/>}
+          <ChatDropdown socket={props.socket}/>}
         {props.store.ws.notifyConnFail && <ErrorMessage msg="Соединение разорвано. Повторное подключение..."/>}
             
       </header>
@@ -193,7 +187,6 @@ export default connect(
     ActivateModal: () => dispatch(ActivateModal()),
     UpdateProfile: (data) => dispatch(UpdateProfile(data)),
     ActiveChatDropdown: (active) => dispatch(ActiveChatDropdown(active)),
-    SetNotifyConn: (connected) => dispatch(SetNotifyConn(connected)),
     SetNotifyConnFail: (connected) => dispatch(SetNotifyConnFail(connected)),
     SetSelectedChat: (chat_id) => dispatch(SetSelectedChat(chat_id)),
     SetNeedRead: (chat_id, need_read) => dispatch(SetNeedRead(chat_id, need_read)),
@@ -201,8 +194,7 @@ export default connect(
     AddNotifications: (data) => dispatch(AddNotifications(data)),
     RemoveNotification: (chat_id) => dispatch(RemoveNotification(chat_id)),
     DeactivateModal: () => dispatch(DeactivateModal()),
-    ActiveProfileDropdown: 
-      (active) => dispatch(ActiveProfileDropdown(active)),
+    ActiveProfileDropdown: (active) => dispatch(ActiveProfileDropdown(active)),
   })
 )(Header)
 

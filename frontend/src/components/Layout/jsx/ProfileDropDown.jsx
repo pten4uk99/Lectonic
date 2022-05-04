@@ -4,7 +4,12 @@ import {useNavigate} from "react-router-dom";
 
 import {logout} from "../ajax";
 import {ActiveProfileDropdown} from "../redux/actions/header";
-import {SwapCustomer, SwapLecturer, SwapLogin, SwapPerson} from "../../Authorization/redux/actions/permissions";
+import {
+  SwapCustomer,
+  SwapLecturer,
+  SwapLogin,
+  SwapPerson
+} from "../../Authorization/redux/actions/permissions";
 import {baseURL, reverse} from "../../../ProjectConstants";
 
 
@@ -18,11 +23,12 @@ function ProfileDropDown(props) {
       .then(r => r.json())
       .then(() => {
         props.ActiveProfileDropdown(false)
-        props.SwapLogin(false)
-        props.SwapPerson(false)
-        props.SwapLecturer(false)
-        props.SwapCustomer(false)
+        props.SwapLogin(undefined)
+        props.SwapPerson(undefined)
+        props.SwapLecturer(undefined)
+        props.SwapCustomer(undefined)
         navigate(reverse('index'))
+        location.reload()
       })
   }
   
@@ -40,10 +46,10 @@ function ProfileDropDown(props) {
       .then(data => {
         if (data.status === 'deleted') {
           props.ActiveProfileDropdown(false)
-          props.SwapLogin(false)
-          props.SwapPerson(false)
-          props.SwapLecturer(false)
-          props.SwapCustomer(false)
+          props.SwapLogin(undefined)
+          props.SwapPerson(undefined)
+          props.SwapLecturer(undefined)
+          props.SwapCustomer(undefined)
           navigate(reverse('index'))
         }
       })

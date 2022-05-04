@@ -40,12 +40,21 @@
     margin-top: 20px
   }
   .chat-dropdown__notification {
+    position: relative
     list-style: none
     display flex
     align-items: center
     height: 76px
     box-sizing border-box
     padding: 0 20px
+    
+    &.disabled {
+      opacity: .3
+      
+      .photo {
+        filter: grayscale(1)
+      }
+    }
     
     &:hover {
       background-color: $main-blue
@@ -56,6 +65,17 @@
       }
     }
     
+    .talker-photo {
+      position: absolute;
+      top: 5px
+      left: 10px
+      width: 32px
+      height: 32px
+      overflow: hidden;
+      border-radius: 50%
+      z-index: 1
+    }
+  
     .photo {
       display: flex
       justify-content: center;
@@ -69,6 +89,11 @@
         max-height: 56px;
       }
     }
+    .lecture-response-icon {
+      position: absolute
+      bottom: 15px
+      left: 73px
+    }
     .text {
       margin-left: 12px
       width: 294px
@@ -81,6 +106,16 @@
       }
       .respondent-name {
         font-size: 14px
+      }
+      .is-online {
+        font-size: 12px
+        font-weight: 500
+        color: rgba(0, 211, 120, 1);
+      }      
+      .is-offline {
+        font-size: 12px
+        font-weight: 500
+        color: $add-grey;
       }
     }
     .need-read {

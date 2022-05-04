@@ -14,7 +14,8 @@ function Respondents(props) {
             return <div className="respondent-photo" key={index}>
               <PhotoName firstName={elem.first_name} 
                          lastName={elem.last_name} 
-                         size={28}/>
+                         size={28} 
+                         colorNumber={elem.bgc_number}/>
             </div>})}
         </> :
         <>
