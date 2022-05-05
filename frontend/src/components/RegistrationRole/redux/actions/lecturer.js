@@ -1,8 +1,14 @@
 export function AddPerfLink(link) {
   return {type: "ADD_PERF_LINK", payload: link}
 }
+export function DeletePerfLink(link) {
+  return {type: "DELETE_PERF_LINK", payload: link}
+}
 export function AddPubLink(link) {
   return {type: "ADD_PUB_LINK", payload: link}
+}
+export function DeletePubLink(link) {
+  return {type: "DELETE_PUB_LINK", payload: link}
 }
 export function UpdateDiplomaPhotos(photo) {
   return {type: "UPDATE_DIPLOMA_PHOTOS", payload: {photo: photo}}

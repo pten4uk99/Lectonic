@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 
 import {getDomainArray} from "../../../WorkRooms/CreateEvent/ajax/event";
 import {UpdateDomain, DeleteDomain} from "~@/WorkRooms/CreateEvent/redux/actions/event";
-import {AddPerfLink, AddPubLink} from "../../redux/actions/lecturer";
+import {AddPerfLink, AddPubLink, DeletePerfLink, DeletePubLink} from "../../redux/actions/lecturer";
 import LecturerLink from "./LecturerLink";
 import DropDown from "../../../Utils/jsx/DropDown";
 import btnDelete from '~/assets/img/btn-delete.svg';
@@ -74,10 +74,12 @@ function LecturerStep1(props) {
       
       <LecturerLink label="Ссылки на видео Ваших выступлений:" 
                     links={performancesLinks}
-                    blur={props.AddPerfLink}/>
+                    blur={props.AddPerfLink}
+                    deleteLink={props.DeletePerfLink}/>
       <LecturerLink label="Ссылки на Ваши публикации:" 
                     links={publicationLinks}
-                    blur={props.AddPubLink}/>
+                    blur={props.AddPubLink}
+                    deleteLink={props.DeletePubLink}/>
     </>
   )
 }
@@ -88,6 +90,8 @@ export default connect(
     UpdateDomain: (domain) => dispatch(UpdateDomain(domain)),
     DeleteDomain: (domain, i) => dispatch(DeleteDomain(domain, i)),
     AddPerfLink: (link) => dispatch(AddPerfLink(link)),
+    DeletePerfLink: (link) => dispatch(DeletePerfLink(link)),
     AddPubLink: (link) => dispatch(AddPubLink(link)),
+    DeletePubLink: (link) => dispatch(DeletePubLink(link))
   })
 )(LecturerStep1)

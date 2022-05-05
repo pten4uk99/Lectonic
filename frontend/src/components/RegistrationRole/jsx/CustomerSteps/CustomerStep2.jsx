@@ -11,6 +11,7 @@ function CustomerStep2(props) {
   let companyName = role.company_name
   let companyDescription = role.company_description
   let companySite = role.company_site
+  let storeCustomerName = props.store.addRole.customer.customer_type
   let [customerType, setCustomerType] = useState({
     selectedValue: null,
     selectedIndex: null,
@@ -33,13 +34,13 @@ function CustomerStep2(props) {
     });
   }
 
-  switch (customerType.selectedIndex){
-    case 1:
+  switch (storeCustomerName){
+    case 'ИП':
       headlines.name = 'Наименование ИП';
       headlines.placeholderName = 'Введите полное наименование ИП';
       headlines.placeholderDescription = 'Расскажите о своей деятельности';
       break;
-    case 2:
+    case 'Самозанятый':
       headlines.placeholderDescription = 'Расскажите о своей деятельности';
       break; 
     default:
@@ -49,7 +50,6 @@ function CustomerStep2(props) {
       break;
   }
 
-  console.log(props.store);
   return (
     <>
       <div className="step-block-wrapper">
@@ -65,49 +65,49 @@ function CustomerStep2(props) {
         <div className='step-block margin-bottom-24'>
                 <div className='step-block__left-part'></div>
                 {customerType.type.map((typeName, index) => {
-                  return (<button key={index} className={`${customerType.selectedIndex === index ? "btn-role-selected" : "btn-role"} margin-right-12`} 
+                  return (<button key={index} className={`${(customerType.selectedIndex === index || storeCustomerName === typeName) ? "btn-role-selected" : "btn-role"} margin-right-12`} 
                   onClick={(e) => selectCustomerType(e, index)}>{typeName}</button>)
                 })}
         </div>
         {/* </div>step-block__left-part pt-0` */}
         <div className="step-block margin-bottom-24"
-        style={{display: customerType.selectedIndex === 2 ? 'none' : 'flex'}}>
+        style={{display: storeCustomerName === 'Самозанятый' ? 'none' : 'flex'}}>
           <p className="step-block__left-part pt-0"
-             style={{color: !customerType.selectedValue ? "var(--add-darkGrey" : ""}}>
+             style={{color: !storeCustomerName ? "var(--add-darkGrey" : ""}}>
              {headlines.name}
              <span className="required-sign step-block__required-sign">*</span>
           </p>
           <input className="step-block__input-area"
                  placeholder={headlines.placeholderName}
                  defaultValue={companyName}
-                 readOnly={!customerType.selectedValue}
+                 readOnly={!storeCustomerName}
                  type="text" 
-                 onBlur={(e) => props.UpdateCompanyName(e.target.value)}/>
+                 onChange={(e) => props.UpdateCompanyName(e.target.value)}/>
         </div>
         
         <div className="step-block-with-textarea margin-bottom-24">
           <p className="step-block__left-part left-part-with-textarea"
-             style={{color: !customerType.selectedValue ? "var(--add-darkGrey" : ""}}>
+             style={{color: !storeCustomerName ? "var(--add-darkGrey" : ""}}>
              Описание:
           </p>
           <textarea className="form__textarea textarea-height88"
                     placeholder={headlines.placeholderDescription}
                     defaultValue={companyDescription}
-                    readOnly={!customerType.selectedValue}
+                    readOnly={!storeCustomerName}
                     onBlur={(e) => props.UpdateCompanyDescription(e.target.value)}>
           </textarea>
         </div>
 
         <div className="step-block-with-textarea margin-bottom-24">
           <p className="step-block__left-part left-part-with-textarea"
-             style={{color: !customerType.selectedValue ? "var(--add-darkGrey" : ""}}>
+             style={{color: !storeCustomerName ? "var(--add-darkGrey" : ""}}>
              Сайт:
           </p>
           <input className="step-block__input-area"
                  placeholder="http://"
                  type="text" 
                  defaultValue={companySite}
-                 readOnly={!customerType.selectedValue}
+                 readOnly={!storeCustomerName}
                  onBlur={(e) => props.UpdateCompanySite(e.target.value)}/>
         </div>
       </div>

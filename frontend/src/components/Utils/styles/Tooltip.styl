@@ -55,6 +55,19 @@
     height: 9px;
     position:absolute;
     //background: #fff;
+    .tooltip-arrow-bg{
+        box-sizing: border-box;
+        border-left: 9px solid transparent;
+        border-top: 10px solid white;
+        border-right: none;
+        border-bottom: none;
+        position: relative;
+        left: 4px;
+        z-index: 1;
+    }
+    .tooltip-arrow-none{
+        display: none;
+    }
 }
 
 .tooltip-arrow-up-left-side{
@@ -117,6 +130,7 @@
         border-top-right-radius:100%;
         border-bottom: none;
         border-left: none;
+        z-index: 10
     } 
 }
 

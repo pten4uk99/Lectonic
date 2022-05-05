@@ -18,12 +18,26 @@ export default function lecturer(state=initialState, action) {
           action.payload
         ]
       }
+    case "DELETE_PERF_LINK":
+      return {
+        ...state, 
+        performances_links: [
+          ...state.performances_links.filter((elem) => action.payload != elem), 
+        ]
+      }
     case "ADD_PUB_LINK":
       return {
         ...state, 
         publication_links: [
           ...state.publication_links, 
           action.payload
+        ]
+      }
+    case "DELETE_PUB_LINK":
+      return {
+        ...state, 
+        publication_links: [
+          ...state.publication_links.filter((elem) => action.payload != elem), 
         ]
       }
     case "UPDATE_DIPLOMA_PHOTOS":
