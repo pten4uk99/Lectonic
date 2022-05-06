@@ -10,7 +10,6 @@ const initialState = {
 export default function lecturer(state=initialState, action) {
   switch (action.type) {
     case "ADD_PERF_LINK":
-      console.log(action.payload)
       return {
         ...state, 
         performances_links: [
