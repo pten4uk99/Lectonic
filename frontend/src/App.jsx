@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {connect} from "react-redux";
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route} from 'react-router-dom'
 
 import Index from '~@/Layout/jsx/Index'
 import Footer from '~@/Layout/jsx/Footer'

@@ -27,6 +27,8 @@ function RegistrationRole(props) {
   let location = useLocation()
   let currentStep = props.store.addRole.main.step
   let roleVisible = props.store.addRole.main.chooseRoleVisible
+  let companyName = props.store.addRole.customer.company_name
+  let customerType = props.store.addRole.customer.customer_type
   
   function handleDisabledButton() {
     if (location.pathname === reverse('create_lecturer')) {
@@ -34,7 +36,7 @@ function RegistrationRole(props) {
       else if (currentStep === 2) return false
     } else if (location.pathname === reverse('create_customer')) {
       if (currentStep === 1) return !(props.store.event.domain.length > 0) 
-      else if (currentStep === 2) return !(props.store.event.domain.length > 0)
+      else if (currentStep === 2) return !(companyName || customerType === 'Самозанятый')
     } else return true
   }
   
@@ -47,7 +49,7 @@ function RegistrationRole(props) {
       else props.SwapChooseRoleVisible(true)
     } else if (currentStep === 1) props.SwapChooseRoleVisible(true)
   }, [currentStep])
-  
+
   return (
     <>
       <StepsBar step={currentStep}/>

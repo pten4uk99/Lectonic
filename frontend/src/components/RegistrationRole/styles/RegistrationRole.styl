@@ -94,12 +94,29 @@
       margin-top: 12px
       padding: 8px 20px
       max-width: 384px
+      width: fit-content;
       background-color: $add-grey
       border-radius: 18px
       overflow: hidden
       text-overflow: ellipsis
       white-space: nowrap
     }
+    .link-btn {
+      position: relative;
+      overflow: visible;
+      cursor: pointer;
+    }
+    .pill-btn-text{
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+.link-block:hover {
+  .pill-btn-delete {
+    visibility: visible;
   }
 }
   

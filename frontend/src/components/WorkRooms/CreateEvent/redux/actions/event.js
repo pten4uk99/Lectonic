@@ -13,6 +13,9 @@ export function SwapEventType(type) {
 export function SwapPlace(place) {
   return {type: "SWAP_PLACE", payload: {place: place}}
 }
+export function SwapEquipment(equipment) {
+  return {type: "SWAP_EQUIPMENT", payload: {equipment: equipment}}
+}
 export function SwapPayment(payment) {
   return {type: "SWAP_PAYMENT", payload: {payment: payment}}
 }

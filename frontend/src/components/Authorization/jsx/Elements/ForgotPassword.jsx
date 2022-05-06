@@ -44,10 +44,10 @@ function ForgotPassword(props) {
                  placeholder='E-mail' 
                  onChange={(e) => setEmail({email: e.target.value})}/>
           
-          <div className='auth__password-forgotten__text'>Ссылка на смену пароля будет выслана вам по e-mail</div>
+          <div className='auth__password-forgotten__text'>Ссылка на смену пароля будет выслана Вам по e-mail</div>
         </div>
 
-        <button className='btn' type='button' onClick={onSubmit}>Продолжить</button>
+        <button className='btn auth__form__btn' type='button' onClick={onSubmit}>Продолжить</button>
         
         <h5 className='auth__password-forgotten__text-bottom' 
             onClick={props.signInShow}>

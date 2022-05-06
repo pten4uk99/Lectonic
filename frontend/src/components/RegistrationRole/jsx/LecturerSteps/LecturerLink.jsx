@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import addLinkIcon from '~/assets/img/addLink-icon.svg'
 import addHoveredIcon from '~/assets/img/add-icon-hover.svg'
 import Tooltip from "../../../Utils/jsx/Tooltip";
+import btnDelete from '~/assets/img/btn-delete.svg';
 
 
 function LecturerLink(props) {
@@ -14,6 +15,7 @@ function LecturerLink(props) {
   let [correctInput, setCorrectInput] = useState(true)
   let [tooltipActive, setTooltipActive] = useState(false)
   let [tooltipActivated, setTooltipActivated] = useState(false)
+  let [deletedLink, setDeletedLink] = useState();
   
   useEffect(() => {
     if (pub_links.length >= 5 || perf_links.length >= 5) setCorrectInput(false)
@@ -58,7 +60,15 @@ function LecturerLink(props) {
                    width='200px' posR="-150px" posT="20px"/>
         </div>
         {props.links.map((elem, index) => (
-          <div key={index} className="link-block">{elem}</div>
+          <div key={index} 
+               className="link-block link-btn"
+               onMouseUp={() => setDeletedLink(elem)}>
+            <div className='pill-btn-delete'
+                 onClick={() => {props.deleteLink(deletedLink)}}>
+                <img src={btnDelete} alt="delete"/>
+            </div>
+            <div className='pill-btn-text'>{elem}</div>
+            </div>
         ))}
       </div>
     </div>

@@ -90,6 +90,7 @@ function Tooltip({width, posL, posT, posR, posB, corner, position, isVisible, te
         <div className={tooltip} style={{width: width || '',left: posL, top: posT, right: posR, bottom: posB}}>
             <div className={tooltipArrow} style={{left: left, top: top}}>
                 <div className={arrow}/>
+                <div className={corner == "left-top" ? "tooltip-arrow-bg" : "tooltip-arrow-none"}/>
             </div>
             <p className="tooltip-text">{text}</p>
         </div>

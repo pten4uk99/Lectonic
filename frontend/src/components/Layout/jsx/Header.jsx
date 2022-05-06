@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import {connect} from "react-redux";
 
 import logo from '~/assets/img/header_logo.svg'
@@ -31,7 +31,7 @@ function Header(props) {
   let loggedIn = permissions.logged_in
   let isCustomer = permissions.is_customer
   let isLecturer = permissions.is_lecturer
-  
+  let {pathname} = useLocation();
   let chatActive = props.store.header.chatDropdownActive
   let [chatUnread, setChatUnread] = useState(false)
   let [headerIconsVisible, setIconsVisible] = useState(false)
@@ -74,7 +74,7 @@ function Header(props) {
   
   return (
     <>
-      <header className="header">
+      <header className="header" style={{position: (pathname === '/workroom') ? 'fixed' : 'relative'}}>
         <Link to="/">
           <img className="header-logo" src={logo} alt="логотип" />
         </Link>
