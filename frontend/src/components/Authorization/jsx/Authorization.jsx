@@ -91,24 +91,25 @@ function Authorization(props) {
   function onSubmitSignUpEmail(e) {
     setRequestLoaded(false)
     e.preventDefault()
-    emailConfirmation(userSignUpEmail)
-      .then(response => {
-        setErrorSignUpEmail('') //очищаем стейты, чтоб при новом запросе прошлая ошибка не оставалась
-        return response.json()
-      })
-      .then(data => {
-        //ниже идет проверка наличия ключа в объекте дата.
-        if ('email' in data) {
-          setErrorSignUpEmail(data.email[0])
-        } else if (data.status === 'error') {
-          setErrorSignUpEmail(data.detail)
-        } else if (data.status === 'success') {
-          navigate(reverse('verify_email'))
-          props.DeactivateModal()
-        }
-        setRequestLoaded(true)
-      })
-      .catch(error => console.log(error))
+    navigate(reverse('continue_signup', {reset_password: false}), {state: userSignUpEmail.email})
+    // emailConfirmation(userSignUpEmail)
+    //   .then(response => {
+    //     setErrorSignUpEmail('') //очищаем стейты, чтоб при новом запросе прошлая ошибка не оставалась
+    //     return response.json()
+    //   })
+    //   .then(data => {
+    //     //ниже идет проверка наличия ключа в объекте дата.
+    //     if ('email' in data) {
+    //       setErrorSignUpEmail(data.email[0])
+    //     } else if (data.status === 'error') {
+    //       setErrorSignUpEmail(data.detail)
+    //     } else if (data.status === 'success') {
+    //       navigate(reverse('verify_email'))
+    //       props.DeactivateModal()
+    //     }
+    //     setRequestLoaded(true)
+    //   })
+    //   .catch(error => console.log(error))
   }
 
   //Checkbox согласие на обработку персональных данных

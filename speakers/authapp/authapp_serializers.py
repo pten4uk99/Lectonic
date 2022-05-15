@@ -37,7 +37,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
         fields = (
             'email',
             'password',
-            # повторный ввод пароля будет проверяться на стороне фронтенда
         )
 
     def validate_email(self, email):
@@ -59,10 +58,10 @@ class UserCreateSerializer(serializers.ModelSerializer):
         if User.objects.filter(email=email).first():
             raise ValidationError('Пользователь с данным email уже зарегистрирован')
 
-        confirmation = EmailConfirmation.objects.filter(email=email).first()
-
-        if not confirmation or (confirmation and not confirmation.confirmed):
-            raise ValidationError('Данный адрес электронной почты не подтвержден')
+        # confirmation = EmailConfirmation.objects.filter(email=email).first()
+        #
+        # if not confirmation or (confirmation and not confirmation.confirmed):
+        #     raise ValidationError('Данный адрес электронной почты не подтвержден')
 
         return email
 
