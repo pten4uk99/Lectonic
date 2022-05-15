@@ -1,9 +1,10 @@
 import re
 import datetime
 
+from django.core.files.storage import default_storage
 from rest_framework import serializers
 
-from workroomsapp.models import Person, City, DocumentImage, Domain
+from workroomsapp.models import Person, City, Domain
 
 
 class PersonPhotoGetSerializer(serializers.HyperlinkedModelSerializer):
@@ -12,10 +13,32 @@ class PersonPhotoGetSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['photo']
 
 
+class CitySerializer(serializers.ModelSerializer):
+    name = serializers.CharField(error_messages={'required': 'Обязательное поле'}, default='')
+
+    class Meta:
+        model = City
+        fields = [
+            'id',
+            'name',
+            'region'
+        ]
+
+
+class DomainGetSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(error_messages={'required': 'Обязательное поле'})
+
+    class Meta:
+        model = Domain
+        fields = [
+            'id',
+            'name'
+        ]
+
+
 class PersonSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    photo = serializers.FileField()
-    city = serializers.PrimaryKeyRelatedField(queryset=City.objects.all())
+    photo = serializers.FileField(required=False)
 
     class Meta:
         model = Person
@@ -34,9 +57,6 @@ class PersonSerializer(serializers.ModelSerializer):
         Общий валидатор для имени, фамилии и отчества.
 
         1. Все буквы должны быть кириллицей
-        2. Первая буква имени должна быть заглвной
-        3. Затем может быть сколько угодно строчных символов без пробелов
-
         '''
 
         match = re.findall(r'^[А-Яа-яё-]+$', name)
@@ -69,82 +89,30 @@ class PersonSerializer(serializers.ModelSerializer):
 
     def validate_photo(self, photo):
         image_format = photo.name.split('.')[-1]
-
-        if image_format not in ['jpg', 'jpeg', 'png', 'JPG']:
-            msg = 'Фотография может быть только в формате "jpg", "jpeg" или "png"'
-            raise serializers.ValidationError(msg)
-
         photo.name = 'photo.' + image_format
-
         return photo
 
 
-class DocumentImageCreateSerializer(serializers.Serializer):
-    passport = serializers.FileField()
-    selfie = serializers.FileField()
+class PersonGetSerializer(PersonSerializer):
+    photo = PersonPhotoGetSerializer
 
-    class Meta:
-        model = DocumentImage
-        fields = [
-            'passport',
-            'selfie'
-        ]
-
-    def validate_passport(self, passport):
-        image_format = passport.name.split('.')[-1]
-
-        if image_format not in ['jpg', 'jpeg', 'png', 'JPG']:
-            msg = 'Паспорт может быть только в формате "jpg", "jpeg" или "png"'
-            raise serializers.ValidationError(msg)
-
-        passport.name = 'passport.' + image_format
-
-        return passport
-
-    def validate_selfie(self, selfie):
-        image_format = selfie.name.split('.')[-1]
-
-        if image_format not in ['jpg', 'jpeg', 'png', 'JPG']:
-            msg = 'Селфи может быть только в формате "jpg", "jpeg" или "png"'
-            raise serializers.ValidationError(msg)
-
-        selfie.name = 'selfie.' + image_format
-
-        return selfie
-
-    def create(self, validated_data):
-        DocumentImage.objects.all().delete()  # ТОЛЬКО В РЕЖИМЕ РАЗРАБОТКИ!!!
-        return DocumentImage.objects.create(
-            person=self.context['request'].user.person,
-            passport=validated_data['passport'],
-            selfie=validated_data['selfie']
-        )
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        city = City.objects.get(pk=data.pop('city'))
+        data['city'] = {'name': city.name, 'region': city.region, 'id': city.pk}
+        return data
 
 
-class DocumentImageGetSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = DocumentImage
-        fields = ['passport', 'selfie']
+class PersonPatchSerializer(PersonSerializer):
+    photo = PersonPhotoGetSerializer
 
+    def update(self, instance, validated_data):
+        if 'photo' in validated_data and instance.photo:
+            default_storage.delete(instance.photo.path)
+        return super().update(instance, validated_data)
 
-class CitySerializer(serializers.ModelSerializer):
-    name = serializers.CharField(error_messages={'required': 'Обязательное поле'})
-
-    class Meta:
-        model = City
-        fields = [
-            'id',
-            'name',
-            'region'
-        ]
-
-
-class DomainGetSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(error_messages={'required': 'Обязательное поле'})
-
-    class Meta:
-        model = Domain
-        fields = [
-            'id',
-            'name'
-        ]
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        city = City.objects.get(pk=data.pop('city'))
+        data['city'] = {'name': city.name, 'region': city.region, 'id': city.pk}
+        return data

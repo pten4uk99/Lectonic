@@ -16,4 +16,10 @@ export function DeactivateSwapClass() {
 export function SetHoverDate(date) {
   return { type: 'SET_HOVER_DATE', payload: {date: date}}
 }
+export function SwapModalChooseDates(dates) {
+  return { type: 'SWAP_MODAL_CHOOSE_DATES', payload: {dates: dates}}
+}
+export function SwapChosenDuration(duration) {
+  return { type: 'SWAP_CHOSEN_DURATION', payload: duration}
+}
 

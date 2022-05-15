@@ -1,53 +1,68 @@
 import React from "react";
+
 import plus from "~/assets/img/icon-create-lection.svg"
+import deleteIcon from "~/assets/img/workrooms/delete-icon.svg"
+import PhotoName from "../../../Utils/jsx/PhotoName";
+
 
 function WoorkroomCard(props){
-    let button = 'workroom-card__hide'; 
-    let box = 'workroom-card__box '; 
-    let boxDescription = "workroom-card__box-description";
-    let boxImg;
-    let boxName = "workroom-card__box-name";
-    let createLecture = 'workroom-card__hide'; // скрыто по умолчанию
-    let client = 'workroom-card__hide';
+    let potentialLecture = "workroom-card__img-potential-lecture";
+    let lectureImg = "workroom-card__img-lecture"; 
 
-    console.log(props);
-    if (props.data.lectorCard) {
-        box += "workroom-card__box-lector";
-        boxDescription = 'workroom-card__box-description workroom-card__box-description--padding';
-    } else if (props.data.createLecture) {
-        box = 'workroom-card__box workroom-card__create-lecture--background';
-        boxName = "workroom-card__create-lecture-text";
-        createLecture = 'workroom-card__create-lecture-btn';
-        boxImg = 'workroom-card__hide';
-        boxDescription = 'workroom-card__hide';
-    } else if (props.data.lectureConfirm) {
-        button = 'workroom-card__box-btn';
-        box = 'workroom-card__box workroom-card__box--box-shadow';
-        client = 'workroom-card__show';
-    } else {
-        button = 'workroom-card__box-btn workroom-card__box-btn--margin';
-        box = 'workroom-card__box workroom-card__box--box-shadow';
-        boxDescription = 'workroom-card__box-description';
-        client = 'workroom-card__show';
-    }
-
-    return (
-        <div className={box}>
-            <div className={(props.data.createLecture) ? "workroom-card__hide" : "workroom-card__box-wrapper"}>
-                <img className={boxImg} src={props.data.src} alt="photo"/>
+    if (props.data.createLecture) {
+        return (
+            <div className="workroom-card__box">
+                <div className="workroom-card__create-lecture">
+                    <div>
+                        <img src={plus} alt="обложка"/>
+                    </div>
+                    <h2>{props.data.name}</h2>
+                </div>
             </div>
-            <div className={createLecture}>
-                <img src={plus} alt="create lection"/>
-            </div>
-            <h2 className={boxName}>{props.data.name}</h2>
-            <p className={boxDescription}>{props.data.description}</p>
-            <div className={client}>
-                <h3 className="workroom-card__client">{props.client}</h3>
-                <p className="workroom-card__client-name">{props.clientName}</p>
-            </div>
-            <button className={button}>{props.data.textBtn}</button>
+        )}
+    if (props.data.lectorCard){
+        return(
+            <div className="workroom-card__box" 
+                 onClick={props.onClick} style={{cursor: 'pointer'}}>
+                <div className= "workroom-card__img-lector">
+                  {props.data.src ? 
+                    <img src={props.data.src} alt="photo"/> :
+                    <PhotoName firstName={props.data.firstName} 
+                               lastName={props.data.lastName} 
+                               size={110} 
+                               colorNumber={props.data.colorNumber}/>}
+                </div>
+                <h2 className="workroom-card__box-name">{props.data.name}</h2>
+                <p className="workroom-card__box-lecture-name">{props.data.description}</p>
         </div>
-    )
+        )}
+    if (props.data){
+        return(
+          <div className="workroom-card__box-del-wrapper">
+            {props.canDelete && 
+              <img className="delete__icon" src={deleteIcon} alt="удалить" onClick={props.onDelete}/>}
+            <div className="workroom-card__box box-shadow">
+                <div className="workroom-card__box-wrapper">
+                    <div className={(props.data.potentialLecture) ? potentialLecture : lectureImg}>
+                        <img src={props.data.src} alt="photo"/>
+                    </div>
+                    <h2 className="workroom-card__box-name">{props.data.name}</h2>
+                    <p className="workroom-card__box-description">{props.data.type}</p>
+                    <div>
+                        <span>{props.data.date}</span>
+                        <span>{props.data.city}</span>
+                    </div>
+                    <div className={(props.data.createdLecture) ? "workroom-card__hide" : ""}>
+                        <h3 className="workroom-card__client">{props.data.client}</h3>
+                        <p className="workroom-card__client-name">{props.data.clientName}</p>
+                    </div>
+                    <button className="workroom-card__box-btn" 
+                            onClick={props.onClick}>{props.data.textBtn}</button>
+                </div>
+            </div>
+          </div>
+        )
+    }
 }
 
 export default WoorkroomCard;

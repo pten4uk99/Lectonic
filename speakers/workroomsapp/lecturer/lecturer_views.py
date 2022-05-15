@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 
 from workroomsapp.lecturer.docs import lecturer_docs
 from workroomsapp.lecturer.lecturer_serializers import *
+from workroomsapp.models import City
 from workroomsapp.utils import workroomsapp_permissions
 from workroomsapp.lecturer import lecturer_responses
 
@@ -48,3 +49,28 @@ class LecturerCreateAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return lecturer_responses.lecturer_created()
+
+    @swagger_auto_schema(deprecated=True)
+    def get(self, request):
+        lecturer_id = request.GET.get('id')
+
+        lecturer = Lecturer.objects.filter(pk=lecturer_id)
+
+        if not lecturer:
+            return lecturer_responses.lecturer_does_not_exist()
+
+        serializer = LecturerGetSerializer(lecturer, many=True, context={'request': request})
+        city_id = serializer.data[0]['person']['city']
+        serializer.data[0]['person']['city'] = City.objects.get(pk=city_id).name
+        return lecturer_responses.success_get_lecturers(serializer.data)
+
+
+class LecturersListGetAPIView(APIView):
+    @swagger_auto_schema(deprecated=True)
+    def get(self, request):
+        lecturers = Lecturer.objects.exclude(person__user=request.user)
+
+        serializer = LecturersListGetSerializer(
+            lecturers, many=True, context={'request': request})
+
+        return lecturer_responses.success_get_lecturers(serializer.data)

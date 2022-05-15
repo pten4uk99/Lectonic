@@ -29,18 +29,30 @@ def document_image(instance, filename):
 def diploma_image(instance, filename):
     user_id = get_id_with_prefix(instance.lecturer.person.user.pk)
     path = f'{user_id}/diploma/{user_id}_{filename}'
+    return path
 
-    if default_storage.exists(path):
+
+def lecturer_lecture_image(instance, filename):
+    lecture_id = get_id_with_prefix(instance.lecture_requests.first().lecture.pk)
+
+    user_id = get_id_with_prefix(instance.lecturer.person.user.pk)
+    path = f'{user_id}/lectures/lecturer/{lecture_id}_{filename}'
+
+    if user_id is None:
+        raise AttributeError('Ошибка при построении пути к фотографии: '
+                             'ни один из связанных объектов не существует')
+
+    if path and default_storage.exists(path):
         default_storage.delete(path)
 
     return path
 
 
-def lecturer_lecture_image(instance, filename):
+def customer_lecture_image(instance, filename):
     lecture_id = get_id_with_prefix(instance.lecture_request.lecture.pk)
 
-    user_id = get_id_with_prefix(instance.lecturer.person.user.pk)
-    path = f'{user_id}/lectures/lecturer/{lecture_id}_{filename}'
+    user_id = get_id_with_prefix(instance.customer.person.user.pk)
+    path = f'{user_id}/lectures/customer/{lecture_id}_{filename}'
 
     if user_id is None:
         raise AttributeError('Ошибка при построении пути к фотографии: '

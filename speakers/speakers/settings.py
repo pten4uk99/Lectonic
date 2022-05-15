@@ -1,9 +1,14 @@
 import os
 from pathlib import Path
 
+from django.conf import settings
+
+settings.configure()
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = True
+AS_TEST = False
 
 ALLOWED_HOSTS = []
 
@@ -19,12 +24,15 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'drf_yasg',
+    'channels',
+    'django_dump_load_utf8',
 
     # Наши приложения
+    'adminapp',
     'emailapp',
     'authapp',
     'workroomsapp',
-    'guestapp',
+    'chatapp',
 ]
 
 MIDDLEWARE = [
@@ -44,7 +52,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    r'^http://(localhost|192\.168\.1\.51|127\.0\.0\.1):[\d]+$',
+    r'^http://(localhost|192\.168\.1\.[0-9][0-9]|127\.0\.0\.1):[\d]+$',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -67,6 +75,7 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = "speakers.asgi.application"
 WSGI_APPLICATION = 'speakers.wsgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -105,7 +114,72 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'authapp.User'
 
-DEFAULT_HOST = 'https://dev.lectonic.ru'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '{message}',
+            'style': '{',
+        },
+        'own': {
+            'format': '{asctime} {pathname} line:{lineno} [{message}]',
+            'style': '{',
+        },
+        'info': {
+            'format': '{asctime} {levelname} {pathname} line:{lineno} [{message}]',
+            'style': '{',
+        },
+        'error': {
+            'format': '{asctime} {levelname} {pathname} {exc_info} line:{lineno} [{message}]',
+            'style': '{',
+        }
+    },
+    'handlers': {
+        'own_handler': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'log/own.log',
+            'formatter': 'own'
+        },
+        'info': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'log/info.log',
+            'formatter': 'info'
+        },
+        'errors': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'log/error.log',
+            'formatter': 'error'
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'console',
+        }
+    },
+    'loggers': {
+        'workroomsapp': {
+            'handlers': ['own_handler'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django': {
+            'handlers': ['console', 'info'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['errors'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
 
 try:
     from .local_settings import *

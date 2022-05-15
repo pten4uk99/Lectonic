@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
-from workroomsapp.models import Lecturer, Link, Person, DiplomaImage, Domain
+from speakers.settings import DEFAULT_HOST
+from workroomsapp.models import Lecturer, DiplomaImage, Domain
+from workroomsapp.person.person_serializers import PersonSerializer
 
 
 class DiplomaImageCreateSerializer(serializers.Serializer):
@@ -10,18 +12,17 @@ class DiplomaImageCreateSerializer(serializers.Serializer):
         fields = ['diploma']
 
     def validate_diploma(self, diploma):
-        image_format = diploma.name.split('.')[-1]
+        lecturer = self.context['request'].user.person.lecturer
 
-        if image_format not in ['jpg', 'jpeg', 'png', 'JPG']:
-            msg = 'Диплом может быть только в формате "jpg", "jpeg" или "png"'
+        if lecturer.diploma_images.all().count() >= 5:
+            msg = 'Превышено максимальное количество дипломов (5)'
             raise serializers.ValidationError(msg)
 
+        image_format = diploma.name.split('.')[-1]
         diploma.name = 'diploma.' + image_format
-
         return diploma
 
     def create(self, validated_data):
-        DiplomaImage.objects.all().delete()  # ТОЛЬКО В РЕЖИМЕ РАЗРАБОТКИ!!!
         return DiplomaImage.objects.create(
             lecturer=self.context['request'].user.person.lecturer,
             diploma=validated_data['diploma']
@@ -69,3 +70,62 @@ class LecturerCreateSerializer(serializers.Serializer):
             education=validated_data.get('education')
         )
 
+
+class LecturersListGetSerializer(serializers.ModelSerializer):
+    first_name = serializers.StringRelatedField(source='person.first_name')
+    last_name = serializers.StringRelatedField(source='person.last_name')
+    middle_name = serializers.StringRelatedField(source='person.middle_name')
+    bgc_number = serializers.StringRelatedField(source='person.bgc_number')
+    photo = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Lecturer
+        fields = [
+            'id',
+            'photo',
+            'first_name',
+            'last_name',
+            'middle_name',
+            'bgc_number'
+        ]
+
+    def get_photo(self, obj):
+        if obj.person.photo:
+            return DEFAULT_HOST + obj.person.photo.url
+        else:
+            return ''
+
+
+class LecturerGetSerializer(serializers.ModelSerializer):
+    person = PersonSerializer()
+    domain = serializers.SerializerMethodField()
+    optional = serializers.SerializerMethodField()
+    performances_links = serializers.SerializerMethodField()
+    publication_links = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Lecturer
+        fields = [
+            'id',
+            'person',
+            'performances_links',
+            'publication_links',
+            'education',
+            'optional',
+            'domain',
+        ]
+
+    def get_optional(self, lecturer):
+        return {
+            'hall_address': lecturer.optional.hall_address,
+            'equipment': lecturer.optional.equipment
+        }
+
+    def get_performances_links(self, lecturer):
+        return lecturer.performances_links.all().values_list('url', flat=True)
+
+    def get_publication_links(self, lecturer):
+        return lecturer.publication_links.all().values_list('url', flat=True)
+
+    def get_domain(self, lecturer):
+        return lecturer.lecturer_domains.all().values_list('domain__name', flat=True)

@@ -1,0 +1,97 @@
+.label
+  justify-self right
+  font-size $fsSmall
+
+.pill
+  padding px2rem(7px) px2rem(20px)
+  border-radius $bdRad
+  background $main-white
+  border 1px solid $main-black
+  display initial
+  cursor pointer
+  position: relative;
+
+  &-grey
+    background $add-grey
+    border none
+
+  &-blue
+    background $main-blue
+    border 1px solid $main-blue
+    color $main-white
+
+.pill-btn-delete
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+  background: #B4B4B4;
+  border-radius: 50%;
+  cursor: pointer;
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  visibility: hidden;
+
+.pill:hover{
+  .pill-btn-delete{
+    visibility: visible;
+  }
+}
+
+.flex
+  display flex
+  flex-flow row wrap
+  align-items center
+  font-size $fsNorm
+  gap px2rem(6px)
+
+.selector
+  border-radius $bdRad
+  background-color $main-white
+  height 2rem
+  border solid $add-grey $bdWid
+  appearance none
+  background-repeat no-repeat
+
+  // background-position-x right
+  &:first-child
+    color $add-darkGrey
+    padding-left 1rem
+
+.text-area, .text-input
+  height 100%
+  width px2rem(440px)
+  font-family 'Montserrat', sans-serif
+
+.text-area
+  padding px2rem(8px) px2rem(20px)
+  border-radius $bdRad
+  border solid $add-grey $bdWid
+  outline none
+  resize none
+  
+  &::placeholder
+    color $add-darkGrey
+    font-size 12px
+
+.text-input
+  padding 0.5rem 0
+  border none
+  width px2rem(320px)
+  border-bottom solid $add-grey $bdWid
+  font-size $fsNorm
+
+  &:focus
+    // outline none // Don't do this!!! Needed for screen-readers
+    outline $main-white
+    box-shadow none
+
+.big-button
+  border-radius $bdRad
+  border none
+  background $add-purple
+  padding px2rem(12px) px2rem(135px)
+  color $main-white
+  font-size $fsNorm
+  cursor pointer

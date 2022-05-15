@@ -1,25 +1,70 @@
 import React, {useEffect, useState} from 'react'
 import {connect} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 import photoIcon from '~/assets/img/photo-icon.svg'
 import locationIcon from '~/assets/img/location-icon.svg'
 import birthdateIcon from '~/assets/img/birthdate-icon.svg'
+import backArrow from '~/assets/img/back-arrow.svg'
 import infoIcon from '~/assets/img/Info-icon.svg'
 import {getDaysArr, getMonthsArr, getYearsArr} from "./utils/date";
-import {UpdateBirthDate} from "../redux/actions/profile";
-import {createProfile, getCities} from "../ajax/profile";
-import {reverse} from "../../../ProjectConstants";
-import {SwapPerson} from "../../Authorization/redux/actions/permissions";
+import {UpdateBirthDate, UpdateProfile} from "../redux/actions/profile";
+import {createProfile, getCities, getProfile, setProfile} from "../ajax/profile";
+import {reverse, reverseEqual} from "../../../ProjectConstants";
+import {SwapPerson, SwapUserId} from "../../Authorization/redux/actions/permissions";
+import {SetErrorMessage} from "../../Layout/redux/actions/header";
+import DropDown from '~@/Utils/jsx/DropDown';
+import {SetIdDropDown} from "../../Utils/redux/actions/dropdown";
+import Loader from "../../Utils/jsx/Loader";
+import {ActivateModal, DeactivateModal} from "../../Layout/redux/actions/header";
+import ChooseAvatar from "./ChooseAvatar";
+
 
 
 function SetProfileInfo(props) {
   let birth_date = props.store.profile.birth_date
   let navigate = useNavigate()
+  let location = useLocation()
+  let setInfo = reverseEqual('set_profile', location.pathname)
+  let [loadedRequest, setLoadedRequest] = useState(true)
+  
+  let [profileInfo, setProfileInfo] = useState(null)
+  //этот стейт и логика с ним ниже возможно и не нужна будет
+  // пока закомментировано, чтоб работало
+  let [avatarPreview, setAvatarPreview] = useState(null)
+  let [avatarFile, setAvatarFile] = useState(null)
+
+  useEffect(() => {
+    if (!setInfo) {
+      if (props.store.permissions.is_person) navigate(reverse('workroom'))
+    }
+  }, [props.store.permissions.is_person])
   
   useEffect(() => {
-    if (props.store.permissions.is_person) navigate(reverse('workroom'))
-  }, [props.store.permissions.is_person])
+    if (setInfo) {
+      getProfile()
+        .then(r => r.json())
+        .then(data => setProfileInfo(data.data[0]))
+        .catch(e => console.log(e))
+    }
+  }, [])
+  
+  useEffect(() => {
+    if (avatarPreview) {
+      fetch(avatarPreview)
+        .then(r => r.blob())
+        .then(data => setAvatarFile(data))
+    }
+  }, [avatarPreview])
+  
+  useEffect(() => {
+    if (profileInfo) {
+      let [year, month, day] = profileInfo.birth_date.split('-')
+      props.UpdateBirthDate({year: year, month: month, day: day})
+      props.SetIdDropDown(profileInfo.city.id)
+      setAvatarPreview(profileInfo.photo)
+    }
+  }, [profileInfo])
   
   let [requiredFields, setRequiredFields] = useState({
     lastName: '',
@@ -27,68 +72,95 @@ function SetProfileInfo(props) {
     city: '',
   })
   
-  //отображение выбранного аватара
-  let [avatarPreview, setAvatarPreview] = useState(null) //выбранный файл для отправки на сервер
-  
-  const handleAvatarPreview = e => {
+  //в работе сейчас не участвует
+  const handleAvatarPreview = (file) => {
     const reader = new FileReader();
     reader.onload = () => {
       if(reader.readyState === 2) {
         setAvatarPreview(reader.result)
       }
     }
-    reader.readAsDataURL(e.target.files[0])
+    reader.readAsDataURL(file)
   }
   
-  let [cities, setCities] = useState(null)
+  let [dayArray, setDayArray] = useState(getDaysArr(birth_date.year, birth_date.month))
   
-  function handleCityChange(e) {
-    getCities(e.target.value)
-      .then(response => response.json())
-      .then(data => setCities(data.data))
-      .catch(error => console.log('ERROR: ', error))
-    setRequiredFields({...requiredFields, city: e.target.value})
-  }
+  useEffect(() => {
+    setDayArray(getDaysArr(birth_date.year, birth_date.month))
+  }, [birth_date.year, birth_date.month])
+
   
   let [errorMessages, setErrorMessages] = useState({
     firstName: '',
     lastName: '',
     middleName: '',
-    birthDate: ''
+    birthDate: '',
+    city: ''
   })
   
   function handleFormSubmit(e) {
+    setLoadedRequest(false)
     e.preventDefault()
     let formData = new FormData(e.target)
-    let year = formData.get('year')
-    let month = formData.get('month')
-    let day = formData.get('day')
+    if (avatarFile) formData.set('photo', new File([avatarFile], 'photo.jpeg'))
+    formData.set('bgc_number', profileInfo?.bgc_number || String(1 + Math.floor(Math.random() * 5)))
+    formData.set('city', props.store.dropdown.id)
     formData.delete('year')
     formData.delete('month')
     formData.delete('day')
-    formData.set('birth_date', `${year}-${month}-${day}`)
+    formData.set('birth_date', `${birth_date.year}-${birth_date.month}-${birth_date.day}`)
     
-    createProfile(formData)
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'created') {
-          props.SwapPerson(true)
-          navigate(reverse('add_role'))
-        }
-        else {
-          setErrorMessages({
-            firstName: data?.first_name || '',
-            lastName: data?.last_name || '',
-            middleName: data?.middle_name || '',
-            birthDate: data?.birth_date || '',
-          })
-        }
-      })
-      .catch(error => console.log('Ошибка в создании профиля: ', error))
+    if (!setInfo) {
+      createProfile(formData)
+        .then(response => response.json())
+        .then(data => {
+          setLoadedRequest(true)
+          if (data.status === 'created') {
+            props.SwapUserId(data.data[0].user_id)
+            props.SwapPerson(true)
+            navigate(reverse('add_role'))
+          } 
+          else {
+            setErrorMessages({
+              firstName: data?.first_name || '',
+              lastName: data?.last_name || '',
+              middleName: data?.middle_name || '',
+              birthDate: data?.birth_date || '',
+            })
+          }
+        })
+        .catch(error => console.log(error))
+    } else {
+      setProfile(formData)
+        .then(r => r.json())
+        .then(data => {
+          setLoadedRequest(true)
+          if (data.status === 'success') {
+            navigate(reverse('workroom')) 
+            props.UpdateProfile({...props.store.profile, photo: avatarPreview})
+          } else {
+            setErrorMessages({
+              firstName: data?.first_name || '',
+              lastName: data?.last_name || '',
+              middleName: data?.middle_name || '',
+              birthDate: data?.birth_date || '',
+              city: data?.city || ''
+            })
+          }
+        })
+        .catch(e => console.log(e))
+    }
+    
   }
-
+  
   return (
     <>
+      <ChooseAvatar onConfirm={setAvatarPreview}/>
+      {setInfo && <div className="navigate-back__block" 
+                       onClick={() => navigate(reverse('workroom'))}>
+        <img src={backArrow} alt="назад"/>
+      </div>}
+      
       <div className='userInfo'>
         <h2 className='userInfo__text-header'>Информация профиля</h2>
         <p className='userInfo__text'>
@@ -97,50 +169,49 @@ function SetProfileInfo(props) {
         </p>
 
         <form className='userInfo__form' onSubmit={e => handleFormSubmit(e)}>
-          <div className='add-avatar'>
+          <div className='avatar'>
             {avatarPreview && (
               <img src={avatarPreview} 
                    className='preview-avatar__img' 
                    alt='аватар'/>)}
-            <label className='add-avatar__label' 
-                   htmlFor='avatar'>
-              <img src={photoIcon} 
-                   alt='выбрать фото' 
-                   style={{marginLeft: avatarPreview ? '-130px' : ''}}/>
-              <div className='add-avatar__text' 
-                   style={{display: avatarPreview ? 'none' : ''}}>Добавить аватар</div>
-            </label>
-            <input type='file' 
-                   name='photo'
-                   id='avatar' 
-                   accept='image/jpeg, image/png' 
-                   onChange={handleAvatarPreview}/>
+              <div className="avatar__add"
+                /* открывает модальное окно в компоненте ChooseAvatar*/
+                   onClick={props.ActivateModal}>
+                <img src={photoIcon}
+                    alt='выбрать фото' style={{marginLeft: avatarPreview ? '-130px' : ''}}/>
+               <div className='avatar__add-text' style={{display: avatarPreview ? 'none' : ''}}>
+                 Добавить аватар
+               </div>
+            </div>
           </div>
           
-          <div className='userInfo__form__input-container'>
-            <input name='first_name' 
-                   className='form__input'
-                   type='text' 
-                   placeholder='Фамилия' 
-                   onChange={(e) => setRequiredFields({...requiredFields, lastName: e.target.value})}/>
-            <span className='required-sign'>*</span>
-            {errorMessages.firstName && (<div className='form__input-error'>{errorMessages.firstName}</div>)}
-          </div>
-
           <div className='userInfo__form__input-container'>
             <input name='last_name' 
                    className='form__input'
                    type='text' 
-                   placeholder='Имя' 
-                   onChange={(e) => setRequiredFields({...requiredFields, firstName: e.target.value})}/>
+                   placeholder='Фамилия'
+                   defaultValue={profileInfo?.last_name}
+                   onChange={(e) => setRequiredFields({...requiredFields, lastName: e.target.value})}/>
             <span className='required-sign'>*</span>
             {errorMessages.lastName && (<div className='form__input-error'>{errorMessages.lastName}</div>)}
+          </div>
+
+          <div className='userInfo__form__input-container'>
+            <input name='first_name' 
+                   className='form__input'
+                   type='text' 
+                   placeholder='Имя' 
+                   defaultValue={profileInfo?.first_name}
+                   onChange={(e) => setRequiredFields({...requiredFields, firstName: e.target.value})}/>
+            <span className='required-sign'>*</span>
+            {errorMessages.firstName && (<div className='form__input-error'>{errorMessages.firstName}</div>)}
           </div>
 
           <div className='userInfo__form__input-container'>
             <input name='middle_name' 
                    className='form__input' 
                    type='text' 
+                   defaultValue={profileInfo?.middle_name}
                    placeholder='Отчество'/>
             {errorMessages.middleName && (<div className='form__input-error'>{errorMessages.middleName}</div>)}
           </div>
@@ -148,61 +219,59 @@ function SetProfileInfo(props) {
           <div className='userInfo__form__inputIcon-container'>
             <img className='location-icon' src={locationIcon} />
             <div className='dropDown-wrapper'>
-              <input type="text" 
-                     list="cities" 
-                     name="city"
-                     autoComplete='none'
-                     onChange={(e) => handleCityChange(e)}/>
-              <datalist id="cities">
-                {cities ? 
-                  cities.map((city) => <option key={city.id}
-                                               data-city-id={city.id}
-                                               value={city.id}>{city.name}</option>) : <></>}
-              </datalist>
+              <DropDown request={getCities}
+                        width={true} 
+                        input={true} 
+                        placeholder='Ваш город'
+                        defaultValue={profileInfo?.city.name}
+                        onSelect={(value) => setRequiredFields({...requiredFields, city: value})}/>
             </div>
             <div className='required-sign required-sign-location'>*</div>
           </div>
+          {errorMessages.city && (<div className='form__input-error'>{errorMessages.city}</div>)}
 
           <div className='userInfo__form__inputIcon-container'>
-            <img className='birthdate-icon' src={birthdateIcon} />
+            <img className='birthdate-icon' src={birthdateIcon}/>
             <div className='dropDown-wrapper'>
-              <select name="day" 
-                      onChange={(e) => props.UpdateBirthDate({day: e.target.selectedOptions[0].value})}>
-                <option value={birth_date.day}>{birth_date.day}</option>
-                {getDaysArr(birth_date.year, birth_date.month).map((elem, index) => (
-                  <option key={index} value={elem}>{elem}</option>
-                ))}
-              </select>
-              {errorMessages.birthDate && (<div className='form__input-error'>{errorMessages.birthDate}</div>)}
+              <DropDown request={dayArray} 
+                        onSelect={(value) => props.UpdateBirthDate({day: value})} 
+                        defaultValue={birth_date.day}
+                        inputName="day"/>
             </div>
 
             <div className='dropDown-wrapper'>
-              <select name="month" 
-                      onChange={(e) => props.UpdateBirthDate({month: e.target.selectedOptions[0].value})}>
-                <option value={birth_date.month}>{getMonthsArr()[birth_date.month - 1]}</option>
-                {getMonthsArr().map((elem, index) => <option key={index} value={index + 1}>{elem}</option>)}
-              </select>
+            <DropDown request={getMonthsArr()}
+                      onSelect={(value) => props.UpdateBirthDate({month: value})}
+                      defaultValue={getMonthsArr()[birth_date.month - 1]}
+                      inputName="month" monthArr={true}/>
             </div>
-
             <div className='dropDown-wrapper'>
-              <select name="year" 
-                      onChange={(e) => props.UpdateBirthDate({year: e.target.selectedOptions[0].value})}>
-                <option value={birth_date.year}>{birth_date.year}</option>
-                  {getYearsArr().map((elem, index) => <option key={index} value={elem}>{elem}</option>)}
-                </select>
+            <DropDown request={getYearsArr()}
+                      onSelect={(value) => props.UpdateBirthDate({year: value})} 
+                      defaultValue={birth_date.year}
+                      inputName="year"/>
             </div>
             <div className='required-sign required-sign-birthdate'>*</div>
           </div>
+          {errorMessages.birthDate && (<div className='form__input-error'>{errorMessages.birthDate}</div>)}
 
           <div className='userInfo__form__inputIcon-container'>
             <img className='info-icon' src={infoIcon}/>
             <textarea name='description' 
-                      className='form__textarea textarea-height178' 
+                      className='form__textarea textarea-height178 w-298'
+                      defaultValue={profileInfo?.description}
                       placeholder='Напишите о себе'/>
           </div>
           <button type='submit' 
                   className='btn userInfo__btn' 
-                  disabled={checkRequiredFields(requiredFields)}>Продолжить</button>
+                  disabled={checkRequiredFields(requiredFields, setInfo)}>
+            {!loadedRequest ? 
+              <Loader size={20} 
+                      left="50%" 
+                      top="50%" 
+                      tX="-50%" tY="-50%"/> : 
+              "Продолжить"}
+            </button>
         </form>
       </div>
     </>
@@ -212,13 +281,20 @@ function SetProfileInfo(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
+    SetErrorMessage: (message) => dispatch(SetErrorMessage(message)),
+    SwapUserId: (user_id) => dispatch(SwapUserId(user_id)),
+    SetIdDropDown: (id) => dispatch(SetIdDropDown(id)),
     SwapPerson: (is_person) => dispatch(SwapPerson(is_person)),
+    UpdateProfile: (data) => dispatch(UpdateProfile(data)),
     UpdateBirthDate: (data) => dispatch(UpdateBirthDate(data)),
+    ActivateModal: () =>  dispatch(ActivateModal()),
+    DeactivateModal: () => dispatch(DeactivateModal())
   })
 )(SetProfileInfo)
 
 
-function checkRequiredFields(obj) {
+function checkRequiredFields(obj, setInfo) {
+  if (setInfo) return false
   for (let field in obj) {
     if (!obj[field]) return true
   }

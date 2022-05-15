@@ -3,9 +3,9 @@ import {connect} from "react-redux";
 import {useLocation, useNavigate} from "react-router-dom";
 
 import {baseURL} from "~/ProjectConstants";
-import {SwapCustomer, SwapLecturer, SwapLogin, SwapPerson} from "../redux/actions/permissions";
-import {permissions, reverse} from "../../../ProjectConstants";
-import {getProfileInfo} from "../../WorkRooms/WorkRoom/ajax/workRooms";
+import {SwapCustomer, SwapLecturer, SwapLogin, SwapPerson, SwapUserId} from "../redux/actions/permissions";
+import {reverse, withoutPermissionsList} from "../../../ProjectConstants";
+import {SetErrorMessage} from "../../Layout/redux/actions/header";
 
 
 function Permissions(props) {
@@ -23,20 +23,8 @@ function Permissions(props) {
   }
   
   function notNeedPermissions() {
-    console.log(location.pathname)
-    switch (location.pathname) {
-      case reverse('index'):
-        return true
-      case reverse('confirm_email'):
-        return true
-      case reverse('continue_signup'):
-        return true      
-      case reverse('verify_email'):
-        return true
-      case "*":
-        return true
-      default:
-        return false
+    for (let route of withoutPermissionsList) {
+      if (location.pathname === route) return true
     }
   }
   
@@ -49,23 +37,25 @@ function Permissions(props) {
   }
   
   useEffect(() => {
-      fetch(`${baseURL}/api/auth/check_authentication/`, options)
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') {
-            let permissions = data.data[0]
-            
-            props.SwapLogin(true)
-            props.SwapPerson(permissions?.is_person || false)
-            props.SwapLecturer(permissions?.is_lecturer || false)
-            props.SwapCustomer(permissions?.is_customer || false)
-            
-          } else if (data.status === 'error') {
-            props.SwapLogin(false)
-            if (!notNeedPermissions()) navigate(reverse('index'))
-          }
-        })
-        .catch(error => console.log(error))
+    props.SetErrorMessage('')
+    fetch(`${baseURL}/api/auth/check_authentication/`, options)
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          let permissions = data.data[0]
+          
+          props.SwapUserId(permissions?.user_id || null)
+          props.SwapLogin(true)
+          props.SwapPerson(permissions?.is_person || false)
+          props.SwapLecturer(permissions?.is_lecturer || false)
+          props.SwapCustomer(permissions?.is_customer || false)
+          
+        } else if (data.status === 'error') {
+          props.SwapLogin(false)
+          if (!notNeedPermissions()) navigate(reverse('index'))
+        }
+      })
+      .catch(error => props.SetErrorMessage('permissions'))
 
   }, [loggedIn])
   
@@ -79,6 +69,8 @@ function Permissions(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
+    SetErrorMessage: (message) => dispatch(SetErrorMessage(message)),
+    SwapUserId: (user_id) => dispatch(SwapUserId(user_id)),
     SwapLogin: (logged) => dispatch(SwapLogin(logged)),
     SwapPerson: (is_person) => dispatch(SwapPerson(is_person)),
     SwapLecturer: (is_lecturer) => dispatch(SwapLecturer(is_lecturer)),

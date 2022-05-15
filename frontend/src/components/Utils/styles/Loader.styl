@@ -1,0 +1,26 @@
+.loader__icon {
+  position: relative
+  padding: 1px
+  overflow: hidden;
+  img {
+    width: 100%
+    height: 100%
+    animation: rotations .5s infinite linear
+  }
+  
+  &.main-loader {
+    position: absolute
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+  }
+}
+
+@keyframes rotations {
+  0% {
+    transform: rotateZ(0deg)
+  }
+  100% {
+    transform: rotateZ(360deg)
+  }
+}

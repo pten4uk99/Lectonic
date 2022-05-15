@@ -2,13 +2,13 @@
 
 .user-account{
     display: flex;
+    margin-top: 60px;
 }
 
 .user-account__wrapper{
-  box-shadow: 0 4px 40px rgba(0, 6, 32, 0.2);
+  box-shadow: 0 2px 20px rgba(0, 5, 26, 0.1);
   height: inherit;
   width: 100%;
-  
   overflow-x: hidden;
 }
 
@@ -26,7 +26,7 @@
 .workroom__block-header {
   display: flex
   align-items: center
-  margin: 28px 0 20px 8px
+  margin: 28px 0 0 8px
   span {
     display: block
     font-weight: 600
@@ -34,14 +34,18 @@
   }
 }
   
+.workroom__block-header-mt0{
+  margin-top: 0;
+}
+
 .workroom__block-underline {
   width: 100%
   height: 1px
 
-  margin-top: 92px
+  margin-top: 40px
   background-color: rgba(219, 219, 219, 1)
   &.calendar {
-    margin-top: 40px
+    
   }
 }
 

@@ -27,7 +27,6 @@ class TestSignup(APITestCase):
             msg='Пароль неверно захешировался'
         )
 
-
     def test_user_successful_authenticated(self):
         data = {'email': 'admin@admin.ru', 'password': '12345678'}
 
@@ -91,6 +90,14 @@ class TestSignup(APITestCase):
         self.assertEqual(
             response5.status_code, 400,
             msg='Неверный статус ответа при наличии русских символов в эмейле'
+        )
+
+        data['email'] = 'admi-n@admin.ru'
+
+        response6 = self.client.post(reverse('signup'), data)
+        self.assertEqual(
+            response6.status_code, 201,
+            msg='Неверный статус ответа при наличии дефиса в эмейле'
         )
 
     def test_wrong_password(self):

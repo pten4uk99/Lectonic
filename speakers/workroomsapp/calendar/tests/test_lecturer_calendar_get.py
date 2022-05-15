@@ -31,26 +31,31 @@ class TestLecturerCalendarGet(APITestCase):
         self.client.post(reverse('lecturer'), temp_lecturer_data)
 
         for i in range(3):
-            self.client.post(reverse('lecture_as_lecturer'),
+            r = self.client.post(reverse('lecture_as_lecturer'),
                              {
+                                 'svg': 1,
                                  'name': f'Моя лектушка {i}',
-                                 'photo': test_image.create_image(),
                                  'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
-                                 'date': datetime.date.today() + datetime.timedelta(days=i),
-                                 'time_start': '15:30',
-                                 'time_end': '15:40',
+                                 'datetime': [
+                                     (datetime.datetime.now() +
+                                      datetime.timedelta(days=2 + i)).strftime('%Y-%m-%dT%H:%M') +
+                                     ',' +
+                                     (datetime.datetime.now() +
+                                      datetime.timedelta(days=2 + i, hours=1)).strftime('%Y-%m-%dT%H:%M')],
                                  'type': 'offline'
                              })
         for i in range(4, 7):
-            self.client.post(reverse('lecture_as_lecturer'),
+            r2 = self.client.post(reverse('lecture_as_lecturer'),
                              {
+                                 'svg': 1,
                                  'name': f'Моя лектушка {i}',
-                                 'photo': test_image.create_image(),
                                  'domain': ['Канцелярия', 'Бухгалтерия', 'Юриспруденция'],
-                                 'date': datetime.date.today() + datetime.timedelta(days=i-2),
-                                 'time_start': '15:30',
-                                 'time_end': '15:40',
-                                 'duration': '30',
+                                 'datetime': [
+                                     (datetime.datetime.now() +
+                                      datetime.timedelta(days=2 + i)).strftime('%Y-%m-%dT%H:%M') +
+                                     ',' +
+                                     (datetime.datetime.now() +
+                                      datetime.timedelta(days=2 + i, hours=1)).strftime('%Y-%m-%dT%H:%M')],
                                  'type': 'offline'
                              })
 
@@ -58,6 +63,7 @@ class TestLecturerCalendarGet(APITestCase):
         response = self.client.get(
             reverse('lecturer_calendar'), {'year': datetime.datetime.now().year,
                                            'month': datetime.datetime.now().month})
+        # Если уже конец месяца, то события могут отображаться некорректно
         self.assertEqual(
             'data' in response.data and type(response.data['data']) == list, True,
             msg='В ответе нет списка data'

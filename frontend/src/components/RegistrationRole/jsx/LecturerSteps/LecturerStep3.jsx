@@ -1,18 +1,20 @@
 import React, {useState} from 'react'
-import {useNavigate} from 'react-router-dom'
 import {connect} from "react-redux";
 
 import backArrow from "~/assets/img/back-arrow.svg"
-import {SwapStep, UpdateEquipment, UpdateHallAddress} from "../../redux/actions/registerRole";
+import {UpdateEquipment, UpdateHallAddress} from "../../redux/actions/lecturer";
+import {SwapAddRoleStep} from "../../redux/actions/main";
 
 
 function LecturerStep3(props) {
-  let address = props.store.registerRole.hall_address
-  let equipment = props.store.registerRole.equipment
+  let address = props.store.addRole.lecturer.hall_address
+  let equipment = props.store.addRole.lecturer.equipment
   
   /*переключение блоков Да/Нет*/
   const [yesSelected, setYesSelected] = useState(false);
   const [noSelected, setNoSelected] = useState(true);
+  const [yesSelectedEquip, setYesSelectedEquip] = useState(false);
+  const [noSelectedEquip, setNoSelectedEquip] = useState(true);
  
   function saysYes() {
     setYesSelected(true);
@@ -22,6 +24,16 @@ function LecturerStep3(props) {
   function saysNo() {
     setYesSelected(false);
     setNoSelected(true);
+  }
+
+  function saysYesEquip() {
+    setYesSelectedEquip(true);
+    setNoSelectedEquip(false);
+  }
+  
+  function saysNoEquip() {
+    setYesSelectedEquip(false);
+    setNoSelectedEquip(true);
   }
 
   /*согласие с условиями пользовательского соглашения*/
@@ -67,10 +79,24 @@ function LecturerStep3(props) {
           </textarea>
         </div>
 
+        <div className="step-block margin-bottom-12">
+          <p className="step-block__left-part">Оборудование:</p>
+          <button className={`${yesSelectedEquip ? "btn-role-selected" : "btn-role"} margin-right-12`} 
+                  type='button'
+                  onClick={saysYesEquip}>Есть</button>
+          <button className={`${noSelectedEquip ? "btn-role-selected" : "btn-role"}`} 
+                  type='button'
+                  onClick={saysNoEquip}>Нет</button>
+        </div>
+
         <div className="step-block-with-textarea margin-bottom-24">
-          <p className="step-block__left-part left-part-with-textarea">Оборудование:</p>
+        <p className="step-block__left-part left-part-with-textarea" 
+             style={{color: noSelectedEquip ? "var(--add-darkGrey" : ""}}>
+               Список оборудования:
+          </p>
           <textarea className="form__textarea textarea-height88" 
                     placeholder="Перечислите имеющееся для лекций оборудование" 
+                    readOnly={noSelectedEquip}
                     defaultValue={equipment}
                     onBlur={(e) => props.UpdateEquipment(e.target.value)}>
           </textarea>
@@ -94,13 +120,13 @@ function LecturerStep3(props) {
       </div>
       </div>
       
+      <div className="steps__underline"/>
       <div className="step-block steps__btn mb-148">
-          <div className="link-to-back" onClick={() => props.SwapStep(2)}>
+          <div className="link-to-back" onClick={() => props.SwapAddRoleStep(2)}>
             <img src={backArrow} alt="предыдущий шаг"/>
             <span>Предыдущий шаг</span>
           </div>
-        <div className="step-block__left-part"/>
-        <button className="btn" type="submit">Завершить регистрацию</button>
+        <button className="btn" type="submit" disabled={!isAgreed}>Завершить регистрацию</button>
       </div>
     </>
   )
@@ -109,7 +135,7 @@ function LecturerStep3(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({
-    SwapStep: (step) => dispatch(SwapStep(step)),
+    SwapAddRoleStep: (step) => dispatch(SwapAddRoleStep(step)),
     UpdateHallAddress: (address) => dispatch(UpdateHallAddress(address)),
     UpdateEquipment: (equipment) => dispatch(UpdateEquipment(equipment)),
   })

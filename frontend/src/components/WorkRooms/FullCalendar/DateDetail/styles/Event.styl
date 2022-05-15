@@ -8,7 +8,6 @@
 }
 
 .date-detail__event:hover {
-    transform: translateX(5px);
     background-color: #F5F5F5;
 }
 
@@ -45,9 +44,35 @@
 .left-block.grey > .dynamic-circle {
     background-color: rgba(180, 180, 180, 1);
 }
+  
+.date-detail__event-photo-block {
+  position: relative;
+  margin-left: 18px
+  .lecturer-photo {
+    position: absolute;
+    top: -4px
+    left: -8px
+    width: 32px
+    height: 32px
+    overflow: hidden;
+    border-radius: 50%
+  }
+  .event-photo {
+    display: flex
+    justify-content: center;
+    align-items: center
+    width: 56px
+    height: 56px
+    overflow: hidden;
+    border-radius: 50%
+    img {
+      max-height: 100%
+    }
+  }
+}
 
 .date-detail__event > .event-info {
-    transform: translateX(-35px);
+    transform: translateX(-5px);
     width: 516px;
     margin-left: 12px;
 
@@ -59,12 +84,12 @@
 
 .date-detail__event > .event-info > .theme,
 .date-detail__event > .event-info > .lecturer,
-.date-detail__event > .event-info > .listener,
 .date-detail__event > .event-info > .address {
     font-size: 12px;
     margin-bottom: 4px;
 }
 
+  
 .date-detail__event > .event-info span {
     font-weight: 700;
 }
@@ -102,12 +127,7 @@
 
 @media screen and (max-width: 1900px) {
     .date-detail__event > .event-info {
-        transform: translateX(-15px);
         width: 409px;
-    }
-
-    .date-detail__event > .event-info:hover {
-        transform: translateX(-15px);
     }
 }
 
@@ -119,11 +139,6 @@
 
 @media screen and (max-width: 1240px) {
     .date-detail__event > .event-info {
-        transform: translateX(-5px);
         width: 289px;
-    }
-
-    .date-detail__event > .event-info:hover {
-        transform: translateX(-5px);
     }
 }

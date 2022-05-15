@@ -7,52 +7,54 @@ from workroomsapp import models as workrooms_models
 
 class LectureManager(models.Manager):
     @transaction.atomic
-    def create_as_lecturer(self, name: str, photo: object = None,
-                           lecturer: object = None, datetime: object = None,
-                           hall_address: str = None, equipment: str = None,
-                           lecture_type: str = None, status: bool = None,
-                           duration: int = None, cost: int = 0,
-                           description: str = "", domain: list = None):
-
-        if not lecturer:
-            raise exceptions.ValidationError(
-                'В объектный менеджер не передан объект лектора')
-        if not lecture_type:
+    def __create_dependences(self, **kwargs):
+        if not kwargs.get('lecturer') and not kwargs.get('customer'):
+            raise exceptions.ValidationError('В объектный менеджер не передан объект создателя лекции')
+        if not kwargs.get('lecture_type'):
             raise exceptions.ValidationError('В менеджер не передан тип лекции')
 
         optional = workrooms_models.Optional.objects.create(
-            hall_address=hall_address,
-            equipment=equipment
+            hall_address=kwargs.get('hall_address'),
+            equipment=kwargs.get('equipment')
         )
 
         lecture = self.create(
-            name=name,
+            name=kwargs.get('name'),
+            svg=kwargs.get('svg'),
             optional=optional,
-            type=lecture_type,
-            status=status,
-            duration=duration,
-            cost=cost,
-            description=description
+            type=kwargs.get('lecture_type'),
+            listeners=kwargs.get('listeners'),
+            cost=kwargs.get('cost'),
+            description=kwargs.get('description')
         )
 
-        if domain is not None:
-            for name in domain:
+        if kwargs.get('domain') is not None:
+            for name in kwargs.get('domain'):
                 workrooms_models.LectureDomain.objects.create(
                     lecture=lecture,
                     domain=workrooms_models.Domain.objects.get(name=name)
                 )
 
-        lecture_request = workrooms_models.LectureRequest.objects.create(lecture=lecture)
+        if kwargs.get('lecturer'):
+            lecture.lecturer = kwargs['lecturer']
+            calendar = kwargs['lecturer'].lecturer_calendar.calendar
+        elif kwargs.get('customer'):
+            lecture.customer = kwargs['customer']
+            calendar = kwargs['customer'].customer_calendar.calendar
 
-        event = workrooms_models.Event.objects.create(
-            datetime=make_aware(datetime), lecture_request=lecture_request)
+        for event in kwargs.get('datetime'):
+            lecture_request = workrooms_models.LectureRequest.objects.create(lecture=lecture)
+            calendar.events.add(workrooms_models.Event.objects.create(
+                datetime_start=make_aware(event[0]),
+                datetime_end=make_aware(event[1]),
+                lecture_request=lecture_request))
 
-        if lecturer.lecturer_calendar:
-            calendar = lecturer.lecturer_calendar.calendar
-            calendar.events.add(event)
-            calendar.save()
-        return workrooms_models.LecturerLectureRequest.objects.create(
-            lecturer=lecturer,
-            lecture_request=lecture_request,
-            photo=photo
-        )
+        lecture.save()
+        calendar.save()
+        return lecture
+
+    def create_as_lecturer(self, **kwargs):
+        return self.__create_dependences(**kwargs)
+
+    def create_as_customer(self, **kwargs):
+        return self.__create_dependences(**kwargs)

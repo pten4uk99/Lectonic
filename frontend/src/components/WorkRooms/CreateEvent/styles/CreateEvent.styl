@@ -1,0 +1,88 @@
+@import 'partials/grid.styl'
+@import 'partials/general.styl'
+
+.main-heading
+  font-size $fsBig
+  color $main-blue
+  font-weight 700
+
+.main-subheading
+  width 480px
+  font-size $fsNorm
+  font-weight normal
+
+.cover
+  position relative
+  
+  &.no-photo
+    cursor pointer
+    width 150px
+    
+    .title-img
+      display none
+    .add-photo
+      display inline
+      margin-left 8px
+      text-decoration underline
+      font-size 11px
+      color rgba(0, 37, 255, 1)
+    .icon
+      position relative
+      top 12px
+      
+  .add-photo__input
+    display none
+  .icon
+    position absolute
+    left 0%
+    bottom -3%
+    z-index 5
+    cursor pointer
+    
+  .add-photo
+    display none
+
+  .title-img
+    position relative
+    left 3%
+    width px2rem(220px)
+    height px2rem(120px)
+    border-radius $bdRad
+
+.domain-list
+  align-items start
+  font-size $fsNorm
+  width: 600px
+
+  select
+    width px2rem(250px)
+    background-position 95%
+    outline none
+    cursor pointer
+
+.date
+  &.flex
+    .open-calendar
+      display flex
+      align-items center
+      cursor pointer
+      .date-link
+        color $main-blue
+        margin-left 8px
+        font-size 11px
+        text-decoration: underline
+
+.time
+  select
+    width px2rem(84px)
+    background-position 85%
+
+.fee
+  input
+    margin 1rem 0 0
+    &::placeholder {
+      font-size: 12px
+    }
+  span {
+    font-size: 12px
+  }

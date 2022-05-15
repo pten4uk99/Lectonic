@@ -5,9 +5,10 @@ import DaysOfWeek from './DaysOfWeek'
 import { connect } from 'react-redux'
 import DatesListSwappable from './Date/DatesListSwappable'
 import {SetCheckedDate, SetHoverDate} from "../redux/actions/calendar";
+import Loader from "../../../../Utils/jsx/Loader";
 
 function Calendar(props) {
-  
+  let [isLoaded, setIsLoaded] = useState(false)
   useEffect(() => {
     if (!props.store.header.modalActive) {
       props.SetHoverDate(props.store.calendar.currentDate)
@@ -16,10 +17,11 @@ function Calendar(props) {
   }, [props.store.header.modalActive])
   return (
     <div className='calendar__container'>
+      {!isLoaded && <Loader size={15} right={15} top={15} position={'absolute'}/>}
       <div className='inside__container'>
-        <MonthNav />
-        <DaysOfWeek />
-        <DatesListSwappable />
+        <MonthNav isMyLectures={props.isMyLectures} setIsLoaded={setIsLoaded} setIsError={props.setIsError}/>
+        <DaysOfWeek/>
+        <DatesListSwappable/>
       </div>
     </div>
   )

@@ -1,0 +1,129 @@
+.create-event__wrapper
+  display grid
+  grid-auto-flow row dense
+  grid-auto-columns 1fr
+  grid-auto-rows 1fr
+  grid-template-areas '. heading' '. subheading' 'domain-l domains' 'topic-l topic' 'type-l type' 'date-l date' 'workspace-l workspace' 'address-l address' 'workspace-2 workspace-btn' 'equip-l equip' 'desc-l desc' 'fee-l fee' '. submit' '. .' '. .'
+  grid-template-columns 2fr 3fr
+  grid-template-rows repeat(2, 0.1fr) repeat(5, 0.1fr) repeat(2, 0.3fr) 1fr repeat(5, 0.1fr)
+  gap 1.5em 2em
+
+  margin-top: 100px
+  &.customer
+    grid-template-areas '. heading' '. subheading' 'domain-l domains' 'topic-l topic' 'type-l type' 'date-l date' 'listeners-l listeners' 'workspace-l workspace' 'address-l address' 'workspace-2 workspace-btn' 'equip-l equip' 'desc-l desc' 'fee-l fee' '. submit' '. .' '. .'
+    grid-template-rows repeat(2, 0.1fr) repeat(6, 0.1fr) repeat(2, 0.3fr) 1fr repeat(5, 0.1fr)
+
+  &>*
+    align-self center
+
+.heading
+  grid-area heading
+
+.subheading
+  grid-area subheading
+
+.domain-l
+  grid-area domain-l
+  align-self start
+  margin-top px2rem(8px)
+
+.domains
+  grid-area domains
+
+.topic-l
+  grid-area topic-l
+  align-self center
+
+.topic
+  grid-area topic
+
+.type-l
+  grid-area type-l
+  align-self start
+  margin-top px2rem(8px)
+
+.type
+  grid-area type
+
+.cover-l
+  grid-area cover-l
+  align-self end
+
+.cover
+  grid-area cover
+
+.date-l
+  grid-area date-l
+
+.date
+  grid-area date
+
+.time-l
+  grid-area time-l
+
+.time
+  grid-area time
+
+.listeners-l
+  grid-area listeners-l
+
+.listeners
+  grid-area listeners
+
+.workspace-l
+  grid-area workspace-l
+
+.workspace
+  grid-area workspace
+
+.address-l
+  grid-area address-l
+  align-self start
+  margin-top 7px
+  
+  &.disabled
+    color $add-darkGrey
+
+.address
+  grid-area address
+  align-self start
+
+.equip-l
+  grid-area equip-l
+  align-self start
+  margin-top 7px
+
+  &.disabled
+    color $add-darkGrey
+
+.equip
+  grid-area equip
+  align-self start
+
+.desc-l
+  grid-area desc-l
+  align-self start
+  margin-top 7px
+
+.desc
+  grid-area desc
+  align-self start
+
+.fee-l
+  grid-area fee-l
+  align-self start
+  margin-top $marginTopSemi
+
+.fee
+  grid-area fee
+
+.submit
+  grid-area submit
+
+.workspace-2{
+  grid-area: workspace-2;
+}
+
+.workspace-btn{
+  grid-area: workspace-btn;
+}

@@ -87,7 +87,7 @@ LecturerCreationSchema = Schema(
         "domain": Schema(
             description='Список выбранных тематик лекций',
             type='array',
-            items=Schema(type='number', enum=['15']),
+            items=Schema(type='string', enum=['Генеалогия']),
         ),
         "performances_links": Schema(
             description='Список ссылок на выступления',

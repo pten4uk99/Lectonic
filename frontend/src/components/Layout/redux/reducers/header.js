@@ -1,6 +1,9 @@
 const initialState = {
   modalActive: false,
-  profileDropDownActive: false
+  profileDropDownActive: false,
+  chatDropdownActive: false,
+  errorMessage: '',
+  selectedChatId: null
 }
 
 export default function header(state=initialState, action) {
@@ -10,7 +13,13 @@ export default function header(state=initialState, action) {
     case "DEACTIVATE_MODAL":
       return {...state, modalActive: false}    
     case "SET_PROFILE_DROPDOWN":
-      return {...state, profileDropDownActive: action.payload.active}
+      return {...state, profileDropDownActive: action.payload.active, chatDropdownActive: false}       
+    case "SET_CHAT_DROPDOWN":
+      return {...state, profileDropDownActive: false, chatDropdownActive: action.payload.active}    
+    case "SET_ERROR_MESSAGE":
+      return {...state, errorMessage: action.payload.message}    
+    case "SET_SELECTED_CHAT_ID":
+      return {...state, selectedChatId: action.payload}
     default:
       return state
   }

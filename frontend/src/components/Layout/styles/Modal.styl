@@ -10,6 +10,8 @@
   height: 100%;
   background: rgba(0, 5, 26, .65);
   z-index: 100;
+  
+  animation: bg-visible .1s
 }
 
 .modal__wrapper {
@@ -17,6 +19,26 @@
   background: white;
   border-radius: 18px;
   box-shadow: 0 4px 40px rgba(0, 12, 63, 0.2);
+  
+  animation: visible .1s
+}
+  
+@keyframes visible {
+  from {
+    transform: scale(0)
+  }
+  to {
+    transform: scale(1)
+  }
+}
+
+@keyframes bg-visible {
+  from {
+    opacity: 0%
+  }
+  to {
+    opacity: 100%
+  }
 }
 
 .block__close-icon {

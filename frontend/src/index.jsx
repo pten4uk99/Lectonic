@@ -9,21 +9,32 @@ import calendar from '~/components/WorkRooms/FullCalendar/Calendar/redux/reducer
 import dateDetail from '~/components/WorkRooms/FullCalendar/DateDetail/redux/reducers/dateDetail'
 import '~/index.styl'
 import header from "~@/Layout/redux/reducers/header";
+import ws from "~@/Layout/redux/reducers/ws";
+import messages from "~@/Layout/redux/reducers/messages";
+import notifications from "~@/Layout/redux/reducers/notifications";
 import profile from "~@/Profile/redux/reducers/profile";
-import event from "~@/CreateEvent/redux/reducers/event";
+import event from "~@/WorkRooms/CreateEvent/redux/reducers/event";
 import permissions from "~@/Authorization/redux/reducers/permissions";
-import registerRole from "~@/RegistrationRole/redux/reducers/registerRole"
+import addRole from "~@/RegistrationRole/redux/reducers/index"
+import dropdown from "~@/Utils/redux/reducers/dropdown"
+import lectureDetail from "~@/Pages/Lecture/redux/reducers/lectureDetail";
+
 
 console.clear()
 
 let reducer = combineReducers({
   permissions,
-  registerRole,
+  ws,
+  addRole,
+  lectureDetail,
   header,
+  messages,
+  notifications,
   event,
   profile,
   calendar,
   dateDetail,
+  dropdown,
 })
 
 const store = createStore(

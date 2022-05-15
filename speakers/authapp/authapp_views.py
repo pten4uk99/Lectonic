@@ -2,6 +2,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
 from rest_framework.views import APIView
 
+from emailapp.models import EmailResetPassword
 from .authapp_serializers import (
     UserCreateSerializer,
     UserLoginSerializer, CheckAuthenticationSerializer
@@ -26,11 +27,12 @@ class CheckAuthenticationAPIView(APIView):
         serializer = CheckAuthenticationSerializer(request.user.person)
         return authapp_responses.success_check_auth([{
             **serializer.data,
-            'is_person': True
+            'is_person': True,
+            'user_id': request.user.pk
         }])
 
 
-class UserCreationView(APIView):  # Возможно в будущем переделается на дженерик
+class UserCreationView(APIView):
     @swagger_auto_schema(**authapp_docs.UserProfileCreationView)
     def post(self, request):
         serializer = UserCreateSerializer(data=request.data)
@@ -43,6 +45,29 @@ class UserCreationView(APIView):  # Возможно в будущем пере�
             data={'user': serializer.data['email']},
             cookie=('auth_token', new_token.key)
         )
+
+    @swagger_auto_schema(deprecated=True)
+    def patch(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        if not email:
+            return authapp_responses.not_in_data()
+
+        user = User.objects.filter(email=email).first()
+
+        if not user:
+            return authapp_responses.does_not_exist()
+
+        confirmation = EmailResetPassword.objects.filter(email=email).first()
+
+        if not confirmation or (confirmation and not confirmation.confirmed):
+            return authapp_responses.not_confirmed()
+
+        user.set_password(password)
+        user.save()
+
+        return authapp_responses.success_change_password()
 
 
 class UserLoginView(APIView):

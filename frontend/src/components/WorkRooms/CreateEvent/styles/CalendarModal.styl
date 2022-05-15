@@ -1,0 +1,127 @@
+.calendar-modal__wrapper {
+  display: flex
+  .calendar-modal__right-block {
+    display: flex
+    flex-direction: column
+    align-items: center
+    margin-left: 63px
+    width: 380px
+    
+    .calendar-modal__header {
+      font-size: 18px
+      font-weight: 700
+      color: $main-blue
+    }
+    
+    .calendar-modal__tooltip {
+      text-align: center
+      margin-top: 32px
+    }
+    
+    .calendar-modal__duration {
+      display flex
+      flex-direction column
+      z-index: 10
+      
+      span {
+        margin-top: 36px
+        margin-bottom: 8px
+        font-size: 12px
+        font-weight: 700
+      }
+    }
+    
+    .calendar-modal__dates-block {
+      display: flex
+      flex-direction: column
+      align-items: center
+      margin-top: 24px
+      
+      max-height: 270px
+      
+      .title {
+        display: flex
+        span {
+          display: block
+          width: 100px
+          text-align: center
+          font-weight: 700
+          font-size: 12px
+          &.mr-5 {
+            margin-right: 5px
+          }
+        }
+      }
+      
+      .calendar-modal__dates-list {
+        //display: flex
+        //flex-wrap: wrap
+        //justify-content: center
+        //align-items: center
+        
+        margin-top: 12px
+        grid-column-gap: 8px
+        grid-row-gap: 12px
+      }
+    }
+    .calendar-modal__time {
+      display flex
+      flex-direction column
+      align-items: center
+      margin-top: 24px
+      margin-bottom: 14px
+      &>span {
+        font-weight: 700
+        font-size: 12px
+        margin-bottom: 8px
+      }
+      .time-dropdown {
+        .end {
+          margin-left: 5px
+        }
+      }
+    }
+  }
+  .calendar-modal__button {
+    display: flex
+    justify-content: center;
+    align-items: center
+
+    margin-top: 44px
+  }
+}
+
+.calendar-modal__date-wrapper {
+  display: flex
+}
+  
+.calendar-modal__date {
+  display: flex
+  justify-content: center
+  align-items: center
+  
+  box-sizing: border-box
+  width: 90px
+
+  padding: 6px 0
+  margin-bottom: 12px
+  margin-right: 16px
+  
+  border: 1px solid #000000
+  border-radius: 45px
+  cursor: pointer
+  
+  &.create-event {
+    margin: 0
+  }
+
+  &.active {
+    background-color: $main-blue
+    color: white
+    font-weight: 700
+    border: 1px solid $main-blue
+  }
+  &.ml-8 {
+    margin-left: 8px
+  }
+}

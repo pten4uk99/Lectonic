@@ -10,3 +10,6 @@ export function SwapLecturer(is_lecturer) {
 export function SwapCustomer(is_customer) {
   return {type: "SWAP_CUSTOMER", payload: {is_customer: is_customer}}
 }
+export function SwapUserId(user_id) {
+  return {type: "SWAP_USER_ID", payload: {user_id: user_id}}
+}

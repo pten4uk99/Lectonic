@@ -1,6 +1,7 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 
-function Tooltip({posY, posX, corner, position, isVisible, text}){
+
+function Tooltip({width, posL, posT, posR, posB, corner, position, isVisible, text}){
 
     /*
     По props
@@ -11,15 +12,18 @@ function Tooltip({posY, posX, corner, position, isVisible, text}){
     text - это текст
     */
 
-    let tooltip = 'tooltip ';
+    let [tooltip, setTooltip] = useState('tooltip ');
     let tooltipArrow = 'tooltip-arrow ';
     let arrow;
     let left = 0;
     let top = 0;
-
-    if(isVisible){
-        tooltip += 'tooltip-visible '
-    }
+    
+    
+    useEffect(() => {
+      if(isVisible) {
+        setTooltip('tooltip tooltip-visible ')
+      } else setTooltip('tooltip display-none ')
+    }, [isVisible])
 
     switch (corner) {
         case 'left-top':
@@ -83,9 +87,10 @@ function Tooltip({posY, posX, corner, position, isVisible, text}){
     }
 
     return (
-        <div className={tooltip} style={{left: posX, top: posY}}>
+        <div className={tooltip} style={{width: width || '',left: posL, top: posT, right: posR, bottom: posB}}>
             <div className={tooltipArrow} style={{left: left, top: top}}>
                 <div className={arrow}/>
+                <div className={corner == "left-top" ? "tooltip-arrow-bg" : "tooltip-arrow-none"}/>
             </div>
             <p className="tooltip-text">{text}</p>
         </div>

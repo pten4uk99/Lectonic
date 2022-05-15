@@ -8,7 +8,7 @@ class LecturerManager(models.Manager):
     @transaction.atomic
     def create_lecturer(self, person: object = None, performances_links: list = None,
                         publication_links: list = None, domain: list = None,
-                        diploma_image: list = None, hall_address: str = None,
+                        hall_address: str = None,
                         equipment: str = None, education: str = None):
         if not person:
             raise exceptions.ValidationError('Обязательное поле Person не заполнено')
@@ -38,11 +38,6 @@ class LecturerManager(models.Manager):
             for pub_link in publication_links:
                 lecturer.publication_links.add(workrooms_models.Link.objects.create(url=pub_link))
 
-        if diploma_image:
-            for image in diploma_image:
-                workrooms_models.DiplomaImage.objects.create(
-                    lecturer=lecturer,
-                    image=workrooms_models.Image.objects.create(photo=image))
         lecturer.save()
 
         calendar = workrooms_models.Calendar.objects.create()

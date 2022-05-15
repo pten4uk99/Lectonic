@@ -18,14 +18,11 @@ class TestUploadingImages:
         if not os.path.exists(self.MEDIA_ROOT):
             os.mkdir(self.MEDIA_ROOT)
 
-    def create_image(self):
+    def create_image(self, width=640, height=480):
         self.__create_folder()
 
-        image = Image.new('RGB', (640, 480))
-
-        if not default_storage.exists(self.filename):
-            image.save(self.path)
-
+        image = Image.new('RGB', (width, height))
+        image.save(self.path)
         return default_storage.open(self.filename)
 
 

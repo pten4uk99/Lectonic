@@ -23,6 +23,19 @@
   margin-bottom: 28px;
 }
 
+.auth__text-margin{
+  margin-bottom: 0px;
+}
+
+.auth__link{
+  color: var(--main-blue);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 19px;
+  text-decoration-line: underline;
+  cursor: pointer;
+}
+
 .auth__text p {
   font-size: 11px;
   line-height: 13px;
@@ -36,13 +49,23 @@ h5 {
   margin: 0px;
 }
 
+.auth__form {
+  display flex
+  flex-direction column
+  align-items: center
+}
+
+.auth__form__bottom-block {
+  width: 100%
+}
+  
 .auth__form__password-forgotten {
   text-align: right;
   color: var(--main-blue);
   font-size: 11px;
   line-height: 13px;
   text-decoration: underline;
-  margin: 8px 0px 20px;
+  margin: 8px 0 20px;
   cursor: pointer;
 }
 
@@ -83,10 +106,12 @@ npm
 /*КНОПКИ*/
 .auth__form__btn {
   margin-bottom: 20px;
+  font-weight: normal;
+  padding: 13px 0 14px 0;
 }
 
 .auth__form__btn.signUp {
-  margin: 28px 0px 5px;
+  margin: 28px 0 20px;
 }
 
 .auth__socials {
@@ -136,12 +161,15 @@ npm
   line-height: 17px;
   text-align: center;
   display: block;
+  &.fz-11 {
+    font-size: 11px
+  }
 }
   
-.auth__bottom-text>span {
+.auth__bottom-text > span {
   color: var(--main-blue);
-  font-weight: 400;
-  font-size: 16px;
+  font-weight: 700;
+  font-size: 14px;
   line-height: 19px;
   text-decoration-line: underline;
   cursor: pointer;
@@ -212,16 +240,17 @@ npm
 
   input[type="checkbox"].auth__form__checkbox-switch {
     width: 28px;
+    padding: 1px
     border-radius: 45px;
   }
   input[type="checkbox"].auth__form__checkbox-switch:after {
     left: 2px;
-    top: 2px;
+    top: 50%;
     border-radius: 50%;
     width: 12px;
     height: 12px;
     background: var(--ab, var(--border));
-    transform: translateX(var(--x, 0));
+    transform: translateX(var(--x, 0)) translateY(-50%);
   }
   input[type="checkbox"].auth__form__checkbox-switch:checked {
     --ab: var(--active-inner);
@@ -230,7 +259,7 @@ npm
 }
 
 .auth__password-forgotten__text {
-  font-size: 12px;
+  font-size: 11px;
   line-height: 15px;
   margin-top: 12px;
 }
@@ -238,12 +267,15 @@ npm
 .auth__password-forgotten__text-bottom {
   display: block;
   text-align: center;
-  margin-top: 20px;
   cursor: pointer;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 17px;
 }
 
 .auth__password-forgotten {
-  padding-bottom: 60px;
+  padding-bottom: 0;
 }
   
 .input-wrapper__signup-email {

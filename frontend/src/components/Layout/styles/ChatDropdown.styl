@@ -1,0 +1,146 @@
+.chat-dropdown__block {
+  position: absolute
+  top: 70px
+  right: 144px
+  
+  width: 455px
+  height: 605px
+  
+  overflow: hidden;
+  
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 0 10px rgba(0, 6, 32, 0.1);
+  
+  transform-origin: 100% 0;
+  animation: dropdown-open .1s;
+  
+  z-index 9
+  
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(180, 180, 180, 1);
+    border-radius: 18px;
+  }
+  
+  .notifications-list__block {
+    height: 585px
+    overflow-y: auto
+  }
+  .notification__header {
+    height: 40px
+    display flex
+    justify-content: center;
+    align-items: center
+    font-size: 14px
+    font-weight: 700
+    margin-top: 20px
+  }
+  .chat-dropdown__notification {
+    position: relative
+    list-style: none
+    display flex
+    align-items: center
+    height: 76px
+    box-sizing border-box
+    padding: 0 20px
+    
+    &.disabled {
+      opacity: .3
+      
+      .photo {
+        filter: grayscale(1)
+      }
+    }
+    
+    &:hover {
+      background-color: $main-blue
+      cursor pointer
+      .lecture-name, 
+      .respondent-name {
+        color white
+      }
+    }
+    
+    .talker-photo {
+      position: absolute;
+      top: 5px
+      left: 10px
+      width: 32px
+      height: 32px
+      overflow: hidden;
+      border-radius: 50%
+      z-index: 1
+    }
+  
+    .photo {
+      display: flex
+      justify-content: center;
+      
+      width: 56px
+      height: 56px
+      border-radius 50%
+      overflow: hidden;
+      
+      img {
+        max-height: 56px;
+      }
+    }
+    .lecture-response-icon {
+      position: absolute
+      bottom: 15px
+      left: 73px
+    }
+    .text {
+      margin-left: 12px
+      width: 294px
+      .lecture-name {
+        overflow-x: hidden;
+        white-space: nowrap
+        text-overflow: ellipsis
+        font-size: 16px
+        font-weight: 500
+      }
+      .respondent-name {
+        font-size: 14px
+      }
+      .is-online {
+        font-size: 12px
+        font-weight: 500
+        color: rgba(0, 211, 120, 1);
+      }      
+      .is-offline {
+        font-size: 12px
+        font-weight: 500
+        color: $add-grey;
+      }
+    }
+    .need-read {
+      position: absolute
+      right: 28px
+      width: 8px
+      height: 8px
+      border-radius 50%
+      background-color: rgba(255, 0, 193, 1);
+    }
+  }
+  .empty-list {
+    box-sizing: border-box
+    padding: 0 30px
+    text-align: center
+    margin-top: 200px
+    color $main-grey
+  }
+}
+  
+@keyframes dropdown-open {
+  0% {
+    transform: scale(0)
+  }
+  100% {
+    transform: scale(1)
+  }
+}

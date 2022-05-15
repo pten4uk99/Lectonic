@@ -14,7 +14,7 @@
 }
 
 .lecturer-right__header {
-  padding-top: 25px
+  padding-top: 10px
 }
 
 .btn-role {
@@ -25,6 +25,7 @@
   border 1px solid var(--main-black)
   background-color var(--main-white)
   color var(--main-black)
+  font-family: 'Montserrat', sans-serif;
   cursor pointer
 }
   
@@ -36,6 +37,7 @@
   border 1px solid var(--main-blue)
   background-color var(--main-blue)
   color var(--main-white)
+  font-family: 'Montserrat', sans-serif;
   cursor pointer
 }
 
@@ -59,20 +61,61 @@
   display: flex;
   align-items: center;
   height: auto;
+  
+  &.mt-12 {
+    margin-top: 12px
+  }
 }
   
 .lecturer-link__block {
   display: flex
+  margin-bottom: 24px
   .lecturer-link__input-list {
     display: flex
     flex-direction: column
     .lecturer-link__input {
+      position: relative;
       display flex
-      margin-bottom: 24px
+      input {
+        font-family: 'Montserrat', sans-serif
+        font-size: 12px
+        &::placeholder {
+          color: rgba(180, 180, 180, 1);
+        }
+      }
       img {
+        cursor: pointer
         transform: translateX(-45px)
       }
     }
+    .link-block {
+      box-sizing border-box
+      height: 32px
+      margin-top: 12px
+      padding: 8px 20px
+      width: 384px;
+      background-color: $add-grey
+      border-radius: 18px
+      overflow: hidden
+      text-overflow: ellipsis
+      white-space: nowrap
+    }
+    .link-btn {
+      position: relative;
+      overflow: visible;
+      cursor: pointer;
+    }
+    .pill-btn-text{
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+.link-block:hover {
+  .pill-btn-delete {
+    visibility: visible;
   }
 }
   
@@ -81,7 +124,7 @@
   align-items: flex-start;
 }
 
-.step-block__left-part{
+.step-block__left-part {
   width: 41%;
   box-sizing border-box
   padding-top: 9px
@@ -89,6 +132,10 @@
   justify-content: flex-end;
   text-align: right;
   margin-right: 20px;
+  
+  &.pt-0 {
+    padding-top: 0
+  }
 }
   
 .left-part-with-textarea {
@@ -146,8 +193,9 @@
 .link-to-back {
   display: flex
   align-items: center
-  position: absolute
-  left: 62px
+  //position: absolute
+  //left: 62px
+  margin-right: 20px
   cursor: pointer
   font-size: 11px
   span {
@@ -156,7 +204,21 @@
 }
 
 .step-block.steps__btn.mb-148 {
+  display: flex
+  justify-content: center;
   margin-bottom: 148px
+}
+  
+.steps__underline {
+  opacity: .3
+  margin: 0 auto
+  width: 63%
+  height: 4px
+
+  margin-bottom: 24px
+  
+  border-radius: 3px
+  background-color: $add-grey
 }
 
   
