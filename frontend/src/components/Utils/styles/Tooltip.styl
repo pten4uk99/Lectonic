@@ -1,0 +1,149 @@
+.tooltip {
+    box-sizing: border-box;
+    border: 1px solid black;
+    position: relative;
+    display: inline-block; 
+    opacity: 0;
+    max-width: 250px; 
+    padding: 20px;
+    // word-break: break-all; // переносит на след. строку (без '-'), 
+    // hyphens: auto; // переносит по слогам (с '-'), но в хроме не работает
+    // -webkit-hyphens: auto;
+    // -moz-hyphens: auto;
+    // -ms-hyphens: auto; 
+}
+
+.tooltip-visible{
+    opacity: 1;
+    transition-duration: 3s;
+}
+
+.tooltip-top-left{
+    border-radius: 0px 18px 18px 18px;
+}
+
+.tooltip-top-right{
+    border-radius: 18px 0px 18px 18px;
+}
+
+.tooltip-down-left{
+    border-radius: 18px 18px 18px 0px;
+}
+
+.tooltip-down-right{
+    border-radius: 18px 18px 0px 18px;
+}
+
+.tooltip-arrow {
+    width: 10px;
+    height: 9px;
+    position:absolute;
+    background: #fff;
+}
+
+.tooltip-arrow-up-left-side{
+    transform: rotateY(0deg);
+    border-top: 1px solid black;
+}
+
+.tooltip-arrow-up-right-side{
+    transform: rotateY(180deg);
+    border-top: 1px solid black;
+}
+
+.tooltip-arrow-down-left-side{
+    transform: rotateY(0deg);
+    border-bottom: 1px solid black;
+}
+
+.tooltip-arrow-down-right-side{
+    transform: rotateY(180deg);
+    border-bottom: 1px solid black;
+}
+
+.tooltip-arrow-up-left-outside{
+    height: 10px;
+    transform: rotateY(0deg);
+    border-left: 1px solid black;
+}
+
+.tooltip-arrow-down-left-outside{
+    height: 10px;
+    transform: rotateX(180deg);
+    border-left: 1px solid black;
+}
+
+.tooltip-arrow-up-right-outside{
+    height: 10px;
+    transform: rotateY(0deg);
+    border-right: 1px solid black;
+}
+
+.tooltip-arrow-down-right-outside{
+    height: 10px;
+    transform: rotateX(180deg);
+    border-right: 1px solid black;
+}
+
+.tooltip-arrow{ 
+    div {
+        width:9px;
+        height:9px;
+        border: 1px solid black;
+        position: absolute;
+    }
+}
+
+.tooltip-arrow{
+    .arrow-up-side{
+        top: -1px;
+        left: 0px;
+        border-top-right-radius:100%;
+        border-bottom: none;
+        border-left: none;
+    } 
+}
+
+.tooltip-arrow{
+    .arrow-down-side{
+        top: 0px;
+        left: 0px;
+        border-bottom-right-radius:100%;
+        border-top: none;
+        border-left: none;
+    }
+}
+
+.tooltip-arrow{
+    .arrow-left-outside{
+        width: 10px;
+        top: 0px;
+        left: -1px;
+        border-bottom-left-radius:100%;
+        border-top: none;
+        border-right: none;
+    }
+}
+
+.tooltip-arrow{
+    .arrow-right-outside{
+        width: 10px;
+        top: 0px;
+        left: 0px;
+        border-bottom-right-radius:100%;
+        border-left: none;
+        border-top: none;
+    }
+}
+
+.tooltip-text{
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 9px;
+    line-height: 11px;
+    color: #000000;
+    margin: 0;
+}
+
+

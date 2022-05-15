@@ -1,0 +1,62 @@
+header {
+  position: relative;
+  float: left;
+  width: 100%;
+  height: 60px;
+  box-shadow: 0 4px 40px rgba(0, 12, 63, 0.2);
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  
+  z-index: 10;
+}
+
+.header-logo {
+  margin-top: 21px;
+  width: 155px;
+  height: 27px;
+  margin-left: 60px;
+  cursor: pointer;
+}
+
+.header__nav {
+  display: flex
+  align-items: center
+  margin-right: 60px;
+}
+  
+.header__profile-photo-block {
+  position: relative;
+  border-radius: 50%
+  width: 32px
+  height: 32px
+  overflow: hidden;
+  cursor: pointer
+  .header__nav-profile-photo {
+    width: 100%
+    height: 100%
+  }
+}
+
+.header__nav-search,
+.header__nav-profile,
+.header__nav-burger {
+  cursor: pointer;
+  width: 56px;
+  height: 32px;
+}
+
+.header__nav-search {
+  margin-right: 48px;
+}
+
+@media screen and (max-width: 720px) {
+  .header-logo{
+    width: 121px;
+    height: 21px;
+    margin-left: 20px;
+  }
+  .header__nav {
+    margin-right: 20px;
+  }
+}

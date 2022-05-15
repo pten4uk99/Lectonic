@@ -1,0 +1,58 @@
+@import '~/variables';
+
+.user-account{
+    display: flex;
+}
+
+.user-account__wrapper{
+  box-shadow: 0 4px 40px rgba(0, 6, 32, 0.2);
+  height: inherit;
+  width: 100%;
+  
+  overflow-x: hidden;
+}
+
+.user-account__content {
+  margin-left: 48px;
+  padding-top: 44px;
+}
+
+.user-account__profile{
+    width: 362px;
+    height: inherit;
+    flex-shrink: 0;
+}
+  
+.workroom__block-header {
+  display: flex
+  align-items: center
+  margin: 28px 0 20px 8px
+  span {
+    display: block
+    font-weight: 600
+    margin-right: 8px
+  }
+}
+  
+.workroom__block-underline {
+  width: 100%
+  height: 1px
+
+  margin-top: 92px
+  background-color: rgba(219, 219, 219, 1)
+  &.calendar {
+    margin-top: 40px
+  }
+}
+
+@media screen and (max-width: $full-screen) {
+    .user-account__profile{
+        width: 282px;
+    }
+}
+
+@media screen and (max-width: $middle-screen) {
+    .user-account__profile{
+        width: 255px;
+    }
+}

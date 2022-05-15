@@ -1,0 +1,32 @@
+.dates-list__wrapper {
+    display: flex;
+
+}
+
+.dates-list__wrapper.swap-left {
+    transform: translateX(-542px);
+    transition: transform .1s;
+}
+.dates-list__wrapper.swap-right {
+    transform: translateX(542px);
+    transition: transform .1s;
+}
+
+
+@media screen and (max-width: 1900px) {
+    .dates-list__wrapper.swap-left {
+        transform: translateX(-482px);
+    }
+.dates-list__wrapper.swap-right {
+        transform: translateX(482px);
+    }
+}
+
+@media screen and (max-width: 1240px) {
+    .dates-list__wrapper.swap-left {
+        transform: translateX(-355px);
+    }
+.dates-list__wrapper.swap-right {
+        transform: translateX(355px);
+    }
+}

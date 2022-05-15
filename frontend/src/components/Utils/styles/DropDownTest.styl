@@ -1,0 +1,88 @@
+.select {
+  font-size: 12px;
+  line-height: 15px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.select-top {
+  display: flex;
+  align-items: center;
+}
+
+.select-top__input {
+  border: 1px solid var(--add-darkGrey);
+  border-radius: 18px;
+  padding: 7px 0px 7px 19px;
+  cursor: pointer;
+}
+
+.select-top__input::placeholder {
+  color: var(--add-darkGrey);
+}
+
+.select-top__input:focus {
+  outline: none;
+}
+
+.select-top__input:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.select-top__input:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.select-top__input:focus:-moz-placeholder {
+  color: transparent;
+}
+
+.select-top__input:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.select-top__arrow {
+  margin-left: -32px;
+  cursor: pointer;
+}
+
+.select-bottom {
+  border: 1px solid var(--add-darkGrey);
+  background-color: var(--main-white);
+  max-height: 201px;
+  padding-top: 40px;
+  padding-left: 19px;
+  border-radius: 16px;
+  margin-top: -32px;
+  z-index: -5;
+  
+  overflow-y: auto;
+  scrollbar-width: 8px;
+  scrollbar-color: var(--add-darkGrey) var(--add-grey);
+}
+
+  
+.select-bottom::-webkit-scrollbar {
+  width: 8px;
+}
+
+.select-bottom::-webkit-scrollbar-track {
+  background: var(--add-grey);
+  border-radius: 18px;
+  margin-top: 40px;
+  margin-bottom: 16px;
+}
+
+.select-bottom::-webkit-scrollbar-thumb {
+  background-color: var(--add-darkGrey);
+  border-radius: 18px;
+  width: 8px;
+  max-height: 20px;
+}
+
+.select-bottom__option {
+  margin-bottom: 8px;
+}
+
+.select-bottom__option:hover {
+  cursor: pointer;
+}

@@ -1,0 +1,56 @@
+.inside__container > .days-of-week__container {
+    display: flex;
+    flex-direction: column;
+    width: 448px;
+}
+
+.days-of-week__container > .days-of-week {
+    display: flex;
+    justify-content: space-around;
+}
+
+.days-of-week__container > .days-of-week > .day-of-week {
+    font-size: 12px;
+    color: #B4B4B4;
+}
+
+.days-of-week__container > .days-of-week__underline {
+    width: 448px;
+    height: 1px;
+
+    background-color: #DBDBDB;
+    border: none;
+
+    margin-bottom: 20px;
+}
+
+
+@media screen and (max-width: 1900px) {
+    .inside__container > .days-of-week__container {
+        width: 402px;
+    }
+
+    .days-of-week__container > .days-of-week__underline {
+        width: 402px;
+    }
+}
+
+@media screen and (max-width: 1240px) {
+    .inside__container > .days-of-week__container {
+        width: 304px;
+    }
+
+    .days-of-week__container > .days-of-week__underline {
+        width: 304px;
+    }
+
+    .days-of-week__container > .days-of-week > .day-of-week {
+        font-size: 11px;
+    }
+
+    .days-of-week__container > .days-of-week__underline {
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+}
+
