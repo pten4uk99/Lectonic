@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 
 from chatapp import chatapp_responses
 from chatapp.chatapp_serializers import *
-from chatapp.models import Chat, Message
+from chatapp.models import Chat, Message, WsClient
 from workroomsapp.utils import workroomsapp_permissions
 
 channel_layer = get_channel_layer()
@@ -29,35 +29,48 @@ class MessageListGetAPIView(APIView):
     permission_classes = [workroomsapp_permissions.IsLecturer |
                           workroomsapp_permissions.IsCustomer]
 
-    @swagger_auto_schema(deprecated=True)
-    def get(self, request):
-        chat_id = request.GET.get('chat_id')
-        if not chat_id:
-            chatapp_responses.chat_id_not_in_data()
-
+    def get_chat(self, chat_id):
         chat = Chat.objects.filter(pk=chat_id).first()
+
         if not chat:
             return chatapp_responses.chat_does_not_exist()
+        return chat
 
-        lecture = chat.lecture
-        talker_person = chat.users.exclude(pk=request.user.pk).first().person
+    def get_respondent(self, talker_person):
         if not talker_person:
             respondent = False
         else:
             respondent = talker_person.pk
 
-        is_creator = False
+        return respondent
 
-        if chat.lecture.lecturer:
-            is_creator = chat.lecture.lecturer.person.user == request.user
-        elif chat.lecture.customer:
-            is_creator = chat.lecture.customer.person.user == request.user
+    def get_is_creator(self, lecture):
+        """ Проверяет является ли пользователь создателем лекции """
+
+        is_creator = None
+
+        if lecture.lecturer:
+            is_creator = lecture.lecturer.person.user == self.request.user
+        elif lecture.customer:
+            is_creator = lecture.customer.person.user == self.request.user
+
+        return is_creator
+
+    def handle_messages(self, chat):
+        """
+        Обрабатывает сообщения в чате:
+        делает их все прочитанными и проверяет
+        есть ли подтвержденное/отклоненное сообщение (подтверждение/отклонение лекции).
+
+        Возвращает кортеж: (полный список сообщений чата, есть ли подтвержденное или отклоненное сообщение)
+         """
+
+        messages = Message.objects.order_by('datetime').filter(chat=chat)
+        other_messages = messages.exclude(author=self.request.user)
 
         lecture_confirmed = None
 
-        messages = Message.objects.order_by('datetime').filter(chat=chat)
-        other_messages = messages.exclude(author=request.user)
-        for message in messages:
+        for message in messages:  # Проверяем наличие подтвержденного или отклоненного сообщения
             if lecture_confirmed is not None:
                 continue
             if message.confirm is None:
@@ -66,19 +79,35 @@ class MessageListGetAPIView(APIView):
                 lecture_confirmed = message.confirm
 
         for message in other_messages:
-            message.need_read = False
+            message.need_read = False  # Читаем сообщения
             message.save()
 
-        ws_client = getattr(talker_person.user, 'ws_client', None)
+        return messages, lecture_confirmed
 
+    def send_ws_message(self, client, message):
+        WsClient([client], message)
+
+    @swagger_auto_schema(deprecated=True)
+    def get(self, request):
+        chat_id = request.GET.get('chat_id')
+        if not chat_id:
+            chatapp_responses.chat_id_not_in_data()
+
+        chat = self.get_chat(chat_id)
+        lecture = chat.lecture
+        talker_person = chat.users.exclude(pk=request.user.pk).first().person
+        respondent = self.get_respondent(talker_person)
+        is_creator = self.get_is_creator(lecture)
+        messages, lecture_confirmed = self.handle_messages(chat)
+
+        ws_client = getattr(talker_person.user, 'ws_client', None)
         if ws_client:
-            async_to_sync(channel_layer.send)(
-                ws_client.channel_name,
+            self.send_ws_message(
+                ws_client,
                 {
                     'type': 'read_messages',
                     'chat_id': chat_id,
-                }
-            )
+                })
 
         serializer = MessageSerializer(messages, many=True)
         return chatapp_responses.success([{

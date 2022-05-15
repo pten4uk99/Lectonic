@@ -1,7 +1,6 @@
 import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model
 
 from chatapp.consumers.db import DatabaseInteraction
@@ -14,7 +13,7 @@ class WsConsumer(AsyncWebsocketConsumer, DatabaseInteraction, EventHandler):
     async def connect(self):
         """ При новом подключении добавляем идентификатор канала в
         группу common (общая группа для всех участников соединения) и
-        создаем в базе объект WsClient, который связывает пользователя с идентификатором канала"""
+        создаем в базе объект WsClient, который связывает пользователя с идентификатором канала """
 
         await self.channel_layer.group_add('common', self.channel_name)
 
@@ -27,7 +26,7 @@ class WsConsumer(AsyncWebsocketConsumer, DatabaseInteraction, EventHandler):
 
     async def disconnect(self, code):
         """ При дисконнекте удаляем канал из группы common и
-        удаляем объект WsClient с текущим каналом из БД"""
+        удаляем объект WsClient с текущим каналом из БД """
 
         await self.channel_layer.group_discard('common', self.channel_name)
 
@@ -44,7 +43,7 @@ class WsConsumer(AsyncWebsocketConsumer, DatabaseInteraction, EventHandler):
 
     async def handle_chat_message(self, data):
         recipient_pk = await self.get_recipient_id(data)  # берем id получателя сообщения
-        recipient_client = await self.get_ws_client(user_id=recipient_pk)  # получаем обьект WsClient
+        recipient_client = await self.get_ws_client(user_id=recipient_pk)  # получаем объект WsClient
         author_client = await self.get_ws_client(user_id=data['author'])
         message = await self.create_new_message(data)
 

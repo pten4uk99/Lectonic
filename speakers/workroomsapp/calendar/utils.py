@@ -50,6 +50,8 @@ def get_model_from_attrs(model, attr_names=None):
 
 
 class CalendarDataGripper:
+    """ Класс для взаимодействия с базой данных """
+
     def __init__(self, serializer_obj, owner_attr: str):
         self.request = serializer_obj.context['request']
         self.model = serializer_obj.instance
@@ -134,7 +136,6 @@ class CalendarDataSerializer:
             creator = self.data_gripper.get_person(event)
 
         lecture = self.data_gripper.get_lecture(event)
-
         respondent_list, confirmed_respondent = self.get_respondent_list_serialize(event)
 
         data = {

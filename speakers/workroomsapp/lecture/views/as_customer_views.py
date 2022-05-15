@@ -12,6 +12,30 @@ from workroomsapp.utils import workroomsapp_permissions
 class LectureAsCustomerAPIView(APIView):
     permission_classes = [workroomsapp_permissions.IsCustomer]
 
+    def get_all_lectures(self):
+        customer_id = self.request.GET.get('id')
+        created_lectures = []
+
+        if not customer_id:
+            if hasattr(self.request.user.person, 'customer'):
+                created_lectures = self.request.user.person.customer.lectures.all()
+        else:
+            created_lectures = Customer.objects.get(pk=customer_id).lectures.all()
+        return created_lectures
+
+    def filter_lectures(self):
+        lectures = self.get_all_lectures()
+        filtered_lectures = []
+
+        for lecture in lectures:
+            lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
+            lowest = lowest.get('maximum')
+
+            if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
+                filtered_lectures.append(lecture)
+
+        return filtered_lectures
+
     @swagger_auto_schema(deprecated=True)
     def post(self, request):
         serializer = LectureCreateAsCustomerSerializer(
@@ -24,23 +48,9 @@ class LectureAsCustomerAPIView(APIView):
 
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        customer_id = request.GET.get('id')
-        created_lectures = []
-
-        if not customer_id:
-            if hasattr(request.user.person, 'customer'):
-                created_lectures = request.user.person.customer.lectures.all()
-        else:
-            created_lectures = Customer.objects.get(pk=customer_id).lectures.all()
-
-        lectures_list = []
-        for lecture in created_lectures:
-            lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
-            lowest = lowest.get('maximum')
-            if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
-                lectures_list.append(lecture)
-
         serializer = LecturesGetSerializer(
-            lectures_list, many=True, context={'request': request})
-
+            self.filter_lectures(),
+            many=True,
+            context={'request': request}
+        )
         return lecture_responses.success_get_lectures(serializer.data)
