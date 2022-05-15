@@ -14,7 +14,7 @@ venv/scripts/activate
 ```cmd
 docker-compose up
 ```
-2. Запуск Backend локального сервера
+2. Запуск Backend локального сервера:
 ```cmd
 cd speakers
 python manage.py makemigrations authapp emailapp chatapp workroomsapp
