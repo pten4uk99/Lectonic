@@ -90,7 +90,8 @@ class LectureResponseMixin(LectureResponseBaseMixin):
         format_dates = []
 
         for date in self.get_params()['dates']:
-            format_dates.append(datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M'))
+            format_dates.append(
+                datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M'))
 
         return format_dates
 

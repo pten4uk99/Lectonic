@@ -1,31 +1,14 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
 
 from authapp.models import User
-from speakers.utils.tests import data
-from workroomsapp.models import City, Person, Domain, Lecturer, Customer
+from workroomsapp.customer.tests.base import BaseCustomerCreateTestCase
+
+from workroomsapp.models import Person, Customer
 
 
-class TestCustomerCreate(APITestCase):
-    signup_data = data.SIGNUP.copy()
-    profile_data = data.PROFILE.copy()
-    customer_data = data.CUSTOMER.copy()
-
+class TestCustomerCreate(BaseCustomerCreateTestCase):
     def setUp(self):
-        temp_signup_data = self.signup_data.copy()
-        temp_profile_data = self.profile_data.copy()
-        temp_profile_data['city'] = City.objects.create(pk=1, name='Москова')
-
-        self.client.post(reverse('signup'), temp_signup_data)
-
-        user = User.objects.get(email=temp_signup_data['email'])
-        Person.objects.create(
-            user=user,
-            **temp_profile_data
-        )
-        Domain.objects.create(pk=1, name='Канцелярия')
-        Domain.objects.create(pk=2, name='Бухгалтерия')
-        Domain.objects.create(pk=3, name='Юриспруденция')
+        super().setUp()
 
     def test_customer_was_created(self):
         temp_data = self.customer_data.copy()

@@ -3,8 +3,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
 from workroomsapp.lecture import lecture_responses
-from workroomsapp.lecture.serializers.as_customer_serializers import *
-from workroomsapp.lecture.serializers.as_lecturer_serializers import LecturesGetSerializer
+from workroomsapp.lecture.serializers.as_lecturer_serializers import *
 from workroomsapp.models import Customer, Lecturer
 from workroomsapp.utils import workroomsapp_permissions
 

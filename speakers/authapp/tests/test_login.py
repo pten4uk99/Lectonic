@@ -16,7 +16,8 @@ class TestLogin(APITestCase):
         response = self.client.post(reverse('login'), data)
         self.assertEqual(
             response.status_code, 200,
-            msg='Пользователь не был авторизован'
+            msg='Пользователь не был авторизован:\n'
+                f'Ответ: {response.data}'
         )
 
         user = User.objects.get(email=data['email'])

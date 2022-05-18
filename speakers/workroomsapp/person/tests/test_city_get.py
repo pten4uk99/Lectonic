@@ -1,22 +1,17 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
 
 from workroomsapp.models import City
+from workroomsapp.person.tests.base import SignUpTestCase
 
 
-class TestCityGet(APITestCase):
-
+class TestCityGet(SignUpTestCase):
     def setUp(self):
-        signup_data = {'email': 'admin@admin.ru', 'password': '12345678'}
-        self.client.post(reverse('signup'), signup_data)
-        City.objects.create(name='Москва', pk=1)
-        City.objects.create(name='Ярославль', pk=2)
-        City.objects.create(name='Ивантеевка', pk=3)
-        City.objects.create(name='Щелково', pk=4)
-        City.objects.create(name='Пушкино', pk=5)
+        super().setUp()
+        for index, name in enumerate(['Москва', 'Ярославль', 'Ивантеевка', 'Щелково', 'Пушкино']):
+            City.objects.create(name=name, pk=index + 1)
 
     def test_credentials(self):
-        self.client.get(reverse('logout'))
+        super().test_credentials()
         response = self.client.get(reverse('city'), {'name': 'Москва'})
         self.assertEqual(
             response.status_code, 401,
@@ -32,14 +27,7 @@ class TestCityGet(APITestCase):
 
         response2 = self.client.get(reverse('city'), {'name': 'пст'})
         self.assertEqual(
-            response2.status_code, 224,
+            response2.status_code, 200,
             msg='Неверный статус при получении пустого списка городов'
-        )
-
-    def test_no_data_passed(self):
-        response = self.client.get(reverse('city'))
-        self.assertEqual(
-            response.status_code, 400,
-            msg='Неверный статус ответа при пустом теле запроса'
         )
 

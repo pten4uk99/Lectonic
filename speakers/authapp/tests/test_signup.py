@@ -1,4 +1,3 @@
-from django.contrib.auth.hashers import make_password
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
@@ -7,7 +6,6 @@ from authapp.models import Token
 
 
 class TestSignup(APITestCase):
-
     def test_user_was_created(self):
         data = {'email': 'admin@admin.ru', 'password': '12345678'}
 

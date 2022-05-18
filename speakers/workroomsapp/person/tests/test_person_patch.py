@@ -1,30 +1,17 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase, override_settings
 
 from speakers.utils.tests import data
-from speakers.utils.tests.upload_image import test_image
-from workroomsapp.models import City
+from workroomsapp.models import City, Person
+from workroomsapp.person.tests.base import PersonCreateTestCase
 
 
-@override_settings(MEDIA_URL=test_image.MEDIA_URL, MEDIA_ROOT=test_image.MEDIA_ROOT)
-class TestPersonPatch(APITestCase):
-    signup_data = data.SIGNUP.copy()
-    profile_data = data.PROFILE.copy()
-    profile_data['city'] = '1'
-
+class TestPersonPatch(PersonCreateTestCase):
     def setUp(self):
-        temp_signup_data = self.signup_data.copy()
-        self.profile_data['photo'] = test_image.create_image()
-        temp_profile_data = self.profile_data.copy()
-        self.client.post(reverse('signup'), temp_signup_data)
-
-        City.objects.create(name='Москва', pk=1)
+        super().setUp()
         City.objects.create(name='Ярославль', pk=2)
 
-        self.client.post(reverse('profile'), temp_profile_data)
-
     def test_credentials(self):
-        self.client.get(reverse('logout'))
+        super().test_credentials()
         response = self.client.patch(reverse('profile'), {'city': '2'})
         self.assertEqual(
             response.status_code, 401,
@@ -50,7 +37,7 @@ class TestPersonPatch(APITestCase):
 
             if key == 'city':
                 self.assertEqual(
-                    response.data['data'][0]['city'], 'Ярославль',
+                    response.data['data'][0]['city']['name'], 'Ярославль',
                     msg='Неверные данные в ответе при изменении города профиля пользователя'
                 )
 

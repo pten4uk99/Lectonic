@@ -1,14 +1,15 @@
 import datetime
 
+import pytz
 from rest_framework import serializers
 
 from speakers.settings import DEFAULT_HOST
 from workroomsapp.calendar.utils import get_model_from_attrs
 from workroomsapp.lecture.utils.datetime import (
     convert_datetime,
-    check_datetime_for_lecture_as_lecturer
+    check_datetime_for_lecture
 )
-from workroomsapp.models import Lecture, Respondent
+from workroomsapp.models import Lecture, Respondent, Lecturer, Customer
 
 
 class LectureCreateAsLecturerSerializer(serializers.Serializer):
@@ -34,6 +35,9 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
             'description',
         ]
 
+    def get_creator_obj(self):
+        return self.context['request'].user.person.lecturer
+
     def validate_lecture(self, lecture):
         image_format = lecture.name.split('.')[-1]
         lecture.name = 'lecture.' + image_format
@@ -45,8 +49,8 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
             start, end = elem.split(',')
             start, end = convert_datetime(start, end)
 
-            if not check_datetime_for_lecture_as_lecturer(
-                    self.context['request'].user.person.lecturer, start.date(), start.time(), end.time()):
+            if not check_datetime_for_lecture(
+                    self.get_creator_obj(), start, end):
                 raise serializers.ValidationError(f'Событие на выбранное время уже существует {start} - {end}')
 
             if start < datetime.datetime.now() + datetime.timedelta(hours=1):
@@ -66,6 +70,28 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
             datetime=validated_data.get('datetime'),
             hall_address=validated_data.get('hall_address'),
             equipment=validated_data.get('equipment'),
+            lecture_type=validated_data.get('type'),
+            cost=validated_data.get('cost', 0),
+            description=validated_data.get('description'),
+        )
+
+
+class LectureCreateAsCustomerSerializer(LectureCreateAsLecturerSerializer):
+    listeners = serializers.IntegerField()
+
+    def get_creator_obj(self):
+        return self.context['request'].user.person.customer
+
+    def create(self, validated_data):
+        return Lecture.objects.create_as_customer(
+            customer=self.context['request'].user.person.customer,
+            name=validated_data.get('name'),
+            svg=validated_data.get('svg'),
+            domain=validated_data.get('domain'),
+            datetime=validated_data.get('datetime'),
+            hall_address=validated_data.get('hall_address'),
+            equipment=validated_data.get('equipment'),
+            listeners=validated_data.get('listeners'),
             lecture_type=validated_data.get('type'),
             cost=validated_data.get('cost', 0),
             description=validated_data.get('description'),

@@ -1,33 +1,13 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase, override_settings
 
 from authapp.models import User
-from speakers.utils.tests import data
-from speakers.utils.tests.upload_image import test_image
-from workroomsapp.models import City, Person, Domain, Lecturer
+from workroomsapp.lecturer.tests.base import BaseLecturerCreateTestCase
+from workroomsapp.models import Person, Lecturer
 
 
-@override_settings(MEDIA_URL=test_image.MEDIA_URL, MEDIA_ROOT=test_image.MEDIA_ROOT)
-class TestLecturerCreate(APITestCase):
-    signup_data = data.SIGNUP.copy()
-    profile_data = data.PROFILE.copy()
-    lecturer_data = data.LECTURER.copy()
-
+class TestLecturerCreate(BaseLecturerCreateTestCase):
     def setUp(self):
-        temp_signup_data = self.signup_data.copy()
-        temp_profile_data = self.profile_data.copy()
-        temp_profile_data['city'] = City.objects.create(pk=1, name='Москова')
-
-        self.client.post(reverse('signup'), temp_signup_data)
-
-        user = User.objects.get(email=temp_signup_data['email'])
-        Person.objects.create(
-            user=user,
-            **temp_profile_data
-        )
-        Domain.objects.create(pk=1, name='Канцелярия')
-        Domain.objects.create(pk=2, name='Бухгалтерия')
-        Domain.objects.create(pk=3, name='Юриспруденция')
+        super().setUp()
 
     def test_lecturer_was_created(self):
         temp_data = self.lecturer_data.copy()

@@ -1,16 +1,14 @@
 import datetime
 
 from django.urls import reverse
-from rest_framework.test import APITestCase, override_settings
+from rest_framework.test import APITestCase
 
 from authapp.models import User
 from chatapp.models import Chat, Message
 from speakers.utils.tests import data
-from speakers.utils.tests.upload_image import test_image
-from workroomsapp.models import City, Person, Domain, Lecturer, Customer, Lecture
+from workroomsapp.models import City, Person, Domain, Lecture
 
 
-@override_settings(MEDIA_URL=test_image.MEDIA_URL, MEDIA_ROOT=test_image.MEDIA_ROOT)
 class TestChatCreate(APITestCase):
     signup_data = data.SIGNUP.copy()
     signup_data2 = data.SIGNUP2.copy()
@@ -21,7 +19,6 @@ class TestChatCreate(APITestCase):
 
     def setUp(self):
         temp_data = self.lecture_data.copy()
-        temp_data['photo'] = test_image.create_image()
         self.client.post(reverse('signup'), self.signup_data)
         user = User.objects.get(email=self.signup_data['email'])
         Person.objects.create(
@@ -35,7 +32,6 @@ class TestChatCreate(APITestCase):
 
         self.client.post(reverse('lecturer'), self.lecturer_data)
         temp_data = self.lecture_data.copy()
-        temp_data['photo'] = test_image.create_image()
         self.client.post(reverse('lecture_as_lecturer'), temp_data)
 
         self.client.post(reverse('signup'), self.signup_data2)

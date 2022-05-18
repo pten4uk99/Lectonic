@@ -45,8 +45,8 @@ class LectureManager(models.Manager):
         for event in kwargs.get('datetime'):
             lecture_request = workrooms_models.LectureRequest.objects.create(lecture=lecture)
             calendar.events.add(workrooms_models.Event.objects.create(
-                datetime_start=make_aware(event[0]),
-                datetime_end=make_aware(event[1]),
+                datetime_start=event[0],
+                datetime_end=event[1],
                 lecture_request=lecture_request))
 
         lecture.save()

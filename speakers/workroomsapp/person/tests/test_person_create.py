@@ -1,25 +1,20 @@
 import datetime
 
-from PIL import Image
 from django.urls import reverse
-from rest_framework.test import APITestCase, override_settings
 
 from authapp.models import User
 from speakers.utils.tests import data
-from speakers.utils.tests.upload_image import test_image
-from workroomsapp.models import City, Person
+from workroomsapp.models import Person, City
+from workroomsapp.person.tests.base import SignUpTestCase
 
 
-@override_settings(MEDIA_URL=test_image.MEDIA_URL, MEDIA_ROOT=test_image.MEDIA_ROOT)
-class TestPersonCreate(APITestCase):
-    signup_data = data.SIGNUP.copy()
+class TestPersonCreate(SignUpTestCase):
     profile_data = data.PROFILE.copy()
-    profile_data['city'] = '1'
 
     def setUp(self):
-        temp_data = self.signup_data.copy()
-        self.client.post(reverse('signup'), temp_data)
-        City.objects.create(name='Москва', pk=1)
+        super().setUp()
+        self.profile_data['city'] = '1'
+        City.objects.get_or_create(name='Москва', pk=1)
 
     def test_person_was_created(self):
         temp_data = self.profile_data.copy()
@@ -27,6 +22,7 @@ class TestPersonCreate(APITestCase):
         self.assertEqual(
             response.status_code, 201,
             msg='Неверный статус ответа при создании профиля пользователя'
+                f'\nОтвет: {response.data}'
         )
 
         user = User.objects.get(email=self.signup_data['email'])
@@ -48,7 +44,7 @@ class TestPersonCreate(APITestCase):
         temp_data = self.profile_data.copy()
         response = self.client.post(reverse('profile'), temp_data)
         self.assertEqual(
-            response.data['data'][0]['city'], 'Москва',
+            response.data['data'][0]['city']['name'], 'Москва',
             msg='Неверное отображение города в ответе при создании профиля пользователя'
         )
 
@@ -75,7 +71,8 @@ class TestPersonCreate(APITestCase):
              'birth_date' in response.data and
              'city' in response.data and
              response.status_code == 400), True,
-            msg='Неверный статус ответа при создании профиля пользователя с не переданными данными'
+            msg='Неверный статус ответа при создании профиля пользователя с не переданными данными\n'
+                f'Ответ: {response.data}'
         )
 
     def test_name_validation(self):

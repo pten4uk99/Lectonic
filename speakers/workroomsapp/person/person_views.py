@@ -23,7 +23,7 @@ class PersonAPIView(APIView):
         serializer.save()
 
         return person_responses.created([{
-            **serializer.validated_data,
+            **serializer.data,
             'user_id': request.user.pk
         }])
 

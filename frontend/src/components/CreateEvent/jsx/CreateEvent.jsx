@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react'
-import {connect} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import {connect} from 'react-redux'
+import {useNavigate} from 'react-router-dom'
 
 import calendarIcon from '~/assets/img/event/calendar-icon.svg'
 import photoIcon from '~/assets/img/photo-icon.svg'
@@ -9,44 +9,44 @@ import {
   SwapEventType, SwapPayment, SwapPlace,
   UpdateDomain,
   UpdatePhoto
-} from "../redux/actions/event";
-import {createEvent, getDomainArray} from "../ajax/event";
-import {reverse} from "../../../ProjectConstants";
-import Modal from "../../Layout/jsx/Modal";
-import {ActivateModal} from "../../Layout/redux/actions/header";
-import CalendarModal, {getMonth} from "./CalendarModal";
+} from '../redux/actions/event'
+import {createEvent, getDomainArray} from '../ajax/event'
+import {reverse} from '../../../ProjectConstants'
+import Modal from '../../Layout/jsx/Modal'
+import {ActivateModal} from '../../Layout/redux/actions/header'
+import CalendarModal, {getMonth} from './CalendarModal'
 
 
 function CreateEvent(props) {
   let navigate = useNavigate()
   useEffect(() => {
     if (
-      !props.store.permissions.is_lecturer && 
+      !props.store.permissions.is_lecturer &&
       !props.store.permissions.is_customer
     ) navigate(reverse('add_role'))
   }, [props.store.permissions.is_lecturer, props.store.permissions.is_customer])
 
-  
+
   let checkedDate = props.store.calendar.checkedDate
   let selectedDomains = props.store.event.domain
   let eventType = props.store.event.type
   let place = props.store.event.place
   let payment = props.store.event.payment
   let titlePhotoSrc = props.store.event.photo
-  
+
   let [requiredFields, setRequiredFields] = useState({
     name: '',
     date: checkedDate,
     // timeStart: '',
     // timeEnd: ''
   })
-  
+
   useEffect(() => {
     setRequiredFields({...requiredFields, date: checkedDate})
   }, [checkedDate])
-  
+
   let [domainArray, setDomainArray] = useState(null)
-  
+
   useEffect(() => {
     props.UpdatePhoto('')
     getDomainArray()
@@ -54,7 +54,7 @@ function CreateEvent(props) {
       .then(data => setDomainArray(data.data))
       .catch(error => console.log(error))
   }, [])
-  
+
   useEffect(() => {
     if (selectedDomains.length > 0 && domainArray) {
       let newDomainArray
@@ -62,22 +62,23 @@ function CreateEvent(props) {
       setDomainArray(newDomainArray)
     }
   }, [selectedDomains])
-  
+
   function submitFormHandler(e) {
     e.preventDefault()
     let formData = new FormData(e.target)
-    selectedDomains.map((elem) => formData.append('domain',  elem))
+    selectedDomains.map((elem) => formData.append('domain', elem))
     formData.set(
-      'date', 
-      `${requiredFields.date.getFullYear()}-${requiredFields.date.getMonth() + 1}-${requiredFields.date.getDate()}`)
+      'date',
+      `${requiredFields.date.getUTCFullYear()}-${requiredFields.date.getUTCMonth() + 1}-${requiredFields.date.getUTCDate()}`)
     formData.set('type', eventType)
     createEvent(formData)
       .then(response => response.json())
       .then(data => {
-        if (data.status === 'created') navigate(reverse('workroom'))})
+        if (data.status === 'created') navigate(reverse('workroom'))
+      })
       .catch(error => console.log('Ошибка в создании лекции: ', error))
   }
-  
+
   return (
     <form onSubmit={(e) => submitFormHandler(e)}>
       <div className='create-event__wrapper'>
@@ -90,25 +91,25 @@ function CreateEvent(props) {
             слушатели могли откликнуться.
           </h2>
         </div>
-        
+
         <div className='cover-l label'>
           Обложка:
           <span className="required-sign step-block__required-sign">*</span>
         </div>
         <label className={titlePhotoSrc ? 'cover' : 'cover no-photo'}>
-          <img className='icon' 
-               src={photoIcon} 
+          <img className='icon'
+               src={photoIcon}
                alt='photo-icon'/>
-            <span className='add-photo'>Добавить фото</span>
-            <input name='photo'
-                   className='add-photo__input'
-                   type='file'
-                   onChange={e => addPhotoHandler(e, props.UpdatePhoto)}/>
+          <span className='add-photo'>Добавить фото</span>
+          <input name='photo'
+                 className='add-photo__input'
+                 type='file'
+                 onChange={e => addPhotoHandler(e, props.UpdatePhoto)}/>
           <img className='title-img'
                src={titlePhotoSrc}
                alt='Обложка'/>
         </label>
-        
+
         <div className='domain-l label'>
           Тематика:
           <span className="required-sign step-block__required-sign">*</span>
@@ -116,41 +117,44 @@ function CreateEvent(props) {
         <div className='domains'>
           <div className='domain-list flex'>
             <select className='selector'
-                    style={{ backgroundImage: `url(${downArrow})` }} 
+                    style={{backgroundImage: `url(${downArrow})`}}
                     onChange={e => domainSelectHandler(e, props)}>
               <option value='' disabled selected>Выберите тематику</option>
               {domainArray ? domainArray.map((elem) => {
                 return <option key={elem.id} value={elem.id}>{elem.name}</option>
-              }): <></>}
+              }) : <></>}
             </select>
             {selectedDomains.map((domain, index) => {
               return <div key={index} className='pill pill-grey'>{domain}</div>
             })}
           </div>
         </div>
-        
+
         <div className='topic-l label'>
           Тема лекции:
           <span className="required-sign step-block__required-sign">*</span>
         </div>
         <div className='topic flex'>
-          <input name='name' 
-                 type='text' 
-                 className='text-input' 
+          <input name='name'
+                 type='text'
+                 className='text-input'
                  autoComplete='none'
                  onChange={(e) => setRequiredFields({...requiredFields, name: e.target.value})}/>
         </div>
-        
+
         <div className='type-l label'>Тип лекции:</div>
         <div className='type flex'>
-          <div className={eventType !== 'online' ? 'pill' : 'pill pill-blue'} 
-               onClick={() => props.SwapEventType('online')}>Онлайн</div>
-          <div className={eventType !== 'offline' ? 'pill' : 'pill pill-blue'} 
-               onClick={() => props.SwapEventType('offline')}>Оффлайн</div>
-          <div className={eventType !== 'hybrid' ? 'pill' : 'pill pill-blue'} 
-               onClick={() => props.SwapEventType('hybrid')}>Гибрид</div>
+          <div className={eventType !== 'online' ? 'pill' : 'pill pill-blue'}
+               onClick={() => props.SwapEventType('online')}>Онлайн
+          </div>
+          <div className={eventType !== 'offline' ? 'pill' : 'pill pill-blue'}
+               onClick={() => props.SwapEventType('offline')}>Оффлайн
+          </div>
+          <div className={eventType !== 'hybrid' ? 'pill' : 'pill pill-blue'}
+               onClick={() => props.SwapEventType('hybrid')}>Гибрид
+          </div>
         </div>
-        
+
         <div className='date-l label'>
           Дата:
           <span className="required-sign step-block__required-sign">*</span>
@@ -158,19 +162,19 @@ function CreateEvent(props) {
         <div className='date flex'>
           <div className='open-calendar' onClick={props.ActivateModal}>
             <img src={calendarIcon} alt=""/>
-            {checkedDate ? 
+            {checkedDate ?
               <div className="calendar-modal__date ml-8">
                 {checkedDate.getDate()} {getMonth(checkedDate.getMonth())}
-              </div> : 
+              </div> :
               <div className='date-link'>Открыть календарь</div>}
-            
+
           </div>
-          <Modal styleWrapper={{background: 'background: rgba(0, 5, 26, 1)'}} 
+          <Modal styleWrapper={{background: 'background: rgba(0, 5, 26, 1)'}}
                  styleBody={{width: 1045, height: 681}}>
-              <CalendarModal/>
+            <CalendarModal/>
           </Modal>
         </div>
-        
+
         <div className='time-l label'>
           Время:
           <span className="required-sign step-block__required-sign">*</span>
@@ -181,59 +185,64 @@ function CreateEvent(props) {
           <span>до</span>
           <input name='time_end' type="time"/>
         </div>
-        
+
         <div className='workspace-l label'>Помещение для лекции:</div>
         <div className='workspace flex'>
-          <div className={place ? 'pill pill-blue': 'pill'}
-               onClick={() => props.SwapPlace(true)}>Есть</div>
+          <div className={place ? 'pill pill-blue' : 'pill'}
+               onClick={() => props.SwapPlace(true)}>Есть
+          </div>
           <div className={place ? 'pill' : 'pill pill-blue'}
-               onClick={() => props.SwapPlace(false)}>Нет</div>
+               onClick={() => props.SwapPlace(false)}>Нет
+          </div>
         </div>
-        
+
         <div className={place ? 'address-l label' : 'address-l label disabled'}>Адрес:</div>
         <div className='address flex'>
-          <textarea name='hall_address' 
-                    className='text-area' 
+          <textarea name='hall_address'
+                    className='text-area'
                     placeholder='Введите адрес помещения для лекций'
                     rows='4'
                     readOnly={!place}/>
         </div>
-        
+
         <div className='equip-l label'>Оборудование:</div>
         <div className='equip flex'>
-          <textarea name='equipment' 
-                    className='text-area' 
+          <textarea name='equipment'
+                    className='text-area'
                     rows='4'
                     placeholder='Перечислите имеющееся для лекции оборудование'/>
         </div>
-        
+
         <div className='desc-l label'>Описание:</div>
         <div className='desc flex'>
-          <textarea name='description' 
-                    className='text-area' 
+          <textarea name='description'
+                    className='text-area'
                     rows='5'
                     placeholder='Опишите лекцию'/>
         </div>
-        
+
         <div className='fee-l label'>Цена лекции:</div>
         <div className='fee'>
           <div className='flex'>
-            <div className={payment ? 'pill pill-blue' : 'pill'} 
-                 onClick={() => props.SwapPayment(true)}>Платно</div>
-            <div className={payment ? 'pill' : 'pill pill-blue'} 
-                 onClick={() => props.SwapPayment(false)}>Бесплатно</div>
+            <div className={payment ? 'pill pill-blue' : 'pill'}
+                 onClick={() => props.SwapPayment(true)}>Платно
+            </div>
+            <div className={payment ? 'pill' : 'pill pill-blue'}
+                 onClick={() => props.SwapPayment(false)}>Бесплатно
+            </div>
           </div>
-          {payment ? <input name='cost' 
-                            className='text-input' 
-                            type='number' 
+          {payment ? <input name='cost'
+                            className='text-input'
+                            type='number'
                             step={1000}
                             min={0}
                             placeholder='Укажите цену'/> : <></>}
         </div>
         <div className='submit'>
-          <button className='btn big-button' 
-                  type='submit' 
-                  disabled={checkRequiredFields(requiredFields, props)}>Создать</button>
+          <button className='btn big-button'
+                  type='submit'
+                  disabled={checkRequiredFields(requiredFields, props)}>Создать
+          </button>
         </div>
       </div>
     </form>
@@ -256,24 +265,24 @@ export default connect(
 export function addPhotoHandler(inputEvent, UpdatePhoto) {
   let file = inputEvent.target.files[0]
   let reader = new FileReader()
-  reader.readAsDataURL(file);
-  
+  reader.readAsDataURL(file)
+
   reader.onload = () => {
     UpdatePhoto(reader.result)
   }
 }
 
 export function domainSelectHandler(e, props) {
-  if (props.store.event.domain.length >= 10) return e.target.value = '';
-  let selectedDomain = e.target.selectedOptions[0].innerHTML;
-  
-  props.UpdateDomain(selectedDomain);
-  e.target.value = '';
+  if (props.store.event.domain.length >= 10) return e.target.value = ''
+  let selectedDomain = e.target.selectedOptions[0].innerHTML
+
+  props.UpdateDomain(selectedDomain)
+  e.target.value = ''
 }
 
 function checkRequiredFields(obj, props) {
   if ((props.store.event.domain.length < 1) || !props.store.event.photo) return true
-  
+
   for (let field in obj) {
     if (!obj[field]) return true
   }

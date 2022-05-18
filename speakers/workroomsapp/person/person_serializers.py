@@ -92,15 +92,15 @@ class PersonSerializer(serializers.ModelSerializer):
         photo.name = 'photo.' + image_format
         return photo
 
-
-class PersonGetSerializer(PersonSerializer):
-    photo = PersonPhotoGetSerializer
-
     def to_representation(self, instance):
         data = super().to_representation(instance)
         city = City.objects.get(pk=data.pop('city'))
         data['city'] = {'name': city.name, 'region': city.region, 'id': city.pk}
         return data
+
+
+class PersonGetSerializer(PersonSerializer):
+    photo = PersonPhotoGetSerializer
 
 
 class PersonPatchSerializer(PersonSerializer):
@@ -111,8 +111,3 @@ class PersonPatchSerializer(PersonSerializer):
             default_storage.delete(instance.photo.path)
         return super().update(instance, validated_data)
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        city = City.objects.get(pk=data.pop('city'))
-        data['city'] = {'name': city.name, 'region': city.region, 'id': city.pk}
-        return data

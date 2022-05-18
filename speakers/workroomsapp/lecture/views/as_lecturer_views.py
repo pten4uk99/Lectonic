@@ -46,7 +46,7 @@ class LectureAsLecturerAPIView(APIView):
         for lecture in created_lectures:
             lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
             lowest = lowest.get('maximum')
-            if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
+            if lowest > datetime.datetime.now():
                 lectures_list.append(lecture)
 
         serializer = LecturesGetSerializer(
