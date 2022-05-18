@@ -35,7 +35,7 @@ class ConfirmedLecturesMixin(LecturesListBaseMixin):
 
         lectures = getattr(self.request.user.person, query_from).lectures.filter(
             lecture_requests__respondent_obj__confirmed=True,
-            lecture_requests__event__datetime_start__gte=datetime.datetime.now(tz=datetime.timezone.utc))
+            lecture_requests__event__datetime_start__gte=datetime.datetime.now())
 
         for self_lecture in lectures:
             if getattr(self_lecture, query_from) and self_lecture not in lecture_list:
@@ -51,7 +51,7 @@ class ConfirmedLecturesMixin(LecturesListBaseMixin):
 
         respondents = self.request.user.person.respondent_obj.filter(
             confirmed=True,
-            lecture_request__event__datetime_start__gte=datetime.datetime.now(tz=datetime.timezone.utc))
+            lecture_request__event__datetime_start__gte=datetime.datetime.now())
 
         for respondent in respondents:
             lecture = respondent.lecture_request.lecture
@@ -87,7 +87,7 @@ class PotentialLecturesMixin(LecturesListBaseMixin):
                 lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
                 lowest = lowest.get('maximum')
 
-                if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
+                if lowest > datetime.datetime.now():
                     lecture_list.append(lecture)
 
         return lecture_list
@@ -170,7 +170,7 @@ class PotentialCustomerLecturesGetAPIView(LecturesGetAPIView, PotentialLecturesM
 #             aggregate = lecture.lecture_requests.aggregate(min=Min('event__datetime_start'))
 #             minimum = aggregate.get('min')
 #
-#             if (minimum < datetime.datetime.now(tz=datetime.timezone.utc) and
+#             if (minimum < datetime.datetime.now() and
 #                     lecture.lecture_requests.filter(respondent_obj__confirmed=True)):
 #                 lectures_list.append(lecture)
 #
