@@ -30,7 +30,7 @@ class LectureAsCustomerAPIView(APIView):
             lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
             lowest = lowest.get('maximum')
 
-            if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
+            if lowest > datetime.datetime.now():
                 filtered_lectures.append(lecture)
 
         return filtered_lectures
