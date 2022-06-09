@@ -1,7 +1,5 @@
 import datetime
 
-import pytz
-
 
 def convert_datetime(str_start, str_end):
     start = datetime.datetime.strptime(str_start, '%Y-%m-%dT%H:%M')

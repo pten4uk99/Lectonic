@@ -1,6 +1,4 @@
-from datetime import timezone, timedelta, datetime
-
-import pytz
+from datetime import timedelta, datetime
 
 SIGNUP = {'email': 'admin@admin.ru', 'password': '12345678'}
 SIGNUP2 = {'email': 'admin2@admin.ru', 'password': '12345678'}
@@ -8,6 +6,7 @@ SIGNUP2 = {'email': 'admin2@admin.ru', 'password': '12345678'}
 PROFILE = {
     'first_name': 'Пётр-Петр',
     'bgc_number': '1',
+    'city_id': '1',
     'last_name': 'Петр',
     'middle_name': 'Петрович',
     'birth_date': '2020-01-18',

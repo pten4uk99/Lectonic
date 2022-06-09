@@ -51,7 +51,7 @@ function Lecture(props) {
     setResponseLoaded(false)
     let text = e.target.innerText
     let dates = props.store.lectureDetail.chosenDates.map(
-      elem => `${elem.getUTCFullYear()}-${elem.getUTCMonth() + 1}-${elem.getUTCDate()}T${elem.getUTCHours()}:${elem.getUTCMinutes()}`)
+      elem => `${elem.getFullYear()}-${elem.getMonth() + 1}-${elem.getDate()}T${elem.getHours()}:${elem.getMinutes()}`)
     
     if (lectureData) {
       if (lectureData.can_response) {

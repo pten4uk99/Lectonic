@@ -1,16 +1,15 @@
-import logging
-
 from channels.layers import get_channel_layer
+from django.core import exceptions
 from django.db import transaction
-from django.db.models import Max, Min
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
 from chatapp.chatapp_serializers import ChatSerializer
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.serializers.as_lecturer_serializers import *
-from workroomsapp.lecture.utils.response_on_lecture import *
-from workroomsapp.models import Lecturer, Customer
+from workroomsapp.lecture.services.api import serialize_created_lectures, service_delete_lecture_by_id
+from workroomsapp.lecture.services.filters import AttrNames
+from workroomsapp.lecture.services.response_on_lecture import *
 from workroomsapp.utils import workroomsapp_permissions
 
 channel_layer = get_channel_layer()
@@ -21,12 +20,15 @@ class LectureAsLecturerAPIView(APIView):
     permission_classes = [workroomsapp_permissions.IsLecturer |
                           workroomsapp_permissions.IsCustomer]
 
+    def get_lecturer(self, id_):
+        lecturer = Lecturer.objects.filter(pk=id_).first()
+        if not lecturer:
+            raise exceptions.ObjectDoesNotExist('Объекта не существует в базе данных')
+        return lecturer
+
     @swagger_auto_schema(**lecture_docs.LectureAsLecturerCreateDoc)
     def post(self, request):
-        serializer = LectureCreateAsLecturerSerializer(
-            data=request.data,
-            context={'request': request}
-        )
+        serializer = LectureCreateAsLecturerSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return lecture_responses.lecture_created()
@@ -34,24 +36,12 @@ class LectureAsLecturerAPIView(APIView):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
         lecturer_id = request.GET.get('id')
-        created_lectures = []
 
-        if not lecturer_id:
-            if hasattr(request.user.person, 'lecturer'):
-                created_lectures = request.user.person.lecturer.lectures.all()
-        else:
-            created_lectures = Lecturer.objects.get(pk=lecturer_id).lectures.all()
+        person = request.user.person
+        if lecturer_id:
+            person = self.get_lecturer(lecturer_id).person
 
-        lectures_list = []
-        for lecture in created_lectures:
-            lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
-            lowest = lowest.get('maximum')
-            if lowest > datetime.datetime.now():
-                lectures_list.append(lecture)
-
-        serializer = LecturesGetSerializer(
-            lectures_list, many=True, context={'request': request})
-
+        serializer = serialize_created_lectures(request, person, from_attr=AttrNames.LECTURER)
         return lecture_responses.success_get_lectures(serializer.data)
 
     @swagger_auto_schema(deprecated=True)
@@ -61,19 +51,7 @@ class LectureAsLecturerAPIView(APIView):
         if not lecture_id:
             lecture_responses.not_in_data()
 
-        lecture = Lecture.objects.filter(pk=lecture_id).first()
-
-        if not lecture:
-            return lecture_responses.does_not_exist()
-
-        if lecture.lecturer:
-            if not lecture.lecturer.person.user == request.user:
-                return lecture_responses.not_a_creator()
-        elif lecture.customer:
-            if not lecture.customer.person.user == request.user:
-                return lecture_responses.not_a_creator()
-
-        lecture.delete()
+        service_delete_lecture_by_id(user=request.user, lecture_id=lecture_id)
         return lecture_responses.lecture_deleted()
 
 
@@ -84,6 +62,8 @@ class LectureDetailAPIView(APIView):
             return lecture_responses.not_in_data()
 
         lecture = Lecture.objects.filter(pk=pk)
+        # .first() сразу не берется, чтобы в сериализатор передавался Queryset,
+        # а не один объект Lecture
 
         if not lecture.first():
             return lecture_responses.does_not_exist()

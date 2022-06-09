@@ -36,7 +36,10 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
         ]
 
     def get_creator_obj(self):
-        return self.context['request'].user.person.lecturer
+        lecturer = self.context['request'].user.person.lecturer
+        if not lecturer:
+            raise serializers.ValidationError('Пользователь не является лектором')
+        return lecturer
 
     def validate_lecture(self, lecture):
         image_format = lecture.name.split('.')[-1]
@@ -62,15 +65,15 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
         return dates
 
     def create(self, validated_data):
-        return Lecture.objects.create_as_lecturer(
-            lecturer=self.context['request'].user.person.lecturer,
+        return Lecture.objects.create_lecture(
+            lecturer=self.get_creator_obj(),
             name=validated_data.get('name'),
             svg=validated_data.get('svg'),
             domain=validated_data.get('domain'),
             datetime=validated_data.get('datetime'),
             hall_address=validated_data.get('hall_address'),
             equipment=validated_data.get('equipment'),
-            lecture_type=validated_data.get('type'),
+            type=validated_data.get('type'),
             cost=validated_data.get('cost', 0),
             description=validated_data.get('description'),
         )
@@ -80,11 +83,14 @@ class LectureCreateAsCustomerSerializer(LectureCreateAsLecturerSerializer):
     listeners = serializers.IntegerField()
 
     def get_creator_obj(self):
-        return self.context['request'].user.person.customer
+        customer = self.context['request'].user.person.customer
+        if not customer:
+            raise serializers.ValidationError('Пользователь не является заказчиком')
+        return customer
 
     def create(self, validated_data):
-        return Lecture.objects.create_as_customer(
-            customer=self.context['request'].user.person.customer,
+        return Lecture.objects.create_lecture(
+            customer=self.get_creator_obj(),
             name=validated_data.get('name'),
             svg=validated_data.get('svg'),
             domain=validated_data.get('domain'),
@@ -92,7 +98,7 @@ class LectureCreateAsCustomerSerializer(LectureCreateAsLecturerSerializer):
             hall_address=validated_data.get('hall_address'),
             equipment=validated_data.get('equipment'),
             listeners=validated_data.get('listeners'),
-            lecture_type=validated_data.get('type'),
+            type=validated_data.get('type'),
             cost=validated_data.get('cost', 0),
             description=validated_data.get('description'),
         )

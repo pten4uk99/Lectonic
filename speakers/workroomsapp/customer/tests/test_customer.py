@@ -24,6 +24,15 @@ class TestCustomerCreate(BaseCustomerCreateTestCase):
             msg='Заказчик не был создан в базе данных'
         )
 
+    def test_customer_success_get(self):
+        self.client.post(reverse('customer'), self.customer_data)
+        response = self.client.get(reverse('customer'), {'id': Customer.objects.first().pk})
+        self.assertEqual(
+            response.status_code, 200,
+            msg='Неверный статус ответа при получении профиля лектора\n'
+                f'Ответ: {response.data}'
+        )
+
     def test_credentials(self):
         temp_data = self.customer_data.copy()
         self.client.get(reverse('logout'))

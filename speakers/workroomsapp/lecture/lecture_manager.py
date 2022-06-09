@@ -10,7 +10,7 @@ class LectureManager(models.Manager):
     def __create_dependences(self, **kwargs):
         if not kwargs.get('lecturer') and not kwargs.get('customer'):
             raise exceptions.ValidationError('В объектный менеджер не передан объект создателя лекции')
-        if not kwargs.get('lecture_type'):
+        if not kwargs.get('type'):
             raise exceptions.ValidationError('В менеджер не передан тип лекции')
 
         optional = workrooms_models.Optional.objects.create(
@@ -22,7 +22,7 @@ class LectureManager(models.Manager):
             name=kwargs.get('name'),
             svg=kwargs.get('svg'),
             optional=optional,
-            type=kwargs.get('lecture_type'),
+            type=kwargs.get('type'),
             listeners=kwargs.get('listeners'),
             cost=kwargs.get('cost'),
             description=kwargs.get('description')
@@ -53,8 +53,5 @@ class LectureManager(models.Manager):
         calendar.save()
         return lecture
 
-    def create_as_lecturer(self, **kwargs):
-        return self.__create_dependences(**kwargs)
-
-    def create_as_customer(self, **kwargs):
+    def create_lecture(self, **kwargs):
         return self.__create_dependences(**kwargs)

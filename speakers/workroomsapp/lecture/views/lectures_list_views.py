@@ -1,12 +1,12 @@
 import datetime
 
-from django.db.models import Min, Max
+from django.db.models import Max
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.serializers.as_lecturer_serializers import LecturesGetSerializer
-from workroomsapp.models import Customer, Person, Lecturer
+from workroomsapp.models import Customer, Lecturer
 
 
 class LecturesListBaseMixin:

@@ -1,39 +1,22 @@
-from django.db.models import Max
+from django.core import exceptions
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.serializers.as_lecturer_serializers import *
-from workroomsapp.models import Customer, Lecturer
+from workroomsapp.lecture.services.api import serialize_created_lectures
+from workroomsapp.lecture.services.filters import AttrNames
 from workroomsapp.utils import workroomsapp_permissions
 
 
 class LectureAsCustomerAPIView(APIView):
     permission_classes = [workroomsapp_permissions.IsCustomer]
 
-    def get_all_lectures(self):
-        customer_id = self.request.GET.get('id')
-        created_lectures = []
-
-        if not customer_id:
-            if hasattr(self.request.user.person, 'customer'):
-                created_lectures = self.request.user.person.customer.lectures.all()
-        else:
-            created_lectures = Customer.objects.get(pk=customer_id).lectures.all()
-        return created_lectures
-
-    def filter_lectures(self):
-        lectures = self.get_all_lectures()
-        filtered_lectures = []
-
-        for lecture in lectures:
-            lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
-            lowest = lowest.get('maximum')
-
-            if lowest > datetime.datetime.now():
-                filtered_lectures.append(lecture)
-
-        return filtered_lectures
+    def get_customer(self, id_):
+        customer = Customer.objects.filter(pk=id_).first()
+        if not customer:
+            raise exceptions.ObjectDoesNotExist('Объекта не существует в базе данных')
+        return customer
 
     @swagger_auto_schema(deprecated=True)
     def post(self, request):
@@ -47,9 +30,11 @@ class LectureAsCustomerAPIView(APIView):
 
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        serializer = LecturesGetSerializer(
-            self.filter_lectures(),
-            many=True,
-            context={'request': request}
-        )
+        customer_id = request.GET.get('id')
+
+        person = request.user.person
+        if customer_id:
+            person = self.get_customer(customer_id).person
+
+        serializer = serialize_created_lectures(request, person, from_attr=AttrNames.CUSTOMER)
         return lecture_responses.success_get_lectures(serializer.data)

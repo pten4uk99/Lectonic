@@ -31,7 +31,5 @@ class CustomerAPIView(APIView):
             return customer_responses.customer_does_not_exist()
 
         serializer = CustomerGetSerializer(customer, many=True, context={'request': request})
-        city_id = serializer.data[0]['person']['city']
-        serializer.data[0]['person']['city'] = City.objects.get(pk=city_id).name
         return customer_responses.success_get_customer(serializer.data)
 

@@ -11,7 +11,7 @@ class TestCityGet(SignUpTestCase):
             City.objects.create(name=name, pk=index + 1)
 
     def test_credentials(self):
-        super().test_credentials()
+        self.client.get(reverse('logout'))
         response = self.client.get(reverse('city'), {'name': 'Москва'})
         self.assertEqual(
             response.status_code, 401,

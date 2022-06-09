@@ -1,5 +1,4 @@
 import datetime
-import pytz
 from datetime import timedelta
 
 from django.urls import reverse
@@ -8,28 +7,7 @@ from workroomsapp.models import *
 from workroomsapp.customer.tests.base import CustomerCreateTestCase
 from workroomsapp.lecturer.tests.base import LecturerCreateTestCase
 from speakers.utils.tests import data
-
-
-def get_str_range_datetime(now_plus: timedelta = timedelta(hours=0),
-                           end_plus: timedelta = None,
-                           end_minus: timedelta = None) -> str:
-    """
-    Принимает timedelta начала и конца промежутка даты и преобразовывает к строке вида:
-    'YYYY-MM-DDThh:mm,YYYY-MM-DDThh:mm'
-    """
-
-    start = datetime.datetime.now() + now_plus
-
-    if end_plus and end_minus:
-        raise AttributeError('В функцию нельзя передать оба аргумента: (end_plus, end_minus)')
-    if end_plus is not None:
-        end = start + end_plus
-    elif end_minus is not None:
-        end = start - end_minus
-    else:
-        raise AttributeError('В функцию необходимо передать один из аргументов (end_plus, end_minus)')
-
-    return start.strftime('%Y-%m-%dT%H:%M') + ',' + end.strftime('%Y-%m-%dT%H:%M')
+from workroomsapp.person.tests.base import get_str_range_datetime
 
 
 class LectureTestCaseMixin:

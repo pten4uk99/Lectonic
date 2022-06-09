@@ -5,7 +5,7 @@ from workroomsapp.lecturer.tests.base import BaseLecturerCreateTestCase
 from workroomsapp.models import Person, Lecturer
 
 
-class TestLecturerCreate(BaseLecturerCreateTestCase):
+class TestLecturer(BaseLecturerCreateTestCase):
     def setUp(self):
         super().setUp()
 
@@ -20,6 +20,15 @@ class TestLecturerCreate(BaseLecturerCreateTestCase):
             Lecturer.objects.filter(person=Person.objects.get(user=User.objects.first())).exists(),
             True,
             msg='Лектор не был создан в базе данных'
+        )
+
+    def test_lecturer_success_get(self):
+        self.client.post(reverse('lecturer'), self.lecturer_data)
+        response = self.client.get(reverse('lecturer'), {'id': Lecturer.objects.first().pk})
+        self.assertEqual(
+            response.status_code, 200,
+            msg='Неверный статус ответа при получении профиля лектора\n'
+                f'Ответ: {response.data}'
         )
 
     def test_credentials(self):

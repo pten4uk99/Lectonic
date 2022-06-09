@@ -58,12 +58,12 @@ function RolePage(props) {
         })
         .catch((error) => console.log(error))
       
-      getLecturesHistory('customer', customerId)
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') setLecturesHistory(data.data)
-        })
-        .catch((error) => console.log(error))
+    //   getLecturesHistory('customer', customerId)
+    //     .then(response => response.json())
+    //     .then(data => {
+    //       if (data.status === 'success') setLecturesHistory(data.data)
+    //     })
+    //     .catch((error) => console.log(error))
     }
   }, [])
   
@@ -95,7 +95,7 @@ function RolePage(props) {
                     </div>
                     <div>
                         <div className='rolepage__tag tag-role'>{customerId ? "Заказчик" : "Лектор"}</div>
-                        <div className='rolepage__tag tag-city'>г. {data?.person.city}</div>
+                        <div className='rolepage__tag tag-city'>г. {data?.person.city.name}</div>
                     </div>
                 </div>
             </div>

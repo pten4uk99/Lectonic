@@ -3,7 +3,6 @@ import datetime
 import os
 
 from django.db import models
-from django.utils import timezone
 
 
 class BaseEmailConfirmation(models.Model):
@@ -25,10 +24,10 @@ class BaseEmailConfirmation(models.Model):
         return binascii.hexlify(os.urandom(7)).decode()
 
     def check_lifetime(self):
-        return datetime.datetime.now(timezone.utc) - self.created_at < datetime.timedelta(minutes=15)
+        return datetime.datetime.now() - self.created_at < datetime.timedelta(minutes=15)
 
     def can_repeat_confirmation(self):
-        return datetime.datetime.now(timezone.utc) - self.created_at > datetime.timedelta(seconds=30)
+        return datetime.datetime.now() - self.created_at > datetime.timedelta(seconds=30)
 
     def __str__(self):
         return self.key

@@ -63,10 +63,10 @@ function LectureDates(props) {
               <span className="date">
                 {elem.startDate.getDate()} {getMonth(elem.startDate.getUTCMonth())}</span>
               <span className="time">
-                {elem.startDate.getUTCHours().toString().padStart(2, '0')}:
-                {elem.startDate.getUTCMinutes().toString().padStart(2, '0')}-
-                {elem.endDate.getUTCHours().toString().padStart(2, '0')}:
-                {elem.endDate.getUTCMinutes().toString().padStart(2, '0')}</span>
+                {elem.startDate.getHours().toString().padStart(2, '0')}:
+                {elem.startDate.getMinutes().toString().padStart(2, '0')}-
+                {elem.endDate.getHours().toString().padStart(2, '0')}:
+                {elem.endDate.getMinutes().toString().padStart(2, '0')}</span>
             </div>
           </div>
         })}

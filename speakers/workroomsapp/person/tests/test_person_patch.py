@@ -11,7 +11,7 @@ class TestPersonPatch(PersonCreateTestCase):
         City.objects.create(name='Ярославль', pk=2)
 
     def test_credentials(self):
-        super().test_credentials()
+        self.client.get(reverse('logout'))
         response = self.client.patch(reverse('profile'), {'city': '2'})
         self.assertEqual(
             response.status_code, 401,
