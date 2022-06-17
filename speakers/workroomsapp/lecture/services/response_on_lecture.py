@@ -4,9 +4,7 @@ import logging
 from chatapp.models import Chat, Message
 from workroomsapp.calendar.utils import get_model_from_attrs
 from workroomsapp.lecture import lecture_responses
-from workroomsapp.models import Lecture, Person
-from workroomsapp.utils.ws import WsMessageSender
-
+from workroomsapp.models import Lecture
 
 logger = logging.getLogger(__name__)
 

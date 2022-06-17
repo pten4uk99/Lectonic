@@ -3,8 +3,10 @@ from enum import Enum
 
 from django.db.models import QuerySet, Max
 
+from authapp.models import User
+from chatapp.models import Chat, Message
 from workroomsapp.lecture import lecture_responses
-from workroomsapp.models import Person, Lecture
+from workroomsapp.models import Person, Lecture, LectureRequest
 
 
 class AttrNames(Enum):
@@ -17,6 +19,54 @@ class LectureObjectManager:
 
     def __init__(self, from_attr: AttrNames = AttrNames.LECTURER):
         self._from_attr = from_attr.value
+
+    @staticmethod
+    def get_lecture_by_id(lecture_id: int) -> Lecture:
+        """ Получает лекцию из базы данных. Выбрасывает исключение, если лекции не существует. """
+
+        lecture = Lecture.objects.filter(pk=lecture_id).first()
+
+        if not lecture:
+            return lecture_responses.does_not_exist()
+        return lecture
+
+
+class ChatManager(LectureObjectManager):
+    @staticmethod
+    def get_chat_by_dates(dates: QuerySet[LectureRequest], creator: User, respondent: User) -> Chat:
+        """ Возвращает объект Chat у которого даты dates, и собеседники creator и respondent """
+
+        return Chat.objects.filter(
+            lecture_requests__in=dates, users=creator).filter(
+            users=respondent).first()
+
+    @staticmethod
+    def create_chat(lecture: Lecture) -> Chat:
+        return Chat.objects.create(lecture=lecture)
+
+    @staticmethod
+    def add_responses(chat: Chat, responses: QuerySet[LectureRequest], save: bool = True) -> None:
+        """ Добавляет даты responses в атрибут lecture_requests переданного объекта Chat """
+
+        chat.lecture_requests.add(*responses)
+        if save:
+            chat.save()
+
+    @staticmethod
+    def add_users(chat: Chat, creator: User, respondent: User, save: bool = True) -> None:
+        """ Добавляет даты responses в атрибут lecture_requests переданного объекта Chat """
+
+        chat.users.add(creator, respondent)
+        if save:
+            chat.save()
+
+    @staticmethod
+    def create_message(chat: Chat, author: User, text: str) -> Message:
+        return Message.objects.create(
+            author=author,
+            chat=chat,
+            text=text
+        )
 
 
 class GetLectureManager(LectureObjectManager):
@@ -83,19 +133,38 @@ class GetLectureManager(LectureObjectManager):
 
 class DeleteLectureManager(LectureObjectManager):
     @staticmethod
-    def get_lecture_by_id(lecture_id: int) -> Lecture:
-        """ Получает лекцию из базы данных. Выбрасывает исключение, если лекции не существует. """
-
-        lecture = Lecture.objects.filter(pk=lecture_id).first()
-
-        if not lecture:
-            return lecture_responses.does_not_exist()
-        return lecture
-
-    @staticmethod
     def delete(lecture: Lecture) -> int:
         """ Удаляет лекцию """
 
         id_ = lecture.pk
         lecture.delete()
         return id_
+
+
+class LectureResponseManager(LectureObjectManager):
+    @staticmethod
+    def get_person_rejected_lecture_requests(person: Person, lecture: Lecture) -> QuerySet[LectureRequest]:
+        """ Возвращает список дат лекции, на которые пользователь
+         получил отклонение отклика хотябы на одну из дат лекции """
+
+        return lecture.lecture_requests.filter(
+            respondents=person, respondent_obj__rejected=True)
+
+    @staticmethod
+    def get_responses(lecture: Lecture, dates: list[datetime.datetime]) -> QuerySet[LectureRequest]:
+        """ Возвращает все объекты LectureRequest переданной лекции с выбранными датами """
+
+        responses = lecture.lecture_requests.filter(
+            event__datetime_start__in=dates)
+
+        if not responses:
+            return lecture_responses.does_not_exist()
+        return responses
+
+    @staticmethod
+    def add_respondent(person: Person, responses: QuerySet[LectureRequest]) -> None:
+        """ Принимает даты лекции, на которые надо откликнуться пользователю (person) """
+
+        for response_request in responses:
+            response_request.respondents.add(person)
+            response_request.save()

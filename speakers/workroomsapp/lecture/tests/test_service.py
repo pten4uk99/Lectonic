@@ -2,7 +2,7 @@ from typing import Union
 
 from rest_framework.test import APITestCase
 
-from workroomsapp.lecture.services.service import delete_lecture_by_id
+from workroomsapp.lecture.services.api import service_delete_lecture_by_id
 from workroomsapp.models import Lecturer, Lecture
 from workroomsapp.person.tests.base import LecturerTestManager, CustomerTestManager, LectureTestManager
 
@@ -19,7 +19,7 @@ class ServiceTestCase(APITestCase):
 
     def test_delete_lecture_by_id(self):
         lecture_count = Lecture.objects.all().count()
-        delete_lecture_by_id(Lecturer.objects.first().person.user, Lecture.objects.first().pk)
+        service_delete_lecture_by_id(Lecturer.objects.first().person.user, Lecture.objects.first().pk)
 
         self.assertEqual(
             lecture_count - 1,

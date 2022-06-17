@@ -7,7 +7,8 @@ from rest_framework.views import APIView
 from chatapp.chatapp_serializers import ChatSerializer
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.serializers.as_lecturer_serializers import *
-from workroomsapp.lecture.services.api import serialize_created_lectures, service_delete_lecture_by_id
+from workroomsapp.lecture.services.api import serialize_created_lectures, service_delete_lecture_by_id, \
+    service_response_to_lecture
 from workroomsapp.lecture.services.filters import AttrNames
 from workroomsapp.lecture.services.response_on_lecture import *
 from workroomsapp.utils import workroomsapp_permissions
@@ -113,19 +114,27 @@ class LectureResponseAPIView(APIView, LectureResponseMixin):
 
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        with transaction.atomic():
-            self.check_can_response()  # может ли пользователь откликаться на эту лекцию
-            self.add_respondent()  # добавляем откликнувшегося к лекции
-            chat = self.get_or_create_chat()
-            self.create_response_message()  # создаем сообщение по умолчанию при отклике
+        # with transaction.atomic():
+        #     self.check_can_response()  # может ли пользователь откликаться на эту лекцию
+        #     self.add_respondent()  # добавляем откликнувшегося к лекции
+        #     chat = self.get_or_create_chat()
+        #     self.create_response_message()  # создаем сообщение по умолчанию при отклике
+        #
+        #     chat_serializer = ChatSerializer(chat, context={'request': request})
+        #
+        #     self.send_ws_message(clients=[request.user, self.get_creator().user], message={
+        #         'type': 'new_respondent',
+        #         'respondent_id': self.request.user.pk,
+        #         **chat_serializer.data
+        #     })  # отправляем сообщение обоим собеседникам чата
 
-            chat_serializer = ChatSerializer(chat, context={'request': request})
+        lecture_id: int = self.request.GET.get('lecture')
+        dates: list[str] = self.request.GET.getlist('date')
 
-            self.send_ws_message(clients=[request.user, self.get_creator().user], message={
-                'type': 'new_respondent',
-                'respondent_id': self.request.user.pk,
-                **chat_serializer.data
-            })  # отправляем сообщение обоим собеседникам чата
+        if not lecture_id or not dates:
+            return lecture_responses.not_in_data()
+
+        service_response_to_lecture(request, lecture_id, dates)
 
         return lecture_responses.success_response()
 
