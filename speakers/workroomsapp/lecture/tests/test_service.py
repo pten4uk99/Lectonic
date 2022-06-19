@@ -1,5 +1,3 @@
-from typing import Union
-
 from rest_framework.test import APITestCase
 
 from workroomsapp.lecture.services.api import service_delete_lecture_by_id

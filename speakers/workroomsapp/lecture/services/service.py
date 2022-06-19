@@ -61,7 +61,7 @@ class WsService(Service):
         chat = self.chat_manager.get_chat_by_dates(
             self.responses,
             creator=self._lecture_creator.user,
-            respondent=self._from_obj.person
+            respondent=self._from_obj
         )
         return self.message_builder.new_respondent(chat)
 

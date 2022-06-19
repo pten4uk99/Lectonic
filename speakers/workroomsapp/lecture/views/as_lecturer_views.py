@@ -75,59 +75,12 @@ class LectureDetailAPIView(APIView):
         return lecture_responses.success_get_lectures(serializer.data)
 
 
-class LectureResponseAPIView(APIView, LectureResponseMixin):
+class LectureResponseAPIView(APIView):
     permission_classes = [workroomsapp_permissions.IsLecturer |
                           workroomsapp_permissions.IsCustomer]
 
-    def add_respondent(self):
-        for response_request in self.get_responses():
-            response_request.respondents.add(self.request.user.person)
-            response_request.save()
-        logger.info(f'responses: {self.get_responses()}')
-
-    def get_or_create_chat(self):
-        responses = self.get_responses()
-        chat = Chat.objects.filter(
-            lecture_requests__in=responses, users=self.get_creator().user).filter(
-            users=self.request.user).first()
-
-        if not chat:
-            chat = Chat.objects.create(lecture=self.get_lecture())
-            chat.lecture_requests.add(*responses)
-            chat.users.add(self.get_creator().user, self.request.user)
-            chat.save()
-        logger.info(f'chat: {chat}')
-        return chat
-
-    def create_response_message(self):
-        dates = []
-        for date in self.get_format_dates():
-            dates.append(date.strftime('%d.%m'))
-
-        message = Message.objects.create(
-            author=self.request.user,
-            chat=self.get_or_create_chat(),
-            text=f'Собеседник заинтересован в Вашем предложении. '
-                 f'Возможные даты проведения: {", ".join(dates)}.'
-        )
-        logger.info(f'text:{message.text}, author: {message.author}')
-
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        # with transaction.atomic():
-        #     self.check_can_response()  # может ли пользователь откликаться на эту лекцию
-        #     self.add_respondent()  # добавляем откликнувшегося к лекции
-        #     chat = self.get_or_create_chat()
-        #     self.create_response_message()  # создаем сообщение по умолчанию при отклике
-        #
-        #     chat_serializer = ChatSerializer(chat, context={'request': request})
-        #
-        #     self.send_ws_message(clients=[request.user, self.get_creator().user], message={
-        #         'type': 'new_respondent',
-        #         'respondent_id': self.request.user.pk,
-        #         **chat_serializer.data
-        #     })  # отправляем сообщение обоим собеседникам чата
-
         lecture_id: int = self.request.GET.get('lecture')
         dates: list[str] = self.request.GET.getlist('date')
 
