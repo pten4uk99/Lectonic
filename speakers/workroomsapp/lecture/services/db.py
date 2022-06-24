@@ -45,6 +45,10 @@ class ChatManager(LectureObjectManager):
         return Chat.objects.create(lecture=lecture)
 
     @staticmethod
+    def delete_chat(chat: Chat) -> None:
+        chat.delete()
+
+    @staticmethod
     def add_responses(chat: Chat, responses: QuerySet[LectureRequest], save: bool = True) -> None:
         """ Добавляет даты responses в атрибут lecture_requests переданного объекта Chat """
 
@@ -168,3 +172,12 @@ class LectureResponseManager(LectureObjectManager):
         for response_request in responses:
             response_request.respondents.add(person)
             response_request.save()
+
+
+class LectureCancelResponseManager(LectureObjectManager):
+    @staticmethod
+    def get_chat_from_lecture(lecture: Lecture, respondent: User) -> Chat:
+        chat = Chat.objects.filter(lecture=lecture, users=respondent).first()
+        # lecture_request = lecture.lecture_requests.filter(respondents=respondent.person).first()
+        # chat = lecture_request.chat_list.filter(users=respondent).first()
+        return chat

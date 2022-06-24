@@ -2,6 +2,7 @@ import datetime
 import logging
 
 from chatapp.models import Chat, Message
+from chatapp.services.ws_message import WsMessageSender
 from workroomsapp.calendar.utils import get_model_from_attrs
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.models import Lecture

@@ -1,57 +1,83 @@
+from django.db.models import QuerySet
 from django.http import HttpRequest
 
-from chatapp.chatapp_serializers import ChatSerializer
-from chatapp.models import Chat
-from dataclasses import dataclass
-from enum import Enum
-
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
-
-from chatapp.models import WsClient
+from authapp.models import User
+from chatapp.services.ws_message import WsMessage, WsEventTypes, WsMessageSender, WsMessageBuilder
+from speakers.service import Service
+from workroomsapp.lecture.services.db import ChatManager
+from workroomsapp.models import LectureRequest, Person
 
 
-class WsEventTypes(Enum):
-    new_respondent = 'new_respondent'
-    set_online_users = 'set_online_users'
-    remove_respondent = 'remove_respondent'
-    chat_message = 'chat_message'
-    read_messages = 'read_messages'
-    read_reject_chat = 'read_reject_chat'
+class WsService(Service):
+    message_builder = WsMessageBuilder
+    message_sender = WsMessageSender
+
+    def __init__(self, request: HttpRequest, from_obj: User, clients: list[User]):
+        super().__init__(from_obj)
+        self.message_builder = self.message_builder(request)
+        self.clients = clients
+
+    def _get_message(self) -> dict:
+        """ Возвращает сообщение для вебсокета """
+        pass
+
+    def setup(self) -> None:
+        """ Собирает и запускает последовательно необходимые действия класса """
+        pass
 
 
-@dataclass
-class WsMessage:
-    type_: WsEventTypes
-    kwargs: dict
+class LectureResponseWsService(WsService):
+    chat_manager = ChatManager
+    message_sender = WsMessageSender
 
-    def to_dict(self):
-        return {'type': self.type_.value, **self.kwargs}
-
-
-class WsMessageSender:
-    channel_layer = get_channel_layer()
-
-    def __init__(self, clients: list, message: WsMessage):
-        self.message = message.to_dict()
-        self.clients = WsClient.objects.filter(user__in=clients)
-
-    def send(self) -> None:
-        """ Отправляет вебсокет сообщение """
-
-        for client in self.clients:
-            async_to_sync(self.channel_layer.send)(getattr(client, 'channel_name', ''), self.message)
-
-
-class WsMessageBuilder:
-    def __init__(self, request: HttpRequest):
+    def __init__(self, request: HttpRequest, from_obj: User,
+                 clients: list[User], responses: QuerySet[LectureRequest],
+                 lecture_creator: Person):
+        super().__init__(request, from_obj, clients=clients)
         self.request = request
+        self.chat_manager = self.chat_manager()
+        self.responses = responses
+        self._lecture_creator = lecture_creator
 
-    def new_respondent(self, chat: Chat) -> dict:
-        """ Сериализует сообщение для вебсокета в json """
+    @property
+    def clients(self):
+        return self._clients
 
-        serializer = ChatSerializer(chat, context={'request': self.request})
-        return {
-            'respondent_id': self.request.user.pk,
-            **serializer.data
-        }
+    @clients.setter
+    def clients(self, value):
+        if not isinstance(value, list):
+            raise TypeError("Значение аттрибута clients должно быть списком")
+        for client in value:
+            if not isinstance(client, User):
+                raise TypeError("Получатель должен быть типа User")
+
+        self._clients = value
+
+    def _get_message(self):
+        chat = self.chat_manager.get_chat_by_dates(
+            self.responses,
+            creator=self._lecture_creator.user,
+            respondent=self.from_obj
+        )
+        return self.message_builder.new_respondent(chat)
+
+    def setup(self) -> None:
+        """ Создает сообщение для вебсокета и отправляет его """
+
+        message = WsMessage(type_=WsEventTypes.new_respondent, kwargs=self._get_message())
+        sender = self.message_sender(self.clients, message)
+        sender.send()
+
+
+class LectureCancelResponseWsService(WsService):
+    def __init__(self, request: HttpRequest, from_obj: User, clients: list[User], chat_id: int):
+        super().__init__(request, from_obj, clients=clients)
+        self.chat_id = chat_id
+
+    def _get_message(self):
+        return self.message_builder.remove_respondent(self.chat_id)
+
+    def setup(self):
+        message = WsMessage(type_=WsEventTypes.remove_respondent, kwargs=self._get_message())
+        sender = self.message_sender(self.clients, message)
+        sender.send()

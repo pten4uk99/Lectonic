@@ -8,7 +8,7 @@ from chatapp.chatapp_serializers import ChatSerializer
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.serializers.as_lecturer_serializers import *
 from workroomsapp.lecture.services.api import serialize_created_lectures, service_delete_lecture_by_id, \
-    service_response_to_lecture
+    service_response_to_lecture, service_cancel_response_to_lecture
 from workroomsapp.lecture.services.filters import AttrNames
 from workroomsapp.lecture.services.response_on_lecture import *
 from workroomsapp.utils import workroomsapp_permissions
@@ -96,60 +96,14 @@ class LectureCancelResponseAPIView(APIView, LectureCancelResponseMixin):
     permission_classes = [workroomsapp_permissions.IsLecturer |
                           workroomsapp_permissions.IsCustomer]
 
-    def remove_chat(self, lecture_request):
-        chat_list = getattr(lecture_request, 'chat_list', None)
-
-        if not chat_list:
-            chats = Chat.objects.filter(lecture=self.get_lecture())
-
-            for elem in chats:
-                if elem.users.all().count() < 2:
-                    elem.delete()
-
-            return lecture_responses.success_cancel([{'type': 'chat_does_not_exist'}])
-
-        chat = chat_list.filter(users=self.request.user).first()
-        logger.info(f'chat: {chat}')
-        chat_id = chat.pk
-        users = []
-
-        for user in chat.users.all():
-            users.append(user)
-
-        chat.delete()
-        return chat_id, users
-
-    def remove_respondent(self):
-        user_list = []
-        chat = None
-
-        for lecture_request in self.get_lecture().lecture_requests.all():
-            respondent_obj = lecture_request.respondent_obj.filter(person=self.request.user.person).first()
-
-            if respondent_obj and not respondent_obj.rejected:
-                lecture_request.respondents.remove(self.request.user.person)
-
-                if not chat:
-                    chat_id, users = self.remove_chat(lecture_request)
-
-                user_list = users
-                chat = chat_id
-                lecture_request.save()
-                logger.info(f'respondent_obj: {respondent_obj}, rejected: {respondent_obj.rejected}')
-
-        return chat, user_list
-
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        with transaction.atomic():
-            self.check_can_response()
-            chat_id, users = self.remove_respondent()  # удаляет откликнувшегося и
-            # возвращает id и собеседников удаленного чата
+        lecture_id: int = self.request.GET.get('lecture')
 
-            self.send_ws_message(clients=users, message={
-                    'type': 'remove_respondent',
-                    'chat_id': chat_id,
-                })  # отправляем сообщение обоим собеседникам чата
+        if not lecture_id:
+            return lecture_responses.not_in_data()
+
+        service_cancel_response_to_lecture(request, lecture_id=lecture_id)
 
         return lecture_responses.success_cancel()
 

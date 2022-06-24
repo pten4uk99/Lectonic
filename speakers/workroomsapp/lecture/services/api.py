@@ -7,9 +7,10 @@ from rest_framework.serializers import Serializer
 
 from authapp.models import User
 from workroomsapp.lecture.serializers.as_lecturer_serializers import LecturesGetSerializer
-from workroomsapp.lecture.services.db import AttrNames, LectureObjectManager
+from workroomsapp.lecture.services.db import AttrNames
 from workroomsapp.lecture.services.filters import CreatedLecturesFilter, ConfirmedLecturesFilter, BaseFilter
-from workroomsapp.lecture.services.service import LectureDeleteService, LectureResponseService
+from workroomsapp.lecture.services.lecture_response import LectureResponseService, LectureCancelResponseService
+from workroomsapp.lecture.services.service import LectureDeleteService
 from workroomsapp.models import Person
 
 
@@ -78,10 +79,15 @@ def serialize_confirmed_lectures(request: Request, person: Person, from_attr: At
 
 def service_delete_lecture_by_id(user: User, lecture_id: int) -> None:
     service = LectureDeleteService(from_obj=user, lecture_id=lecture_id)
-    service.to_do()
+    service.setup()
 
 
 def service_response_to_lecture(request: HttpRequest, lecture_id: int, dates: list[str]):
-    lecture = LectureObjectManager().get_lecture_by_id(lecture_id)
-    service = LectureResponseService(request, from_obj=request.user, lecture=lecture, response_dates=dates)
-    service.to_do()
+    service = LectureResponseService(
+        request, from_obj=request.user, lecture_id=lecture_id, response_dates=dates)
+    service.setup()
+
+
+def service_cancel_response_to_lecture(request: HttpRequest, lecture_id: int):
+    service = LectureCancelResponseService(request=request, from_obj=request.user, lecture_id=lecture_id)
+    service.setup()
