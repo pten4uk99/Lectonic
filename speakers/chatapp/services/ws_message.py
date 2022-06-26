@@ -1,7 +1,9 @@
+from django.db.models import QuerySet
 from django.http import HttpRequest
 
+from authapp.models import User
 from chatapp.chatapp_serializers import ChatSerializer
-from chatapp.models import Chat
+from chatapp.models import Chat, Message
 from dataclasses import dataclass
 from enum import Enum
 
@@ -32,9 +34,9 @@ class WsMessage:
 class WsMessageSender:
     channel_layer = get_channel_layer()
 
-    def __init__(self, clients: list, message: WsMessage):
+    def __init__(self, clients: list[User], message: WsMessage):
         self.message = message.to_dict()
-        self.clients = WsClient.objects.filter(user__in=clients)
+        self.clients: QuerySet[WsClient] = WsClient.objects.filter(user__in=clients)
 
     def send(self) -> None:
         """ Отправляет вебсокет сообщение """
@@ -57,6 +59,19 @@ class WsMessageBuilder:
     @staticmethod
     def remove_respondent(chat_id: int):
         return {
-            'type': 'remove_respondent',
             'chat_id': chat_id,
+        }
+
+    @staticmethod
+    def read_reject_chat(chat_id: int):
+        return {
+            'chat_id': chat_id,
+        }
+
+    @staticmethod
+    def chat_message(message: Message):
+        return {
+            'author': message.author.pk,
+            'text': message.text,
+            'chat_id': message.chat.pk
         }

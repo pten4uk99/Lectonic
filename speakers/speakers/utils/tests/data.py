@@ -2,6 +2,7 @@ from datetime import timedelta, datetime
 
 SIGNUP = {'email': 'admin@admin.ru', 'password': '12345678'}
 SIGNUP2 = {'email': 'admin2@admin.ru', 'password': '12345678'}
+SIGNUP3 = {'email': 'admin3@admin.ru', 'password': '12345678'}
 
 PROFILE = {
     'first_name': 'Пётр-Петр',

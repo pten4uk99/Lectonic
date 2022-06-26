@@ -9,7 +9,8 @@ from authapp.models import User
 from workroomsapp.lecture.serializers.as_lecturer_serializers import LecturesGetSerializer
 from workroomsapp.lecture.services.db import AttrNames
 from workroomsapp.lecture.services.filters import CreatedLecturesFilter, ConfirmedLecturesFilter, BaseFilter
-from workroomsapp.lecture.services.lecture_response import LectureResponseService, LectureCancelResponseService
+from workroomsapp.lecture.services.lecture_response import LectureResponseService, LectureCancelResponseService, \
+    LectureConfirmRespondentService
 from workroomsapp.lecture.services.service import LectureDeleteService
 from workroomsapp.models import Person
 
@@ -90,4 +91,9 @@ def service_response_to_lecture(request: HttpRequest, lecture_id: int, dates: li
 
 def service_cancel_response_to_lecture(request: HttpRequest, lecture_id: int):
     service = LectureCancelResponseService(request=request, from_obj=request.user, lecture_id=lecture_id)
+    service.setup()
+
+
+def service_confirm_respondent_to_lecture(request: HttpRequest, lecture_id: int, respondent_id: int):
+    service = LectureConfirmRespondentService(request, request.user, lecture_id, respondent_id)
     service.setup()

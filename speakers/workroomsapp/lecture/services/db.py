@@ -30,6 +30,10 @@ class LectureObjectManager:
             return lecture_responses.does_not_exist()
         return lecture
 
+    @staticmethod
+    def get_lecture_requests_by_chat(chat: Chat) -> QuerySet[LectureRequest]:
+        return chat.lecture_requests.all()
+
 
 class ChatManager(LectureObjectManager):
     @staticmethod
@@ -39,6 +43,24 @@ class ChatManager(LectureObjectManager):
         return Chat.objects.filter(
             lecture_requests__in=dates, users=creator).filter(
             users=respondent).first()
+
+    @staticmethod
+    def get_lecture_request_chats_with_exclude(lecture_request: LectureRequest,
+                                               exclude_user: User) -> QuerySet[Chat]:
+        return lecture_request.chat_list.exclude(users=exclude_user)
+
+    @staticmethod
+    def get_user_from_chat(chat: Chat, exclude_user: User) -> User:
+        return chat.users.exclude(pk=exclude_user.pk).first()
+
+    @staticmethod
+    def count_chat_lecture_requests(chat: Chat) -> int:
+        return chat.lecture_requests.all().count()
+
+    @staticmethod
+    def remove_lecture_request_from_chat(chat: Chat, lecture_request: LectureRequest) -> None:
+        chat.lecture_requests.remove(lecture_request)
+        chat.save()
 
     @staticmethod
     def create_chat(lecture: Lecture) -> Chat:
@@ -173,11 +195,34 @@ class LectureResponseManager(LectureObjectManager):
             response_request.respondents.add(person)
             response_request.save()
 
-
-class LectureCancelResponseManager(LectureObjectManager):
     @staticmethod
     def get_chat_from_lecture(lecture: Lecture, respondent: User) -> Chat:
         chat = Chat.objects.filter(lecture=lecture, users=respondent).first()
-        # lecture_request = lecture.lecture_requests.filter(respondents=respondent.person).first()
-        # chat = lecture_request.chat_list.filter(users=respondent).first()
         return chat
+
+    @staticmethod
+    def get_person(person_id) -> Person:
+        return Person.objects.get(pk=person_id)
+
+    @staticmethod
+    def get_confirmed_lecture_requests_in_chat(lecture: Lecture, chat: Chat) -> QuerySet[LectureRequest]:
+        """ Возвращает список подтвержденных дат лекции в текущем чате """
+
+        return lecture.lecture_requests.filter(
+            chat_list=chat, respondent_obj__confirmed=True)
+
+    @staticmethod
+    def get_lecture_request_respondents(lecture_request: LectureRequest,
+                                        respondent_id: int) -> QuerySet[Person]:
+        return lecture_request.respondents.exclude(pk=respondent_id)
+
+    @staticmethod
+    def remove_lecture_request_respondent(lecture_request: LectureRequest, respondent: Person) -> None:
+        lecture_request.respondents.remove(respondent)
+        lecture_request.save()
+
+    @staticmethod
+    def confirm_respondent(lecture_request: LectureRequest, respondent: Person) -> None:
+        lecture_respondent = lecture_request.respondent_obj.get(person=respondent)
+        lecture_respondent.confirmed = True
+        lecture_respondent.save()
