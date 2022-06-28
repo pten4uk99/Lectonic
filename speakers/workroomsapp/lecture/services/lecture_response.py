@@ -4,7 +4,7 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 
 from authapp.models import User
-from chatapp.services.chat import LectureCancelResponseChatService, LectureResponseChatService, \
+from workroomsapp.lecture.services.chat import LectureCancelResponseChatService, LectureResponseChatService, \
     LectureConfirmRespondentChatService, LectureRejectRespondentChatService
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.services.db import AttrNames, LectureResponseManager

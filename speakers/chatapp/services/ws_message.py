@@ -69,6 +69,12 @@ class WsMessageBuilder:
         }
 
     @staticmethod
+    def read_messages(chat_id: int):
+        return {
+            'chat_id': chat_id,
+        }
+
+    @staticmethod
     def chat_message(message: Message):
         return {
             'author': message.author.pk,

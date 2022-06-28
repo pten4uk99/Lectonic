@@ -17,7 +17,7 @@ from workroomsapp.models import Person
 
 # Тут описаны методы взаимодействия с представлениями
 
-class BaseAPI:
+class BaseLectureAPI:
     def __init__(self, request: Request, person: Person, from_attr: AttrNames, to_attr: AttrNames = None):
         self.request = request
         self.person = person
@@ -25,7 +25,7 @@ class BaseAPI:
         self.to_attr = to_attr
 
 
-class SerializerAPI(BaseAPI):
+class SerializerAPI(BaseLectureAPI):
     serializer_class: Type[Serializer]
 
     def serialize(self) -> Serializer:

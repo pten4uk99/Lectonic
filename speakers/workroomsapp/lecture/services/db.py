@@ -5,6 +5,7 @@ from django.db.models import QuerySet, Max
 
 from authapp.models import User
 from chatapp.models import Chat, Message
+from speakers.db import ObjectManager
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.models import Person, Lecture, LectureRequest
 
@@ -14,7 +15,7 @@ class AttrNames(Enum):
     CUSTOMER = 'customer'
 
 
-class LectureObjectManager:
+class LectureObjectManager(ObjectManager):
     """ Предоставляет интерфейс для работы с объектами лекции (Lecture) в базе данных """
 
     def __init__(self, from_attr: AttrNames = AttrNames.LECTURER):
@@ -200,14 +201,6 @@ class LectureResponseManager(LectureObjectManager):
     def get_chat_from_lecture(lecture: Lecture, respondent: User) -> Chat:
         chat = Chat.objects.filter(lecture=lecture, users=respondent).first()
         return chat
-
-    @staticmethod
-    def get_chat(chat_id) -> Chat:
-        return Chat.objects.get(pk=chat_id)
-
-    @staticmethod
-    def get_person(person_id) -> Person:
-        return Person.objects.get(pk=person_id)
 
     @staticmethod
     def get_confirmed_lecture_requests_in_chat(lecture: Lecture, chat: Chat) -> QuerySet[LectureRequest]:

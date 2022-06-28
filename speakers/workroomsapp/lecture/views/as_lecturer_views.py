@@ -1,17 +1,17 @@
+import logging
+
 from channels.layers import get_channel_layer
 from django.core import exceptions
-from django.db import transaction
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
-from chatapp.chatapp_serializers import ChatSerializer
+from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.serializers.as_lecturer_serializers import *
 from workroomsapp.lecture.services.api import serialize_created_lectures, service_delete_lecture_by_id, \
     service_response_to_lecture, service_cancel_response_to_lecture, service_confirm_respondent_to_lecture, \
     service_reject_respondent_to_lecture
 from workroomsapp.lecture.services.filters import AttrNames
-from workroomsapp.lecture.services.response_on_lecture import *
 from workroomsapp.utils import workroomsapp_permissions
 
 channel_layer = get_channel_layer()
@@ -93,7 +93,7 @@ class LectureResponseAPIView(APIView):
         return lecture_responses.success_response()
 
 
-class LectureCancelResponseAPIView(APIView, LectureCancelResponseMixin):
+class LectureCancelResponseAPIView(APIView):
     permission_classes = [workroomsapp_permissions.IsLecturer |
                           workroomsapp_permissions.IsCustomer]
 
@@ -122,7 +122,7 @@ class LectureConfirmRespondentAPIView(APIView):
         return lecture_responses.success_confirm()
 
 
-class LectureRejectRespondentAPIView(APIView, LectureRejectRespondentMixin):
+class LectureRejectRespondentAPIView(APIView):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
         respondent_id = self.request.GET.get('respondent')
