@@ -94,50 +94,45 @@ class LectureCancelResponseWsService(WsService):
 class LectureConfirmRespondentWsService(WsService):
     chat_manager = ChatManager
 
-    def __init__(self, request: HttpRequest, from_obj: User,
-                 messages: list[Message], deleted_chats: list[DeletedChat]):
-        super().__init__(request, from_obj, clients=[])
-        self.messages = messages
-        self.deleted_chats = deleted_chats
-
-    def _get_client_from_chat(self, chat: Chat) -> User:
-        return self.chat_manager.get_user_from_chat(chat, exclude_user=self.from_obj)
-
-    def _make_message(self, message: Message) -> WsMessage:
+    def _make_message_for_other_respondent(self, message: Message) -> WsMessage:
         built_message = self.message_builder.chat_message(message)
         built_message['confirm'] = True
 
-        return WsMessage(
-            type_=WsEventTypes.chat_message, kwargs=built_message)
+        return WsMessage(type_=WsEventTypes.chat_message, kwargs=built_message)
 
-    def _send_message(self, message: Message) -> None:
+    def send_message(self, message: Message, client: User = None) -> None:
         """ Создает и отправляет сообщение для откликнувшихся пользователей на подтвержденную дату """
 
-        client = self._get_client_from_chat(message.chat)
-        ws_message = self._make_message(message)
-        sender = self.message_sender([client], ws_message)
+        clients = client or self.clients  # если client передан,
+        # то отправляем выбранному человеку, иначе self.clients
+
+        ws_message = self._make_message_for_other_respondent(message)
+        sender = self.message_sender(clients, ws_message)
         sender.send()
 
-    def _make_deleted_chat_message(self, chat_id: int) -> WsMessage:
+    def _make_delete_chat_message_for_other_respondent(self, chat_id: int) -> WsMessage:
         return WsMessage(
             type_=WsEventTypes.read_reject_chat, kwargs=self.message_builder.read_reject_chat(chat_id))
 
-    def _send_deleted_chat_message(self, deleted_chat: DeletedChat) -> None:
-        """ Создает и отправляет сообщение для чата, который был удален """
+    def send_delete_chat_message_to_other_respondent(self, chat: Chat, client: User) -> None:
+        """ Создает и отправляет сообщение для чата, который будет удален """
 
-        client, chat_id = deleted_chat
-        ws_message = self._make_deleted_chat_message(chat_id)
+        ws_message = self._make_delete_chat_message_for_other_respondent(chat.pk)
         sender = self.message_sender([client], ws_message)
         sender.send()
 
-    def _send_messages(self) -> None:
-        """ Отправляет сообщения self.messages и self.deleted_chats """
 
-        for message in self.messages:
-            self._send_message(message)
+class LectureRejectRespondentWsService(WsService):
+    def _make_message(self, message: Message) -> WsMessage:
+        built_message = self.message_builder.chat_message(message)
+        built_message['confirm'] = False
 
-        for deleted_chat in self.deleted_chats:
-            self._send_deleted_chat_message(deleted_chat)
+        return WsMessage(type_=WsEventTypes.chat_message, kwargs=built_message)
 
-    def setup(self):
-        self._send_messages()
+    def send_message(self, message: Message) -> None:
+        """ Создает и отправляет сообщение в чате """
+
+        ws_message = self._make_message(message)
+        sender = self.message_sender(self.clients, ws_message)
+        sender.send()
+

@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 from chatapp.models import Chat
 from speakers.utils.tests import data
 from workroomsapp.lecture.services.api import service_response_to_lecture, service_cancel_response_to_lecture, \
-    service_confirm_respondent_to_lecture
+    service_confirm_respondent_to_lecture, service_reject_respondent_to_lecture
 from workroomsapp.models import *
 from workroomsapp.person.tests.base import LecturerTestManager, CustomerTestManager, LectureTestManager
 
@@ -83,4 +83,18 @@ class LectureConfirmRespondentTestCase(LectureResponseTestCase):
         self.assertEqual(
             lecture.lecture_requests.first().chat_list.all().count(), 1,
             msg='Чат не был удален'
+        )
+
+
+class LectureRejectRespondentTestCase(LectureResponseTestCase):
+    def test_reject_respondent_on_lecture(self):
+        lecture_id = Lecture.objects.first().pk
+        respondent_id = self.customer_manager._person.pk
+        self._request.user = self.lecturer_manager._user
+        service_reject_respondent_to_lecture(self._request, lecture_id, respondent_id)
+
+        self.assertEqual(
+            Lecture.objects.first().lecture_requests.filter(respondent_obj__rejected=True).exists(),
+            True,
+            msg='Отклик пользователя не был отклонен'
         )

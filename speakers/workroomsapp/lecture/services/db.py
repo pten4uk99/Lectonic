@@ -87,11 +87,12 @@ class ChatManager(LectureObjectManager):
             chat.save()
 
     @staticmethod
-    def create_message(chat: Chat, author: User, text: str) -> Message:
+    def create_message(chat: Chat, author: User, text: str, confirm: bool = None) -> Message:
         return Message.objects.create(
             author=author,
             chat=chat,
-            text=text
+            text=text,
+            confirm=confirm
         )
 
 
@@ -170,8 +171,8 @@ class DeleteLectureManager(LectureObjectManager):
 class LectureResponseManager(LectureObjectManager):
     @staticmethod
     def get_person_rejected_lecture_requests(person: Person, lecture: Lecture) -> QuerySet[LectureRequest]:
-        """ Возвращает список дат лекции, на которые пользователь
-         получил отклонение отклика хотябы на одну из дат лекции """
+        """ Возвращает список дат лекции, хотя бы на одну из которых
+        пользователь получил отклонение отклика """
 
         return lecture.lecture_requests.filter(
             respondents=person, respondent_obj__rejected=True)
@@ -225,4 +226,10 @@ class LectureResponseManager(LectureObjectManager):
     def confirm_respondent(lecture_request: LectureRequest, respondent: Person) -> None:
         lecture_respondent = lecture_request.respondent_obj.get(person=respondent)
         lecture_respondent.confirmed = True
+        lecture_respondent.save()
+
+    @staticmethod
+    def reject_respondent(lecture_request: LectureRequest, respondent: Person) -> None:
+        lecture_respondent = lecture_request.respondent_obj.get(person=respondent)
+        lecture_respondent.rejected = True
         lecture_respondent.save()

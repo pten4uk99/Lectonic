@@ -1,8 +1,10 @@
 from django.db.models import QuerySet
+from django.http import HttpRequest
 
 from authapp.models import User
 from chatapp.models import Chat
-from chatapp.services.ws import DeletedChat
+from chatapp.services.ws import DeletedChat, LectureResponseWsService, LectureCancelResponseWsService, \
+    LectureConfirmRespondentWsService, LectureRejectRespondentWsService
 from speakers.service import Service
 from workroomsapp.lecture.services.db import AttrNames, ChatManager
 from workroomsapp.models import Lecture, LectureRequest, Person
@@ -10,6 +12,8 @@ from workroomsapp.models import Lecture, LectureRequest, Person
 
 class ChatService(Service):
     response_message_text = None
+    ws_service = None
+    object_manager = ChatManager
 
     def format_dates_for_message(self, *args, **kwargs) -> list[str]:
         """ Приводит даты лекции к формату dd.mm и возвращает список отформатированных строк """
@@ -23,23 +27,32 @@ class ChatService(Service):
         str_dates = ", ".join(dates)
         return self.response_message_text + ' ' + str_dates
 
-    def setup(self) -> None:
+    def to_do(self) -> None:
         """ Собирает и запускает последовательно необходимые действия класса """
         pass
+
+    def setup(self) -> None:
+        """ Собирает и запускает последовательно необходимые действия класса """
+        self.to_do()
+        self.ws_service.to_do()
 
 
 class LectureResponseChatService(ChatService):
     response_message_text = 'Собеседник заинтересован в Вашем предложении. ' \
                             'Возможные даты проведения:'
-    object_manager = ChatManager
+    ws_service = LectureResponseWsService
 
-    def __init__(self, from_obj: User, lecture: Lecture,
+    def __init__(self, request: HttpRequest, from_obj: User, lecture: Lecture,
                  responses: QuerySet[LectureRequest], lecture_creator: Person,
                  from_attr: AttrNames = AttrNames.LECTURER):
         super().__init__(from_obj, from_attr)
         self._lecture = lecture
         self._lecture_responses = responses
         self._lecture_creator = lecture_creator
+
+        self.ws_service = self.ws_service(
+            request, from_obj=from_obj, clients=[self._lecture_creator.user, self.from_obj],
+            lecture_creator=self._lecture_creator, responses=responses)
 
     def format_dates_for_message(self) -> list[str]:
         """ Приводит даты лекции к формату dd.mm и возвращает список отформатированных строк """
@@ -76,7 +89,7 @@ class LectureResponseChatService(ChatService):
 
         # logger.info(f'text:{message.text}, author: {message.author}')
 
-    def setup(self) -> None:
+    def to_do(self) -> None:
         """ Создает новый чат (если его до этого не существовало) и
         стандартное сообщение в чате при отклике """
 
@@ -85,11 +98,14 @@ class LectureResponseChatService(ChatService):
 
 
 class LectureCancelResponseChatService(ChatService):
-    object_manager = ChatManager
+    ws_service = LectureCancelResponseWsService
 
-    def __init__(self, from_obj: User, chat: Chat):
+    def __init__(self, request: HttpRequest, from_obj: User, chat: Chat):
         super().__init__(from_obj)
         self._chat = chat
+
+        self.ws_service = self.ws_service(
+            request, from_obj, clients=self._chat.users.all(), chat_id=self._chat.pk)
 
     def _remove_chat(self) -> None:
         self.object_manager.delete_chat(self._chat)
@@ -102,14 +118,17 @@ class LectureConfirmRespondentChatService(ChatService):
     response_message_text = f'Одна или более из выбранных вами дат на данную лекцию ' \
                             f'уже подтверждена для другого пользователя. ' \
                             f'Возможные даты проведения:'
-    object_manager = ChatManager
+    ws_service = LectureConfirmRespondentWsService
 
-    def __init__(self, from_obj: User, lecture_requests: QuerySet[LectureRequest],
-                 respondent: Person, service):
+    def __init__(self, request: HttpRequest, from_obj: User,
+                 lecture_requests: QuerySet[LectureRequest],
+                 respondent: Person, response_chat: Chat):
         super().__init__(from_obj)
         self.lecture_requests = lecture_requests  # список подтвержденных дат лекции
         self.respondent = respondent
-        self.service = service
+        self.response_chat = response_chat
+
+        self.ws_service = self.ws_service(request, from_obj, clients=self.response_chat.users.all())
 
     def format_dates_for_message(self, chat: Chat) -> list[str]:
         """ Приводит даты лекции к формату dd.mm и возвращает список отформатированных строк """
@@ -120,25 +139,28 @@ class LectureConfirmRespondentChatService(ChatService):
 
         return dates
 
-    def create_response_message(self, chat: Chat) -> None:
+    def _create_message_for_other_respondent(self, chat: Chat) -> None:
+        """ Создает сообщение для откликнувшегося на лекцию, которого не подтвердили """
+
         message = self.object_manager.create_message(
             author=self.from_obj,
             chat=chat,
             text=self.make_message_text()
         )
-        self.service.add_chat_message(message)
+        client = self.object_manager.get_user_from_chat(message.chat, exclude_user=self.from_obj)
+        self.ws_service.send_message(message, client)
 
     def _handle_several_dates(self, chat: Chat, lecture_request: LectureRequest):
         """ Удаляет подтвержденную дату из всех чатов откликнувшихся на нее пользователей """
 
         self.object_manager.remove_lecture_request_from_chat(chat, lecture_request)
-        self.create_response_message(chat)
+        self._create_message_for_other_respondent(chat)
 
     def _handle_single_date(self, chat: Chat):
         """ Удаляет чат """
 
         client = self.object_manager.get_user_from_chat(chat, self.from_obj)
-        self.service.add_deleted_chat(DeletedChat(client=client, chat_id=chat.pk))
+        self.ws_service.send_delete_chat_message_to_other_respondent(chat, client)
         self.object_manager.delete_chat(chat)
 
     def _handle_chats(self, chat_list: QuerySet[Chat], lecture_request: LectureRequest):
@@ -162,5 +184,45 @@ class LectureConfirmRespondentChatService(ChatService):
 
             self._handle_chats(chat_list, lecture_request)
 
-    def setup(self):
+    def _create_message_for_confirmed_respondent(self):
+        """ Создает сообщение в чате для подтвержденного пользователя """
+
+        message = self.object_manager.create_message(
+            author=self.from_obj,
+            chat=self.response_chat,
+            text='',
+            confirm=True
+        )
+        self.ws_service.send_message(message)
+
+    def to_do(self):
+        self._create_message_for_confirmed_respondent()
         self._handle_lecture_requests()
+
+
+class LectureRejectRespondentChatService(ChatService):
+    """ Сервис, включающий логику по обработки отклонения откликнувшегося пользователя на лекцию """
+
+    ws_service = LectureRejectRespondentWsService
+
+    def __init__(self, request: HttpRequest, from_obj: User,
+                 respondent: Person, response_chat: Chat):
+        super().__init__(from_obj)
+        self.respondent = respondent
+        self.response_chat = response_chat
+
+        self.ws_service = self.ws_service(request, from_obj, clients=[self.from_obj, self.respondent.user])
+
+    def _create_message_for_rejected_respondent(self):
+        """ Создает сообщение в чате для отклоненного пользователя """
+
+        message = self.object_manager.create_message(
+            author=self.from_obj,
+            chat=self.response_chat,
+            text='',
+            confirm=False
+        )
+        self.ws_service.send_message(message)
+
+    def to_do(self):
+        self._create_message_for_rejected_respondent()
