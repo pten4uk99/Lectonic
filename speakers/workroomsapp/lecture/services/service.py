@@ -9,9 +9,11 @@ from workroomsapp.lecture.services.db import DeleteLectureManager, AttrNames, Le
 
 
 class LectureService(Service):
-    def __init__(self, from_obj: User, lecture_id: int, from_attr: AttrNames = AttrNames.LECTURER):
+    def __init__(self, from_obj: User, lecture_id: int = None, from_attr: AttrNames = AttrNames.LECTURER):
         super().__init__(from_obj, from_attr)
-        self.lecture = LectureObjectManager().get_lecture_by_id(lecture_id)
+
+        if lecture_id is not None:
+            self.lecture = LectureObjectManager().get_lecture_by_id(lecture_id)
 
     def check_permissions(self, *args, **kwargs) -> bool:
         """ Проверяет права """

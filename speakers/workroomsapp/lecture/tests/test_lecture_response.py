@@ -52,10 +52,10 @@ class LectureCancelResponseTestCase(LectureResponseTestCase):
 
 class LectureConfirmRespondentTestCase(LectureResponseTestCase):
     def test_confirm_respondent_on_lecture(self):
-        lecture_id = Lecture.objects.first().pk
+        chat_id = Chat.objects.first().pk
         respondent_id = self.customer_manager._person.pk
         self._request.user = self.lecturer_manager._user
-        service_confirm_respondent_to_lecture(self._request, lecture_id, respondent_id)
+        service_confirm_respondent_to_lecture(self._request, chat_id, respondent_id)
 
         self.assertEqual(
             Lecture.objects.first().lecture_requests.filter(respondent_obj__confirmed=True).exists(),
@@ -78,8 +78,9 @@ class LectureConfirmRespondentTestCase(LectureResponseTestCase):
             dates=[lecture.lecture_requests.first().event.datetime_start.strftime('%Y-%m-%dT%H:%M')]
         )
 
+        chat = Chat.objects.first()
         respondent_id = self.customer_manager._person.pk
-        service_confirm_respondent_to_lecture(self._request, lecture.pk, respondent_id)
+        service_confirm_respondent_to_lecture(self._request, chat.pk, respondent_id)
         self.assertEqual(
             lecture.lecture_requests.first().chat_list.all().count(), 1,
             msg='Чат не был удален'
@@ -88,10 +89,10 @@ class LectureConfirmRespondentTestCase(LectureResponseTestCase):
 
 class LectureRejectRespondentTestCase(LectureResponseTestCase):
     def test_reject_respondent_on_lecture(self):
-        lecture_id = Lecture.objects.first().pk
+        chat_id = Chat.objects.first().pk
         respondent_id = self.customer_manager._person.pk
         self._request.user = self.lecturer_manager._user
-        service_reject_respondent_to_lecture(self._request, lecture_id, respondent_id)
+        service_reject_respondent_to_lecture(self._request, chat_id, respondent_id)
 
         self.assertEqual(
             Lecture.objects.first().lecture_requests.filter(respondent_obj__rejected=True).exists(),

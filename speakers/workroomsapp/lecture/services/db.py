@@ -202,6 +202,10 @@ class LectureResponseManager(LectureObjectManager):
         return chat
 
     @staticmethod
+    def get_chat(chat_id) -> Chat:
+        return Chat.objects.get(pk=chat_id)
+
+    @staticmethod
     def get_person(person_id) -> Person:
         return Person.objects.get(pk=person_id)
 

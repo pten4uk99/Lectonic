@@ -149,9 +149,10 @@ class LectureConfirmRespondentService(LectureResponseBaseService):
 
     chat_service = LectureConfirmRespondentChatService
 
-    def __init__(self, request: HttpRequest, from_obj: User, lecture_id: int, respondent_id: int):
-        super().__init__(from_obj, lecture_id)
-        self._chat = self.object_manager.get_chat_from_lecture(self.lecture, self.from_obj)
+    def __init__(self, request: HttpRequest, from_obj: User, chat_id: int, respondent_id: int):
+        super().__init__(from_obj)
+        self._chat = self.object_manager.get_chat(chat_id)
+        self.lecture = self._chat.lecture
         self.respondent = self.object_manager.get_person(respondent_id)
 
         confirmed_lectures = self.object_manager.get_confirmed_lecture_requests_in_chat(
@@ -199,9 +200,10 @@ class LectureRejectRespondentService(LectureResponseBaseService):
 
     chat_service = LectureRejectRespondentChatService
 
-    def __init__(self, request: HttpRequest, from_obj: User, lecture_id: int, respondent_id: int):
-        super().__init__(from_obj, lecture_id)
-        self._chat = self.object_manager.get_chat_from_lecture(self.lecture, self.from_obj)
+    def __init__(self, request: HttpRequest, from_obj: User, chat_id: int, respondent_id: int):
+        super().__init__(from_obj)
+        self._chat = self.object_manager.get_chat(chat_id)
+        self.lecture = self._chat.lecture
         self.respondent = self.object_manager.get_person(respondent_id)
 
         self.chat_service = self.chat_service(

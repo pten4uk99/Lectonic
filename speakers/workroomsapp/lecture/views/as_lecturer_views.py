@@ -8,7 +8,8 @@ from chatapp.chatapp_serializers import ChatSerializer
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.serializers.as_lecturer_serializers import *
 from workroomsapp.lecture.services.api import serialize_created_lectures, service_delete_lecture_by_id, \
-    service_response_to_lecture, service_cancel_response_to_lecture
+    service_response_to_lecture, service_cancel_response_to_lecture, service_confirm_respondent_to_lecture, \
+    service_reject_respondent_to_lecture
 from workroomsapp.lecture.services.filters import AttrNames
 from workroomsapp.lecture.services.response_on_lecture import *
 from workroomsapp.utils import workroomsapp_permissions
@@ -108,20 +109,27 @@ class LectureCancelResponseAPIView(APIView, LectureCancelResponseMixin):
         return lecture_responses.success_cancel()
 
 
-class LectureConfirmRespondentAPIView(APIView, LectureConfirmRespondentMixin):
+class LectureConfirmRespondentAPIView(APIView):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        self.check_is_creator()
-        self.check_is_possible()  # проверяем возможно ли подтвердить пользователя на выбранные даты
-        self.handle_respondent()  # обрабатываем откликнувшегося пользователя (подтверждаем, отклоняем)
-        self.handle_message()
+        respondent_id = self.request.GET.get('respondent')
+        chat_id = self.request.GET.get('chat_id')
+
+        if not (respondent_id and chat_id):
+            return lecture_responses.not_in_data()
+
+        service_confirm_respondent_to_lecture(request, chat_id, respondent_id)
         return lecture_responses.success_confirm()
 
 
 class LectureRejectRespondentAPIView(APIView, LectureRejectRespondentMixin):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        self.check_is_creator()
-        self.handle_respondent()  # обрабатываем откликнувшегося пользователя (подтверждаем/отклоняем)
-        self.handle_message()  # обрабатываем сообщение (объект Message): создаем, и отправляем по веб сокету
+        respondent_id = self.request.GET.get('respondent')
+        chat_id = self.request.GET.get('chat_id')
+
+        if not (respondent_id and chat_id):
+            return lecture_responses.not_in_data()
+
+        service_reject_respondent_to_lecture(request, chat_id, respondent_id)
         return lecture_responses.success_denied()
