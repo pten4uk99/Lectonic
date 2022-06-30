@@ -1,5 +1,5 @@
 from authapp.models import User
-from workroomsapp.lecture.services.db import AttrNames
+from workroomsapp.lecture.db import AttrNames
 
 
 class Service:

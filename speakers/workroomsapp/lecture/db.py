@@ -19,7 +19,7 @@ class LectureObjectManager(ObjectManager):
     """ Предоставляет интерфейс для работы с объектами лекции (Lecture) в базе данных """
 
     def __init__(self, from_attr: AttrNames = AttrNames.LECTURER):
-        self._from_attr = from_attr.value
+        self.from_attr = from_attr.value
 
     @staticmethod
     def get_lecture_by_id(lecture_id: int) -> Lecture:
@@ -110,12 +110,17 @@ class GetLectureManager(LectureObjectManager):
             self._to_attr = to_attr.value
 
     def get_person_lectures(self) -> QuerySet[Lecture]:
-        """ Возвращает все лекции пользователя по выбранному аттрибуту (self.attr_name) """
+        """ Возвращает все лекции пользователя по выбранному аттрибуту (self.from_attr) """
 
-        if not hasattr(self._person, self._from_attr):
-            msg = 'У объекта {} нет аттрибута {}'.format(self._person, self._from_attr)
+        if not hasattr(self._person, self.from_attr):
+            msg = 'У объекта {} нет аттрибута {}'.format(self._person, self.from_attr)
             raise AttributeError(msg)
-        return getattr(self._person, self._from_attr).lectures.all()
+        return getattr(self._person, self.from_attr).lectures.all()
+
+    @staticmethod
+    def get_confirmed_lecture_request(lecture: Lecture, respondent: Person) -> LectureRequest:
+        return lecture.lecture_requests.filter(
+            respondent_obj__confirmed=True, respondent_obj__person=respondent).first()
 
     @staticmethod
     def get_latest_lecture_date(lecture: Lecture) -> datetime.datetime:
@@ -127,17 +132,17 @@ class GetLectureManager(LectureObjectManager):
     def get_person_confirmed_lectures(self) -> list[Lecture]:
         """ Возвращает список подтвержденных лекций пользователя self._person (те, которые он создал) """
 
-        if not hasattr(self._person, self._from_attr):
-            raise AttributeError(f'У объекта {self._person} нет аттрибута {self._from_attr}')
+        if not hasattr(self._person, self.from_attr):
+            raise AttributeError(f'У объекта {self._person} нет аттрибута {self.from_attr}')
 
         lecture_list = []
 
-        lectures = getattr(self._person, self._from_attr).lectures.filter(
+        lectures = getattr(self._person, self.from_attr).lectures.filter(
             lecture_requests__respondent_obj__confirmed=True,
             lecture_requests__event__datetime_start__gte=datetime.datetime.now())
 
         for own_lecture in lectures:
-            if getattr(own_lecture, self._from_attr) and own_lecture not in lecture_list:
+            if getattr(own_lecture, self.from_attr) and own_lecture not in lecture_list:
                 lecture_list.append(own_lecture)
 
         return lecture_list

@@ -1,10 +1,9 @@
 from django.http import HttpRequest
-from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from chatapp.models import Chat
 from speakers.utils.tests import data
-from workroomsapp.lecture.services.api import service_response_to_lecture, service_cancel_response_to_lecture, \
+from workroomsapp.lecture.api import service_response_to_lecture, service_cancel_response_to_lecture, \
     service_confirm_respondent_to_lecture, service_reject_respondent_to_lecture
 from workroomsapp.models import *
 from workroomsapp.person.tests.base import LecturerTestManager, CustomerTestManager, LectureTestManager

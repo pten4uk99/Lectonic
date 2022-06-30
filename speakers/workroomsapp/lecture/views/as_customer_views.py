@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.serializers.as_lecturer_serializers import *
-from workroomsapp.lecture.services.api import serialize_created_lectures
-from workroomsapp.lecture.services.filters import AttrNames
+from workroomsapp.lecture.api import serialize_created_lectures
+from workroomsapp.lecture.filters import AttrNames
 from workroomsapp.utils import workroomsapp_permissions
 
 

@@ -2,13 +2,13 @@ from abc import ABC
 from typing import Type
 
 from django.http import HttpRequest
-from rest_framework.request import Request
 from rest_framework.serializers import Serializer
 
 from authapp.models import User
+from workroomsapp.lecture.db import AttrNames
+from workroomsapp.lecture.filters import CreatedLecturesFilter, ConfirmedLecturesFilter, BaseFilter, \
+    PotentialLecturesFilter
 from workroomsapp.lecture.serializers.as_lecturer_serializers import LecturesGetSerializer
-from workroomsapp.lecture.services.db import AttrNames
-from workroomsapp.lecture.services.filters import CreatedLecturesFilter, ConfirmedLecturesFilter, BaseFilter
 from workroomsapp.lecture.services.lecture_response import LectureResponseService, LectureCancelResponseService, \
     LectureConfirmRespondentService, LectureRejectRespondentService
 from workroomsapp.lecture.services.service import LectureDeleteService
@@ -18,11 +18,11 @@ from workroomsapp.models import Person
 # Тут описаны методы взаимодействия с представлениями
 
 class BaseLectureAPI:
-    def __init__(self, request: Request, person: Person, from_attr: AttrNames, to_attr: AttrNames = None):
+    def __init__(self, request: HttpRequest, person: Person, from_attr: AttrNames):
         self.request = request
         self.person = person
         self.from_attr = from_attr
-        self.to_attr = to_attr
+        self.to_attr = AttrNames.LECTURER if self.from_attr == AttrNames.CUSTOMER else AttrNames.CUSTOMER
 
 
 class SerializerAPI(BaseLectureAPI):
@@ -39,13 +39,14 @@ class FilterAPI(SerializerAPI):
 
     filter_class: Type[BaseFilter]
 
-    def __init__(self, request: Request, person: Person, from_attr: AttrNames, to_attr: AttrNames = None):
-        super().__init__(request, person, from_attr, to_attr)
-        self._filter = self.filter_class(person=person, from_attr=from_attr, to_attr=to_attr)
+    def __init__(self, request: HttpRequest, person: Person, from_attr: AttrNames):
+        super().__init__(request, person, from_attr)
+        self._filter = self.filter_class(person=person, from_attr=from_attr)
 
     def serialize(self) -> Serializer:
         filtered_lectures = self._filter.filter()
-        return self.serializer_class(filtered_lectures, many=True, context={'request': self.request})
+        return self.serializer_class(
+            filtered_lectures, many=True, context={'request': self.request, 'query_from': self.from_attr.value})
 
 
 class LectureGetAPI(FilterAPI, ABC):
@@ -63,18 +64,30 @@ class ConfirmedLecturesGetAPI(LectureGetAPI):
     filter_class = ConfirmedLecturesFilter
 
 
+class PotentialLecturesGetAPI(LectureGetAPI):
+    """ API для обработки и сериализации подтвержденных лекций и подтвержденных откликов пользователя """
+    filter_class = PotentialLecturesFilter
+
+
 # ------------------Функции для использования непосредственно в представлениях-------------------
 # ---------------------------------------------------------------------------------------
-def serialize_created_lectures(request: Request, person: Person, from_attr: AttrNames):
+def serialize_created_lectures(request: HttpRequest, person: Person, from_attr: AttrNames):
     return CreatedLecturesGetAPI(request=request, person=person, from_attr=from_attr).serialize()
 
 
-def serialize_confirmed_lectures(request: Request, person: Person, from_attr: AttrNames, to_attr: AttrNames):
+def serialize_confirmed_lectures(request: HttpRequest, person: Person, from_attr: AttrNames):
     return ConfirmedLecturesGetAPI(
         request=request,
         person=person,
         from_attr=from_attr,
-        to_attr=to_attr
+    ).serialize()
+
+
+def serialize_potential_lectures(request: HttpRequest, person: Person, from_attr: AttrNames):
+    return PotentialLecturesGetAPI(
+        request=request,
+        person=person,
+        from_attr=from_attr
     ).serialize()
 
 

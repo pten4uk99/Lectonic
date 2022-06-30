@@ -4,8 +4,8 @@ from django.http import HttpRequest
 from authapp.models import User
 from chatapp.models import Chat
 from speakers.service import Service
-from workroomsapp.lecture.services.db import AttrNames
-from workroomsapp.lecture.services.db import ChatManager
+from workroomsapp.lecture.db import AttrNames
+from workroomsapp.lecture.db import ChatManager
 from workroomsapp.lecture.services.ws import LectureResponseWsService, LectureCancelResponseWsService, \
     LectureConfirmRespondentWsService, LectureRejectRespondentWsService
 from workroomsapp.models import Lecture, LectureRequest, Person

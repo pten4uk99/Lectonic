@@ -7,7 +7,7 @@ from authapp.models import User
 from workroomsapp.lecture.services.chat import LectureCancelResponseChatService, LectureResponseChatService, \
     LectureConfirmRespondentChatService, LectureRejectRespondentChatService
 from workroomsapp.lecture import lecture_responses
-from workroomsapp.lecture.services.db import AttrNames, LectureResponseManager
+from workroomsapp.lecture.db import AttrNames, LectureResponseManager
 from workroomsapp.lecture.services.service import LectureService
 from workroomsapp.models import LectureRequest, Person
 

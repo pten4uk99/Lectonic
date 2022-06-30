@@ -8,7 +8,7 @@ from chatapp.models import Chat, Message
 from chatapp.services.db import ChatMessageObjectManager
 from chatapp.services.ws import ChatMessageWsService
 from speakers.service import Service
-from workroomsapp.lecture.services.db import AttrNames
+from workroomsapp.lecture.db import AttrNames
 
 
 class ChatMessageAPI(Service):
@@ -58,4 +58,4 @@ class ChatMessageAPI(Service):
 
 # функции для использования непосредственно в представлениях
 def serialize_chat_message_list(request: HttpRequest, chat_id: int):
-    return ChatMessageAPI(from_obj=request.user, chat_id=chat_id).serialize()
+    return ChatMessageAPI(request, from_obj=request.user, chat_id=chat_id).serialize()

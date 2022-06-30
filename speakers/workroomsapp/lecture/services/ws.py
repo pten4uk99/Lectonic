@@ -6,7 +6,7 @@ from chatapp.models import Message, Chat
 from chatapp.services.ws_message import WsMessage, WsEventTypes
 from chatapp.services.ws_message import WsMessageSender, WsMessageBuilder
 from speakers.service import Service
-from workroomsapp.lecture.services.db import ChatManager
+from workroomsapp.lecture.db import ChatManager
 from workroomsapp.models import LectureRequest, Person
 
 

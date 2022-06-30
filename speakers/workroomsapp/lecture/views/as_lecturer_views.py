@@ -8,10 +8,10 @@ from rest_framework.views import APIView
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.serializers.as_lecturer_serializers import *
-from workroomsapp.lecture.services.api import serialize_created_lectures, service_delete_lecture_by_id, \
+from workroomsapp.lecture.api import serialize_created_lectures, service_delete_lecture_by_id, \
     service_response_to_lecture, service_cancel_response_to_lecture, service_confirm_respondent_to_lecture, \
     service_reject_respondent_to_lecture
-from workroomsapp.lecture.services.filters import AttrNames
+from workroomsapp.lecture.filters import AttrNames
 from workroomsapp.utils import workroomsapp_permissions
 
 channel_layer = get_channel_layer()

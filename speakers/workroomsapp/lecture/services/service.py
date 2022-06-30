@@ -1,9 +1,7 @@
-import logging
-
 from authapp.models import User
 from speakers.service import Service
 from workroomsapp.lecture import lecture_responses
-from workroomsapp.lecture.services.db import DeleteLectureManager, AttrNames, LectureObjectManager
+from workroomsapp.lecture.db import DeleteLectureManager, AttrNames, LectureObjectManager
 
 # logger = logging.getLogger(__name__)
 

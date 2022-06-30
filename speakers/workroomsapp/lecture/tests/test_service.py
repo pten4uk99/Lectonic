@@ -1,11 +1,11 @@
 from rest_framework.test import APITestCase
 
-from workroomsapp.lecture.services.api import service_delete_lecture_by_id
+from workroomsapp.lecture.api import service_delete_lecture_by_id
 from workroomsapp.models import Lecturer, Lecture
 from workroomsapp.person.tests.base import LecturerTestManager, CustomerTestManager, LectureTestManager
 
 
-class ServiceTestCase(APITestCase):
+class LectureServiceTestCase(APITestCase):
     def setUp(self):
         l_manager = LecturerTestManager()
         c_manager = CustomerTestManager()

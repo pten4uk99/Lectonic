@@ -6,7 +6,7 @@ from unittest import TestCase
 from django.db.models import QuerySet
 from rest_framework.test import APITestCase
 
-from workroomsapp.lecture.services.filters import AttrNames, GetLectureManager
+from workroomsapp.lecture.filters import AttrNames, GetLectureManager
 from workroomsapp.models import Lecture, Lecturer, Customer
 from workroomsapp.person.tests.base import LecturerTestManager, CustomerTestManager, LectureTestManager
 
