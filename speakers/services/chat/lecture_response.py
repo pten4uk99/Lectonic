@@ -3,39 +3,11 @@ from django.http import HttpRequest
 
 from authapp.models import User
 from chatapp.models import Chat
-from speakers.service import Service
-from workroomsapp.lecture.db import AttrNames
-from workroomsapp.lecture.db import ChatManager
-from workroomsapp.lecture.services.ws import LectureResponseWsService, LectureCancelResponseWsService, \
+from services.chat.base import ChatService
+from services.types import AttrNames
+from services.ws.lecture_response import LectureResponseWsService, LectureCancelResponseWsService, \
     LectureConfirmRespondentWsService, LectureRejectRespondentWsService
 from workroomsapp.models import Lecture, LectureRequest, Person
-
-
-class ChatService(Service):
-    response_message_text = None
-    ws_service = None
-    object_manager = ChatManager
-
-    def format_dates_for_message(self, *args, **kwargs) -> list[str]:
-        """ Приводит даты лекции к формату dd.mm и возвращает список отформатированных строк """
-
-        pass
-
-    def make_message_text(self) -> str:
-        """ Объединяет сообщение self.response_message_text и отформатированные даты лекции """
-
-        dates = self.format_dates_for_message()
-        str_dates = ", ".join(dates)
-        return self.response_message_text + ' ' + str_dates
-
-    def to_do(self) -> None:
-        """ Собирает и запускает последовательно необходимые действия класса """
-        pass
-
-    def setup(self) -> None:
-        """ Собирает и запускает последовательно необходимые действия класса """
-        self.to_do()
-        self.ws_service.to_do()
 
 
 class LectureResponseChatService(ChatService):
@@ -45,7 +17,7 @@ class LectureResponseChatService(ChatService):
 
     def __init__(self, request: HttpRequest, from_obj: User, lecture: Lecture,
                  responses: QuerySet[LectureRequest], lecture_creator: Person,
-                 from_attr: AttrNames = AttrNames.LECTURER):
+                 from_attr: AttrNames = AttrNames.LECTURER, ws_active: bool = True):
         super().__init__(from_obj, from_attr)
         self._lecture = lecture
         self._lecture_responses = responses
@@ -53,7 +25,7 @@ class LectureResponseChatService(ChatService):
 
         self.ws_service = self.ws_service(
             request, from_obj=from_obj, clients=[self._lecture_creator.user, self.from_obj],
-            lecture_creator=self._lecture_creator, responses=responses)
+            lecture_creator=self._lecture_creator, responses=responses, ws_active=ws_active)
 
     def format_dates_for_message(self) -> list[str]:
         """ Приводит даты лекции к формату dd.mm и возвращает список отформатированных строк """
@@ -105,13 +77,14 @@ class LectureCancelResponseChatService(ChatService):
         super().__init__(from_obj)
         self._chat = chat
 
+        clients = list(self._chat.users.all())
         self.ws_service = self.ws_service(
-            request, from_obj, clients=self._chat.users.all(), chat_id=self._chat.pk)
+            request, from_obj, clients=clients, chat_id=self._chat.pk)
 
     def _remove_chat(self) -> None:
         self.object_manager.delete_chat(self._chat)
 
-    def setup(self):
+    def to_do(self):
         self._remove_chat()
 
 
@@ -158,7 +131,7 @@ class LectureConfirmRespondentChatService(ChatService):
         self._create_message_for_other_respondent(chat)
 
     def _handle_single_date(self, chat: Chat):
-        """ Удаляет чат """
+        """ Удаляет чат и отправляет сообщение об удалении по вебсокету """
 
         client = self.object_manager.get_user_from_chat(chat, self.from_obj)
         self.ws_service.send_delete_chat_message_to_other_respondent(chat, client)
@@ -186,7 +159,8 @@ class LectureConfirmRespondentChatService(ChatService):
             self._handle_chats(chat_list, lecture_request)
 
     def _create_message_for_confirmed_respondent(self):
-        """ Создает сообщение в чате для подтвержденного пользователя """
+        """ Создает сообщение в чате для подтвержденного пользователя и отправляет созданное
+         сообщение во вебсокету """
 
         message = self.object_manager.create_message(
             author=self.from_obj,

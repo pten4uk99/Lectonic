@@ -2,7 +2,8 @@ import datetime
 from abc import ABC
 from typing import Type, Union, Iterable
 
-from workroomsapp.lecture.db import AttrNames, GetLectureManager
+from services.db.lecture import GetLectureManager
+from services.types import AttrNames
 from workroomsapp.models import Lecture, Person, Customer, Lecturer
 
 

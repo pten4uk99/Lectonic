@@ -3,29 +3,11 @@ from django.http import HttpRequest
 
 from authapp.models import User
 from chatapp.models import Message, Chat
-from chatapp.services.ws_message import WsMessage, WsEventTypes
-from chatapp.services.ws_message import WsMessageSender, WsMessageBuilder
-from speakers.service import Service
-from workroomsapp.lecture.db import ChatManager
+from services.types import WsEventTypes
+from services.ws.ws_message import WsMessageSender, WsMessage
+from services.ws.base import WsService
+from services.db.lecture import ChatManager
 from workroomsapp.models import LectureRequest, Person
-
-
-class WsService(Service):
-    message_builder = WsMessageBuilder
-    message_sender = WsMessageSender
-
-    def __init__(self, request: HttpRequest, from_obj: User, clients: list[User]):
-        super().__init__(from_obj)
-        self.message_builder = self.message_builder(request)
-        self.clients = clients
-
-    def _get_message(self) -> dict:
-        """ Возвращает сообщение для вебсокета """
-        pass
-
-    def setup(self) -> None:
-        """ Собирает и запускает последовательно необходимые действия класса """
-        pass
 
 
 class LectureResponseWsService(WsService):
@@ -34,12 +16,13 @@ class LectureResponseWsService(WsService):
 
     def __init__(self, request: HttpRequest, from_obj: User,
                  clients: list[User], responses: QuerySet[LectureRequest],
-                 lecture_creator: Person):
+                 lecture_creator: Person, ws_active: bool = True):
         super().__init__(request, from_obj, clients=clients)
         self.request = request
         self.chat_manager = self.chat_manager()
         self.responses = responses
         self._lecture_creator = lecture_creator
+        self._ws_active = ws_active
 
     @property
     def clients(self):
@@ -66,9 +49,10 @@ class LectureResponseWsService(WsService):
     def setup(self) -> None:
         """ Создает сообщение для вебсокета и отправляет его """
 
-        message = WsMessage(type_=WsEventTypes.new_respondent, kwargs=self._get_message())
-        sender = self.message_sender(self.clients, message)
-        sender.send()
+        if self._ws_active:
+            message = WsMessage(type_=WsEventTypes.new_respondent, kwargs=self._get_message())
+            sender = self.message_sender(self.clients, message)
+            sender.send()
 
 
 class LectureCancelResponseWsService(WsService):

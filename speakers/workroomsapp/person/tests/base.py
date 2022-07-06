@@ -2,10 +2,12 @@ import datetime
 from datetime import timedelta
 from typing import Union
 
+from django.http import SimpleCookie
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from rest_framework.test import APITransactionTestCase
 
 from authapp.models import User
+from services.api import user_signup_service
 from speakers.utils.tests import data
 from workroomsapp.models import City, Person, Lecturer, Domain, Customer, Lecture
 
@@ -53,7 +55,10 @@ class SignUpTestManager:
         self.run_signup()
 
     def run_signup(self):
-        self._user = User.objects.create(**self.signup_data)
+        self._user = User.objects.filter(email=self.signup_data['email']).first()
+
+        if not self._user:
+            self._user = User.objects.create(**self.signup_data)
 
     def create_obj(self):
         """ Проверяет созданы ли все зависимые объекты, и затем создает объект для текущего класса """
@@ -140,14 +145,16 @@ class LectureTestManager:
 
 # тесты API
 # ---------------------------------
-class SignUpTestCase(APITestCase):
+# используется APITransactionTestCase для асинхронного
+# взаимодействия с базой данных (нужно для теста вебсокета)
+class SignUpTestCase(APITransactionTestCase):
     """ Базовый класс для тестирования, в котором создается пользователь """
 
     signup_data = data.SIGNUP.copy()
 
     def setUp(self):
-        temp_signup_data = self.signup_data.copy()
-        self.client.post(reverse('signup'), temp_signup_data)
+        user_login, serializer = user_signup_service(data=self.signup_data, pk=self.signup_data['pk'])
+        self.client.cookies = SimpleCookie({'auth_token': user_login.token.key})
 
 
 class PersonCreateTestCase(SignUpTestCase):

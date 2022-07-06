@@ -4,21 +4,14 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 
 from authapp.models import User
-from workroomsapp.lecture.services.chat import LectureCancelResponseChatService, LectureResponseChatService, \
+from services.base import LectureResponseBaseService, LectureService
+from services.chat.lecture_response import LectureCancelResponseChatService, LectureResponseChatService, \
     LectureConfirmRespondentChatService, LectureRejectRespondentChatService
+from services.db import DeleteLectureManager
+from services.types import person_id
 from workroomsapp.lecture import lecture_responses
-from workroomsapp.lecture.db import AttrNames, LectureResponseManager
-from workroomsapp.lecture.services.service import LectureService
+from services.types import AttrNames
 from workroomsapp.models import LectureRequest, Person
-
-
-class LectureResponseBaseService(LectureService):
-    object_manager = LectureResponseManager
-    chat_service = None
-
-    def setup(self, *args, **kwargs) -> None:
-        super().setup(*args, **kwargs)
-        self.chat_service.to_do()
 
 
 class LectureResponseService(LectureResponseBaseService):
@@ -26,14 +19,15 @@ class LectureResponseService(LectureResponseBaseService):
 
     def __init__(self, request: HttpRequest, from_obj: User,
                  lecture_id: int, response_dates: list[str],
-                 from_attr: AttrNames = AttrNames.LECTURER):
+                 from_attr: AttrNames = AttrNames.LECTURER, ws_active: bool = True):
         super().__init__(from_obj, lecture_id=lecture_id, from_attr=from_attr)
         self._lecture_creator = self._get_lecture_creator()
         self._responses = self._get_lecture_dates(response_dates)
 
         self.chat_service = self.chat_service(
             request, from_obj=from_obj, lecture=self.lecture,
-            responses=self._responses, lecture_creator=self._lecture_creator
+            responses=self._responses, lecture_creator=self._lecture_creator,
+            ws_active=ws_active
         )
 
     def _get_lecture_creator(self) -> Person:
@@ -149,7 +143,7 @@ class LectureConfirmRespondentService(LectureResponseBaseService):
 
     chat_service = LectureConfirmRespondentChatService
 
-    def __init__(self, request: HttpRequest, from_obj: User, chat_id: int, respondent_id: int):
+    def __init__(self, request: HttpRequest, from_obj: User, chat_id: int, respondent_id: person_id):
         super().__init__(from_obj)
         self._chat = self.object_manager.get_chat(chat_id)
         self.lecture = self._chat.lecture
@@ -200,7 +194,7 @@ class LectureRejectRespondentService(LectureResponseBaseService):
 
     chat_service = LectureRejectRespondentChatService
 
-    def __init__(self, request: HttpRequest, from_obj: User, chat_id: int, respondent_id: int):
+    def __init__(self, request: HttpRequest, from_obj: User, chat_id: int, respondent_id: person_id):
         super().__init__(from_obj)
         self._chat = self.object_manager.get_chat(chat_id)
         self.lecture = self._chat.lecture
@@ -230,3 +224,24 @@ class LectureRejectRespondentService(LectureResponseBaseService):
 
     def to_do(self):
         self._reject_respondent()
+
+
+class LectureDeleteService(LectureService):
+    object_manager = DeleteLectureManager
+
+    def check_permissions(self) -> bool:
+        """ Проверяет является ли пользователь (self._from_obj), создателем лекции (lecture) """
+
+        if self.lecture.lecturer:
+            if not self.lecture.lecturer.person.user == self.from_obj:
+                return lecture_responses.not_a_creator()
+        elif self.lecture.customer:
+            if not self.lecture.customer.person.user == self.from_obj:
+                return lecture_responses.not_a_creator()
+
+        return True
+
+    def to_do(self) -> None:
+        """ Удаляет объект Lecture из базы данных """
+
+        self.object_manager.delete(self.lecture)

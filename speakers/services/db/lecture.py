@@ -1,18 +1,13 @@
 import datetime
-from enum import Enum
 
 from django.db.models import QuerySet, Max
 
 from authapp.models import User
 from chatapp.models import Chat, Message
+from services.types import AttrNames
 from speakers.db import ObjectManager
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.models import Person, Lecture, LectureRequest
-
-
-class AttrNames(Enum):
-    LECTURER = 'lecturer'
-    CUSTOMER = 'customer'
 
 
 class LectureObjectManager(ObjectManager):
@@ -204,7 +199,7 @@ class LectureResponseManager(LectureObjectManager):
 
     @staticmethod
     def get_chat_from_lecture(lecture: Lecture, respondent: User) -> Chat:
-        chat = Chat.objects.filter(lecture=lecture, users=respondent).first()
+        chat = Chat.objects.filter(lecture=lecture, users=respondent).prefetch_related('users').first()
         return chat
 
     @staticmethod

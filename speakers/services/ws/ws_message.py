@@ -1,25 +1,17 @@
+from dataclasses import dataclass
+
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
 from authapp.models import User
 from chatapp.chatapp_serializers import ChatSerializer
 from chatapp.models import Chat, Message
-from dataclasses import dataclass
-from enum import Enum
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
 from chatapp.models import WsClient
-
-
-class WsEventTypes(Enum):
-    new_respondent = 'new_respondent'
-    set_online_users = 'set_online_users'
-    remove_respondent = 'remove_respondent'
-    chat_message = 'chat_message'
-    read_messages = 'read_messages'
-    read_reject_chat = 'read_reject_chat'
+from services.types import WsEventTypes
 
 
 @dataclass

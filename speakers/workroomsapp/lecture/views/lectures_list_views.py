@@ -2,8 +2,8 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
 from workroomsapp.lecture import lecture_responses
-from workroomsapp.lecture.api import serialize_confirmed_lectures, serialize_potential_lectures
-from workroomsapp.lecture.db import AttrNames
+from services.api import serialize_confirmed_lectures, serialize_potential_lectures
+from services import AttrNames
 
 
 class ConfirmedLecturesGetAPIView(APIView):

@@ -3,9 +3,10 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
 from workroomsapp.lecture import lecture_responses
-from workroomsapp.lecture.serializers.as_lecturer_serializers import *
-from workroomsapp.lecture.api import serialize_created_lectures
-from workroomsapp.lecture.filters import AttrNames
+from services.api import serialize_created_lectures
+from services import AttrNames
+from workroomsapp.lecture.lecture_serializers import LectureCreateAsCustomerSerializer
+from workroomsapp.models import Customer
 from workroomsapp.utils import workroomsapp_permissions
 
 
@@ -20,10 +21,7 @@ class LectureAsCustomerAPIView(APIView):
 
     @swagger_auto_schema(deprecated=True)
     def post(self, request):
-        serializer = LectureCreateAsCustomerSerializer(
-            data=request.data,
-            context={'request': request}
-        )
+        serializer = LectureCreateAsCustomerSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return lecture_responses.lecture_created()

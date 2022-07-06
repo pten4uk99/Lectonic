@@ -2,7 +2,7 @@ from django.db.models import QuerySet
 
 from chatapp.models import Message, Chat
 from speakers.db import ObjectManager
-from workroomsapp.lecture.db import AttrNames
+from services.types import AttrNames
 
 
 class ChatMessageObjectManager(ObjectManager):

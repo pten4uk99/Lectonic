@@ -1,15 +1,9 @@
-import datetime
-
-import pytz
 from rest_framework import serializers
 
 from speakers.settings import DEFAULT_HOST
 from workroomsapp.calendar.utils import get_model_from_attrs
-from workroomsapp.lecture.utils.datetime import (
-    convert_datetime,
-    check_datetime_for_lecture
-)
-from workroomsapp.models import Lecture, Respondent, Lecturer, Customer
+from workroomsapp.lecture.validators import LectureDatetimeValidator
+from workroomsapp.models import Lecture, Respondent
 
 
 class LectureCreateAsLecturerSerializer(serializers.Serializer):
@@ -41,28 +35,9 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
             raise serializers.ValidationError('Пользователь не является лектором')
         return lecturer
 
-    def validate_lecture(self, lecture):
-        image_format = lecture.name.split('.')[-1]
-        lecture.name = 'lecture.' + image_format
-        return lecture
-
     def validate_datetime(self, datetime_list):
-        dates = []
-        for elem in datetime_list:
-            start, end = elem.split(',')
-            start, end = convert_datetime(start, end)
-
-            if not check_datetime_for_lecture(
-                    self.get_creator_obj(), start, end):
-                raise serializers.ValidationError(f'Событие на выбранное время уже существует {start} - {end}')
-
-            if start < datetime.datetime.now() + datetime.timedelta(hours=1):
-                msg = 'Невозможно создать событие на прошедшую дату'
-                raise serializers.ValidationError(msg)
-
-            dates.append([start, end])
-
-        return dates
+        validator = LectureDatetimeValidator(self.get_creator_obj())
+        return validator.validate(datetime_list)
 
     def create(self, validated_data):
         return Lecture.objects.create_lecture(

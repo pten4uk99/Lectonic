@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from chatapp import chatapp_responses
 from chatapp.chatapp_serializers import *
 from chatapp.models import Chat
-from chatapp.services.api import serialize_chat_message_list
+from services.api import serialize_chat_message_list
 from workroomsapp.utils import workroomsapp_permissions
 
 channel_layer = get_channel_layer()

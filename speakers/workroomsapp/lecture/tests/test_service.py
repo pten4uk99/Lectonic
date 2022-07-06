@@ -1,6 +1,6 @@
 from rest_framework.test import APITestCase
 
-from workroomsapp.lecture.api import service_delete_lecture_by_id
+from services.api import service_delete_lecture_by_id
 from workroomsapp.models import Lecturer, Lecture
 from workroomsapp.person.tests.base import LecturerTestManager, CustomerTestManager, LectureTestManager
 

@@ -2,8 +2,9 @@ from django.http import HttpRequest
 
 from authapp.models import User
 from chatapp.models import Chat
-from chatapp.services.ws_message import WsMessage, WsEventTypes
-from workroomsapp.lecture.services.ws import WsService
+from services.types import WsEventTypes
+from services.ws.ws_message import WsMessage
+from services.ws.base import WsService
 
 
 class ChatMessageWsService(WsService):

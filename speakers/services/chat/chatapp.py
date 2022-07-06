@@ -3,17 +3,15 @@ from django.http import HttpRequest
 
 from authapp.models import User
 from chatapp import chatapp_responses
-from chatapp.chatapp_serializers import MessageListSerializer
 from chatapp.models import Chat, Message
-from chatapp.services.db import ChatMessageObjectManager
-from chatapp.services.ws import ChatMessageWsService
-from speakers.service import Service
-from workroomsapp.lecture.db import AttrNames
+from services.base import Service
+from services.db.chat import ChatMessageObjectManager
+from services.ws.chatapp import ChatMessageWsService
+from services.types import AttrNames
 
 
-class ChatMessageAPI(Service):
+class ChatMessageService(Service):
     object_manager = ChatMessageObjectManager
-    serializer_class = MessageListSerializer
     ws_service = ChatMessageWsService
 
     def __init__(self, request: HttpRequest, from_obj: User, chat_id: int, from_attr: AttrNames = AttrNames.LECTURER):
@@ -23,8 +21,9 @@ class ChatMessageAPI(Service):
 
         self._to_do_ran = False
 
+        clients = list(self.chat.users.all())
         self.ws_service = self.ws_service(
-            request, from_obj=from_obj, chat=self.chat, clients=self.chat.users.all())
+            request, from_obj=from_obj, chat=self.chat, clients=clients)
 
     def _get_chat(self, chat_id) -> Chat:
         chat = self.object_manager.get_chat(chat_id)
@@ -51,11 +50,5 @@ class ChatMessageAPI(Service):
 
             self._to_do_ran = True
 
-    def serialize(self):
+    def setup(self):
         self._to_do()
-        return self.serializer_class(self.chat_messages, many=True, context={'user': self.from_obj})
-
-
-# функции для использования непосредственно в представлениях
-def serialize_chat_message_list(request: HttpRequest, chat_id: int):
-    return ChatMessageAPI(request, from_obj=request.user, chat_id=chat_id).serialize()

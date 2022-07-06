@@ -4,11 +4,11 @@ from rest_framework.views import APIView
 
 from emailapp.models import EmailResetPassword
 from .authapp_serializers import (
-    UserCreateSerializer,
     UserLoginSerializer, CheckAuthenticationSerializer
 )
 from .docs import authapp_docs
 from .models import User
+from services.api import user_signup_service
 from .utils import authapp_responses
 
 
@@ -35,15 +35,11 @@ class CheckAuthenticationAPIView(APIView):
 class UserCreationView(APIView):
     @swagger_auto_schema(**authapp_docs.UserProfileCreationView)
     def post(self, request):
-        serializer = UserCreateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        user = serializer.save()
-        user, new_token = user.login()
+        user_login, serializer = user_signup_service(data=request.data)
 
         return authapp_responses.signed_in(
             data={'user': serializer.data['email']},
-            cookie=('auth_token', new_token.key)
+            cookie=('auth_token', user_login.token.key)
         )
 
     @swagger_auto_schema(deprecated=True)
