@@ -32,7 +32,7 @@ class ObjectManagerTestCaseMixin:
         respondent.save()
 
     def _test_get_person_lectures(self: TestCase, from_obj, from_attr: AttrNames) -> None:
-        manager = GetLectureManager(person=from_obj.objects.first().person, from_attr=from_attr)
+        manager = GetLectureManager(from_obj.objects.first().person.user, from_attr=from_attr)
         lectures = manager.get_person_lectures()
         self.assertEqual(
             isinstance(lectures, QuerySet), True,
@@ -40,7 +40,7 @@ class ObjectManagerTestCaseMixin:
         )
 
     def _test_get_latest_lecture_date(self: TestCase, from_obj, from_attr: AttrNames) -> None:
-        manager = GetLectureManager(person=from_obj.objects.first().person, from_attr=from_attr)
+        manager = GetLectureManager(from_obj.objects.first().person.user, from_attr=from_attr)
         latest_lecture_date = manager.get_latest_lecture_date(Lecture.objects.first())
         self.assertEqual(
             latest_lecture_date,
@@ -49,7 +49,7 @@ class ObjectManagerTestCaseMixin:
         )
 
     def _test_get_person_confirmed_lectures(self: TestCase, from_obj, from_attr: AttrNames):
-        manager = GetLectureManager(person=from_obj.objects.first().person, from_attr=from_attr)
+        manager = GetLectureManager(from_obj.objects.first().person.user, from_attr=from_attr)
         confirmed_lectures = manager.get_person_confirmed_lectures()
 
         for lecture in confirmed_lectures:
@@ -60,7 +60,7 @@ class ObjectManagerTestCaseMixin:
             )
 
     def _test_get_person_confirmed_responses(self: TestCase, from_obj, from_attr: AttrNames):
-        manager = GetLectureManager(person=from_obj.objects.first().person, from_attr=from_attr)
+        manager = GetLectureManager(from_obj.objects.first().person.user, from_attr=from_attr)
         confirmed_responses = manager.get_person_confirmed_responses()
 
         for lecture in confirmed_responses:

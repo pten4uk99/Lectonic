@@ -133,7 +133,7 @@ class LecturesGetSerializer(serializers.ModelSerializer):
     def get_dates(self, obj):
         dates = []
         lecture_requests = obj.lecture_requests.order_by('event__datetime_start').all()
-        user = self.context['request'].user
+        user = self.context['user']
         lecture_creator = get_model_from_attrs(
             lecture_requests.first().lecture, ['lecturer', 'customer']).person
 
@@ -219,7 +219,7 @@ class LecturesGetSerializer(serializers.ModelSerializer):
         return obj.lecturer.person.bgc_number
 
     def get_can_response(self, obj):
-        person = self.context['request'].user.person
+        person = self.context['user'].person
         for lecture_request in obj.lecture_requests.all():
             respondent = Respondent.objects.filter(person=person, lecture_request=lecture_request).first()
             if respondent and not (respondent.rejected or respondent.confirmed):
@@ -227,7 +227,7 @@ class LecturesGetSerializer(serializers.ModelSerializer):
         return True
 
     def get_response_dates(self, obj):
-        person = self.context['request'].user.person
+        person = self.context['user'].person
         data = []
 
         for lecture_request in person.responses.filter(lecture=obj):

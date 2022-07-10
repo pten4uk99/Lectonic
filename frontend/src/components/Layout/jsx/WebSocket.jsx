@@ -29,7 +29,7 @@ function WebSocket(props) {
       let data = JSON.parse(e.data)
       if (data.type === 'set_online_users') props.SetOnlineUsers(data.users)
       else if (data.type === 'new_respondent') props.AddNotifications(data)
-      else if (data.type === 'remove_respondent') props.RemoveNotification(data.id)
+      else if (data.type === 'remove_respondent') props.RemoveNotification(data.chat_id)
       else if (data.type === 'chat_message') {
         if (chatId != data.chat_id) props.SetNeedRead(data.chat_id, true)
       }

@@ -1,17 +1,15 @@
 import json
-from typing import TypedDict, Optional, Type, Union
+from typing import Type, Union
 
 from channels.db import database_sync_to_async
 from channels.routing import URLRouter
 from channels.testing import WebsocketCommunicator
-from django.http import HttpRequest
 
 from authapp.models import User
 from chatapp.models import WsClient, Chat
 from chatapp.routing import websocket_urlpatterns
-from services.types import WsEventTypes
 from services.api import service_response_to_lecture, service_cancel_response_to_lecture, \
-    service_confirm_respondent_to_lecture
+    service_confirm_respondent_to_lecture, serialize_chat_message_list
 from workroomsapp.models import Lecturer, Lecture, Person, Customer
 from workroomsapp.person.tests.base import SignUpTestCase, LecturerTestManager, CustomerTestManager, LectureTestManager
 
@@ -56,7 +54,7 @@ async def websocket_connect():
 
 
 @database_sync_to_async
-def create_lecture(request: HttpRequest):
+def create_lecture():
     lecturer_manager = LecturerTestManager()
     customer_manager = CustomerTestManager()
 
@@ -67,35 +65,8 @@ def create_lecture(request: HttpRequest):
     lecture_manager.create_obj()
 
     lecture = Lecture.objects.first()
-    request.user = customer_manager._user  # откликается Customer
-    return lecture
-
-
-class NewRespondentEvent(TypedDict):
-    type: WsEventTypes
-    respondent_id: int
-    id: int
-    lecture_name: str
-    lecture_svg: int
-    need_read: bool
-    talker_id: int
-    talker_first_name: str
-    talker_last_name: str
-    talker_photo: str
-    chat_confirm: Optional[bool]
-
-
-class RemoveRespondentEvent(TypedDict):
-    type: WsEventTypes
-    id: int
-
-
-class ChatMessageEvent(TypedDict):
-    type: WsEventTypes
-    author: int
-    text: str
-    chat_id: int
-    confirm: Optional[bool]
+    respondent = customer_manager._user  # откликается Customer
+    return lecture, respondent
 
 
 class ConsumerTestCase(SignUpTestCase):
@@ -113,16 +84,16 @@ class ConsumerTestCase(SignUpTestCase):
         await communicator.disconnect()
         ws_client_again = await get_ws_client(user)
         self.assert_(not ws_client_again, 'WsClient не был удален при завершении соединения')
+        await communicator.disconnect()
 
     async def test_new_respondent(self):
         user, communicator = await websocket_connect()
 
-        request = HttpRequest()
-        lecture = await create_lecture(request)
+        lecture, user = await create_lecture()
 
         date = await get_lecture_first_date(lecture)
         await database_sync_to_async(service_response_to_lecture)(
-            request,
+            user,
             lecture_id=lecture.pk,
             dates=[date])
 
@@ -131,51 +102,74 @@ class ConsumerTestCase(SignUpTestCase):
         new_respondent = json.loads(new_respondent_event)
 
         self.assertEqual(len(new_respondent), 11, msg='Неверное количество ключей в событии new_respondent')
+        await communicator.disconnect()
 
     async def test_remove_respondent(self):
         user, communicator = await websocket_connect()
-
-        request = HttpRequest()
-        lecture = await create_lecture(request)
+        lecture, respondent = await create_lecture()
 
         date = await get_lecture_first_date(lecture)
         await database_sync_to_async(service_response_to_lecture)(
-            request,
+            respondent,
             lecture_id=lecture.pk,
             dates=[date],
-            ws_active=False,  # не отправляем сообщение по вебсокету
-        )
+            ws_active=False)
 
-        await database_sync_to_async(service_cancel_response_to_lecture)(request, lecture.pk)
+        await database_sync_to_async(service_cancel_response_to_lecture)(respondent, lecture.pk)
 
         await communicator.receive_from()  # set_online_users event
         remove_respondent_event = await communicator.receive_from()
         remove_respondent = json.loads(remove_respondent_event)
 
         self.assertEqual(len(remove_respondent), 2, msg='Неверное количество ключей в событии remove_respondent')
+        await communicator.disconnect()
 
     async def test_send_chat_message(self):  # тест через подтверждение откликнувшегося пользователя
         user, communicator = await websocket_connect()
 
-        request = HttpRequest()
-        lecture: Lecture = await create_lecture(request)  # создатель лекции Lecturer
+        lecture, respondent_user = await create_lecture()
 
-        date: str = await get_lecture_first_date(lecture)
+        date = await get_lecture_first_date(lecture)
         await database_sync_to_async(service_response_to_lecture)(
-            request,
+            respondent_user,
             lecture_id=lecture.pk,
             dates=[date],
-            ws_active=False,  # не отправляем сообщение по вебсокету
-        )
-        respondent = await get_person_from_obj(Customer)  # берем откликнувшегося
-        request2 = HttpRequest()
-        request2.user = await get_user_from_lecture(lecture)  # помещаем создателя в объект запроса
+            ws_active=False)
+
+        respondent_person = await get_person_from_obj(Customer)  # берем откликнувшегося
+        creator: User = await get_user_from_lecture(lecture)  # помещаем создателя в объект запроса
         chat = await get_chat()
         await database_sync_to_async(service_confirm_respondent_to_lecture)(
-            request2, chat.pk, respondent.pk)
+            creator, chat.pk, respondent_person.pk)
 
         await communicator.receive_from()  # set_online_users event
         chat_message_event = await communicator.receive_from()
         chat_message = json.loads(chat_message_event)
 
         self.assertEqual(len(chat_message), 5, msg='Неверное количество ключей в событии chat_message')
+        await communicator.disconnect()
+
+    async def test_read_messages(self):  # тест через подтверждение откликнувшегося пользователя
+        user, communicator = await websocket_connect()
+        lecture, respondent = await create_lecture()
+
+        date = await get_lecture_first_date(lecture)
+        await database_sync_to_async(service_response_to_lecture)(
+            respondent,
+            lecture_id=lecture.pk,
+            dates=[date],
+            ws_active=False)
+
+        creator: User = await get_user_from_lecture(lecture)  # помещаем создателя в объект запроса
+        chat = await get_chat()
+        await database_sync_to_async(serialize_chat_message_list)(creator, chat.pk)
+
+        await communicator.receive_from()  # set_online_users event
+        read_messages_event = await communicator.receive_from()
+        read_messages = json.loads(read_messages_event)
+
+        self.assertEqual(
+            len(read_messages), 2,
+            msg='Неверное количество ключей в событии read_messages\n'
+                f'{read_messages}')
+        await communicator.disconnect()

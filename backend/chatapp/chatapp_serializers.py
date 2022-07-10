@@ -37,7 +37,7 @@ class ChatSerializer(serializers.ModelSerializer):
 
     def get_need_read(self, obj):
         return Message.objects.filter(chat=obj, need_read=True).exclude(
-            author=self.context['request'].user).exists()
+            author=self.context['user']).exists()
 
     def get_lecture_svg(self, obj):
         return obj.lecture.svg
@@ -57,17 +57,17 @@ class ChatSerializer(serializers.ModelSerializer):
             return obj.lecture.customer.person.user.pk
 
     def get_talker_id(self, obj):
-        talker_user = obj.users.exclude(pk=self.context['request'].user.pk).first()
+        talker_user = obj.users.exclude(pk=self.context['user'].pk).first()
         return talker_user.pk
 
     def get_talker_first_name(self, obj):
-        return obj.users.exclude(pk=self.context['request'].user.pk).first().person.first_name
+        return obj.users.exclude(pk=self.context['user'].pk).first().person.first_name
 
     def get_talker_last_name(self, obj):
-        return obj.users.exclude(pk=self.context['request'].user.pk).first().person.last_name
+        return obj.users.exclude(pk=self.context['user'].pk).first().person.last_name
 
     def get_talker_photo(self, obj):
-        photo = obj.users.exclude(pk=self.context['request'].user.pk).first().person.photo
+        photo = obj.users.exclude(pk=self.context['user'].pk).first().person.photo
 
         if photo:
             return DEFAULT_HOST + photo.url
@@ -83,19 +83,19 @@ class MessageSerializer(serializers.ModelSerializer):
         fields = ['author', 'text', 'chat', 'datetime', 'confirm', 'need_read']
 
 
-class MessageListSerializer(serializers.ModelSerializer):
-    lecture_id = serializers.StringRelatedField(source='chat.lecture.pk'),
-    lecture_name = serializers.StringRelatedField(source='chat.lecture.name'),
-    is_creator = serializers.SerializerMethodField(),
-    confirmed = serializers.SerializerMethodField(),
-    response_dates = serializers.SerializerMethodField(),
-    talker_respondent = serializers.SerializerMethodField(),
-    talker_first_name = serializers.SerializerMethodField(),
-    talker_last_name = serializers.SerializerMethodField(),
-    messages = MessageSerializer(),
+class ChatMessageListSerializer(serializers.ModelSerializer):
+    lecture_id = serializers.SerializerMethodField()
+    lecture_name = serializers.SerializerMethodField()
+    is_creator = serializers.SerializerMethodField()
+    confirmed = serializers.SerializerMethodField()
+    response_dates = serializers.SerializerMethodField()
+    talker_respondent = serializers.SerializerMethodField()
+    talker_first_name = serializers.SerializerMethodField()
+    talker_last_name = serializers.SerializerMethodField()
+    messages = MessageSerializer(many=True)
 
     class Meta:
-        model = Message
+        model = Chat
         fields = [
             'lecture_id',
             'lecture_name',
@@ -108,8 +108,14 @@ class MessageListSerializer(serializers.ModelSerializer):
             'messages',
         ]
 
-    def get_is_creator(self, message):
-        lecture = message.chat.lecture
+    def get_lecture_id(self, chat):
+        return chat.lecture.pk
+
+    def get_lecture_name(self, chat):
+        return chat.lecture.name
+
+    def get_is_creator(self, chat):
+        lecture = chat.lecture
 
         is_creator = None
 
@@ -120,24 +126,23 @@ class MessageListSerializer(serializers.ModelSerializer):
 
         return is_creator
 
-    def get_confirmed(self, message):
-        chat = message.chat
+    def get_confirmed(self, chat):
         message = chat.messages.filter(Q(confirm=True) | Q(confirm=False)).first()
 
         if message is not None:
             return message.confirm
         return None
 
-    def get_response_dates(self, message):
-        return message.chat.lecture_requests.all().values_list(
+    def get_response_dates(self, chat):
+        return chat.lecture_requests.all().values_list(
             'event__datetime_start', 'event__datetime_end')
 
-    def _get_talker_person(self, message: Message) -> Person:
-        return message.chat.users.exclude(pk=self.context['user'].pk).first().person
+    def _get_talker_person(self, chat: Chat) -> Person:
+        return chat.users.exclude(pk=self.context['user'].pk).first().person
 
-    def get_talker_respondent(self, message):
-        talker_person = self._get_talker_person(message)
-        is_creator = self.get_is_creator(message)
+    def get_talker_respondent(self, chat):
+        talker_person = self._get_talker_person(chat)
+        is_creator = self.get_is_creator(chat)
 
         respondent: int
 
@@ -150,8 +155,8 @@ class MessageListSerializer(serializers.ModelSerializer):
 
         return respondent
 
-    def get_talker_first_name(self, message):
-        return self._get_talker_person(message).first_name
+    def get_talker_first_name(self, chat):
+        return self._get_talker_person(chat).first_name
 
-    def get_talker_last_name(self, message):
-        return self._get_talker_person(message).last_name
+    def get_talker_last_name(self, chat):
+        return self._get_talker_person(chat).last_name

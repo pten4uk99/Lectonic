@@ -8,12 +8,12 @@ from services.ws.base import WsService
 
 
 class ChatMessageWsService(WsService):
-    def __init__(self, request: HttpRequest, from_obj: User, chat: Chat, clients: list[User]):
-        super().__init__(request, from_obj, clients=clients)
+    def __init__(self, from_obj: User, chat: Chat, clients: list[User]):
+        super().__init__(from_obj, clients=clients)
         self.chat = chat
 
     def _get_message(self):
-        self.message_builder.read_messages(self.chat)
+        return self.message_builder.read_messages(self.chat.pk)
 
     def setup(self):
         ws_message = WsMessage(type_=WsEventTypes.read_messages, kwargs=self._get_message())

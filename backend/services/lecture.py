@@ -8,7 +8,7 @@ from services.base import LectureResponseBaseService, LectureService
 from services.chat.lecture_response import LectureCancelResponseChatService, LectureResponseChatService, \
     LectureConfirmRespondentChatService, LectureRejectRespondentChatService
 from services.db import DeleteLectureManager
-from services.types import person_id
+from services.types import person_id_type
 from workroomsapp.lecture import lecture_responses
 from services.types import AttrNames
 from workroomsapp.models import LectureRequest, Person
@@ -17,15 +17,14 @@ from workroomsapp.models import LectureRequest, Person
 class LectureResponseService(LectureResponseBaseService):
     chat_service = LectureResponseChatService
 
-    def __init__(self, request: HttpRequest, from_obj: User,
-                 lecture_id: int, response_dates: list[str],
+    def __init__(self, from_obj: User, lecture_id: int, response_dates: list[str],
                  from_attr: AttrNames = AttrNames.LECTURER, ws_active: bool = True):
         super().__init__(from_obj, lecture_id=lecture_id, from_attr=from_attr)
         self._lecture_creator = self._get_lecture_creator()
         self._responses = self._get_lecture_dates(response_dates)
 
         self.chat_service = self.chat_service(
-            request, from_obj=from_obj, lecture=self.lecture,
+            from_obj=from_obj, lecture=self.lecture,
             responses=self._responses, lecture_creator=self._lecture_creator,
             ws_active=ws_active
         )
@@ -93,12 +92,12 @@ class LectureResponseService(LectureResponseBaseService):
 class LectureCancelResponseService(LectureResponseBaseService):
     chat_service = LectureCancelResponseChatService
 
-    def __init__(self, request: HttpRequest, from_obj: User, lecture_id: int):
+    def __init__(self, from_obj: User, lecture_id: int):
         super().__init__(from_obj, lecture_id)
         self._chat = self.object_manager.get_chat_from_lecture(self.lecture, self.from_obj)
         self.chat_id = self._chat.pk
 
-        self.chat_service = self.chat_service(request, from_obj=from_obj, chat=self._chat)
+        self.chat_service = self.chat_service(from_obj, chat=self._chat)
 
     # def _delete_wrong_chats(self):
     #     chats = Chat.objects.filter(lecture=self.get_lecture())
@@ -143,7 +142,7 @@ class LectureConfirmRespondentService(LectureResponseBaseService):
 
     chat_service = LectureConfirmRespondentChatService
 
-    def __init__(self, request: HttpRequest, from_obj: User, chat_id: int, respondent_id: person_id):
+    def __init__(self, from_obj: User, chat_id: int, respondent_id: person_id_type):
         super().__init__(from_obj)
         self._chat = self.object_manager.get_chat(chat_id)
         self.lecture = self._chat.lecture
@@ -152,7 +151,7 @@ class LectureConfirmRespondentService(LectureResponseBaseService):
         confirmed_lectures = self.object_manager.get_confirmed_lecture_requests_in_chat(
             self.lecture, self._chat)
         self.chat_service = self.chat_service(
-            request, from_obj, lecture_requests=confirmed_lectures,
+            from_obj, lecture_requests=confirmed_lectures,
             respondent=self.respondent, response_chat=self._chat)
 
     def _check_is_possible(self) -> None:
@@ -194,14 +193,14 @@ class LectureRejectRespondentService(LectureResponseBaseService):
 
     chat_service = LectureRejectRespondentChatService
 
-    def __init__(self, request: HttpRequest, from_obj: User, chat_id: int, respondent_id: person_id):
+    def __init__(self, from_obj: User, chat_id: int, respondent_id: person_id_type):
         super().__init__(from_obj)
         self._chat = self.object_manager.get_chat(chat_id)
         self.lecture = self._chat.lecture
         self.respondent = self.object_manager.get_person(respondent_id)
 
         self.chat_service = self.chat_service(
-            request, from_obj, respondent=self.respondent, response_chat=self._chat)
+            from_obj, respondent=self.respondent, response_chat=self._chat)
 
     def _check_is_possible(self) -> None:
         """ Проверяет не подтверждена ли уже лекция на даты в текущем чате """

@@ -14,24 +14,21 @@ class ConfirmedLecturesGetAPIView(APIView):
         # от кого идет запрос
         query_from = AttrNames.LECTURER if obj_name == AttrNames.CUSTOMER.value else AttrNames.CUSTOMER
 
-        serializer = serialize_confirmed_lectures(
-            request, request.user.person, from_attr=query_from)
+        serializer = serialize_confirmed_lectures(from_obj=request.user, from_attr=query_from)
         return lecture_responses.success_get_lectures(serializer.data)
 
 
 class PotentialLecturerLecturesGetAPIView(APIView):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        serializer = serialize_potential_lectures(
-            request, request.user.person, from_attr=AttrNames.LECTURER)
+        serializer = serialize_potential_lectures(from_obj=request.user, from_attr=AttrNames.LECTURER)
         return lecture_responses.success_get_lectures(serializer.data)
 
 
 class PotentialCustomerLecturesGetAPIView(APIView):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        serializer = serialize_potential_lectures(
-            request, request.user.person, from_attr=AttrNames.CUSTOMER)
+        serializer = serialize_potential_lectures(from_obj=request.user, from_attr=AttrNames.CUSTOMER)
         return lecture_responses.success_get_lectures(serializer.data)
 
 # class LecturesHistoryMixin(LecturesListBaseMixin):
@@ -47,7 +44,7 @@ class PotentialCustomerLecturesGetAPIView(APIView):
 #
 #         params = self.get_params()
 #
-#         if params.get('person_id'):
+#         if params.get('person_id_type'):
 #             if params['query_from'] == 'lecturer':
 #                 person = Lecturer.objects.get(pk=params['obj_id']).person
 #             else:

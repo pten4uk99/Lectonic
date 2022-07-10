@@ -1,13 +1,16 @@
 import datetime
+from typing import Type, TypeVar
 
 from django.db.models import QuerySet, Max
 
 from authapp.models import User
-from chatapp.models import Chat, Message
-from services.types import AttrNames
+from chatapp.models import Chat, Message, WsClient
 from config.db import ObjectManager
+from services.types import AttrNames
 from workroomsapp.lecture import lecture_responses
 from workroomsapp.models import Person, Lecture, LectureRequest
+
+Model = TypeVar('Model')
 
 
 class LectureObjectManager(ObjectManager):
@@ -27,6 +30,10 @@ class LectureObjectManager(ObjectManager):
         return lecture
 
     @staticmethod
+    def get_object_by_id(obj: Type[Model], id_: int) -> Model:
+        return obj.objects.filter(pk=id_).first()
+
+    @staticmethod
     def get_lecture_requests_by_chat(chat: Chat) -> QuerySet[LectureRequest]:
         return chat.lecture_requests.all()
 
@@ -39,6 +46,16 @@ class ChatManager(LectureObjectManager):
         return Chat.objects.filter(
             lecture_requests__in=dates, users=creator).filter(
             users=respondent).first()
+
+    @staticmethod
+    def get_ws_client(channel_name=None, user_id=None):
+        if user_id is not None:
+            client = WsClient.objects.filter(user_id=user_id).first()
+        elif channel_name is not None:
+            client = WsClient.objects.filter(channel_name=channel_name).first()
+        else:
+            raise AttributeError('В функцию должен быть передан хотя бы один аргумент')
+        return client
 
     @staticmethod
     def get_lecture_request_chats_with_exclude(lecture_request: LectureRequest,
@@ -91,13 +108,34 @@ class ChatManager(LectureObjectManager):
             confirm=confirm
         )
 
+    @staticmethod
+    def read_message(message: Message) -> None:
+        message.need_read = False
+        message.save()
+
+    @staticmethod
+    def delete_first_message(messages: QuerySet[Message]) -> None:
+        messages.first().delete()
+
+    @staticmethod
+    def count_messages(messages: QuerySet[Message]) -> int:
+        return messages.count()
+
+    @staticmethod
+    def get_messages_by_chat(chat_id: int) -> QuerySet[Message]:
+        return Message.objects.filter(chat_id=chat_id)
+
+    @staticmethod
+    def exclude_user_in_messages(messages: QuerySet[Message], user_id: int) -> QuerySet[Message]:
+        return messages.exclude(author_id=user_id)
+
 
 class GetLectureManager(LectureObjectManager):
     """ Интерфейс для получения объектов из базы данных """
 
-    def __init__(self, person: Person, from_attr: AttrNames, to_attr: AttrNames = None):
+    def __init__(self, from_obj: User, from_attr: AttrNames, to_attr: AttrNames = None):
         super().__init__(from_attr=from_attr)
-        self._person = person
+        self._from_obj = from_obj
 
         if to_attr is None:
             self._to_attr = from_attr.value
@@ -107,10 +145,10 @@ class GetLectureManager(LectureObjectManager):
     def get_person_lectures(self) -> QuerySet[Lecture]:
         """ Возвращает все лекции пользователя по выбранному аттрибуту (self.from_attr) """
 
-        if not hasattr(self._person, self.from_attr):
-            msg = 'У объекта {} нет аттрибута {}'.format(self._person, self.from_attr)
+        if not hasattr(self._from_obj.person, self.from_attr):
+            msg = 'У объекта {} нет аттрибута {}'.format(self._from_obj.person, self.from_attr)
             raise AttributeError(msg)
-        return getattr(self._person, self.from_attr).lectures.all()
+        return getattr(self._from_obj.person, self.from_attr).lectures.all()
 
     @staticmethod
     def get_confirmed_lecture_request(lecture: Lecture, respondent: Person) -> LectureRequest:
@@ -125,14 +163,14 @@ class GetLectureManager(LectureObjectManager):
         return aggregate.get('latest')
 
     def get_person_confirmed_lectures(self) -> list[Lecture]:
-        """ Возвращает список подтвержденных лекций пользователя self._person (те, которые он создал) """
+        """ Возвращает список подтвержденных лекций пользователя self._from_obj (те, которые он создал) """
 
-        if not hasattr(self._person, self.from_attr):
-            raise AttributeError(f'У объекта {self._person} нет аттрибута {self.from_attr}')
+        if not hasattr(self._from_obj.person, self.from_attr):
+            raise AttributeError(f'У объекта {self._from_obj.person} нет аттрибута {self.from_attr}')
 
         lecture_list = []
 
-        lectures = getattr(self._person, self.from_attr).lectures.filter(
+        lectures = getattr(self._from_obj.person, self.from_attr).lectures.filter(
             lecture_requests__respondent_obj__confirmed=True,
             lecture_requests__event__datetime_start__gte=datetime.datetime.now())
 
@@ -147,7 +185,7 @@ class GetLectureManager(LectureObjectManager):
 
         lecture_list = []
 
-        respondents = self._person.respondent_obj.filter(
+        respondents = self._from_obj.person.respondent_obj.filter(
             confirmed=True,
             lecture_request__event__datetime_start__gte=datetime.datetime.now())
 

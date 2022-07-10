@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Type
+from typing import Type, Iterable
 
 from django.http import HttpRequest
 from rest_framework.serializers import Serializer
 
 from authapp.models import User
-from chatapp.chatapp_serializers import MessageListSerializer
+from chatapp.chatapp_serializers import ChatMessageListSerializer
 from services.chat.chatapp import ChatMessageService
 from services.create_user import UserCreateService
 from services.filters import CreatedLecturesFilter, ConfirmedLecturesFilter, BaseFilter, \
@@ -13,17 +13,16 @@ from services.filters import CreatedLecturesFilter, ConfirmedLecturesFilter, Bas
 from workroomsapp.lecture.lecture_serializers import LecturesGetSerializer
 from services.lecture import LectureResponseService, LectureCancelResponseService, \
     LectureConfirmRespondentService, LectureRejectRespondentService, LectureDeleteService
-from services.types import person_id, UserLogin
+from services.types import person_id_type, UserLogin
 from services import AttrNames
-from workroomsapp.models import Person
+from workroomsapp.models import Person, Lecture
 
 
 # Тут описаны методы взаимодействия с представлениями
 
 class BaseLectureAPI:
-    def __init__(self, request: HttpRequest, person: Person, from_attr: AttrNames):
-        self.request = request
-        self.person = person
+    def __init__(self, from_obj: User, from_attr: AttrNames):
+        self.from_obj = from_obj
         self.from_attr = from_attr
         self.to_attr = AttrNames.LECTURER if self.from_attr == AttrNames.CUSTOMER else AttrNames.CUSTOMER
 
@@ -45,14 +44,19 @@ class FilterAPI(SerializerAPI):
 
     filter_class: Type[BaseFilter]
 
-    def __init__(self, request: HttpRequest, person: Person, from_attr: AttrNames):
-        super().__init__(request, person, from_attr)
-        self._filter = self.filter_class(person=person, from_attr=from_attr)
+    def __init__(self, from_obj: User, from_attr: AttrNames):
+        super().__init__(from_obj, from_attr)
+        self._filter = self.filter_class(from_obj=from_obj, from_attr=from_attr)
+
+    def get_filtered_lectures(self) -> Iterable[Lecture]:
+        return self._filter.filter()
 
     def init_serializer(self):
-        filtered_lectures = self._filter.filter()
         return self.serializer_class(
-            filtered_lectures, many=True, context={'request': self.request, 'query_from': self.from_attr.value})
+            self.get_filtered_lectures(),
+            many=True,
+            context={'user': self.from_obj, 'query_from': self.from_attr.value}
+        )
 
 
 class LectureGetAPI(FilterAPI, ABC):
@@ -63,6 +67,13 @@ class LectureGetAPI(FilterAPI, ABC):
 class CreatedLecturesGetAPI(LectureGetAPI):
     """ API для обработки и сериализации созданных лекций пользователя """
     filter_class = CreatedLecturesFilter
+
+    def init_serializer(self):
+        return self.serializer_class(
+            self.get_filtered_lectures(),
+            many=True,
+            context={'user': self.from_obj}
+        )
 
 
 class ConfirmedLecturesGetAPI(LectureGetAPI):
@@ -76,17 +87,16 @@ class PotentialLecturesGetAPI(LectureGetAPI):
 
 
 class ChatMessageAPI(SerializerAPI):
-    serializer_class = MessageListSerializer
+    serializer_class = ChatMessageListSerializer
     service = ChatMessageService
 
-    def __init__(self, request: HttpRequest, from_obj: User,
-                 chat_id: int, from_attr: AttrNames = AttrNames.LECTURER):
-        super().__init__(request, person=from_obj.person, from_attr=from_attr)
-        self.service = self.service(request, from_obj=from_obj, chat_id=chat_id, from_attr=from_attr)
+    def __init__(self, from_obj: User, chat_id: int, from_attr: AttrNames = AttrNames.LECTURER):
+        super().__init__(from_obj=from_obj, from_attr=from_attr)
+        self.service = self.service(from_obj=from_obj, chat_id=chat_id, from_attr=from_attr)
 
     def init_serializer(self) -> Serializer:
         return self.serializer_class(
-            self.service.chat_messages, many=True, context={'user': self.service.from_obj})
+            [self.service.chat], many=True, context={'user': self.service.from_obj})
 
     def serialize(self) -> Serializer:
         self.service.setup()
@@ -95,56 +105,46 @@ class ChatMessageAPI(SerializerAPI):
 
 # ------------------Функции для использования непосредственно в представлениях-------------------
 # ---------------------------------------------------------------------------------------
-def serialize_created_lectures(request: HttpRequest, person: Person, from_attr: AttrNames):
-    return CreatedLecturesGetAPI(request=request, person=person, from_attr=from_attr).serialize()
+def serialize_created_lectures(from_obj: User, from_attr: AttrNames):
+    return CreatedLecturesGetAPI(from_obj=from_obj, from_attr=from_attr).serialize()
 
 
-def serialize_confirmed_lectures(request: HttpRequest, person: Person, from_attr: AttrNames):
-    return ConfirmedLecturesGetAPI(
-        request=request,
-        person=person,
-        from_attr=from_attr,
-    ).serialize()
+def serialize_confirmed_lectures(from_obj: User, from_attr: AttrNames):
+    return ConfirmedLecturesGetAPI(from_obj=from_obj, from_attr=from_attr).serialize()
 
 
-def serialize_potential_lectures(request: HttpRequest, person: Person, from_attr: AttrNames):
-    return PotentialLecturesGetAPI(
-        request=request,
-        person=person,
-        from_attr=from_attr
-    ).serialize()
+def serialize_potential_lectures(from_obj: User, from_attr: AttrNames):
+    return PotentialLecturesGetAPI(from_obj=from_obj, from_attr=from_attr).serialize()
 
 
-def service_delete_lecture_by_id(user: User, lecture_id: int) -> None:
-    service = LectureDeleteService(from_obj=user, lecture_id=lecture_id)
+def service_delete_lecture_by_id(from_obj: User, lecture_id: int) -> None:
+    service = LectureDeleteService(from_obj=from_obj, lecture_id=lecture_id)
     service.setup()
 
 
-def service_response_to_lecture(request: HttpRequest, lecture_id: int, dates: list[str], ws_active: bool = True):
+def service_response_to_lecture(from_obj: User, lecture_id: int, dates: list[str], ws_active: bool = True):
     service = LectureResponseService(
-        request, from_obj=request.user, lecture_id=lecture_id, response_dates=dates, ws_active=ws_active)
+        from_obj=from_obj, lecture_id=lecture_id, response_dates=dates, ws_active=ws_active)
     service.setup()
 
 
-def service_cancel_response_to_lecture(request: HttpRequest, lecture_id: int):
-    service = LectureCancelResponseService(request=request, from_obj=request.user, lecture_id=lecture_id)
+def service_cancel_response_to_lecture(from_obj: User, lecture_id: int):
+    service = LectureCancelResponseService(from_obj=from_obj, lecture_id=lecture_id)
     service.setup()
 
 
-def service_confirm_respondent_to_lecture(request: HttpRequest, chat_id: int, respondent_id: person_id):
-    service = LectureConfirmRespondentService(
-        request, from_obj=request.user, chat_id=chat_id, respondent_id=respondent_id)
+def service_confirm_respondent_to_lecture(from_obj: User, chat_id: int, respondent_id: person_id_type):
+    service = LectureConfirmRespondentService(from_obj=from_obj, chat_id=chat_id, respondent_id=respondent_id)
     service.setup()
 
 
-def service_reject_respondent_to_lecture(request: HttpRequest, chat_id: int, respondent_id: person_id):
-    service = LectureRejectRespondentService(
-        request, from_obj=request.user, chat_id=chat_id, respondent_id=respondent_id)
+def service_reject_respondent_to_lecture(from_obj: User, chat_id: int, respondent_id: person_id_type):
+    service = LectureRejectRespondentService(from_obj=from_obj, chat_id=chat_id, respondent_id=respondent_id)
     service.setup()
 
 
-def serialize_chat_message_list(request: HttpRequest, chat_id: int):
-    return ChatMessageAPI(request, from_obj=request.user, chat_id=chat_id).serialize()
+def serialize_chat_message_list(from_obj: User, chat_id: int):
+    return ChatMessageAPI(from_obj=from_obj, chat_id=chat_id).serialize()
 
 
 def user_signup_service(data: dict, pk: int = None) -> tuple[UserLogin, Serializer]:

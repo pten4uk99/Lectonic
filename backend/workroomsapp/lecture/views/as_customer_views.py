@@ -30,9 +30,9 @@ class LectureAsCustomerAPIView(APIView):
     def get(self, request):
         customer_id = request.GET.get('id')
 
-        person = request.user.person
+        user = request.user
         if customer_id:
-            person = self.get_customer(customer_id).person
+            user = self.get_customer(customer_id).person.user
 
-        serializer = serialize_created_lectures(request, person, from_attr=AttrNames.CUSTOMER)
+        serializer = serialize_created_lectures(from_obj=user, from_attr=AttrNames.CUSTOMER)
         return lecture_responses.success_get_lectures(serializer.data)

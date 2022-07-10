@@ -14,7 +14,7 @@ class ChatMessageService(Service):
     object_manager = ChatMessageObjectManager
     ws_service = ChatMessageWsService
 
-    def __init__(self, request: HttpRequest, from_obj: User, chat_id: int, from_attr: AttrNames = AttrNames.LECTURER):
+    def __init__(self, from_obj: User, chat_id: int, from_attr: AttrNames = AttrNames.LECTURER):
         super().__init__(from_obj, from_attr)
         self.chat = self._get_chat(chat_id)
         self.chat_messages = self._get_chat_messages()
@@ -22,8 +22,7 @@ class ChatMessageService(Service):
         self._to_do_ran = False
 
         clients = list(self.chat.users.all())
-        self.ws_service = self.ws_service(
-            request, from_obj=from_obj, chat=self.chat, clients=clients)
+        self.ws_service = self.ws_service(from_obj=from_obj, chat=self.chat, clients=clients)
 
     def _get_chat(self, chat_id) -> Chat:
         chat = self.object_manager.get_chat(chat_id)
@@ -41,7 +40,7 @@ class ChatMessageService(Service):
         other_messages = self.chat_messages.exclude(author=self.from_obj)  # сообщения собеседника
 
         for message in other_messages:
-            self.object_manager.set_message_need_read(message, need_read=True)
+            self.object_manager.set_message_need_read(message, need_read=False)
 
     def _to_do(self):
         if not self._to_do_ran:

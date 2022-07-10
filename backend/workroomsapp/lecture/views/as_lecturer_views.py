@@ -11,7 +11,7 @@ from services.api import serialize_created_lectures, service_delete_lecture_by_i
     service_response_to_lecture, service_cancel_response_to_lecture, service_confirm_respondent_to_lecture, \
     service_reject_respondent_to_lecture
 from services import AttrNames
-from workroomsapp.lecture.lecture_serializers import LectureCreateAsLecturerSerializer
+from workroomsapp.lecture.lecture_serializers import LectureCreateAsLecturerSerializer, LecturesGetSerializer
 from workroomsapp.models import Lecturer, Lecture
 from workroomsapp.utils import workroomsapp_permissions
 
@@ -40,11 +40,11 @@ class LectureAsLecturerAPIView(APIView):
     def get(self, request):
         lecturer_id = request.GET.get('id')
 
-        person = request.user.person
+        user = request.user
         if lecturer_id:
-            person = self.get_lecturer(lecturer_id).person
+            user = self.get_lecturer(lecturer_id).person.user
 
-        serializer = serialize_created_lectures(request, person, from_attr=AttrNames.LECTURER)
+        serializer = serialize_created_lectures(from_obj=user, from_attr=AttrNames.LECTURER)
         return lecture_responses.success_get_lectures(serializer.data)
 
     @swagger_auto_schema(deprecated=True)
@@ -54,7 +54,7 @@ class LectureAsLecturerAPIView(APIView):
         if not lecture_id:
             lecture_responses.not_in_data()
 
-        service_delete_lecture_by_id(user=request.user, lecture_id=lecture_id)
+        service_delete_lecture_by_id(from_obj=request.user, lecture_id=lecture_id)
         return lecture_responses.lecture_deleted()
 
 
@@ -72,7 +72,7 @@ class LectureDetailAPIView(APIView):
             return lecture_responses.does_not_exist()
 
         serializer = LecturesGetSerializer(
-            lecture, many=True, context={'request': request})
+            lecture, many=True, context={'user': request.user})
 
         return lecture_responses.success_get_lectures(serializer.data)
 
@@ -89,7 +89,7 @@ class LectureResponseAPIView(APIView):
         if not lecture_id or not dates:
             return lecture_responses.not_in_data()
 
-        service_response_to_lecture(request, lecture_id, dates)
+        service_response_to_lecture(request.user, lecture_id, dates)
 
         return lecture_responses.success_response()
 
@@ -105,7 +105,7 @@ class LectureCancelResponseAPIView(APIView):
         if not lecture_id:
             return lecture_responses.not_in_data()
 
-        service_cancel_response_to_lecture(request, lecture_id=lecture_id)
+        service_cancel_response_to_lecture(request.user, lecture_id=lecture_id)
 
         return lecture_responses.success_cancel()
 
@@ -119,7 +119,7 @@ class LectureConfirmRespondentAPIView(APIView):
         if not (respondent_id and chat_id):
             return lecture_responses.not_in_data()
 
-        service_confirm_respondent_to_lecture(request, chat_id, respondent_id)
+        service_confirm_respondent_to_lecture(request.user, chat_id, respondent_id)
         return lecture_responses.success_confirm()
 
 
@@ -132,5 +132,5 @@ class LectureRejectRespondentAPIView(APIView):
         if not (respondent_id and chat_id):
             return lecture_responses.not_in_data()
 
-        service_reject_respondent_to_lecture(request, chat_id, respondent_id)
+        service_reject_respondent_to_lecture(request.user, chat_id, respondent_id)
         return lecture_responses.success_denied()

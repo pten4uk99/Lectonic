@@ -14,11 +14,10 @@ class LectureResponseWsService(WsService):
     chat_manager = ChatManager
     message_sender = WsMessageSender
 
-    def __init__(self, request: HttpRequest, from_obj: User,
+    def __init__(self, from_obj: User,
                  clients: list[User], responses: QuerySet[LectureRequest],
                  lecture_creator: Person, ws_active: bool = True):
-        super().__init__(request, from_obj, clients=clients)
-        self.request = request
+        super().__init__(from_obj, clients=clients)
         self.chat_manager = self.chat_manager()
         self.responses = responses
         self._lecture_creator = lecture_creator
@@ -50,14 +49,18 @@ class LectureResponseWsService(WsService):
         """ Создает сообщение для вебсокета и отправляет его """
 
         if self._ws_active:
-            message = WsMessage(type_=WsEventTypes.new_respondent, kwargs=self._get_message())
-            sender = self.message_sender(self.clients, message)
-            sender.send()
+            for client in self.clients:
+                # устанавливаем для каждого сообщения свой from_obj,
+                # чтобы сериализатор в self.message_builder правильно определил собеседника в чате
+                self.message_builder.from_obj = client
+                message = WsMessage(type_=WsEventTypes.new_respondent, kwargs=self._get_message())
+                sender = self.message_sender([client], message)
+                sender.send()
 
 
 class LectureCancelResponseWsService(WsService):
-    def __init__(self, request: HttpRequest, from_obj: User, clients: list[User], chat_id: int):
-        super().__init__(request, from_obj, clients=clients)
+    def __init__(self, from_obj: User, clients: list[User], chat_id: int):
+        super().__init__(from_obj, clients=clients)
         self.chat_id = chat_id
 
     def _get_message(self):

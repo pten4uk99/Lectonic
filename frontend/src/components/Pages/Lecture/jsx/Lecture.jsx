@@ -74,7 +74,7 @@ function Lecture(props) {
               e.target.innerText = 'Откликнуться'
               if (data.data[0]?.type === 'remove_respondent') {
                 props.UpdateLectureDetailChosenDates([])
-                props.RemoveNotification(data.data[0].id)
+                props.RemoveNotification(data.data[0].chat_id)
               }
               navigate(reverse('workroom'))
             }

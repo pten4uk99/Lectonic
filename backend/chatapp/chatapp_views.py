@@ -20,7 +20,7 @@ class ChatListGetAPIView(APIView):
         chat = Chat.objects.filter(users__pk=request.user.pk)
 
         serializer = ChatSerializer(
-            chat, many=True, context={'request': request})
+            chat, many=True, context={'user': request.user})
 
         return chatapp_responses.success(serializer.data)
 
@@ -35,6 +35,6 @@ class MessageListGetAPIView(APIView):
         if not chat_id:
             chatapp_responses.chat_id_not_in_data()
 
-        serializer = serialize_chat_message_list(request, chat_id)
+        serializer = serialize_chat_message_list(request.user, chat_id)
         return chatapp_responses.success(serializer.data)
 

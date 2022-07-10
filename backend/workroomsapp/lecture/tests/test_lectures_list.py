@@ -27,14 +27,10 @@ class LecturesListTestCase(APITestCase):
         respondent.confirmed = True
         respondent.save()
 
-        self._request = HttpRequest()
-
     def test_get_confirmed_lectures(self):
-        self._request.user = Customer.objects.first().person.user
+        user = Customer.objects.first().person.user
 
-        serializer = serialize_confirmed_lectures(
-            self._request, self._request.user.person,
-            from_attr=AttrNames.CUSTOMER)
+        serializer = serialize_confirmed_lectures(user, from_attr=AttrNames.CUSTOMER)
 
         self.assertEqual(
             len(serializer.data), 1,
@@ -42,10 +38,9 @@ class LecturesListTestCase(APITestCase):
         )
 
     def test_get_potential_lectures(self):
-        self._request.user = Customer.objects.first().person.user
+        user = Customer.objects.first().person.user
 
-        serializer = serialize_potential_lectures(
-            self._request, self._request.user.person, from_attr=AttrNames.CUSTOMER)
+        serializer = serialize_potential_lectures(user, from_attr=AttrNames.CUSTOMER)
 
         self.assertEqual(
             len(serializer.data), 1,

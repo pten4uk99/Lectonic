@@ -16,7 +16,7 @@ docker-compose up
 ```
 2. Запуск Backend локального сервера:
 ```cmd
-cd speakers
+cd backend
 python manage.py makemigrations authapp emailapp chatapp workroomsapp
 python manage.py migrate
 python manage.py loaddb # Загрузка необходимых данных в базу для коррректной работы

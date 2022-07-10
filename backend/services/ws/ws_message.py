@@ -38,13 +38,13 @@ class WsMessageSender:
 
 
 class WsMessageBuilder:
-    def __init__(self, request: HttpRequest):
-        self.request = request
+    def __init__(self, from_obj: User):
+        self.from_obj = from_obj
 
     def new_respondent(self, chat: Chat) -> dict:
-        serializer = ChatSerializer(chat, context={'request': self.request})
+        serializer = ChatSerializer(chat, context={'user': self.from_obj})
         return {
-            'respondent_id': self.request.user.pk,
+            'respondent_id': self.from_obj.pk,
             **serializer.data
         }
 

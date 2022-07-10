@@ -2,6 +2,7 @@ import datetime
 from abc import ABC
 from typing import Type, Union, Iterable
 
+from authapp.models import User
 from services.db.lecture import GetLectureManager
 from services.types import AttrNames
 from workroomsapp.models import Lecture, Person, Customer, Lecturer
@@ -10,11 +11,11 @@ from workroomsapp.models import Lecture, Person, Customer, Lecturer
 class BaseFilter:
     """ Базовый класс для фильтрации лекций """
 
-    def __init__(self, person: Person, from_attr: AttrNames):
-        self.person = person
+    def __init__(self, from_obj: User, from_attr: AttrNames):
+        self.from_obj = from_obj
         self.from_attr = from_attr
         self.to_attr = AttrNames.CUSTOMER if self.from_attr == AttrNames.LECTURER else AttrNames.LECTURER
-        self._object_manager = GetLectureManager(person=person, from_attr=from_attr, to_attr=self.to_attr)
+        self._object_manager = GetLectureManager(from_obj=from_obj, from_attr=from_attr, to_attr=self.to_attr)
 
     def _generate_lecture_list(self, *args, **kwargs) -> Iterable[Lecture]:
         """ Базовый метод для формирования списка лекций """
@@ -75,7 +76,7 @@ class PotentialLecturesFilter(BaseFilter, ABC):
     def _generate_lecture_list(self):
         attr_class = self._get_attr_class(self.to_attr)
         # берем все потенциальных создателей лекций
-        creators = attr_class.objects.exclude(person=self.person)
+        creators = attr_class.objects.exclude(person=self.from_obj.person)
 
         lectures = []
 
@@ -93,7 +94,7 @@ class PotentialLecturesFilter(BaseFilter, ABC):
         for lecture in lectures_list:
             # если текущий пользователь уже подтвержден на лекцию,
             # переходим на следующую итерацию
-            if self._object_manager.get_confirmed_lecture_request(lecture, self.person):
+            if self._object_manager.get_confirmed_lecture_request(lecture, self.from_obj.person):
                 continue
 
             latest_lecture_date = self._object_manager.get_latest_lecture_date(lecture)

@@ -9,9 +9,9 @@ class WsService(Service):
     message_builder = WsMessageBuilder
     message_sender = WsMessageSender
 
-    def __init__(self, request: HttpRequest, from_obj: User, clients: list[User]):
+    def __init__(self, from_obj: User, clients: list[User]):
         super().__init__(from_obj)
-        self.message_builder = self.message_builder(request)
+        self.message_builder = self.message_builder(from_obj)
         self.clients = clients
 
     def _get_message(self) -> dict:
