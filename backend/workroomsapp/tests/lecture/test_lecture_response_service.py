@@ -1,4 +1,3 @@
-from django.http import HttpRequest
 from rest_framework.test import APITestCase
 
 from chatapp.models import Chat
@@ -6,7 +5,7 @@ from config.utils.tests import data
 from services.api import service_response_to_lecture, service_cancel_response_to_lecture, \
     service_confirm_respondent_to_lecture, service_reject_respondent_to_lecture
 from workroomsapp.models import *
-from workroomsapp.person.tests.base import LecturerTestManager, CustomerTestManager, LectureTestManager
+from workroomsapp.tests.managers import LecturerTestManager, CustomerTestManager, LectureTestManager
 
 
 class LectureResponseTestCase(APITestCase):

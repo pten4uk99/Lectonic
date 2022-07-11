@@ -7,7 +7,7 @@ from rest_framework.serializers import Serializer
 from authapp.models import User
 from chatapp.chatapp_serializers import ChatMessageListSerializer
 from services.chat.chatapp import ChatMessageService
-from services.create_user import UserCreateService
+from services.authapp import UserCreateService
 from services.filters import CreatedLecturesFilter, ConfirmedLecturesFilter, BaseFilter, \
     PotentialLecturesFilter
 from workroomsapp.lecture.lecture_serializers import LecturesGetSerializer

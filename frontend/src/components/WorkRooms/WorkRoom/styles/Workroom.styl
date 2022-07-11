@@ -1,11 +1,11 @@
 @import '~/variables';
 
-.user-account{
-    display: flex;
-    margin-top: 60px;
+.user-account {
+  display: flex;
 }
 
-.user-account__wrapper{
+.user-account__wrapper {
+  margin-left: 362px
   box-shadow: 0 2px 20px rgba(0, 5, 26, 0.1);
   height: inherit;
   width: 100%;
@@ -17,24 +17,26 @@
   padding-top: 44px;
 }
 
-.user-account__profile{
-    width: 362px;
-    height: inherit;
-    flex-shrink: 0;
+.user-account__profile {
+  position: fixed;
+  width: 362px;
+  height: 100%;
+  flex-shrink: 0;
 }
-  
+
 .workroom__block-header {
   display: flex
   align-items: center
   margin: 28px 0 0 8px
+
   span {
     display: block
     font-weight: 600
     margin-right: 8px
   }
 }
-  
-.workroom__block-header-mt0{
+
+.workroom__block-header-mt0 {
   margin-top: 0;
 }
 
@@ -44,19 +46,28 @@
 
   margin-top: 40px
   background-color: rgba(219, 219, 219, 1)
+
   &.calendar {
-    
+
   }
 }
 
 @media screen and (max-width: $full-screen) {
-    .user-account__profile{
-        width: 282px;
-    }
+  .user-account__profile {
+    width: 282px;
+  }
+
+  .user-account__wrapper {
+    margin-left: 282px
+  }
 }
 
 @media screen and (max-width: $middle-screen) {
-    .user-account__profile{
-        width: 255px;
-    }
+  .user-account__profile {
+    width: 255px;
+  }
+
+  .user-account__wrapper {
+    margin-left: 255px
+  }
 }

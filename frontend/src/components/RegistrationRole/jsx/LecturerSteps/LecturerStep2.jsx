@@ -21,11 +21,11 @@ function LecturerStep2(props) {
       <div className="step-block-wrapper">
         <div className='step-block margin-bottom-36 step-block__head-text'>
           <h2 className='step-block__left-part'>
-            Ваши документы
+            Ваши навыки и умения
           </h2>
           <p className="lecturer-right__header">
-            Для дальнейшей работы необходимо загрузить документы,<br/>
-            подтверждающие Ваш уровень образования и квалификацию.
+            Расскажите слушателям про ваши навыки, <br/>
+            образование и всё что считаете необходимым.
           </p>
         </div>
 
@@ -44,11 +44,9 @@ function LecturerStep2(props) {
         {/*</div>*/}
         
         <div className="step-block-with-textarea margin-bottom-24">
-          <p className="step-block__left-part left-part-with-textarea">
-            Образование:
-          </p>
+          <p className="step-block__left-part left-part-with-textarea"/>
           <textarea className="form__textarea textarea-height88" 
-                    placeholder="Напишите о своём образовании в свободной форме" 
+                    placeholder="Напишите про ваше образование, навыки и заслуги" 
                     defaultValue={education}
                     onBlur={(e) => props.UpdateEducation(e.target.value)}>
           </textarea>

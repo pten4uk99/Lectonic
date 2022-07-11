@@ -9,7 +9,7 @@ from rest_framework.test import APITestCase
 from services.filters import GetLectureManager
 from services import AttrNames
 from workroomsapp.models import Lecture, Lecturer, Customer
-from workroomsapp.person.tests.base import LecturerTestManager, CustomerTestManager, LectureTestManager
+from workroomsapp.tests.managers import LecturerTestManager, CustomerTestManager, LectureTestManager
 
 
 class ObjectManagerTestCaseMixin:

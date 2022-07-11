@@ -74,7 +74,7 @@ function Header(props) {
   
   return (
     <>
-      <header className="header" style={{position: (pathname !== '/') ? 'fixed' : 'relative'}}>
+      <header className="header">
         <Link to="/">
           <img className="header-logo" src={logo} alt="логотип" />
         </Link>

@@ -1,10 +1,9 @@
-from django.http import HttpRequest
 from rest_framework.test import APITestCase
 
 from services.api import serialize_confirmed_lectures, serialize_potential_lectures
 from services import AttrNames
 from workroomsapp.models import Lecturer, Lecture, Customer
-from workroomsapp.person.tests.base import LecturerTestManager, CustomerTestManager, LectureTestManager
+from workroomsapp.tests.managers import LecturerTestManager, CustomerTestManager, LectureTestManager
 
 
 class LecturesListTestCase(APITestCase):

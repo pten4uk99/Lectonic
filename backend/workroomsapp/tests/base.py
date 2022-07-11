@@ -1,13 +1,74 @@
-import datetime
 from datetime import timedelta
 
+from django.http import SimpleCookie
 from django.urls import reverse
+from rest_framework.test import APITransactionTestCase
 
-from workroomsapp.models import *
-from workroomsapp.customer.tests.base import CustomerCreateTestCase
-from workroomsapp.lecturer.tests.base import LecturerCreateTestCase
 from config.utils.tests import data
-from workroomsapp.person.tests.base import get_str_range_datetime
+from services.api import user_signup_service
+from workroomsapp.models import City, Domain, LectureRequest, Lecture, Optional, Event, Calendar, LecturerCalendar, \
+    CustomerCalendar, LectureDomain
+from workroomsapp.tests.managers import get_str_range_datetime
+
+
+class SignUpTestCase(APITransactionTestCase):
+    """ Базовый класс для тестирования, в котором создается пользователь """
+
+    signup_data = data.SIGNUP.copy()
+
+    def setUp(self):
+        user_login, serializer = user_signup_service(data=self.signup_data, pk=self.signup_data['pk'])
+        self.client.cookies = SimpleCookie({'auth_token': user_login.token.key})
+
+
+class PersonCreateTestCase(SignUpTestCase):
+    """ Базовый класс для тестирования, в котором создается профиль пользователя """
+
+    profile_data = data.PROFILE.copy()
+
+    def setUp(self):
+        super().setUp()
+        self.profile_data['city'] = '1'
+        City.objects.get_or_create(name='Москва', pk=1)
+        temp_data = self.profile_data.copy()
+        self.client.post(reverse('profile'), temp_data)
+
+
+class BaseLecturerCreateTestCase(PersonCreateTestCase):
+    """ Базовый класс для тестирования """
+
+    lecturer_data = data.LECTURER.copy()
+
+    def setUp(self):
+        super().setUp()
+        Domain.objects.get_or_create(pk=1, name='Канцелярия')
+        Domain.objects.get_or_create(pk=2, name='Бухгалтерия')
+        Domain.objects.get_or_create(pk=3, name='Юриспруденция')
+
+
+class BaseCustomerCreateTestCase(BaseLecturerCreateTestCase):
+    """ Базовый класс для тестирования """
+    signup_data = data.SIGNUP2.copy()
+    customer_data = data.CUSTOMER.copy()
+
+    def setUp(self):
+        super().setUp()
+
+
+class CustomerCreateTestCase(BaseCustomerCreateTestCase):
+    """ Базовый класс для тестирования, в котором создается профиль заказчика """
+
+    def setUp(self):
+        super().setUp()
+        self.client.post(reverse('customer'), self.customer_data)
+
+
+class LecturerCreateTestCase(BaseLecturerCreateTestCase):
+    """ Базовый класс для тестирования, в котором создается профиль лектора """
+
+    def setUp(self):
+        super().setUp()
+        self.client.post(reverse('lecturer'), self.lecturer_data)
 
 
 class LectureTestCaseMixin:

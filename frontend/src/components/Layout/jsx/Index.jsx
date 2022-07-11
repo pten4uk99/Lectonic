@@ -10,7 +10,7 @@ function Index(props) {
   useEffect(() => {
     if (props.store.permissions.logged_in) navigate(reverse('workroom'))
   }, [props.store.permissions.logged_in])
-  
+
   return (
     <div className="main">
       <div className="main__text-wrapper">

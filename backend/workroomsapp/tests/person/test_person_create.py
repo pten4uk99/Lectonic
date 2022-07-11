@@ -5,7 +5,7 @@ from django.urls import reverse
 from authapp.models import User
 from config.utils.tests import data
 from workroomsapp.models import Person, City
-from workroomsapp.person.tests.base import SignUpTestCase
+from workroomsapp.tests.base import SignUpTestCase
 
 
 class TestPersonCreate(SignUpTestCase):

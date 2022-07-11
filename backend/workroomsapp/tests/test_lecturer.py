@@ -1,7 +1,7 @@
 from django.urls import reverse
 
 from authapp.models import User
-from workroomsapp.lecturer.tests.base import BaseLecturerCreateTestCase
+from workroomsapp.tests.base import BaseLecturerCreateTestCase
 from workroomsapp.models import Person, Lecturer
 
 

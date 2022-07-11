@@ -114,13 +114,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'authapp.User'
 
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
     'formatters': {
         'console': {
             'format': '{message}',
+            'filters': ['require_debug_true'],
             'style': '{',
         },
         'own': {
@@ -145,21 +153,30 @@ LOGGING = {
         },
         'info': {
             'level': 'INFO',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'H',
+            'interval': 24,
+            'backupCount': 10,
+            'delay': 5,
             'filename': 'log/info.log',
             'formatter': 'info'
         },
         'errors': {
             'level': 'ERROR',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'H',
+            'interval': 48,
+            'backupCount': 3,
+            'delay': 5,
             'filename': 'log/error.log',
             'formatter': 'error'
         },
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
+            'filters': ['require_debug_true'],
             'formatter': 'console',
-        }
+        },
     },
     'loggers': {
         'workroomsapp': {
@@ -179,7 +196,6 @@ LOGGING = {
         },
     },
 }
-
 
 try:
     from .local_settings import *

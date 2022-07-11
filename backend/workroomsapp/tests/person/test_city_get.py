@@ -1,7 +1,7 @@
 from django.urls import reverse
 
 from workroomsapp.models import City
-from workroomsapp.person.tests.base import SignUpTestCase
+from workroomsapp.tests.base import SignUpTestCase
 
 
 class TestCityGet(SignUpTestCase):

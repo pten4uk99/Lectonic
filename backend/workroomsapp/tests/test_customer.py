@@ -1,7 +1,7 @@
 from django.urls import reverse
 
 from authapp.models import User
-from workroomsapp.customer.tests.base import BaseCustomerCreateTestCase
+from workroomsapp.tests.base import BaseCustomerCreateTestCase
 
 from workroomsapp.models import Person, Customer
 

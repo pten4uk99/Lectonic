@@ -117,7 +117,7 @@ class SetOnlineUsersEvent(WsEvent):
 
     @database_sync_to_async
     def _remove_ws_client(self):
-        return WsClient.objects.get(channel_name=self.channel_name).delete()
+        return WsClient.objects.filter(channel_name=self.channel_name).delete()
 
     async def _execute(self):
         """ Проверяет нужно ли удалять объект WsClient.

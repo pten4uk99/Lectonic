@@ -2,14 +2,9 @@ import datetime
 from datetime import timedelta
 from typing import Union
 
-from django.http import SimpleCookie
-from django.urls import reverse
-from rest_framework.test import APITransactionTestCase
-
 from authapp.models import User
-from services.api import user_signup_service
 from config.utils.tests import data
-from workroomsapp.models import City, Person, Lecturer, Domain, Customer, Lecture
+from workroomsapp.models import City, Person, Domain, Lecturer, Customer, Lecture
 
 
 def get_str_range_datetime(now_plus: timedelta = timedelta(hours=0),
@@ -141,30 +136,3 @@ class LectureTestManager:
     def create_obj(self, quantity: int = 1):
         for i in range(quantity):
             Lecture.objects.create_lecture(**self._data, **self._attrs)
-
-
-# тесты API
-# ---------------------------------
-# используется APITransactionTestCase для асинхронного
-# взаимодействия с базой данных (нужно для теста вебсокета)
-class SignUpTestCase(APITransactionTestCase):
-    """ Базовый класс для тестирования, в котором создается пользователь """
-
-    signup_data = data.SIGNUP.copy()
-
-    def setUp(self):
-        user_login, serializer = user_signup_service(data=self.signup_data, pk=self.signup_data['pk'])
-        self.client.cookies = SimpleCookie({'auth_token': user_login.token.key})
-
-
-class PersonCreateTestCase(SignUpTestCase):
-    """ Базовый класс для тестирования, в котором создается профиль пользователя """
-
-    profile_data = data.PROFILE.copy()
-
-    def setUp(self):
-        super().setUp()
-        self.profile_data['city'] = '1'
-        City.objects.get_or_create(name='Москва', pk=1)
-        temp_data = self.profile_data.copy()
-        self.client.post(reverse('profile'), temp_data)

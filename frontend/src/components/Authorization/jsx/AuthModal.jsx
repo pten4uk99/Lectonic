@@ -33,7 +33,7 @@ function AuthModal(props) {
       {!loggedIn && 
         <Modal isOpened={modalActive} 
                onModalClose={() => props.DeactivateModal()} 
-               styleBody={{ width: '400px' }}>
+               styleBody={{ width: 400, height: 460 }}>
           {emailConfirmed ?
             <CreatePassword email={location.state}/> :
             <Authorization/>

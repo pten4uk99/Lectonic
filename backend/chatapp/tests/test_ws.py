@@ -11,7 +11,8 @@ from chatapp.routing import websocket_urlpatterns
 from services.api import service_response_to_lecture, service_cancel_response_to_lecture, \
     service_confirm_respondent_to_lecture, serialize_chat_message_list
 from workroomsapp.models import Lecturer, Lecture, Person, Customer
-from workroomsapp.person.tests.base import SignUpTestCase, LecturerTestManager, CustomerTestManager, LectureTestManager
+from workroomsapp.tests.base import SignUpTestCase
+from workroomsapp.tests.managers import LecturerTestManager, CustomerTestManager, LectureTestManager
 
 
 @database_sync_to_async

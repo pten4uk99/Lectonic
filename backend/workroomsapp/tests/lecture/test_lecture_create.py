@@ -1,7 +1,4 @@
-from workroomsapp.lecture.tests.base import (
-    BaseLectureAsLecturerCreateTestCase,
-    BaseLectureAsCustomerCreateTestCase
-)
+from workroomsapp.tests.base import BaseLectureAsLecturerCreateTestCase, BaseLectureAsCustomerCreateTestCase
 
 
 class TestLectureAsLecturerCreate(BaseLectureAsLecturerCreateTestCase):

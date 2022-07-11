@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from workroomsapp.person.tests.base import PersonCreateTestCase
+from workroomsapp.tests.base import PersonCreateTestCase
 
 
 class TestPersonGet(PersonCreateTestCase):

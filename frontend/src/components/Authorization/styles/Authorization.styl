@@ -5,15 +5,34 @@
 }
 
 .auth__header {
-  width: 212px;
+  width: 300px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   margin-bottom: 32px;
 }
 
 .auth__header__SignIn-text, .auth__header__SignUp-text {
   cursor: pointer;
-  margin: 0px;
+  width: 50%
+  margin: 0;
+  padding: 12px 16px
+  border-radius: 18px 18px 0 0;
+
+  text-align: center
+}
+
+.auth-signup-underline {
+  position: absolute;
+  margin-top: 43px
+  height: 3px;
+  width: 300px;
+  background-color: $main-blue
+  border-radius: 0 60% 60% 0
+  transition: border-radius .2s
+  
+  &.left {
+    border-radius: 60% 0 0 60%
+  }
 }
 
 .auth__text {

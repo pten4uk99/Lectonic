@@ -68,7 +68,7 @@ function LecturerStep3(props) {
         
         <div className="step-block-with-textarea margin-bottom-24">
           <p className="step-block__left-part left-part-with-textarea" 
-             style={{color: noSelected ? "var(--add-darkGrey" : ""}}>
+             style={{color: noSelected ? "var(--add-darkGrey)" : ""}}>
             Адрес:
           </p>
           <textarea className="form__textarea textarea-height88" 

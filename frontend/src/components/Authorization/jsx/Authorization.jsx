@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, {useState} from 'react'
+import {useNavigate} from 'react-router-dom'
 
 import 'regenerator-runtime/runtime'
 import {connect} from "react-redux";
 import {DeactivateModal, SetErrorMessage} from "../../Layout/redux/actions/header";
-import {emailConfirmation, login} from "../ajax";
+import {login} from "../ajax";
 import {SwapLogin} from "../redux/actions/permissions";
 import {reverse} from "../../../ProjectConstants";
 import SignUp from "./Elements/SignUp";
@@ -148,15 +148,22 @@ function Authorization(props) {
       <div className='auth__header'>
         <h2 className='auth__header__SignUp-text' 
             onClick={handleSignUpShow} 
-            style={{color: signUpShown ? 'var(--main-blue)' : 'var(--add-darkGrey)',}}>
+            style={{
+              backgroundColor: signUpShown ? 'var(--main-blue)' : '',
+              color: signUpShown ? 'white' : 'var(--add-darkGrey)',
+            }}>
           Регистрация
         </h2>
 
         <h2 className='auth__header__SignIn-text' 
             onClick={handleSignInShow} 
-            style={{color: signInShown || emailForgottenShown ? 'var(--main-blue)' : 'var(--add-darkGrey)',}}>
+            style={{
+              backgroundColor: signInShown || emailForgottenShown ? 'var(--main-blue)' : '',
+              color: signInShown || emailForgottenShown ? 'white' : 'var(--add-darkGrey)',
+        }}>
           Вход
         </h2>
+        <div className={signUpShown ? 'auth-signup-underline' : 'auth-signup-underline left'}/>
 
       </div>
 

@@ -1,7 +1,10 @@
 .main {
-  margin-top: 100px;
-  margin-left: 11%;
+  padding-top: 100px;
+  margin-left: 5%;
+  margin-right: 5%;
   display: flex;
+  justify-content: center;
+  height: calc(100vh - 270px);
 }
 
 .main__text-wrapper {
@@ -30,8 +33,7 @@
 }
 
 .main__illustration-wrapper {
-  width: 45%;
-  max-width: 700px;
+  width: 30%;
 }
 
 .main__illustration {
@@ -41,7 +43,7 @@
   padding-top: 15px;
 }
 
-@media screen and (max-width: 1440px) {
+@media screen and (max-width: $middle-screen) {
   .main {
     margin-top: 92px;
     margin-left: 12%;
@@ -67,7 +69,7 @@
   }
 }
 
-@media screen and (max-width: 1280px) {
+@media screen and (max-width: $small-screen) {
   .main {
     margin-top: 48px;
   }

@@ -1,8 +1,7 @@
 from django.urls import reverse
 
-from config.utils.tests import data
-from workroomsapp.models import City, Person
-from workroomsapp.person.tests.base import PersonCreateTestCase
+from workroomsapp.models import City
+from workroomsapp.tests.base import PersonCreateTestCase
 
 
 class TestPersonPatch(PersonCreateTestCase):
