@@ -1,18 +1,46 @@
 import os.path
 import time
+from datetime import datetime, timedelta
 
+from django.conf import settings
 from django.core import management
-from django.http import FileResponse
+from django.core.mail import send_mail
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
-from config.settings import DEFAULT_HOST
-
+from adminapp.models import AuthCode
 
 DIR = 'log/'
 DUMP_PATH = DIR + 'dbdump.json'
 
 
-def index(request):
+def signin(request):
+    if request.method == 'POST':
+        email = request.POST.get('data')
+
+        for admin in settings.ADMINS:
+            if admin[0] == 'Nikita':
+                if email != admin[1]:
+                    return HttpResponse('404')
+
+        AuthCode.objects.all().delete()
+        auth_code = AuthCode.objects.create()
+
+        send_mail(
+            subject='Код доступа лектоник',
+            message=f'{auth_code.key}',
+            recipient_list=[email],
+            from_email=None
+        )
+    return render(request, 'adminapp/signin.html')
+
+
+def index(request, code):
+    auth_code = AuthCode.objects.filter(key=code).first()
+    if not auth_code or datetime.now() - timedelta(hours=2) > auth_code.datetime:
+        return redirect(reverse('admin_auth'))
+
     context = {'files': []}
 
     for file in os.listdir('log'):
