@@ -83,7 +83,7 @@ function RegistrationRole(props) {
         </Routes>
       </div>
       
-      <div className="steps__underline"/>
+      <div className="steps__underline" style={currentStep > 2 ? {display: "none"} : {}}/>
       <div className="step-block steps__btn mb-148" style={currentStep > 2 ? {display: "none"} : {}}>
         {currentStep > 1 && 
           <div className="link-to-back" onClick={() => props.SwapAddRoleStep(currentStep - 1)}>

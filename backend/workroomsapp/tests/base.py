@@ -17,6 +17,7 @@ class SignUpTestCase(APITransactionTestCase):
     signup_data = data.SIGNUP.copy()
 
     def setUp(self):
+        super().setUp()
         user_login, serializer = user_signup_service(data=self.signup_data, pk=self.signup_data['pk'])
         self.client.cookies = SimpleCookie({'auth_token': user_login.token.key})
 

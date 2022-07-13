@@ -23,9 +23,9 @@ class CustomerAPIView(APIView):
 
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        customer_id = request.GET.get('id')
+        user_id = request.GET.get('user_id')
 
-        customer = Customer.objects.filter(pk=customer_id)
+        customer = Customer.objects.filter(person__user_id=user_id)
 
         if not customer:
             return customer_responses.customer_does_not_exist()

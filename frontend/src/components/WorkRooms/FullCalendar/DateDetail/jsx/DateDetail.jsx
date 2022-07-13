@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
+import React, {useEffect, useState} from 'react'
+import {connect} from 'react-redux'
 import Event from './Event'
-import { checkEqualDates } from '~@/WorkRooms/FullCalendar/Calendar/utils/date'
+import {checkEqualDates} from '~@/WorkRooms/FullCalendar/Calendar/utils/date'
 import {useNavigate} from "react-router-dom";
 import {reverse} from "../../../../../ProjectConstants";
 import {SetCheckedDate} from "../../Calendar/redux/actions/calendar";
@@ -9,14 +9,14 @@ import {SetCheckedDate} from "../../Calendar/redux/actions/calendar";
 
 function DateDetail(props) {
   let navigate = useNavigate()
-  
+
   function getRole() {
     let isLecturer = props.store.profile.is_lecturer
     let isCustomer = props.store.profile.is_customer
     if (isLecturer) return 'lecturer'
     else if (isCustomer) return 'customer'
   }
-  
+
   let date = props.store.calendar.checkedDate
   let year = date.getFullYear()
   let month = getMonth(date.getMonth())
@@ -28,7 +28,7 @@ function DateDetail(props) {
       let currentEvents = props.store.dateDetail.filter(value => {
         return checkEqualDates(value.date, date)
       })
-      if (currentEvents.length > 0) setEvents(currentEvents[0].events) 
+      if (currentEvents.length > 0) setEvents(currentEvents[0].events)
       else setEvents(null)
     }
   }, [date, props.store.dateDetail])
@@ -54,6 +54,7 @@ function DateDetail(props) {
                   }
                   creator={event.creator}
                   status={event.status}
+                  creator_is_lecturer={event.creator_is_lecturer}
                   name={event.name}
                   photo={event.svg}
                   customer={event.customer}
@@ -74,8 +75,9 @@ function DateDetail(props) {
             Вы можете создать одно или несколько мероприятий, чтобы
             потенциальные слушатели могли откликнуться
           </p>
-          <button className='create-event' 
-                  onClick={() => navigate(reverse('create_event', {role: getRole()}))}>Создать мероприятие</button>
+          <button className='create-event'
+                  onClick={() => navigate(reverse('create_event', {role: getRole()}))}>Создать мероприятие
+          </button>
         </div>
       )}
     </div>
@@ -83,7 +85,7 @@ function DateDetail(props) {
 }
 
 export default connect(
-  state => ({ store: state }),
+  state => ({store: state}),
   dispatch => ({
     SetCheckedDate: (date) => dispatch(SetCheckedDate(date))
   })

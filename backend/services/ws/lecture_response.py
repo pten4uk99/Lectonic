@@ -84,7 +84,7 @@ class LectureConfirmRespondentWsService(WsService):
     def send_message(self, message: Message, client: User = None) -> None:
         """ Создает и отправляет сообщение для откликнувшихся пользователей на подтвержденную дату """
 
-        clients = client or self.clients  # если client передан,
+        clients = [client] or self.clients  # если client передан,
         # то отправляем выбранному человеку, иначе self.clients
 
         ws_message = self._make_message_for_other_respondent(message)

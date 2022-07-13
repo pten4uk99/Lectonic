@@ -67,6 +67,8 @@ function CreateEvent(props) {
   let [domainArray, setDomainArray] = useState()
 
   useEffect(() => {
+    props.SwapModalChooseDates([])
+    
     if (role === 'customer') setRequiredFields({...requiredFields, listeners: ''})
     props.UpdatePhoto('')
     getDomainArray()
@@ -272,8 +274,8 @@ function CreateEvent(props) {
           
           <div className={place ? 'address-l label' : 'address-l label disabled'}>Адрес:</div>
           <div className='address flex'>
-            <textarea name='hall_address' 
-                      className='text-area' 
+            <textarea name='hall_address'
+                      className={`text-area ${!place && 'disabled'}`} 
                       placeholder='Введите адрес помещения для лекций'
                       rows='4'
                       readOnly={!place}/>
@@ -290,7 +292,7 @@ function CreateEvent(props) {
           <div className={equipment ? 'equip-l label' : 'equip-l label disabled'}>Список оборудования:</div>
           <div className='equip flex'>
             <textarea name='equipment' 
-                      className='text-area' 
+                      className={`text-area ${!equipment && 'disabled'}`} 
                       rows='4'
                       placeholder='Перечислите имеющееся для лекции оборудование'
                       readOnly={!equipment}/>

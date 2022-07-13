@@ -100,12 +100,12 @@ class ChatManager(LectureObjectManager):
             chat.save()
 
     @staticmethod
-    def create_message(chat: Chat, author: User, text: str, confirm: bool = None) -> Message:
+    def create_message(chat: Chat, author: User, text: str = '', system_text: str = '') -> Message:
         return Message.objects.create(
             author=author,
             chat=chat,
             text=text,
-            confirm=confirm
+            system_text=system_text,
         )
 
     @staticmethod

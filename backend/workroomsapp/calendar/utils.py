@@ -140,6 +140,7 @@ class CalendarDataSerializer:
 
         data = {
             'creator': [creator.first_name, creator.last_name, creator.bgc_number],
+            'creator_is_lecturer': bool(lecture.lecturer),
             'svg': lecture.svg,
             'respondents': respondent_list,
             'name': lecture.name,

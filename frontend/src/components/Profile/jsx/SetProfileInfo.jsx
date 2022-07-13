@@ -29,8 +29,7 @@ function SetProfileInfo(props) {
   let [loadedRequest, setLoadedRequest] = useState(true)
   
   let [profileInfo, setProfileInfo] = useState(null)
-  //этот стейт и логика с ним ниже возможно и не нужна будет
-  // пока закомментировано, чтоб работало
+
   let [avatarPreview, setAvatarPreview] = useState(null)
   let [avatarFile, setAvatarFile] = useState(null)
 
@@ -71,17 +70,6 @@ function SetProfileInfo(props) {
     firstName: '',
     city: '',
   })
-  
-  //в работе сейчас не участвует
-  const handleAvatarPreview = (file) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      if(reader.readyState === 2) {
-        setAvatarPreview(reader.result)
-      }
-    }
-    reader.readAsDataURL(file)
-  }
   
   let [dayArray, setDayArray] = useState(getDaysArr(birth_date.year, birth_date.month))
   

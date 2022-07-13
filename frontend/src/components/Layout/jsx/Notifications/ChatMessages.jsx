@@ -14,9 +14,12 @@ import Loader from '~@/Utils/jsx/Loader'
 import {SetChatConn} from "../../redux/actions/ws";
 import ConfirmAction from "../../../Utils/jsx/ConfirmAction";
 import {getMonth} from "../../../WorkRooms/CreateEvent/jsx/CalendarModal";
+import {useNavigate} from "react-router-dom";
+import {reverse} from "../../../../ProjectConstants";
 
 
 function ChatMessages(props) {
+  let navigate = useNavigate()
   let data = props.store.messages
   let selectedChatId = props.store.header.selectedChatId
   let messages = data.messages
@@ -45,7 +48,7 @@ function ChatMessages(props) {
   }, [props.socket])
   
   function handleArrowClick(params) {
-    if ((data.confirmed !== null && !data.confirmed && !data.is_creator) || params.cancel_response) {
+    if ((data.confirm !== null && !data.confirm && !data.is_creator) || params.cancel_response) {
       props.socket.send(JSON.stringify({
         'type': 'read_reject_chat',
         'chat_id': props.store.header.selectedChatId
@@ -56,6 +59,7 @@ function ChatMessages(props) {
   }
   
   function handleSendMessage(e) {
+    if (e.keyCode === 13 && e.target.value === '\n') e.target.value = ''
     if (e.keyCode === 13 && e.target.value) {
       let message = {
         'type': 'chat_message',
@@ -132,6 +136,18 @@ function ChatMessages(props) {
       })
   }
   
+  function handleClickRespondent() {
+    let to
+    if (data.creator_is_lecturer) {
+      if (data.is_creator) to = 'customer'
+      else to = 'lecturer'
+    } else {
+      if (data.is_creator) to = 'lecturer'
+      else to = 'customer'
+    }
+    navigate(reverse('role_page', {[to]: data.talker_respondent}))
+  }
+  
   if (!props.isLoaded) return <Loader size={60} top="50%" left="50%" tX="-50%" tY="-50%"/>
   return (
     <>
@@ -171,8 +187,9 @@ function ChatMessages(props) {
               <img src={backArrow} alt="назад"/>
             </div>
             <div className="text">
-              <p className='lecture-name'>{data.lecture_name}</p>
-              <p className='respondent-name'>
+              <p className='lecture-name' 
+                 onClick={() => navigate(reverse('lecture', {id: data.lecture_id}))}>{data.lecture_name}</p>
+              <p className='respondent-name' onClick={handleClickRespondent}>
                 {data.talker_first_name} {data.talker_last_name}
                 {onlineUsers.includes(data.talker_respondent) ? 
                   <span className='is-online'>В сети</span> : <span className='is-offline'>Не в сети</span>}
@@ -180,14 +197,14 @@ function ChatMessages(props) {
             </div>
           </div>
           <div className="buttons">
-            {data.confirmed === null ? 
+            {data.confirm === null ? 
               data.is_creator ? 
                 <>
                   <button className="confirm" onClick={() => handleToggleConfirm(false)}>Принять</button>
                   <button className="reject" onClick={() => handleToggleConfirm(true)}>Отклонить</button>
                 </> : 
                 <button className="reject-response" onClick={handleRejectResponse}>Отменить отклик</button> :
-              data.confirmed ? 
+              data.confirm ? 
                 <div className="lecture-confirmed">Лекция подтверждена</div> : 
                 <div className="lecture-rejected">Лекция отклонена</div>
             }
@@ -197,16 +214,16 @@ function ChatMessages(props) {
         
         <div className="messages__block" ref={messagesBlock}>
           {messages && messages.length > 0 && messages.map((elem, index) => {
-            if (elem.confirm) return <div key={index} className="block-message">
-              <div className="confirm-message">Лекция подтверждена!</div>
+            if (elem.system_text && data.confirm !== false) return <div key={index} className="block-message">
+              <div className="system-message">{elem.system_text}</div>
             </div>
-            else if (elem.confirm === null) return <div key={index} className="block-message">
+            else if (elem.system_text && data.confirm === false) return <div key={index} className="block-message">
+              <div className="reject-message">{elem.system_text}</div>
+            </div>
+            else return <div key={index} className="block-message">
               {props.store.permissions.user_id === elem.author ? 
                 <div className="self-message">{elem.text} {elem.need_read && <div className="need-read"/>}</div> :
                 <div className="other-message">{elem.text}</div>}
-            </div>
-            else if (elem.confirm === false) return <div key={index} className="block-message">
-              <div className="reject-message">Лекция отклонена!</div>
             </div>
           })}
         </div>
@@ -216,7 +233,7 @@ function ChatMessages(props) {
                     onKeyUp={(e) => handleSendMessage(e)} 
                     onKeyDown={(e) => handleTextareaSize(e)}
                     rows={1}
-                    disabled={data?.confirmed != null && !data.confirmed}
+                    disabled={data?.confirm != null && !data.confirm}
                     ref={input}/>
           <img src={sendMessage} 
                alt="отправить" 

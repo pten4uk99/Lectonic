@@ -3,8 +3,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 
-from chatapp.consumers.db import DatabaseInteraction
-from chatapp.consumers.events import EventHandler, set_online_users
+from chatapp.consumers.events import set_online_users
 from chatapp.consumers.handlers import handle_client_side_message
 from services.types import WsEventTypes, WsGroups
 
@@ -16,13 +15,11 @@ def bind_message_type(name):
         async def wrapper(data):
             data['type'] = name
             return await func(data)
-
         return wrapper
-
     return decorator
 
 
-class WsConsumer(AsyncWebsocketConsumer, DatabaseInteraction, EventHandler):
+class WsConsumer(AsyncWebsocketConsumer):
     def __new__(cls, *args, **kwargs):
         for event in WsEventTypes:
             setattr(cls, event.value, event.value)

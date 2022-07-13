@@ -1,12 +1,12 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import {Link, useLocation} from 'react-router-dom'
 // import '~/styles/Footer.styl'
 import telegram from '~/assets/img/footer-telegram.svg'
-import vk from '~/assets/img/footer-vkontakte.svg'
 
 export default function Footer() {
+  let location = useLocation()
   return (
-    <footer>
+    <footer style={location.pathname === '/' ? {zIndex: 9} : {}}>
       <div className="footer-wrapper">
         <div className="footer__copyright">2022 © Сервис Lectonic</div>
         <div className="footer__rules">
@@ -20,7 +20,7 @@ export default function Footer() {
 
         <div className="footer__supportInfo is-desktop">
           Техническая поддержка:
-          <br />
+          <br/>
           <span>support@lectonic.ru</span>
         </div>
 
@@ -28,7 +28,7 @@ export default function Footer() {
           <p className="footer__socials-text">Мы в соц. сетях:</p>
           <div className="footer__socials-icons">
             <a href="https://www.instagram.com/" target="_blank">
-              <img className="footer__insta-icon" src={telegram} alt="Telegram" />
+              <img className="footer__insta-icon" src={telegram} alt="Telegram"/>
             </a>
           </div>
         </div>

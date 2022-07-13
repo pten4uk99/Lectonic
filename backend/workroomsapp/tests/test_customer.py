@@ -26,7 +26,7 @@ class TestCustomerCreate(BaseCustomerCreateTestCase):
 
     def test_customer_success_get(self):
         self.client.post(reverse('customer'), self.customer_data)
-        response = self.client.get(reverse('customer'), {'id': Customer.objects.first().pk})
+        response = self.client.get(reverse('customer'), {'user_id': Customer.objects.first().person.user.pk})
         self.assertEqual(
             response.status_code, 200,
             msg='Неверный статус ответа при получении профиля лектора\n'

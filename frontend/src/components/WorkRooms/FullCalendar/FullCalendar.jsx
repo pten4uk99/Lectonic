@@ -23,6 +23,7 @@ function FullCalendar(props) {
         </span>
         <span className={!myLecturesActive ? "responses active" : "responses"}
               onClick={() => setMyLecturesActive(false)}>Мои отклики</span>
+        <div className={`underline ${!myLecturesActive && 'right'}`}/>
       </div>
 
       {isError ? 

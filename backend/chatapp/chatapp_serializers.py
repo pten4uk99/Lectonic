@@ -1,8 +1,10 @@
 from django.db.models import Q
 from rest_framework import serializers
 
+from authapp.models import User
 from chatapp.models import Chat, Message
 from config.settings import DEFAULT_HOST
+from services.types import user_id_type
 from workroomsapp.models import Person
 
 
@@ -14,7 +16,6 @@ class ChatSerializer(serializers.ModelSerializer):
     talker_id = serializers.SerializerMethodField()
     talker_first_name = serializers.SerializerMethodField()
     talker_last_name = serializers.SerializerMethodField()
-    chat_confirm = serializers.SerializerMethodField()
     talker_photo = serializers.SerializerMethodField()
 
     class Meta:
@@ -24,12 +25,12 @@ class ChatSerializer(serializers.ModelSerializer):
             'lecture_name',
             'lecture_svg',
             'need_read',
+            'confirm',
             'respondent_id',
             'talker_id',
             'talker_first_name',
             'talker_last_name',
             'talker_photo',
-            'chat_confirm'
         ]
 
     def get_lecture_name(self, obj):
@@ -41,14 +42,6 @@ class ChatSerializer(serializers.ModelSerializer):
 
     def get_lecture_svg(self, obj):
         return obj.lecture.svg
-
-    def get_chat_confirm(self, obj):
-        for confirmed in obj.messages.all().values_list('confirm', flat=True):
-            if confirmed:
-                return confirmed
-            elif confirmed is not None and not confirmed:
-                return confirmed
-        return None
 
     def get_respondent_id(self, obj):
         if obj.lecture.lecturer:
@@ -80,19 +73,19 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['author', 'text', 'chat', 'datetime', 'confirm', 'need_read']
+        fields = ['author', 'text', 'chat', 'datetime', 'system_text', 'need_read']
 
 
 class ChatMessageListSerializer(serializers.ModelSerializer):
     lecture_id = serializers.SerializerMethodField()
     lecture_name = serializers.SerializerMethodField()
     is_creator = serializers.SerializerMethodField()
-    confirmed = serializers.SerializerMethodField()
     response_dates = serializers.SerializerMethodField()
+    creator_is_lecturer = serializers.SerializerMethodField()
     talker_respondent = serializers.SerializerMethodField()
     talker_first_name = serializers.SerializerMethodField()
     talker_last_name = serializers.SerializerMethodField()
-    messages = MessageSerializer(many=True)
+    messages = serializers.SerializerMethodField()
 
     class Meta:
         model = Chat
@@ -100,8 +93,9 @@ class ChatMessageListSerializer(serializers.ModelSerializer):
             'lecture_id',
             'lecture_name',
             'is_creator',
-            'confirmed',
+            'confirm',
             'response_dates',
+            'creator_is_lecturer',
             'talker_respondent',
             'talker_first_name',
             'talker_last_name',
@@ -126,37 +120,34 @@ class ChatMessageListSerializer(serializers.ModelSerializer):
 
         return is_creator
 
-    def get_confirmed(self, chat):
-        message = chat.messages.filter(Q(confirm=True) | Q(confirm=False)).first()
-
-        if message is not None:
-            return message.confirm
-        return None
-
     def get_response_dates(self, chat):
         return chat.lecture_requests.all().values_list(
             'event__datetime_start', 'event__datetime_end')
 
-    def _get_talker_person(self, chat: Chat) -> Person:
-        return chat.users.exclude(pk=self.context['user'].pk).first().person
+    def get_creator_is_lecturer(self, chat):
+        return bool(chat.lecture.lecturer)
 
-    def get_talker_respondent(self, chat):
-        talker_person = self._get_talker_person(chat)
-        is_creator = self.get_is_creator(chat)
+    def _get_talker_user(self, chat: Chat) -> User:
+        return chat.users.exclude(pk=self.context['user'].pk).first()
 
-        respondent: int
-
-        if is_creator:
-            # если пользователь является создателем лекции, то откликнувшийся - собеседник чата
-            respondent = talker_person.pk
-        else:
-            # иначе сам пользователь - откликнувшийся
-            respondent = self.context['user'].pk
-
-        return respondent
+    def get_talker_respondent(self, chat) -> user_id_type:
+        talker_user = self._get_talker_user(chat)
+        return talker_user.pk
 
     def get_talker_first_name(self, chat):
-        return self._get_talker_person(chat).first_name
+        return self._get_talker_user(chat).person.first_name
 
     def get_talker_last_name(self, chat):
-        return self._get_talker_person(chat).last_name
+        return self._get_talker_user(chat).person.last_name
+
+    def get_messages(self, chat):
+        exclude_messages = chat.messages.values('id', 'system_text', 'author')
+        exclude_ids = []
+
+        for message in exclude_messages:
+            if message['author'] == self.context['user'].pk and message['system_text']:
+                exclude_ids.append(message['id'])
+
+        messages = chat.messages.order_by('datetime').exclude(pk__in=exclude_ids)
+        serializer = MessageSerializer(messages, many=True)
+        return serializer.data

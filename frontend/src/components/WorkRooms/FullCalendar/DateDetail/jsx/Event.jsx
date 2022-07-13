@@ -72,7 +72,7 @@ function Event(props) {
           <div className='address'>
             Место: <span>{props.address}</span>
           </div>}
-        <Respondents data={props.respondents}/>
+        <Respondents data={props.respondents} creator_is_lecturer={props.creator_is_lecturer}/>
       </div>
       
       <div className='time-range'>

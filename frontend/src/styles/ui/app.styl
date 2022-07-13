@@ -6,7 +6,7 @@
 
 p
   margin 0
-  
+
 
 body
   padding 0px
@@ -25,7 +25,7 @@ main
   margin-top: 60px
   min-height: calc(100vh - 174px)
 
-  
+
 /* Заголовки */
 h1
   font-weight 500
@@ -91,7 +91,7 @@ h5
   background-color var(--main-white)
   color var(--add-purple)
   cursor pointer
-  
+
 
 /*ниже кнопки будут переделаны и переименованы в соответствии с UI KIT_2*/
 .btn-notChosen
@@ -157,7 +157,7 @@ h5
 
 .form__input:focus:-ms-input-placeholder
   color transparent
-  
+
 .form__input:not(:placeholder-shown)
   border-bottom 1px solid var(--add-darkGrey)
 
@@ -185,9 +185,15 @@ h5
 
 .input__add-link:focus:-ms-input-placeholder
   color transparent
-  
+
 /* TEXTAREA */
-.form__textarea 
+textarea {
+  &.disabled {
+    opacity: .3
+  }
+}
+
+.form__textarea
   width 441px /*тк паддинги и бордеры*/
   /*высота разная по проекту, ниже описаны модифаеры*/
   border 1px solid var(--add-darkGrey)
@@ -198,7 +204,7 @@ h5
   padding-top 8px
   padding-left 20px
   resize none
-  
+
   .w-298 {
     width: 298px
   }
@@ -208,7 +214,7 @@ h5
 
 .form__textarea:focus
   outline none
-  
+
 .textarea-height88 {
   min-height 78px; /*тк паддинги и бордеры*/
 }
@@ -216,7 +222,7 @@ h5
 .textarea-height178 {
   min-height 168px; /*тк паддинги и бордеры*/
 }
-  
+
 /* В Safari убирает иконку автозаполнения */
 ::-webkit-credentials-auto-fill-button
   visibility hidden
@@ -250,14 +256,19 @@ h5
   width: 50px
   height: 50px
   cursor: pointer
-  
+
   z-index: 10
 }
+
 /*Адаптив под разную ширину экранов*/
 @media screen and (max-width: 720px) {
   .is-desktop {
-    display: none !important; } }
+    display: none !important;
+  }
+}
 
 @media screen and (min-width: 721px) {
   .is-mobile {
-    display: none !important; } }
+    display: none !important;
+  }
+}

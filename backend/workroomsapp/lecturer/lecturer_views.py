@@ -36,7 +36,7 @@ class DiplomaImageAPIView(APIView):
         return lecturer_responses.success(serializer.data)
 
 
-class LecturerCreateAPIView(APIView):
+class LecturerAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(**lecturer_docs.LecturerCreateDoc)
@@ -51,9 +51,9 @@ class LecturerCreateAPIView(APIView):
 
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        lecturer_id = request.GET.get('id')
+        user_id = request.GET.get('user_id')
 
-        lecturer = Lecturer.objects.filter(pk=lecturer_id)
+        lecturer = Lecturer.objects.filter(person__user_id=user_id)
 
         if not lecturer:
             return lecturer_responses.lecturer_does_not_exist()

@@ -176,18 +176,25 @@ class ReadRejectChatEvent(WsEvent):
                 await self.channel_layer.send(client.channel_name, self.data)
 
     async def setup(self):
-        await self.remove_chat()
         await self.send()
+        await self.remove_chat()
 
 
 class ChatMessageEvent(WsEvent):
     """ Событие сообщения в чате """
 
     type_ = WsEventTypes.chat_message
+    data_type = ChatMessageEventType
 
-    def __init__(self, data: ChatMessageEventType):
+    def __init__(self, data: dict):
         super().__init__()
-        self.data = data
+        self.data = self._normalize_data(data)
+
+    def _normalize_data(self, data: dict) -> ChatMessageEventType:
+        if 'need_read' not in data:
+            data['need_read'] = True
+
+        return self.data_type(**data)
 
     @database_sync_to_async
     def _read_messages(self, messages: QuerySet[Message]) -> None:
@@ -207,7 +214,6 @@ class ChatMessageEvent(WsEvent):
             chat=chat,
             author=author,
             text=self.data['text'],
-            confirm=self.data['confirm']
         )
 
     async def send(self, chat: Chat) -> None:

@@ -67,6 +67,7 @@ class ChatMessageEventType(TypedDict):
     text: str
     chat_id: int
     confirm: Optional[bool]
+    need_read: bool
 
 
 class ReadMessagesEventType(TypedDict):

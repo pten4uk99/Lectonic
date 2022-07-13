@@ -3,31 +3,59 @@
     margin-top: 28px
     font-weight: 600
   }
+
   .calendar-lectures__block {
-    margin-top: 16px
-    margin-bottom: 20px
-    margin-left: 8px
-    font-size: 11px
-    font-weight: 700
-    color: $add-greyDisable;
-    text-decoration: underline
-    cursor: pointer;
+    margin-top: 30px;
+    margin-left: 18px;
+    transform: translateY(5px)
     
-    .active {
-      color: $main-blue;
-      text-decoration: none
+    color: $add-greyDisable;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    
+    cursor: pointer;
+
+    & > span {
+      padding: 16px 21px;
+      padding-bottom: 25px;
+
+      &.active {
+        color: white;
+        text-decoration: none;
+        
+        background-color: $main-blue;
+        border-radius: 18px 18px 0 0;
+      }
     }
-    .responses {
-      margin-left: 16px
+    
+    &>.underline {
+      margin-left: 15px;
+      background-color: $main-blue;
+      height: 4px;
+      width: 340px;
+      transform: translateY(17px);
+      border-radius: 0 50% 50% 0;
+      
+      transition: transform .2s, width .2s;
+      
+      &.right {
+        transform: translateY(17px) translateX(10px);
+        width: 400px;
+        border-radius: 100%;
+      }
     }
   }
+
   .calendar__block-tooltips {
     display: flex
     font-size: 11px
+
     .tooltip__not-confirmed {
       display: flex
       align-items: center
       margin-right: 16px
+
       span {
         display: block
         width: 12px
@@ -37,9 +65,11 @@
         border-radius: 50%
       }
     }
+
     .tooltip__confirmed {
       display: flex
       align-items: center
+
       span {
         display: block
         width: 12px

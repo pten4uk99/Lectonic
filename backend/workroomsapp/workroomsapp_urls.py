@@ -36,7 +36,7 @@ urlpatterns = [
          CustomerCalendarResponsesAPIView.as_view(),
          name='customer_calendar_responses'),
 
-    path('lecturer/', LecturerCreateAPIView.as_view(), name='lecturer'),
+    path('lecturer/', LecturerAPIView.as_view(), name='lecturer'),
     path('lecturer/potential_lectures/',
          PotentialLecturerLecturesGetAPIView.as_view(),
          name='potential_lecturer_lectures'),

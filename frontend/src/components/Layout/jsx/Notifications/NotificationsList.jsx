@@ -18,7 +18,7 @@ function NotificationsList(props) {
   
   function getClassName(elem) {
     let className = 'chat-dropdown__notification'
-    if (elem.respondent_id == userId && elem.chat_confirm !== null && !elem.chat_confirm) {
+    if (elem.respondent_id == userId && elem.confirm !== null && !elem.confirm) {
       className += ' disabled'
     }
     return className

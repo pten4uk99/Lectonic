@@ -18,7 +18,7 @@ export function getLecturerDetail(id) {
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/lecturer/?id=${id}`,
+    `${baseURL}/api/workrooms/lecturer/?user_id=${id}`,
     options
   )
 }
@@ -30,7 +30,7 @@ export function getCustomerDetail(id) {
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/customer/?id=${id}`,
+    `${baseURL}/api/workrooms/customer/?user_id=${id}`,
     options
   )
 }

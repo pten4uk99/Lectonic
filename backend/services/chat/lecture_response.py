@@ -1,5 +1,14 @@
 from django.db.models import QuerySet
-from django.http import HttpRequest
+
+from authapp.models import User
+from chatapp.models import Chat, Message
+from services.chat.base import ChatService, SystemMessageForRecipientText, SystemMessageForAuthorText, \
+    CurrentChatMessagesChatService
+from services.types import AttrNames
+from services.ws.lecture_response import LectureResponseWsService, LectureCancelResponseWsService, \
+    LectureConfirmRespondentWsService, LectureRejectRespondentWsService
+from workroomsapp.models import Lecture, LectureRequest, Person
+from django.db.models import QuerySet
 
 from authapp.models import User
 from chatapp.models import Chat
@@ -10,9 +19,9 @@ from services.ws.lecture_response import LectureResponseWsService, LectureCancel
 from workroomsapp.models import Lecture, LectureRequest, Person
 
 
-class LectureResponseChatService(ChatService):
-    response_message_text = 'Собеседник заинтересован в Вашем предложении. ' \
-                            'Возможные даты проведения:'
+class LectureResponseChatService(CurrentChatMessagesChatService):
+    message_for_author: SystemMessageForAuthorText = SystemMessageForAuthorText.lecture_response
+    message_for_recipient: SystemMessageForRecipientText = SystemMessageForRecipientText.lecture_response
     ws_service = LectureResponseWsService
 
     def __init__(self, from_obj: User, lecture: Lecture,
@@ -37,6 +46,16 @@ class LectureResponseChatService(ChatService):
 
         return dates
 
+    def _get_str_dates(self) -> str:
+        dates = self.format_dates_for_message()
+        return ", ".join(dates)
+
+    def build_message_for_author(self):
+        return self.message_for_author.value + ' ' + self._get_str_dates()
+
+    def build_message_for_recipient(self):
+        return self.message_for_recipient.value + ' ' + self._get_str_dates()
+
     def _create_chat(self) -> Chat:
         """ Возвращает объект Chat по переданным датам """
 
@@ -51,23 +70,14 @@ class LectureResponseChatService(ChatService):
                 chat, creator=self._lecture_creator.user, respondent=self.from_obj, save=False)
             chat.save()
 
-        # logger.info(f'chat: {chat}')
         return chat
-
-    def _create_response_message(self) -> None:
-        """ Создает в чате стандартное сообщение при отклике """
-
-        message = self.object_manager.create_message(
-            self._create_chat(), self.from_obj, self.make_message_text())
-
-        # logger.info(f'text:{message.text}, author: {message.author}')
 
     def to_do(self) -> None:
         """ Создает новый чат (если его до этого не существовало) и
         стандартное сообщение в чате при отклике """
 
-        self._create_chat()
-        self._create_response_message()
+        chat = self._create_chat()
+        self.create_current_chat_messages(chat)
 
 
 class LectureCancelResponseChatService(ChatService):
@@ -87,10 +97,12 @@ class LectureCancelResponseChatService(ChatService):
         self._remove_chat()
 
 
-class LectureConfirmRespondentChatService(ChatService):
-    response_message_text = f'Одна или более из выбранных вами дат на данную лекцию ' \
-                            f'уже подтверждена для другого пользователя. ' \
-                            f'Возможные даты проведения:'
+class LectureConfirmRespondentChatService(CurrentChatMessagesChatService):
+    message_for_author = SystemMessageForAuthorText.confirm_lecture
+    message_for_recipient = SystemMessageForRecipientText.confirm_lecture
+    other_respondents_message = f'Одна или более из выбранных вами дат на данную лекцию ' \
+                                f'уже подтверждена для другого пользователя. ' \
+                                f'Возможные даты проведения:'
     ws_service = LectureConfirmRespondentWsService
 
     def __init__(self, from_obj: User,
@@ -112,13 +124,18 @@ class LectureConfirmRespondentChatService(ChatService):
 
         return dates
 
+    def _build_message_for_other_respondent(self, chat: Chat) -> str:
+        dates = self.format_dates_for_message(chat)
+        str_dates = ", ".join(dates)
+        return self.other_respondents_message + ' ' + str_dates
+
     def _create_message_for_other_respondent(self, chat: Chat) -> None:
         """ Создает сообщение для откликнувшегося на лекцию, которого не подтвердили """
 
         message = self.object_manager.create_message(
             author=self.from_obj,
             chat=chat,
-            text=self.make_message_text()
+            text=self._build_message_for_other_respondent(chat)
         )
         client = self.object_manager.get_user_from_chat(message.chat, exclude_user=self.from_obj)
         self.ws_service.send_message(message, client)
@@ -157,25 +174,19 @@ class LectureConfirmRespondentChatService(ChatService):
 
             self._handle_chats(chat_list, lecture_request)
 
-    def _create_message_for_confirmed_respondent(self):
-        """ Создает сообщение в чате для подтвержденного пользователя и отправляет созданное
-         сообщение во вебсокету """
-
-        message = self.object_manager.create_message(
-            author=self.from_obj,
-            chat=self.response_chat,
-            text='',
-            confirm=True
-        )
-        self.ws_service.send_message(message)
+    def send_ws_message(self, message: Message, client: User):
+        self.ws_service.send_message(message, client=client)
 
     def to_do(self):
-        self._create_message_for_confirmed_respondent()
+        self.create_current_chat_messages(self.response_chat)
         self._handle_lecture_requests()
 
 
-class LectureRejectRespondentChatService(ChatService):
+class LectureRejectRespondentChatService(CurrentChatMessagesChatService):
     """ Сервис, включающий логику по обработки отклонения откликнувшегося пользователя на лекцию """
+
+    message_for_author = SystemMessageForAuthorText.reject_lecture
+    message_for_recipient = SystemMessageForRecipientText.reject_lecture
 
     ws_service = LectureRejectRespondentWsService
 
@@ -186,16 +197,15 @@ class LectureRejectRespondentChatService(ChatService):
 
         self.ws_service = self.ws_service(from_obj, clients=[self.from_obj, self.respondent.user])
 
-    def _create_message_for_rejected_respondent(self):
-        """ Создает сообщение в чате для отклоненного пользователя """
+    def _reject_chat(self):
+        """ Ставит чату пометку confirm=False """
 
-        message = self.object_manager.create_message(
-            author=self.from_obj,
-            chat=self.response_chat,
-            text='',
-            confirm=False
-        )
+        self.response_chat.confirm = False
+        self.response_chat.save()
+
+    def send_ws_message(self, message: Message, client: User):
         self.ws_service.send_message(message)
 
     def to_do(self):
-        self._create_message_for_rejected_respondent()
+        self.create_current_chat_messages(self.response_chat)
+        self._reject_chat()
