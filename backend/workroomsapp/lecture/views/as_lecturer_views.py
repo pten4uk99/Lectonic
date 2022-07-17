@@ -11,7 +11,7 @@ from services.api import serialize_created_lectures, service_delete_lecture_by_i
     service_response_to_lecture, service_cancel_response_to_lecture, service_confirm_respondent_to_lecture, \
     service_reject_respondent_to_lecture
 from services import AttrNames
-from workroomsapp.lecture.lecture_serializers import LectureCreateAsLecturerSerializer, LecturesGetSerializer
+from workroomsapp.lecture.lecture_serializers import LectureAsLecturerSerializer, LecturesGetSerializer
 from workroomsapp.models import Lecturer, Lecture
 from workroomsapp.utils import workroomsapp_permissions
 
@@ -31,7 +31,7 @@ class LectureAsLecturerAPIView(APIView):
 
     @swagger_auto_schema(**lecture_docs.LectureAsLecturerCreateDoc)
     def post(self, request):
-        serializer = LectureCreateAsLecturerSerializer(data=request.data, context={'request': request})
+        serializer = LectureAsLecturerSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return lecture_responses.lecture_created()
@@ -46,6 +46,20 @@ class LectureAsLecturerAPIView(APIView):
 
         serializer = serialize_created_lectures(from_obj=user, from_attr=AttrNames.LECTURER)
         return lecture_responses.success_get_lectures(serializer.data)
+
+    @swagger_auto_schema(deprecated=True)
+    def patch(self, request):
+        lecture_id = request.data.get('id')
+
+        lecture = Lecture.objects.filter(pk=lecture_id).first()
+        if not lecture or lecture.lecturer.person.user != request.user:
+            return lecture_responses.forbidden()
+
+        serializer = LectureAsLecturerSerializer(
+            lecture, data=request.data, context={'request': request}, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return lecture_responses.success_get_lectures([])
 
     @swagger_auto_schema(deprecated=True)
     def delete(self, request):

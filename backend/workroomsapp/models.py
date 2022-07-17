@@ -35,7 +35,7 @@ class CustomerDomain(models.Model):
     domain = models.ForeignKey('Domain', on_delete=models.CASCADE, related_name='customer_domains')  # сфера деятельности
 
     def __str__(self):
-        return f'Сфера деятельности: {self.domain.name}. Заказчик: {self.customer.person.name}'
+        return f'Сфера деятельности: {self.domain.name}. Заказчик: {self.customer.person}'
 
 
 class LecturerDomain(models.Model):
@@ -44,7 +44,7 @@ class LecturerDomain(models.Model):
     domain = models.ForeignKey('Domain', on_delete=models.CASCADE, related_name='lecturer_domain')  # сфера деятельности
 
     def __str__(self):
-        return f'Сфера деятельности: {self.domain.name}. Лектор: {self.company.person.name}'
+        return f'Сфера деятельности: {self.domain.name}. Лектор: {self.lecturer.person}'
 
 
 class LectureDomain(models.Model):
@@ -53,7 +53,7 @@ class LectureDomain(models.Model):
     domain = models.ForeignKey('Domain', on_delete=models.CASCADE, related_name='lecture_domains')
 
     def __str__(self):
-        return f'Сфера деятельности: {self.domain.name}. Лекция: {self.company.person.name}'
+        return f'Сфера деятельности: {self.domain.name}. Лекция: {self.lecture.name}'
 
 
 class DiplomaImage(models.Model):

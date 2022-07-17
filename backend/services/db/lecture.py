@@ -114,6 +114,11 @@ class ChatManager(LectureObjectManager):
         message.save()
 
     @staticmethod
+    def set_chat_confirm(chat: Chat, confirm: bool) -> None:
+        chat.confirm = confirm
+        chat.save()
+
+    @staticmethod
     def delete_first_message(messages: QuerySet[Message]) -> None:
         messages.first().delete()
 

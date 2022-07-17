@@ -12,8 +12,12 @@ class LectureDatetime(NamedTuple):
 
 
 class LectureDatetimeValidator:
-    def __init__(self, creator: Union[Lecturer, Customer]):
+    # самая ранняя дата, на которую можно создать лекцию
+    earliest_lecture_date: datetime = datetime.now() + timedelta(hours=1)
+
+    def __init__(self, creator: Union[Lecturer, Customer], edit: bool = False):
         self.creator = creator
+        self.edit = edit
 
     @staticmethod
     def _convert_datetime(str_start: str, str_end: str) -> LectureDatetime:
@@ -53,26 +57,47 @@ class LectureDatetimeValidator:
 
         return no_conflicts
 
-    @staticmethod
-    def _check_past_lecture_date(date: datetime) -> bool:
+    def _check_past_lecture_date(self, date: datetime) -> bool:
         """ Проверяет не раньше ли дата самой ближайшей разрешенной """
 
-        return date > datetime.now() + timedelta(hours=1)
+        return date > self.earliest_lecture_date
+
+    @staticmethod
+    def _check_dates_not_extended_more_than_one_day(
+            start: LectureDatetime.start, end: LectureDatetime.end) -> bool:
+        """ Проверяет не захватывают ли даты больше одного дня.
+        Например начало лекции на 11 вечера одного дня,
+        а конец на 2 часа ночи другого дня. """
+
+        return start.day == end.day
+
+    def _is_allowed(self, start: LectureDatetime.start, end: LectureDatetime.end) -> None:
+        """ Производит все проверки валидации для конкретных start и end.
+        Выбрасывает исключение, если какая-то из проверок не прошла. """
+
+        if not self._check_conflict_with_other_lectures(start, end):
+            msg = f'Событие на выбранное время уже существует {start} - {end}'
+            if not self.edit:
+                raise serializers.ValidationError(msg)
+
+        if not self._check_past_lecture_date(start):
+            msg = 'Невозможно создать событие на прошедшую дату'
+            raise serializers.ValidationError(msg)
+
+        if not self._check_dates_not_extended_more_than_one_day(start, end):
+            msg = 'Невозможно создать событие, время которого выходит за пределы одного дня'
+            raise serializers.ValidationError(msg)
 
     def validate(self, datetime_list: list[str]) -> list[LectureDatetime]:
+        """ Метод для взаимодействия с классом извне, выполняет всю необходимую валидацию переданных дат """
+
         dates = []
 
         for elem in datetime_list:
             start, end = elem.split(',')
             start, end = self._convert_datetime(start, end)
 
-            if not self._check_conflict_with_other_lectures(start, end):
-                msg = f'Событие на выбранное время уже существует {start} - {end}'
-                raise serializers.ValidationError(msg)
-
-            if not self._check_past_lecture_date(start):
-                msg = 'Невозможно создать событие на прошедшую дату'
-                raise serializers.ValidationError(msg)
+            self._is_allowed(start, end)
 
             dates.append(LectureDatetime(start=start, end=end))
 

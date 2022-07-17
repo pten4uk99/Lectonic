@@ -9,9 +9,9 @@ const initialState = {
 
 export default function event(state=initialState, action) {
   switch (action.type) {
-    case "UPDATE_PHOTO":
+    case 'UPDATE_PHOTO':
       return {...state, photo: action.payload.photo}    
-    case "UPDATE_DOMAIN":
+    case 'UPDATE_DOMAIN':
       return {
         ...state, 
         domain: [
@@ -19,20 +19,22 @@ export default function event(state=initialState, action) {
            action.payload.domain,
         ]
       }
-    case "DELETE_DOMAIN":
+    case 'CLEAR_DOMAIN':
+      return {...state, domain: []}
+    case 'DELETE_DOMAIN':
       return {
         ...state, 
         domain: [
           ...state.domain.filter((elem, i) => action.payload.index != i), 
         ]
       }
-    case "SWAP_EVENT_TYPE":
+    case 'SWAP_EVENT_TYPE':
       return {...state, type: action.payload.type}    
-    case "SWAP_PLACE":
+    case 'SWAP_PLACE':
       return {...state, place: action.payload.place}
-    case "SWAP_EQUIPMENT":
+    case 'SWAP_EQUIPMENT':
       return {...state, equipment: action.payload.equipment}
-    case "SWAP_PAYMENT":
+    case 'SWAP_PAYMENT':
       return {...state, payment: action.payload.payment}
         default:
       return state

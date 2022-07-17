@@ -1,9 +1,9 @@
-import {baseURL} from "~/ProjectConstants";
+import {baseURL} from '~/ProjectConstants'
 
 
 const body = JSON.stringify({
-  email: "pten4ik99@yande.ru",
-  password: "12345678"
+  email: 'pten4ik99@yande.ru',
+  password: '12345678'
 })
 
 const HEADERS = {
@@ -24,13 +24,30 @@ export function getDomainArray() {
 }
 
 export function createEvent(formData, role) {
+  let postfix = role === 'lecturer' ? 'as_lecturer' : role === 'customer' && 'as_customer'
+  
   const options = {
     method: 'POST',
     body: formData,
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/lecture/${role === 'lecturer' ? 'as_lecturer' : role === 'customer' && 'as_customer'}/`,
+    `${baseURL}/api/workrooms/lecture/${postfix}/`,
     options
   )
 }
+
+export function editEvent(formData, role) {
+  let postfix = role === 'lecturer' ? 'as_lecturer' : role === 'customer' && 'as_customer'
+
+  const options = {
+    method: 'PATCH',
+    body: formData,
+    credentials: 'include',
+  }
+  return fetch(
+    `${baseURL}/api/workrooms/lecture/${postfix}/`,
+    options
+  )
+}
+

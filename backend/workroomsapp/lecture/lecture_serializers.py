@@ -6,7 +6,7 @@ from workroomsapp.lecture.validators import LectureDatetimeValidator
 from workroomsapp.models import Lecture, Respondent
 
 
-class LectureCreateAsLecturerSerializer(serializers.Serializer):
+class LectureAsLecturerSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     svg = serializers.IntegerField(min_value=1)
     domain = serializers.ListField()
@@ -36,7 +36,8 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
         return lecturer
 
     def validate_datetime(self, datetime_list):
-        validator = LectureDatetimeValidator(self.get_creator_obj())
+        lecture_id = self.context['request'].data.get('id')
+        validator = LectureDatetimeValidator(self.get_creator_obj(), edit=bool(lecture_id))
         return validator.validate(datetime_list)
 
     def create(self, validated_data):
@@ -53,8 +54,21 @@ class LectureCreateAsLecturerSerializer(serializers.Serializer):
             description=validated_data.get('description'),
         )
 
+    def update(self, lecture, validated_data):
+        return Lecture.objects.update_lecture(
+            lecture=lecture,
+            name=validated_data.get('name'),
+            datetime=validated_data.get('datetime'),
+            domain=validated_data.get('domain'),
+            hall_address=validated_data.get('hall_address'),
+            equipment=validated_data.get('equipment'),
+            type=validated_data.get('type'),
+            cost=validated_data.get('cost', 0),
+            description=validated_data.get('description'),
+        )
 
-class LectureCreateAsCustomerSerializer(LectureCreateAsLecturerSerializer):
+
+class LectureAsCustomerSerializer(LectureAsLecturerSerializer):
     listeners = serializers.IntegerField()
 
     def get_creator_obj(self):
@@ -128,7 +142,7 @@ class LecturesGetSerializer(serializers.ModelSerializer):
         return obj.get_type_display()
 
     def get_domain(self, obj):
-        return obj.lecture_domains.all().values_list('domain__name', flat=True)
+        return obj.lecture_domains.all().values_list('domain__name', flat=True).distinct()
 
     def get_dates(self, obj):
         dates = []

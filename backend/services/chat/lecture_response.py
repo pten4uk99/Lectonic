@@ -177,8 +177,12 @@ class LectureConfirmRespondentChatService(CurrentChatMessagesChatService):
     def send_ws_message(self, message: Message, client: User):
         self.ws_service.send_message(message, client=client)
 
+    def _set_chat_confirm(self):
+        self.object_manager.set_chat_confirm(self.response_chat, confirm=True)
+
     def to_do(self):
         self.create_current_chat_messages(self.response_chat)
+        self._set_chat_confirm()
         self._handle_lecture_requests()
 
 
@@ -197,15 +201,12 @@ class LectureRejectRespondentChatService(CurrentChatMessagesChatService):
 
         self.ws_service = self.ws_service(from_obj, clients=[self.from_obj, self.respondent.user])
 
-    def _reject_chat(self):
-        """ Ставит чату пометку confirm=False """
-
-        self.response_chat.confirm = False
-        self.response_chat.save()
+    def _set_chat_confirm(self):
+        self.object_manager.set_chat_confirm(self.response_chat, confirm=False)
 
     def send_ws_message(self, message: Message, client: User):
         self.ws_service.send_message(message)
 
     def to_do(self):
         self.create_current_chat_messages(self.response_chat)
-        self._reject_chat()
+        self._set_chat_confirm()
