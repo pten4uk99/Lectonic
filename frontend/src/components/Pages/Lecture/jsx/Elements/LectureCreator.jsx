@@ -12,8 +12,8 @@ function LectureCreator(props) {
 
   function handleClick() {
     data?.creator_is_lecturer ?
-      navigate(reverse('role_page', {lecturer: data.creator_id})) :
-      navigate(reverse('role_page', {customer: data.creator_id}))
+      navigate(reverse('role_page', {lecturer: data.creator_user_id})) :
+      navigate(reverse('role_page', {customer: data.creator_user_id}))
   }
 
   return (

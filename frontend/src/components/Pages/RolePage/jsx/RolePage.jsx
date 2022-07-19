@@ -1,24 +1,20 @@
 import React, {useEffect, useState} from 'react'
 
-import lecturerBackground from '~/assets/img/rolepage/rolepage_header_bg.svg';
-import customerBackground from '~/assets/img/rolepage/customer-bg.png';
+import lecturerBackground from '~/assets/img/rolepage/rolepage_header_bg.svg'
+import customerBackground from '~/assets/img/rolepage/customer-bg.png'
 import backArrow from '~/assets/img/back-arrow-white.svg'
-import LectureCardList from "../../../WorkRooms/WorkRoom/jsx/Elements/LectureCardList";
-import {useNavigate, useSearchParams} from "react-router-dom";
-import {getCustomerDetail, getLecturerDetail} from "../ajax/rolePage";
-import PhotoName from "../../../Utils/jsx/PhotoName";
-import {reverse} from "../../../../ProjectConstants";
-import {
-  getCreatedLecturesForCustomer,
-  getCreatedLecturesForLecturer,
-  getLecturesHistory
-} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
-import Loader from "../../../Utils/jsx/Loader";
+import LectureCardList from '../../../WorkRooms/WorkRoom/jsx/Elements/LectureCardList'
+import {useNavigate, useSearchParams} from 'react-router-dom'
+import {getCustomerDetail, getLecturerDetail} from '../ajax/rolePage'
+import PhotoName from '../../../Utils/jsx/PhotoName'
+import {reverse} from '../../../../ProjectConstants'
+import {getCreatedLecturesForCustomer, getCreatedLecturesForLecturer} from '../../../WorkRooms/WorkRoom/ajax/workRooms'
+import Loader from '../../../Utils/jsx/Loader'
 
 
 function RolePage(props) {
   let [isLoaded, setIsLoaded] = useState(false)
-  let [lastLectures, setLastLectures] = useState(true);
+  let [lastLectures, setLastLectures] = useState(true)
   let [searchParams, setSearchParams] = useSearchParams()
   let navigate = useNavigate()
   let lecturerId = searchParams.get('lecturer')
@@ -94,7 +90,7 @@ function RolePage(props) {
                         <span>{data?.person.last_name}</span>
                     </div>
                     <div>
-                        <div className='rolepage__tag tag-role'>{customerId ? "Заказчик" : "Лектор"}</div>
+                        <div className='rolepage__tag tag-role'>{customerId ? 'Заказчик' : 'Лектор'}</div>
                         <div className='rolepage__tag tag-city'>г. {data?.person.city.name}</div>
                     </div>
                 </div>
@@ -106,37 +102,37 @@ function RolePage(props) {
                         <span>{data?.company_name}</span> :
                         <>
                           <span>Лектор о себе:</span>
-                          <p>{data?.person.description || "Нет"}</p>
+                          <p>{data?.person.description || 'Нет'}</p>
                         </>}
 
                     </div>
                     <div className='rolepage__description-box'>
-                      <span>{customerId ? "Описание:" : "Образование:"}</span>
+                      <span>{customerId ? 'Описание:' : 'Образование:'}</span>
                       <p>
                         {customerId ? 
-                          (data?.company_description || "Нет") : 
-                          (data?.education || "Не указано")}
+                          (data?.company_description || 'Нет') : 
+                          (data?.education || 'Не указано')}
                       </p>
                     </div>
                     <div className='rolepage__description-box'>
-                        <span>{customerId ? "Сайт:" : "Ссылки на видео выступлений:"}</span>
+                        <span>{customerId ? 'Сайт:' : 'Ссылки на видео выступлений:'}</span>
                       {customerId ?
                         <div className='pill pill-grey'>
-                          <a href={data?.company_site} target="_blank">{data?.company_site}</a>
+                          <a href={data?.company_site} target="_blank" rel="noreferrer">{data?.company_site}</a>
                         </div> : 
                         (data?.performances_links?.length > 0 ? data.performances_links.map((elem, index) => {
                         return <div className='pill pill-grey' key={index}>
-                          <a href={elem} target="_blank">{elem}</a>
+                          <a href={elem} target="_blank" rel="noreferrer">{elem}</a>
                         </div>
-                      }) : "Нет")}
+                      }) : 'Нет')}
                     </div>
                   {lecturerId && <div className='rolepage__description-box'>
                         <span>Ссылки на публикации:</span>
                       {data?.performances_links?.length > 0 ? data.publication_links.map((elem, index) => {
                         return <div className='pill pill-grey' key={index}>
-                          <a href={elem} target="_blank">{elem}</a>
+                          <a href={elem} target="_blank" rel="noreferrer">{elem}</a>
                         </div>
-                      }) : "Нет"}
+                      }) : 'Нет'}
                     </div>}
                 </div>
                 <div className='rolepage__box-2'>
@@ -148,11 +144,11 @@ function RolePage(props) {
                     </div>
                     <div className='rolepage__description-box'>
                         <span>Помещение для лекций:</span>
-                        <p>{data?.optional.hall_address || "Нет"}</p>
+                        <p>{data?.optional.hall_address || 'Нет'}</p>
                     </div>
                     <div className='rolepage__description-box'>
                         <span>Оборудование для лекций:</span>
-                        <p>{data?.optional.equipment || "Нет"}</p>
+                        <p>{data?.optional.equipment || 'Нет'}</p>
                     </div>
                 </div>
             </div>
@@ -170,4 +166,4 @@ function RolePage(props) {
   )
 }
 
-export default RolePage;
+export default RolePage

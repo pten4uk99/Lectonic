@@ -26,6 +26,7 @@ export function getLectureData(
 function handleResponseLoaded(responseLoaded, setResponseLoaded) {
   if (!responseLoaded) return false
   setResponseLoaded(false)
+  return true
 }
 
 function formatDates(dates) {
