@@ -1,9 +1,9 @@
 import React, {useEffect} from 'react'
 import mainIllustration from '~/assets/img/main-illustration.svg'
-import {ActivateModal, DeactivateModal} from "../redux/actions/header";
-import {connect} from "react-redux";
-import {useNavigate} from "react-router-dom";
-import {reverse} from "../../../ProjectConstants";
+import {ActivateModal, DeactivateModal} from '../redux/actions/header'
+import {connect} from 'react-redux'
+import {useNavigate} from 'react-router-dom'
+import {reverse} from '../../../ProjectConstants'
 
 function Index(props) {
   let navigate = useNavigate()
@@ -34,7 +34,7 @@ function Index(props) {
         />
       </div>
     </div>
-  );
+  )
 }
 
 export default connect(
