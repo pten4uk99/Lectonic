@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+from django.db import ProgrammingError
 
 
 class ChatappConfig(AppConfig):
@@ -9,4 +10,8 @@ class ChatappConfig(AppConfig):
         """ Отчищает подключенных онлайн пользователей при каждом перезапуске бэкенда """
 
         from chatapp.models import WsClient
-        WsClient.objects.all().delete()
+
+        try:
+            WsClient.objects.all().delete()
+        except ProgrammingError:
+            pass
