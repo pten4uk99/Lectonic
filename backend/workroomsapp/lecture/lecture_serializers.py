@@ -257,8 +257,7 @@ class LecturesGetSerializer(serializers.ModelSerializer):
         return data
 
     def get_can_edit(self, lecture):
-        if self.get_creator_user_id(lecture) == self.context['user']:
-            return lecture.lecture_requests.filter(respondent__obj__confirmed=True).exists()
+        if self.get_creator_user_id(lecture) == self.context['user'].pk:
+            return not lecture.lecture_requests.filter(respondent_obj__confirmed=True).exists()
 
         return False
-
