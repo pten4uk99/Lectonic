@@ -82,8 +82,9 @@ function Lecture(props) {
                                    lectureData={lectureData}/>
           </div>
 
-          {isCreator && <LectureEditButton lectureId={lectureId} 
-                             creatorIsLecturer={lectureData?.creator_is_lecturer}/>}
+          {isCreator && <LectureEditButton lectureId={lectureId}
+                                           creatorIsLecturer={lectureData?.creator_is_lecturer}
+                                           canEdit={lectureData?.can_edit}/>}
         </div>
       </div>
     </>

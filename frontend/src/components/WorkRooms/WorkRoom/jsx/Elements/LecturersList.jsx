@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
-import {connect} from "react-redux";
+import React, {useEffect, useState} from 'react'
+import {connect} from 'react-redux'
 
-import tooltip from "~/assets/img/workrooms/workroom/tooltip.svg";
-import WorkroomCard from "../WorkroomCard";
-import Loader from "../../../../Utils/jsx/Loader";
-import {reverse} from "../../../../../ProjectConstants";
-import {useNavigate} from "react-router-dom";
+import tooltip from '~/assets/img/workrooms/workroom/tooltip.svg'
+import WorkroomCard from '../WorkroomCard'
+import Loader from '../../../../Utils/jsx/Loader'
+import {reverse} from '../../../../../ProjectConstants'
+import {useNavigate} from 'react-router-dom'
 
 
 function LecturersList(props){
@@ -31,7 +31,7 @@ function LecturersList(props){
             <div className="created-lectures">
               {props.data.map((lecturer, index) => {
                 return <WorkroomCard key={index} 
-                                     onClick={() => navigate(reverse('role_page', {lecturer: lecturer.id}))}
+                                     onClick={() => navigate(reverse('role_page', {lecturer: lecturer.user_id}))}
                                      data={{
                                        src: lecturer.photo,
                                        name: `${lecturer.last_name} \n ${lecturer.first_name} ${lecturer.middle_name}`,
@@ -52,4 +52,4 @@ function LecturersList(props){
 export default connect(
   state => ({store: state}),
   dispatch => ({})
-)(LecturersList);
+)(LecturersList)

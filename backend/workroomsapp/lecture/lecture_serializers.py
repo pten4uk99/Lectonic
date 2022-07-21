@@ -110,6 +110,7 @@ class LecturesGetSerializer(serializers.ModelSerializer):
     can_response = serializers.SerializerMethodField()
     response_dates = serializers.SerializerMethodField()
     related_person = serializers.SerializerMethodField()
+    can_edit = serializers.SerializerMethodField()
 
     class Meta:
         model = Lecture
@@ -135,7 +136,8 @@ class LecturesGetSerializer(serializers.ModelSerializer):
             'creator_first_name',
             'creator_last_name',
             'creator_middle_name',
-            'creator_bgc_number'
+            'creator_bgc_number',
+            'can_edit',
         ]
 
     def get_lecture_type(self, obj):
@@ -253,3 +255,10 @@ class LecturesGetSerializer(serializers.ModelSerializer):
             })
 
         return data
+
+    def get_can_edit(self, lecture):
+        if self.get_creator_user_id(lecture) == self.context['user']:
+            return lecture.lecture_requests.filter(respondent__obj__confirmed=True).exists()
+
+        return False
+

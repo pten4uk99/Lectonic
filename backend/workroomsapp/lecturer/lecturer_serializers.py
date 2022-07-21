@@ -72,6 +72,7 @@ class LecturerCreateSerializer(serializers.Serializer):
 
 
 class LecturersListGetSerializer(serializers.ModelSerializer):
+    user_id = serializers.PrimaryKeyRelatedField(source='person.user.pk', read_only=True)
     first_name = serializers.StringRelatedField(source='person.first_name')
     last_name = serializers.StringRelatedField(source='person.last_name')
     middle_name = serializers.StringRelatedField(source='person.middle_name')
@@ -81,7 +82,7 @@ class LecturersListGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lecturer
         fields = [
-            'id',
+            'user_id',
             'photo',
             'first_name',
             'last_name',
