@@ -61,7 +61,7 @@ function Lecture(props) {
             <DataBlock header='Оборудование в наличии:'
                        text={lectureData?.equipment || 'Нет'}/>
             <Listeners data={lectureData}/>
-            <DataBlock header='Стоимость:' text={lectureData?.cost + ' р.'}/>
+            <DataBlock header='Стоимость:' text={lectureData?.cost + ' р. / лекцию'}/>
           </div>
 
           <div className="right-block">
