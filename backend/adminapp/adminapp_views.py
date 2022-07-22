@@ -37,11 +37,12 @@ def signin(request):
 
 
 def index(request, code):
-    auth_code = AuthCode.objects.filter(key=code).first()
-    if not auth_code or datetime.now() - timedelta(hours=2) > auth_code.datetime:
-        return redirect(reverse('admin_auth'))
+    if not settings.DEBUG:
+        auth_code = AuthCode.objects.filter(key=code).first()
+        if not auth_code or datetime.now() - timedelta(hours=2) > auth_code.datetime:
+            return redirect(reverse('admin_auth'))
 
-    context = {'files': []}
+    context = {'files': [], 'key_param': code}
 
     for file in os.listdir('log'):
 
@@ -62,15 +63,19 @@ def index(request, code):
 
 
 def save_file(request):
+    key = request.GET.get('key')
+
     for file in os.listdir('log'):
         name = request.GET.get('file')
 
         if name == file.split('.')[0]:
             return FileResponse(open(DIR + file, 'rb'))
 
-    return redirect('admin_index')
+    return redirect('admin_index', code=key)
 
 
 def make_dump(request):
+    key = request.GET.get('key')
+
     management.call_command('dumpdatautf8', '--indent=2', '-o', DUMP_PATH)
-    return redirect('admin_index')
+    return redirect('admin_index', code=key)

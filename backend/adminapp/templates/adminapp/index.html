@@ -20,13 +20,13 @@
 </head>
 <body>
     <div style="margin-bottom: 30px;">Вы вошли как: {{user}}</div>
-    <a href="{% url 'admin_make_dump' %}" class="admin-button">
+    <a href="make_dump/?key={{key_param}}" class="admin-button">
         Сделать дамп базы
     </a>
 
     {% for file in files %}
             <div style="display: flex; align-items: center;">
-            <a href="save_file/?file={{file.name}}"
+            <a href="save_file/?file={{file.name}}&key={{key_param}}"
                class="admin-button"
                style="background-color: darkgreen;"
                download="{{file.filename}}">
