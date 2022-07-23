@@ -13,7 +13,7 @@ from services.filters import CreatedLecturesFilter, ConfirmedLecturesFilter, Bas
 from workroomsapp.lecture.lecture_serializers import LecturesGetSerializer
 from services.lecture import LectureResponseService, LectureCancelResponseService, \
     LectureConfirmRespondentService, LectureRejectRespondentService, LectureDeleteService
-from services.types import person_id_type, UserLogin
+from services.types import person_id_type, UserLogin, user_id_type
 from services import AttrNames
 from workroomsapp.models import Person, Lecture
 
@@ -133,12 +133,12 @@ def service_cancel_response_to_lecture(from_obj: User, lecture_id: int):
     service.setup()
 
 
-def service_confirm_respondent_to_lecture(from_obj: User, chat_id: int, respondent_id: person_id_type):
+def service_confirm_respondent_to_lecture(from_obj: User, chat_id: int, respondent_id: user_id_type):
     service = LectureConfirmRespondentService(from_obj=from_obj, chat_id=chat_id, respondent_id=respondent_id)
     service.setup()
 
 
-def service_reject_respondent_to_lecture(from_obj: User, chat_id: int, respondent_id: person_id_type):
+def service_reject_respondent_to_lecture(from_obj: User, chat_id: int, respondent_id: user_id_type):
     service = LectureRejectRespondentService(from_obj=from_obj, chat_id=chat_id, respondent_id=respondent_id)
     service.setup()
 

@@ -8,7 +8,7 @@ from services.base import LectureResponseBaseService, LectureService
 from services.chat.lecture_response import LectureCancelResponseChatService, LectureResponseChatService, \
     LectureConfirmRespondentChatService, LectureRejectRespondentChatService
 from services.db import DeleteLectureManager
-from services.types import person_id_type
+from services.types import person_id_type, user_id_type
 from workroomsapp.lecture import lecture_responses
 from services.types import AttrNames
 from workroomsapp.models import LectureRequest, Person
@@ -142,11 +142,11 @@ class LectureConfirmRespondentService(LectureResponseBaseService):
 
     chat_service = LectureConfirmRespondentChatService
 
-    def __init__(self, from_obj: User, chat_id: int, respondent_id: person_id_type):
+    def __init__(self, from_obj: User, chat_id: int, respondent_id: user_id_type):
         super().__init__(from_obj)
         self._chat = self.object_manager.get_chat(chat_id)
         self.lecture = self._chat.lecture
-        self.respondent = self.object_manager.get_person(respondent_id)
+        self.respondent = self.object_manager.get_object_by_id(User, respondent_id).person
 
         confirmed_lectures = self.object_manager.get_confirmed_lecture_requests_in_chat(
             self.lecture, self._chat)
@@ -193,11 +193,11 @@ class LectureRejectRespondentService(LectureResponseBaseService):
 
     chat_service = LectureRejectRespondentChatService
 
-    def __init__(self, from_obj: User, chat_id: int, respondent_id: person_id_type):
+    def __init__(self, from_obj: User, chat_id: int, respondent_id: user_id_type):
         super().__init__(from_obj)
         self._chat = self.object_manager.get_chat(chat_id)
         self.lecture = self._chat.lecture
-        self.respondent = self.object_manager.get_person(respondent_id)
+        self.respondent = self.object_manager.get_object_by_id(User, respondent_id).person
 
         self.chat_service = self.chat_service(
             from_obj, respondent=self.respondent, response_chat=self._chat)

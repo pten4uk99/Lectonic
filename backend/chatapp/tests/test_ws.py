@@ -137,11 +137,10 @@ class ConsumerTestCase(SignUpTestCase):
             dates=[date],
             ws_active=False)
 
-        respondent_person = await get_person_from_obj(Customer)  # берем откликнувшегося
         creator: User = await get_user_from_lecture(lecture)  # помещаем создателя в объект запроса
         chat = await get_chat()
         await database_sync_to_async(service_confirm_respondent_to_lecture)(
-            creator, chat.pk, respondent_person.pk)
+            creator, chat.pk, respondent_user.pk)
 
         await communicator.receive_from()  # set_online_users event
         chat_message_event = await communicator.receive_from()

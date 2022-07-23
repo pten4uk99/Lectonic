@@ -50,7 +50,7 @@ class LectureCancelResponseTestCase(LectureResponseTestCase):
 class LectureConfirmRespondentTestCase(LectureResponseTestCase):
     def test_confirm_respondent_on_lecture(self):
         chat_id = Chat.objects.first().pk
-        respondent_id = self.customer_manager._person.pk
+        respondent_id = self.customer_manager._person.user.pk
         self._user = self.lecturer_manager._user
         service_confirm_respondent_to_lecture(self._user, chat_id, respondent_id)
 
@@ -75,7 +75,7 @@ class LectureConfirmRespondentTestCase(LectureResponseTestCase):
         )
 
         chat = Chat.objects.first()
-        respondent_id = self.customer_manager._person.pk
+        respondent_id = self.customer_manager._person.user.pk
         service_confirm_respondent_to_lecture(self._user, chat.pk, respondent_id)
         self.assertEqual(
             lecture.lecture_requests.first().chat_list.all().count(), 1,
@@ -86,7 +86,7 @@ class LectureConfirmRespondentTestCase(LectureResponseTestCase):
 class LectureRejectRespondentTestCase(LectureResponseTestCase):
     def test_reject_respondent_on_lecture(self):
         chat_id = Chat.objects.first().pk
-        respondent_id = self.customer_manager._person.pk
+        respondent_id = self.customer_manager._person.user.pk
         self._user = self.lecturer_manager._user
         service_reject_respondent_to_lecture(self._user, chat_id, respondent_id)
 
