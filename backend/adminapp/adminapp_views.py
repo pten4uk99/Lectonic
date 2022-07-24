@@ -1,63 +1,27 @@
 import os.path
-import time
-from datetime import datetime, timedelta
 
-from django.conf import settings
 from django.core import management
-from django.core.mail import send_mail
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from adminapp.models import AuthCode
-
-DIR = 'log/'
-DUMP_PATH = DIR + 'dbdump.json'
+from adminapp.services import main_api, MainException
+from adminapp.services.auth import auth_api
+from adminapp.services.config import DIR, DUMP_PATH
 
 
 def signin(request):
     if request.method == 'POST':
         email = request.POST.get('data')
-
-        for admin in settings.ADMINS:
-            if admin[0] == 'Nikita':
-                if email != admin[1]:
-                    return HttpResponse('404')
-
-        AuthCode.objects.all().delete()
-        auth_code = AuthCode.objects.create()
-
-        send_mail(
-            subject='Код доступа лектоник',
-            message=f'{auth_code.key}',
-            recipient_list=[email],
-            from_email=None
-        )
+        auth_api(email)
     return render(request, 'adminapp/signin.html')
 
 
 def index(request, code):
-    if not settings.DEBUG:
-        auth_code = AuthCode.objects.filter(key=code).first()
-        if not auth_code or datetime.now() - timedelta(hours=2) > auth_code.datetime:
-            return redirect(reverse('admin_auth'))
-
-    context = {'files': [], 'key_param': code}
-
-    for file in os.listdir('log'):
-
-        if file.startswith('__init__'):
-            continue
-
-        name = file.split('.')[0]
-        context['files'].append({
-            'path': DIR + file,
-            'filename': file,
-            'name': name
-        })
-
-    if os.path.exists(DUMP_PATH):
-        context['last_change'] = time.ctime(os.path.getmtime(DUMP_PATH))
+    try:
+        context = main_api(code)
+    except MainException:
+        return redirect(reverse('admin_auth'))
 
     return render(request, 'adminapp/index.html', context)
 

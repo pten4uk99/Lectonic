@@ -1,0 +1,21 @@
+<div class="files">
+    <h2>Файлы:</h2>
+
+    <a href="make_dump/?key={{ key_param }}" class="admin-button">
+        Сделать дамп базы
+    </a>
+
+    {% for file in files %}
+        <div style="display: flex; align-items: center;">
+            <a href="save_file/?file={{ file.name }}&key={{ key_param }}"
+               class="admin-button"
+               style="background-color: darkgreen;"
+               download="{{ file.filename }}">
+                {{ file.path }}
+            </a>
+            {% if file.filename == 'dbdump.json' %}
+                <span style="margin-left: 10px;">От: {{ last_dump_change }}</span>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>

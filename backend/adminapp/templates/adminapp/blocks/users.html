@@ -1,0 +1,16 @@
+<div class="users" style="margin-left: 50px;">
+    <h2>Пользователи:</h2>
+
+    {% for user in users %}
+        <p style="
+        display: block;
+        background-color: dodgerblue;
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 18px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer">{{ user }}</p>
+    {% endfor %}
+</div>
