@@ -9,11 +9,11 @@ DEFAULT_HOST = 'http://127.0.0.1:8000'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'lectonic_test',
+        'NAME': 'test',
         'USER': 'postgres',
         'PASSWORD': 'admin',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '5433',
     },
 }
 
