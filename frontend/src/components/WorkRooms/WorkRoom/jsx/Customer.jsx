@@ -1,14 +1,14 @@
-import React, {useEffect, useState} from "react";
-import {connect} from "react-redux";
+import React, {useEffect, useState} from 'react'
+import {connect} from 'react-redux'
 
-import CreatedLectures from "~@/WorkRooms/WorkRoom/jsx/Elements/CreatedLectures";
-import LectureCardList from "./Elements/LectureCardList";
+import CreatedLectures from '~@/WorkRooms/WorkRoom/jsx/Elements/CreatedLectures'
+import LectureCardList from './Elements/LectureCardList'
 import {
   getAllLecturersForCustomer,
   getAllLecturesForCustomer, getConfirmedLectures,
   getCreatedLecturesForCustomer, getLecturesHistory
-} from "../ajax/workRooms";
-import LecturersList from "./Elements/LecturersList";
+} from '../ajax/workRooms'
+import LecturersList from './Elements/LecturersList'
 
 
 function Customer(props) {
@@ -67,13 +67,19 @@ function Customer(props) {
                            isError={createdError}/>
           <LectureCardList header='Новые лекции' 
                            isLecturer={false}
+                           filterCallBack={getAllLecturesForCustomer}
+                           setData={setPotentialLectures}
                            data={potentialLectures} 
                            isError={potentialError}/>
           <LectureCardList header='Подтвержденные лекции' 
                            isLecturer={false} 
+                           filterCallBack={(city, domain) => getConfirmedLectures('lecturer', city, domain)}
+                           setData={setConfirmedLectures}
                            data={confirmedLectures} 
                            isError={confirmedError}/>
-          <LecturersList data={lecturersList} 
+          <LecturersList data={lecturersList}
+                         setData={setLecturersList}
+                         filterCallBack={getAllLecturersForCustomer}
                          isError={lecturersError}/>
         </article>
     )
@@ -82,4 +88,4 @@ function Customer(props) {
 export default connect(
   state => ({store: state}),
   dispatch => ({})
-)(Customer);
+)(Customer)

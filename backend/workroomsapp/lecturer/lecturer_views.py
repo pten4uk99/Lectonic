@@ -2,6 +2,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
+from services.filters import LecturerFilter
 from workroomsapp.lecturer import lecturer_responses
 from workroomsapp.lecturer.docs import lecturer_docs
 from workroomsapp.lecturer.lecturer_serializers import *
@@ -65,9 +66,9 @@ class LecturerAPIView(APIView):
 class LecturersListGetAPIView(APIView):
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        lecturers = Lecturer.objects.exclude(person__user=request.user)
+        city = request.GET.get('city', '')
+        domain = request.GET.get('domain', '')
 
-        serializer = LecturersListGetSerializer(
-            lecturers, many=True, context={'request': request})
-
+        filter_class = LecturerFilter(from_obj=request.user, city=city, domain=domain)
+        serializer = LecturersListGetSerializer(filter_class.filter(), many=True, context={'request': request})
         return lecturer_responses.success_get_lecturers(serializer.data)

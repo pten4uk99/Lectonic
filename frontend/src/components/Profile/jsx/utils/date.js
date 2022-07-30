@@ -1,4 +1,4 @@
-import {DateTime} from "luxon";
+import {DateTime} from 'luxon'
 
 let today = new Date()
 
@@ -33,7 +33,7 @@ export function getYearsArr() {
   let currentYear = DateTime.now().year
   let arr = []
   
-  for (let i = currentYear - 1; i > currentYear - 100; i--) {
+  for (let i = currentYear - 17; i > currentYear - 100; i--) {
     arr.push(i)
   }
   return arr

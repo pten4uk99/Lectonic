@@ -10,7 +10,7 @@ const initialState = {
   is_lecturer: true,
   is_customer: false,
   birth_date: {
-    year: today.year,
+    year: today.year - 17,
     month: today.month,
     day: today.day
   }

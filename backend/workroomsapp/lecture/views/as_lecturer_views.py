@@ -5,12 +5,12 @@ from django.core import exceptions
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
-from workroomsapp.lecture import lecture_responses
-from workroomsapp.lecture.docs import lecture_docs
-from services.api import serialize_created_lectures, service_delete_lecture_by_id, \
+from services.api import service_delete_lecture_by_id, \
     service_response_to_lecture, service_cancel_response_to_lecture, service_confirm_respondent_to_lecture, \
     service_reject_respondent_to_lecture
-from services import AttrNames
+from services.filters import CreatedLecturerLectureFilter
+from workroomsapp.lecture import lecture_responses
+from workroomsapp.lecture.docs import lecture_docs
 from workroomsapp.lecture.lecture_serializers import LectureAsLecturerSerializer, LecturesGetSerializer
 from workroomsapp.models import Lecturer, Lecture
 from workroomsapp.utils import workroomsapp_permissions
@@ -24,7 +24,7 @@ class LectureAsLecturerAPIView(APIView):
                           workroomsapp_permissions.IsCustomer]
 
     def get_lecturer(self, id_):
-        lecturer = Lecturer.objects.filter(pk=id_).first()
+        lecturer = Lecturer.objects.filter(person__user_id=id_).first()
         if not lecturer:
             raise exceptions.ObjectDoesNotExist('Объекта не существует в базе данных')
         return lecturer
@@ -38,13 +38,16 @@ class LectureAsLecturerAPIView(APIView):
 
     @swagger_auto_schema(deprecated=True)
     def get(self, request):
-        lecturer_id = request.GET.get('id')
+        user_id = request.GET.get('user_id')
+        city = request.GET.get('city', '')
+        domain = request.GET.get('domain', '')
 
         user = request.user
-        if lecturer_id:
-            user = self.get_lecturer(lecturer_id).person.user
+        if user_id:
+            user = self.get_lecturer(user_id).person.user
 
-        serializer = serialize_created_lectures(from_obj=user, from_attr=AttrNames.LECTURER)
+        filter_class = CreatedLecturerLectureFilter(from_obj=user, city=city, domain=domain)
+        serializer = LecturesGetSerializer(filter_class.filter(), many=True, context={'user': user})
         return lecture_responses.success_get_lectures(serializer.data)
 
     @swagger_auto_schema(deprecated=True)

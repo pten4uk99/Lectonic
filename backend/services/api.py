@@ -1,21 +1,16 @@
-from abc import ABC, abstractmethod
-from typing import Type, Iterable
+from abc import abstractmethod
+from typing import Type
 
-from django.http import HttpRequest
 from rest_framework.serializers import Serializer
 
 from authapp.models import User
 from chatapp.chatapp_serializers import ChatMessageListSerializer
-from services.chat.chatapp import ChatMessageService
+from services import AttrNames
 from services.authapp import UserCreateService
-from services.filters import CreatedLecturesFilter, ConfirmedLecturesFilter, BaseFilter, \
-    PotentialLecturesFilter
-from workroomsapp.lecture.lecture_serializers import LecturesGetSerializer
+from services.chat.chatapp import ChatMessageService
 from services.lecture import LectureResponseService, LectureCancelResponseService, \
     LectureConfirmRespondentService, LectureRejectRespondentService, LectureDeleteService
-from services.types import person_id_type, UserLogin, user_id_type
-from services import AttrNames
-from workroomsapp.models import Person, Lecture
+from services.types import UserLogin, user_id_type
 
 
 # Тут описаны методы взаимодействия с представлениями
@@ -39,53 +34,6 @@ class SerializerAPI(BaseLectureAPI):
         return self.init_serializer()
 
 
-class FilterAPI(SerializerAPI):
-    """ Занимается отображением отфильтрованных объектов из БД """
-
-    filter_class: Type[BaseFilter]
-
-    def __init__(self, from_obj: User, from_attr: AttrNames):
-        super().__init__(from_obj, from_attr)
-        self._filter = self.filter_class(from_obj=from_obj, from_attr=from_attr)
-
-    def get_filtered_lectures(self) -> Iterable[Lecture]:
-        return self._filter.filter()
-
-    def init_serializer(self):
-        return self.serializer_class(
-            self.get_filtered_lectures(),
-            many=True,
-            context={'user': self.from_obj, 'query_from': self.from_attr.value}
-        )
-
-
-class LectureGetAPI(FilterAPI, ABC):
-    """ API для работы с получением лекций """
-    serializer_class = LecturesGetSerializer
-
-
-class CreatedLecturesGetAPI(LectureGetAPI):
-    """ API для обработки и сериализации созданных лекций пользователя """
-    filter_class = CreatedLecturesFilter
-
-    def init_serializer(self):
-        return self.serializer_class(
-            self.get_filtered_lectures(),
-            many=True,
-            context={'user': self.from_obj}
-        )
-
-
-class ConfirmedLecturesGetAPI(LectureGetAPI):
-    """ API для обработки и сериализации подтвержденных лекций и подтвержденных откликов пользователя """
-    filter_class = ConfirmedLecturesFilter
-
-
-class PotentialLecturesGetAPI(LectureGetAPI):
-    """ API для обработки и сериализации подтвержденных лекций и подтвержденных откликов пользователя """
-    filter_class = PotentialLecturesFilter
-
-
 class ChatMessageAPI(SerializerAPI):
     serializer_class = ChatMessageListSerializer
     service = ChatMessageService
@@ -105,18 +53,6 @@ class ChatMessageAPI(SerializerAPI):
 
 # ------------------Функции для использования непосредственно в представлениях-------------------
 # ---------------------------------------------------------------------------------------
-def serialize_created_lectures(from_obj: User, from_attr: AttrNames):
-    return CreatedLecturesGetAPI(from_obj=from_obj, from_attr=from_attr).serialize()
-
-
-def serialize_confirmed_lectures(from_obj: User, from_attr: AttrNames):
-    return ConfirmedLecturesGetAPI(from_obj=from_obj, from_attr=from_attr).serialize()
-
-
-def serialize_potential_lectures(from_obj: User, from_attr: AttrNames):
-    return PotentialLecturesGetAPI(from_obj=from_obj, from_attr=from_attr).serialize()
-
-
 def service_delete_lecture_by_id(from_obj: User, lecture_id: int) -> None:
     service = LectureDeleteService(from_obj=from_obj, lecture_id=lecture_id)
     service.setup()

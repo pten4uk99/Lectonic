@@ -9,7 +9,7 @@ import {useNavigate} from 'react-router-dom'
 import Filter from "./Filter";
 
 
-function LecturersList(props){
+function CustomersList(props){
   let [isLoaded, setIsLoaded] = useState(false)
   let navigate = useNavigate()
   
@@ -19,7 +19,7 @@ function LecturersList(props){
   return (
     <section className="block__created-lectures">
       <div className="workroom__block-header">
-        <span>Лекторы</span>
+        <span>Заказчики</span>
         <Filter filterCallBack={props.filterCallBack} setData={props.setData}/>
         {/*<img src={tooltip} alt="Подсказка"/>*/}
         {!isLoaded && <Loader size={15} left={12}/>}
@@ -31,16 +31,16 @@ function LecturersList(props){
           props.data.length > 0 && 
           <div className="created-lectures__wrapper">
             <div className="created-lectures">
-              {props.data.map((lecturer, index) => {
+              {props.data.map((customer, index) => {
                 return <WorkroomCard key={index} 
-                                     onClick={() => navigate(reverse('role_page', {lecturer: lecturer.user_id}))}
+                                     onClick={() => navigate(reverse('role_page', {customer: customer.user_id}))}
                                      data={{
-                                       src: lecturer.photo,
-                                       name: `${lecturer.last_name} \n ${lecturer.first_name} ${lecturer.middle_name}`,
-                                       firstName: lecturer.first_name,
-                                       lastName: lecturer.last_name,
+                                       src: customer.photo,
+                                       name: `${customer.last_name} \n ${customer.first_name} ${customer.middle_name}`,
+                                       firstName: customer.first_name,
+                                       lastName: customer.last_name,
                                        lectorCard: true,
-                                       colorNumber: lecturer.bgc_number
+                                       colorNumber: customer.bgc_number
                                      }}/>})}
           </div>
         </div>}
@@ -54,4 +54,4 @@ function LecturersList(props){
 export default connect(
   state => ({store: state}),
   dispatch => ({})
-)(LecturersList)
+)(CustomersList)

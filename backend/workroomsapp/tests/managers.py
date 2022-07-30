@@ -73,7 +73,6 @@ class PersonTestManager(SignUpTestManager):
     def run_person(self):
         City.objects.get_or_create(name='Москва', pk=1)
         self._person = Person.objects.create(**self.profile_data, user=self._user)
-        # возможно в будущем лучше заменить прямое создание через ORM на создание через сериализатор
 
     def _current_method(self):
         self.run_person()
@@ -117,17 +116,19 @@ class LectureTestManager:
     def __init__(self, creator: Union[Lecturer, Customer]):
         self._creator = creator
         self._creator_name = self._creator.__class__.__name__.lower()
-        self._data = {}
+        self.data = {}
         self._attrs = {self._creator_name: self._creator}
 
         if self._creator_name == 'lecturer':
-            self._data = self.data_as_lecturer
+            self.data = self.data_as_lecturer
         elif self._creator_name == 'customer':
-            self._data = self.data_as_customer
+            self.data = self.data_as_customer
+            
+        self.obj = None
 
         now = datetime.datetime.now().replace(second=0, microsecond=0)
 
-        self._data['datetime'] = [
+        self.data['datetime'] = [
             [now + timedelta(days=2), now + timedelta(days=2, hours=1)],
             [now + timedelta(days=2, hours=2), now + timedelta(days=2, hours=3)],
             [now + timedelta(days=3, hours=2), now + timedelta(days=3, hours=3)],
@@ -135,4 +136,5 @@ class LectureTestManager:
 
     def create_obj(self, quantity: int = 1):
         for i in range(quantity):
-            Lecture.objects.create_lecture(**self._data, **self._attrs)
+            self.obj = Lecture.objects.create_lecture(**self.data, **self._attrs)
+            

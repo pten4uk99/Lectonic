@@ -19,7 +19,7 @@ export default function messages(state=initialState, action) {
       })
       return {...state, messages: newMessages}    
     case "SET_MESSAGES_CONFIRMED":
-      return {...state, confirmed: action.payload}
+      return {...state, confirm: action.payload}
     default:
       return state
   }

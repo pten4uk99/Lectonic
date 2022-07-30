@@ -45,7 +45,8 @@ function Lecture(props) {
   return (
     <>
       <div className="navigate-back__block" onClick={() => navigate(reverse('workroom'))}>
-        <img src={backArrowWhite} alt="назад" style={{fill: 'white'}}/>
+        <img src={backArrowWhite} alt="назад"/>
+        <span style={{marginLeft: 10, color: 'white', fontSize: 11}}>Назад</span>
       </div>
 
       <div className="lecture__container">

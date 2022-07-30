@@ -37,6 +37,7 @@ urlpatterns = [
          name='customer_calendar_responses'),
 
     path('lecturer/', LecturerAPIView.as_view(), name='lecturer'),
+    path('lecturer/customers_list/', CustomersListGetAPIView.as_view(), name='customers_list'),
     path('lecturer/potential_lectures/',
          PotentialLecturerLecturesGetAPIView.as_view(),
          name='potential_lecturer_lectures'),

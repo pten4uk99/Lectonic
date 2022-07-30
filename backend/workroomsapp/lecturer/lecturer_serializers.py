@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from config.settings import DEFAULT_HOST
-from workroomsapp.models import Lecturer, DiplomaImage, Domain
+from workroomsapp.models import Lecturer, DiplomaImage, Domain, Customer
 from workroomsapp.person.person_serializers import PersonSerializer
 
 
@@ -95,6 +95,19 @@ class LecturersListGetSerializer(serializers.ModelSerializer):
             return DEFAULT_HOST + obj.person.photo.url
         else:
             return ''
+
+
+class CustomersListGetSerializer(LecturersListGetSerializer):
+    class Meta:
+        model = Customer
+        fields = [
+            'user_id',
+            'photo',
+            'first_name',
+            'last_name',
+            'middle_name',
+            'bgc_number'
+        ]
 
 
 class LecturerGetSerializer(serializers.ModelSerializer):

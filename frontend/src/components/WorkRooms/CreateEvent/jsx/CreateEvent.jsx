@@ -78,6 +78,7 @@ function CreateEvent(props) {
     <>
       <div className="navigate-back__block" onClick={() => navigate(-1)}>
         <img src={backArrow} alt="назад"/>
+        <span style={{marginLeft: 10, fontSize: 11}}>Назад</span>
       </div>
 
       <form onSubmit={(e) => submitFormHandler(e)}>

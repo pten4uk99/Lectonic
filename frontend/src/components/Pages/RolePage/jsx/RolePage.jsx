@@ -68,7 +68,8 @@ function RolePage(props) {
     <>
       <div className="navigate-back__block"
            onClick={() => navigate(reverse('workroom'))}>
-        <img src={backArrow} alt="назад"/>
+        <img src={backArrow} alt="назад"/> 
+        <span style={{marginLeft: 10, color: 'white', fontSize: 11}}>Назад</span>
       </div>
       
         <div className="rolepage__header" 
@@ -128,7 +129,7 @@ function RolePage(props) {
                     </div>
                   {lecturerId && <div className='rolepage__description-box'>
                         <span>Ссылки на публикации:</span>
-                      {data?.performances_links?.length > 0 ? data.publication_links.map((elem, index) => {
+                      {data?.publication_links?.length > 0 ? data.publication_links.map((elem, index) => {
                         return <div className='pill pill-grey' key={index}>
                           <a href={elem} target="_blank" rel="noreferrer">{elem}</a>
                         </div>

@@ -160,47 +160,6 @@ class GetLectureManager(LectureObjectManager):
         return lecture.lecture_requests.filter(
             respondent_obj__confirmed=True, respondent_obj__person=respondent).first()
 
-    @staticmethod
-    def get_latest_lecture_date(lecture: Lecture) -> datetime.datetime:
-        """ Возвращает самую позднюю дату лекции """
-
-        aggregate = lecture.lecture_requests.aggregate(latest=Max('event__datetime_start'))
-        return aggregate.get('latest')
-
-    def get_person_confirmed_lectures(self) -> list[Lecture]:
-        """ Возвращает список подтвержденных лекций пользователя self._from_obj (те, которые он создал) """
-
-        if not hasattr(self._from_obj.person, self.from_attr):
-            raise AttributeError(f'У объекта {self._from_obj.person} нет аттрибута {self.from_attr}')
-
-        lecture_list = []
-
-        lectures = getattr(self._from_obj.person, self.from_attr).lectures.filter(
-            lecture_requests__respondent_obj__confirmed=True,
-            lecture_requests__event__datetime_start__gte=datetime.datetime.now())
-
-        for own_lecture in lectures:
-            if getattr(own_lecture, self.from_attr) and own_lecture not in lecture_list:
-                lecture_list.append(own_lecture)
-
-        return lecture_list
-
-    def get_person_confirmed_responses(self) -> list[Lecture]:
-        """ Возвращает список лекций на который откликнулся пользователь self._person """
-
-        lecture_list = []
-
-        respondents = self._from_obj.person.respondent_obj.filter(
-            confirmed=True,
-            lecture_request__event__datetime_start__gte=datetime.datetime.now())
-
-        for respondent in respondents:
-            lecture = respondent.lecture_request.lecture
-            if getattr(lecture, self._to_attr) and lecture not in lecture_list:
-                lecture_list.append(lecture)
-
-        return lecture_list
-
 
 class DeleteLectureManager(LectureObjectManager):
     @staticmethod

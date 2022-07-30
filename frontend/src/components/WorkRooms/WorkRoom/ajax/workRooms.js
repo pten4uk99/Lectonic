@@ -1,4 +1,4 @@
-import {baseURL} from "~/ProjectConstants";
+import {baseURL} from '~/ProjectConstants'
 
 const HEADERS = {
   'Content-Type': 'application/json',
@@ -17,14 +17,14 @@ export function getProfileInfo() {
 }
 
 
-export function getConfirmedLectures(obj_name) {
+export function getConfirmedLectures(obj_name, city='', domain='') {
   const options = {
     method: 'GET',
     headers: HEADERS,
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/lecture/confirmed_list/?obj_name=${obj_name}`,
+    `${baseURL}/api/workrooms/lecture/confirmed_list/?obj_name=${obj_name}&city=${city}&domain=${domain}`,
     options
   )
 }
@@ -76,26 +76,38 @@ export function deleteLecture(lecture_id) {
   )
 }
 
-export function getAllLecturesForLecturer() {
+export function getAllLecturesForLecturer(city='', domain='') {
   const options = {
     method: 'GET',
     headers: HEADERS,
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/lecturer/potential_lectures/`,
+    `${baseURL}/api/workrooms/lecturer/potential_lectures/?city=${city}&domain=${domain}`,
     options
   )
 }
 
-export function getAllLecturesForCustomer() {
+export function getAllLecturesForCustomer(city='', domain='') {
   const options = {
     method: 'GET',
     headers: HEADERS,
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/customer/potential_lectures/`,
+    `${baseURL}/api/workrooms/customer/potential_lectures/?city=${city}&domain=${domain}`,
+    options
+  )
+}
+
+export function getAllCustomersForLecturer(city='', domain='') {
+  const options = {
+    method: 'GET',
+    headers: HEADERS,
+    credentials: 'include',
+  }
+  return fetch(
+    `${baseURL}/api/workrooms/lecturer/customers_list/?city=${city}&domain=${domain}`,
     options
   )
 }

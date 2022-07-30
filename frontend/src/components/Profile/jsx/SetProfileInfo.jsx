@@ -1,23 +1,23 @@
 import React, {useEffect, useState} from 'react'
-import {connect} from "react-redux";
-import {useLocation, useNavigate} from "react-router-dom";
+import {connect} from 'react-redux'
+import {useLocation, useNavigate} from 'react-router-dom'
 
 import photoIcon from '~/assets/img/photo-icon.svg'
 import locationIcon from '~/assets/img/location-icon.svg'
 import birthdateIcon from '~/assets/img/birthdate-icon.svg'
 import backArrow from '~/assets/img/back-arrow.svg'
 import infoIcon from '~/assets/img/Info-icon.svg'
-import {getDaysArr, getMonthsArr, getYearsArr} from "./utils/date";
-import {UpdateBirthDate, UpdateProfile} from "../redux/actions/profile";
-import {createProfile, getCities, getProfile, setProfile} from "../ajax/profile";
-import {reverse, reverseEqual} from "../../../ProjectConstants";
-import {SwapPerson, SwapUserId} from "../../Authorization/redux/actions/permissions";
-import {SetErrorMessage} from "../../Layout/redux/actions/header";
-import DropDown from '~@/Utils/jsx/DropDown';
-import {SetIdDropDown} from "../../Utils/redux/actions/dropdown";
-import Loader from "../../Utils/jsx/Loader";
-import {ActivateModal, DeactivateModal} from "../../Layout/redux/actions/header";
-import ChooseAvatar from "./ChooseAvatar";
+import {getDaysArr, getMonthsArr, getYearsArr} from './utils/date'
+import {UpdateBirthDate, UpdateProfile} from '../redux/actions/profile'
+import {createProfile, getCities, getProfile, setProfile} from '../ajax/profile'
+import {reverse, reverseEqual} from '../../../ProjectConstants'
+import {SwapPerson, SwapUserId} from '../../Authorization/redux/actions/permissions'
+import {SetErrorMessage} from '../../Layout/redux/actions/header'
+import DropDown from '~@/Utils/jsx/DropDown'
+import {SetIdDropDown} from '../../Utils/redux/actions/dropdown'
+import Loader from '../../Utils/jsx/Loader'
+import {ActivateModal, DeactivateModal} from '../../Layout/redux/actions/header'
+import ChooseAvatar from './ChooseAvatar'
 
 
 
@@ -258,7 +258,7 @@ function SetProfileInfo(props) {
                       left="50%" 
                       top="50%" 
                       tX="-50%" tY="-50%"/> : 
-              "Продолжить"}
+              'Продолжить'}
             </button>
         </form>
       </div>
