@@ -10,10 +10,10 @@ export default function Footer() {
       <div className="footer-wrapper">
         <div className="footer__copyright">2022 © Сервис Lectonic</div>
         <div className="footer__rules">
-          <Link className="footer__rules-link" to="">
+          <Link className="footer__rules-link" to="/license/polsovatelskoe_soglashenije.pdf">
             Условия использования
           </Link>
-          <Link className="footer__rules-link" to="">
+          <Link className="footer__rules-link" to="/license/politica_konfidentialnosty.pdf">
             Политика конфиденциальности
           </Link>
         </div>
@@ -27,7 +27,7 @@ export default function Footer() {
         <div className="footer__socials">
           <p className="footer__socials-text">Мы в соц. сетях:</p>
           <div className="footer__socials-icons">
-            <a href="https://www.instagram.com/" target="_blank">
+            <a href="https://web.telegram.org/z/#5485561224" target="_blank">
               <img className="footer__insta-icon" src={telegram} alt="Telegram"/>
             </a>
           </div>
