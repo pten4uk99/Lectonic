@@ -10,12 +10,12 @@ export default function Footer() {
       <div className="footer-wrapper">
         <div className="footer__copyright">2022 © Сервис Lectonic</div>
         <div className="footer__rules">
-          <Link className="footer__rules-link" to="/license/polsovatelskoe_soglashenije.pdf">
+          <a className="footer__rules-link" href="/license/polsovatelskoe_soglashenije.pdf" target="_blank">
             Условия использования
-          </Link>
-          <Link className="footer__rules-link" to="/license/politica_konfidentialnosty.pdf">
+          </a>
+          <a className="footer__rules-link" href="/license/politica_konfidentialnosty.pdf" target="_blank">
             Политика конфиденциальности
-          </Link>
+          </a>
         </div>
 
         <div className="footer__supportInfo is-desktop">
