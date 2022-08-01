@@ -82,7 +82,7 @@ function DropDown(props) {
     <>
       <div className='dropdown' style={{zIndex: props.zIndex}}>
         <div className="dropdown-top"
-        style={{width: props.width ? '' : width + 30, zIndex: props.input ? '90' : ''}}>
+        style={{width: props.width ? '' : width + 30, zIndex: props.input ? '9' : ''}}>
               <input readOnly={!props.input} 
                      autoComplete='nope' 
                      name={props?.inputName}
@@ -97,7 +97,7 @@ function DropDown(props) {
                    onClick={openSelectBottom}/>
           </div>
           <div className={isSelectOpen ? dropdown + " show" : dropdown}
-               style={{width: props.width ? '100%' : '', zIndex: props.input ? '80' : ''}}>
+               style={{width: props.width ? '100%' : '', zIndex: props.input ? '8' : ''}}>
             <div ref={dropDownBox} 
                  className='dropdown-box'>
                  {data?.map((elem, index) => {

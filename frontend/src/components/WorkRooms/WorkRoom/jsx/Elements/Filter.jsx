@@ -7,11 +7,13 @@ import {ActivateModal, DeactivateModal} from '../../../../Layout/redux/actions/h
 import {getCities} from '../../../../Profile/ajax/profile'
 import DropDown from '../../../../Utils/jsx/DropDown'
 import {getDomainArray} from '../../../CreateEvent/ajax/event'
+import Tooltip from "../../../../Utils/jsx/Tooltip";
 
 function Filter({filterCallBack, setData}) {
   let [isLoaded, setIsLoaded] = useState(true)
   let [filterActive, setFilterActive] = useState(false)
   let [domainArray, setDomainArray] = useState([])
+  let [tooltipActive, setTooltipActive] = useState(false)
 
   let [selectedCity, setSelectedCity] = useState('')
   let [selectedDomain, setSelectedDomain] = useState('')
@@ -67,10 +69,26 @@ function Filter({filterCallBack, setData}) {
     setValue('')
   }
 
+  function activateToolip() {
+    if (!filterActive) {
+      setTooltipActive(true)
+      setTimeout(() => setTooltipActive(false), 2000)
+    }
+  }
+
   return (
     <div className='workrooms__card__filter'>
       <div className="icon" onClick={handleClick}>
-        <img src={filterActive ? filterActiveIcon : filterIcon} alt="Фильтр"/>
+        <img src={filterActive ? filterActiveIcon : filterIcon}
+             alt="Фильтр"
+             onMouseOver={activateToolip}
+             onMouseLeave={() => setTooltipActive(false)}/>
+        <Tooltip text="Фильтр"
+                 isVisible={tooltipActive}
+                 corner="left-top"
+                 position="side"
+                 posL={40}
+                 posT={20}/>
       </div>
 
       {filterActive &&
