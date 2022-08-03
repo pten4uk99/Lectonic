@@ -83,7 +83,7 @@ function Filter({filterCallBack, setData}) {
              alt="Фильтр"
              onMouseOver={activateToolip}
              onMouseLeave={() => setTooltipActive(false)}/>
-        <Tooltip text="Фильтр"
+        <Tooltip text="Фильтры"
                  isVisible={tooltipActive}
                  corner="left-top"
                  position="side"

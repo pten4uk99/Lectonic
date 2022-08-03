@@ -10,7 +10,8 @@ from workroomsapp.utils import workroomsapp_permissions
 
 
 class LectureAsCustomerAPIView(APIView):
-    permission_classes = [workroomsapp_permissions.IsCustomer]
+    permission_classes = [workroomsapp_permissions.IsCustomer |
+                          workroomsapp_permissions.IsLecturer]
     
     def get_customer(self, id_):
         customer = Customer.objects.filter(person__user_id=id_).first()

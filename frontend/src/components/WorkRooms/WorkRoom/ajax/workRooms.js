@@ -48,7 +48,7 @@ export function getCreatedLecturesForLecturer(id='') {
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/lecture/as_lecturer/?id=${id}`,
+    `${baseURL}/api/workrooms/lecture/as_lecturer/?user_id=${id}`,
     options
   )
 }
@@ -59,7 +59,7 @@ export function getCreatedLecturesForCustomer(id='') {
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/lecture/as_customer/?id=${id}`,
+    `${baseURL}/api/workrooms/lecture/as_customer/?user_id=${id}`,
     options
   )
 }
