@@ -112,14 +112,14 @@ export function getAllCustomersForLecturer(city='', domain='') {
   )
 }
 
-export function getAllLecturersForCustomer() {
+export function getAllLecturersForCustomer(city='', domain='') {
   const options = {
     method: 'GET',
     headers: HEADERS,
     credentials: 'include',
   }
   return fetch(
-    `${baseURL}/api/workrooms/customer/lecturers_list/`,
+    `${baseURL}/api/workrooms/customer/lecturers_list/?city=${city}&domain=${domain}`,
     options
   )
 }
