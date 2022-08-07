@@ -30,7 +30,7 @@ def _send_code_on_email(email: str, code: str) -> None:
 
     send_mail(
         subject='Код доступа лектоник',
-        message=code,
+        message=str(code),
         recipient_list=[email],
         from_email=None
     )

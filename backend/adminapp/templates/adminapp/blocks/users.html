@@ -2,7 +2,7 @@
     <h2>Пользователи:</h2>
 
     {% for user in users %}
-        <p style="
+        <a style="
         display: block;
         background-color: dodgerblue;
         margin-top: 10px;
@@ -11,6 +11,6 @@
         font-size: 18px;
         color: white;
         font-weight: 600;
-        cursor: pointer">{{ user }}</p>
+        cursor: pointer" href="user_detail/{{ user.pk }}?key={{ key_param }}">{{ user }}</a>
     {% endfor %}
 </div>

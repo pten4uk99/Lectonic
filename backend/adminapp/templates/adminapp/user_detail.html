@@ -1,0 +1,51 @@
+{% extends 'adminapp/index.html' %}
+
+{% block content %}
+<style>
+    p {
+        background-color: blue;
+        border-radius: 10px;
+
+        color: white;
+        text-align: center;
+
+        padding: 10px;
+        width: max-content;
+    }
+
+    p#delete {
+        margin-top: 100px;
+        background-color: #d20000;
+        cursor: pointer;
+
+        width: 200px;
+
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+</style>
+
+<p id="key" hidden>{{ key_param }}</p>
+<p id="user_pk">{{ user.pk }}</p>
+<p>{{ user.email }}</p>
+<p>{{ user.person }}</p>
+
+<p id="delete"><b>Удалить</b> {{ user.email }}</p>
+
+<script>
+    let userId = document.getElementById('user_pk').textContent;
+    let key = document.getElementById('key').textContent;
+
+    let deleteButton = document.getElementById('delete');
+    let buttonClicks = 6;
+    deleteButton.onclick = (e) => {
+        if (buttonClicks === 1) document.location.href = `/api/lectonic_admin/delete_user/${userId}?key=${key}`
+        else {
+            buttonClicks -= 1
+            deleteButton.textContent = buttonClicks;
+        }
+    }
+</script>
+{% endblock content %}

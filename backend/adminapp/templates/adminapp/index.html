@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Панель разработчика Лектоник</title>
     <style>
         .admin-button {
             display: block;
@@ -19,12 +19,13 @@
     </style>
 </head>
 <body>
+{% block content %}
     <div style="margin-bottom: 30px;">Вы вошли как: {{ user }}</div>
 
     <main style="display: flex">
         {% include 'adminapp/blocks/files.html' %}
         {% include 'adminapp/blocks/users.html' %}
     </main>
-
+{% endblock content %}
 </body>
 </html>

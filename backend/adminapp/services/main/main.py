@@ -23,7 +23,7 @@ class IncorrectCode(MainException):
     pass
 
 
-def _check_correct_code(code: str) -> None:
+def check_correct_code(code: str) -> None:
     """ Проверяет корректность переданного кода """
 
     if not config.SIMPLE_ACCESS:
@@ -54,6 +54,6 @@ def _make_context(code: str) -> dict:
 
 
 def main_api(code: str) -> dict:
-    _check_correct_code(code)
+    check_correct_code(code)
     context = _make_context(code)
     return context
