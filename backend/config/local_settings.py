@@ -4,6 +4,9 @@
 
 SECRET_KEY = '3j4k5jn34kr34n9oka;mldsanmekj345njd:&&^&*322988hdsdlkemw:::#289dj'
 
+DEBUG = True
+ALLOWED_HOSTS = ['*']
+
 DEFAULT_HOST = 'http://127.0.0.1:8000'
 
 DATABASES = {
