@@ -3,7 +3,7 @@ from datetime import timedelta
 from typing import Union
 
 from authapp.models import User
-from config.utils.tests import data
+from utils.tests import data
 from workroomsapp.models import City, Person, Domain, Lecturer, Customer, Lecture
 
 

@@ -2,9 +2,9 @@ from datetime import timedelta
 
 from django.http import SimpleCookie
 from django.urls import reverse
-from rest_framework.test import APITransactionTestCase
 
-from config.utils.tests import data
+from rest_framework.test import APITransactionTestCase
+from utils.tests import data
 from services.api import user_signup_service
 from workroomsapp.models import City, Domain, LectureRequest, Lecture, Optional, Event, Calendar, LecturerCalendar, \
     CustomerCalendar, LectureDomain
@@ -76,12 +76,10 @@ class LectureTestCaseMixin:
     lecture_data = None
 
     def assertEqual(self, *args, **kwargs):
-        # Используется только при наследовании
-        pass
+        raise NotImplementedError()
 
     def make_request(self, temp_data):
-        # Используется только при наследовании
-        pass
+        raise NotImplementedError()
 
     def make_create_tests(self):
         # Для корректной работы используется только в классах-наследниках
@@ -191,7 +189,7 @@ class BaseLectureAsLecturerCreateTestCase(LecturerCreateTestCase, LectureTestCas
     lecture_data = data.LECTURE.copy()
 
     def make_request(self, temp_data):
-        response = self.client.post(reverse('lecture_as_lecturer'), temp_data)
+        response = self.client.post(reverse('lecture_as_lecturer_create_list'), temp_data)
         return response
 
 
@@ -201,5 +199,5 @@ class BaseLectureAsCustomerCreateTestCase(CustomerCreateTestCase, LectureTestCas
     lecture_data = data.LECTURE_AS_CUSTOMER.copy()
 
     def make_request(self, temp_data):
-        response = self.client.post(reverse('lecture_as_customer'), temp_data)
+        response = self.client.post(reverse('lecture_as_customer_create_list'), temp_data)
         return response

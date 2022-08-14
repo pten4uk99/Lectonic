@@ -1,4 +1,4 @@
-from config.utils import response
+from utils import response
 
 
 def mail_is_sent():

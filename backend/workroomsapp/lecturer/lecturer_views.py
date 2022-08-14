@@ -69,6 +69,6 @@ class LecturersListGetAPIView(APIView):
         city = request.GET.get('city', '')
         domain = request.GET.get('domain', '')
 
-        filter_class = LecturerFilter(from_obj=request.user, city=city, domain=domain)
+        filter_class = LecturerFilter(qs=Lecturer.objects.all(), from_obj=request.user, city=city, domain=domain)
         serializer = LecturersListGetSerializer(filter_class.filter(), many=True, context={'request': request})
         return lecturer_responses.success_get_lecturers(serializer.data)

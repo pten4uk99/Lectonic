@@ -1,4 +1,4 @@
-from config.utils import response
+from utils import response
 
 CHAT_ID_NOT_IN_DATA = 'Параметр chat_id не передан'
 CHAT_NOT_EXIST = 'Не найден чат с таким id'

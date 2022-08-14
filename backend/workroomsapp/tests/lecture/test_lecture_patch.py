@@ -9,7 +9,7 @@ from workroomsapp.tests.base import BaseLectureAsLecturerCreateTestCase
 class LecturePatchTestCase(BaseLectureAsLecturerCreateTestCase):
     def setUp(self):
         super().setUp()
-        self.client.post(reverse('lecture_as_lecturer'), self.lecture_data)
+        self.client.post(reverse('lecture_as_lecturer_create_list'), self.lecture_data)
 
     def test_lecture_patch(self):
         new_domains = ['Эквилибристика', 'Лалалэнд']
@@ -20,7 +20,6 @@ class LecturePatchTestCase(BaseLectureAsLecturerCreateTestCase):
             Domain.objects.create(name=name, pk=index + 4)
 
         temp_data = {
-            'id': Lecture.objects.first().pk,
             'name': 'Обновленное название лекции',
             'domain': new_domains,
             'datetime': [
@@ -34,7 +33,7 @@ class LecturePatchTestCase(BaseLectureAsLecturerCreateTestCase):
             'equipment': 'Обновленное оборудование'
         }
 
-        self.client.patch(reverse('lecture_as_lecturer'), temp_data)
+        self.client.patch(reverse('lecture_as_lecturer_update_delete', args=[Lecture.objects.first().pk]), temp_data)
         lecture = Lecture.objects.first()
 
         self.assertEqual(lecture.name, temp_data['name'], msg='Название лекции не изменилось')

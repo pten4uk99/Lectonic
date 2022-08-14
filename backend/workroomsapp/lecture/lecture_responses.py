@@ -1,4 +1,4 @@
-from config.utils import response
+from utils import response
 
 LECTURE_CREATED = 'Лекция успешно создана'
 LECTURE_DELETED = 'Лекция успешно удалена'

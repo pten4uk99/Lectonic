@@ -1,4 +1,4 @@
-from config.utils import response
+from utils import response
 
 DOES_NOT_EXIST = 'Календарь заказчика не существует'
 

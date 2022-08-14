@@ -1,8 +1,8 @@
 from drf_yasg.openapi import Schema
 
 from authapp.utils import authapp_responses
-from config.utils import response
-from config.utils.swagger_response import get_default_response
+from utils import response
+from utils.swagger import get_default_response
 
 CheckAuthenticationSchema200 = Schema(
     title='Пользователь авторизован',

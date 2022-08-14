@@ -16,11 +16,18 @@ urlpatterns = [
     path('domain/', DomainGetAPIView.as_view(), name='domain'),
 
     path('lecture/<int:pk>/', LectureDetailAPIView.as_view(), name='lecture_detail'),
-    path('lecture/as_lecturer/', LectureAsLecturerAPIView.as_view(), name='lecture_as_lecturer'),
-    path('lecture/as_customer/', LectureAsCustomerAPIView.as_view(), name='lecture_as_customer'),
+    path('lecture/as_lecturer/', LectureAsLecturerListCreateAPIView.as_view(), name='lecture_as_lecturer_create_list'),
+    path('lecture/as_lecturer/<int:pk>',
+         LectureAsLecturerUpdateDeleteAPIView.as_view(),
+         name='lecture_as_lecturer_update_delete'),
+    path('lecture/as_customer/', LectureAsCustomerListCreateAPIView.as_view(), name='lecture_as_customer_create_list'),
+    path('lecture/as_customer/<int:pk>',
+         LectureAsCustomerUpdateDeleteAPIView.as_view(),
+         name='lecture_as_customer_update_delete'),
 
     # path('lecture/history_list/', LecturesHistoryGetAPIView.as_view(), name='lecture_history'),
-    path('lecture/confirmed_list/', ConfirmedLecturesGetAPIView.as_view(), name='lecture_history'),
+    path('lecture/confirmed_list/', ConfirmedLecturesGetAPIView.as_view(), name='lecture_confirmed_list'),
+    path('lecture/permanent_list/', PermanentLecturesGetAPIView.as_view(), name='lecture_permanent_list'),
 
     path('lecture/response/', LectureResponseAPIView.as_view(), name='lecture_response'),
     path('lecture/cancel_response/', LectureCancelResponseAPIView.as_view(), name='lecture_cancel_response'),

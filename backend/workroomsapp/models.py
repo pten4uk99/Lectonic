@@ -1,12 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from config.utils.validators import PhotoValidator
+from utils import PhotoValidator
 from workroomsapp.customer.customer_manager import CustomerManager
 from workroomsapp.lecture.lecture_manager import LectureManager
 from workroomsapp.lecturer.lecturer_manager import LecturerManager
-from workroomsapp.utils.paths_for_media import document_image, diploma_image, lecturer_lecture_image, person_image, \
-    customer_lecture_image
+from workroomsapp.utils.paths_for_media import diploma_image, person_image
 
 BaseUser = get_user_model()
 

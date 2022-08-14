@@ -1,7 +1,7 @@
 from drf_yasg.openapi import Schema
 
-from config.utils import response
-from config.utils.swagger_response import get_default_response
+from utils import response
+from utils.swagger import get_default_response
 from workroomsapp.person import person_responses
 
 DocumentImageCreationSchema = Schema(

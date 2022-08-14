@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from emailapp.models import EmailConfirmation
-from config.utils.validators import EMAIL_VALIDATOR
+from utils import EMAIL_VALIDATOR
 from workroomsapp.models import Person
 
 User = get_user_model()
@@ -37,6 +37,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         fields = (
             'email',
             'password',
+            # повторный ввод пароля будет проверяться на стороне фронтенда
         )
 
     def validate_email(self, email):

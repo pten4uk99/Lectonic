@@ -10,7 +10,7 @@ class LectureAsLecturerSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     svg = serializers.IntegerField(min_value=1)
     domain = serializers.ListField()
-    datetime = serializers.ListField()
+    datetime = serializers.ListField(help_text='YYYY-MM-DDTHH:MM', required=False)
     hall_address = serializers.CharField(required=False)
     equipment = serializers.CharField(required=False)
     type = serializers.CharField()
@@ -36,8 +36,7 @@ class LectureAsLecturerSerializer(serializers.Serializer):
         return lecturer
 
     def validate_datetime(self, datetime_list):
-        lecture_id = self.context['request'].data.get('id')
-        validator = LectureDatetimeValidator(self.get_creator_obj(), edit=bool(lecture_id))
+        validator = LectureDatetimeValidator(self.get_creator_obj(), edit=bool(self.instance))
         return validator.validate(datetime_list)
 
     def create(self, validated_data):
@@ -261,3 +260,4 @@ class LecturesGetSerializer(serializers.ModelSerializer):
             return not lecture.lecture_requests.filter(respondent_obj__confirmed=True).exists()
 
         return False
+

@@ -1,4 +1,4 @@
-from config.utils import response
+from utils import response
 
 PHOTO_CREATED = 'Фотографии успешно загружены'
 PHOTO_DOES_NOT_EXIST = 'Фотографий для данного профиля не существуют'

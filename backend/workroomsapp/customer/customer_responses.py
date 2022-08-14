@@ -1,4 +1,4 @@
-from config.utils import response
+from utils import response
 
 CUSTOMER_CREATED = 'Профиль заказчика успешно создан'
 CUSTOMER_DOES_NOT_EXIST = 'Профиль заказчика не существует'

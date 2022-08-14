@@ -82,14 +82,15 @@ class LectureCreator:
             self.lecture.customer = self.customer
 
     def create_events(self):
-        for event in self.datetime:
-            lecture_request = workrooms_models.LectureRequest.objects.create(lecture=self.lecture)
-            self.calendar.events.add(workrooms_models.Event.objects.create(
-                datetime_start=event[0],
-                datetime_end=event[1],
-                lecture_request=lecture_request)
-            )
-        self.calendar.save()
+        if self.datetime is not None:
+            for event in self.datetime:
+                lecture_request = workrooms_models.LectureRequest.objects.create(lecture=self.lecture)
+                self.calendar.events.add(workrooms_models.Event.objects.create(
+                    datetime_start=event[0],
+                    datetime_end=event[1],
+                    lecture_request=lecture_request)
+                )
+            self.calendar.save()
 
     @transaction.atomic
     def create(self):

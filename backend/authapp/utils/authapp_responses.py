@@ -1,4 +1,4 @@
-from config.utils import response
+from utils import response
 
 UNAUTHORIZED = 'Пользователь не авторизован'
 SUCCESS = 'Успешная проверка авторизации'

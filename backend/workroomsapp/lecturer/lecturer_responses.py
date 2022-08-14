@@ -1,4 +1,4 @@
-from config.utils import response
+from utils import response
 
 PHOTO_CREATED = 'Фотография успешно загружена'
 PHOTO_DOES_NOT_EXIST = 'Фотографий дипломов лектора не существует'
